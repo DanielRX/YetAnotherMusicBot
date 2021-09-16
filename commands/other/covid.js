@@ -23,30 +23,13 @@ module.exports = {
                         .addField('Total cases', data.cases.toLocaleString(), true)
                         .addField('Cases today', data.todayCases.toLocaleString(), true)
                         .addField('Deaths today', data.todayDeaths.toLocaleString(), true)
-                        .addField('Active cases',
-                            `${data.active.toLocaleString()} (${(
-                                (data.active / data.cases) * 100
-                            ).toFixed(2)}%)`,
-                            true)
-                        .addField('Total recovered',
-                            `${data.recovered.toLocaleString()} (${(
-                                (data.recovered / data.cases) * 100
-                            ).toFixed(2)}%)`,
-                            true)
-                        .addField('Total deaths',
-                            `${data.deaths.toLocaleString()} (${(
-                                (data.deaths / data.cases) * 100
-                            ).toFixed(2)}%)`,
-                            true)
+                        .addField('Active cases', `${data.active.toLocaleString()} (${((data.active / data.cases) * 100).toFixed(2)}%)`, true)
+                        .addField('Total recovered', `${data.recovered.toLocaleString()} (${((data.recovered / data.cases) * 100).toFixed(2)}%)`, true)
+                        .addField('Total deaths', `${data.deaths.toLocaleString()} (${((data.deaths / data.cases) * 100).toFixed(2)}%)`, true)
                         .addField('Tests', `${data.tests.toLocaleString()}`, true)
-                        .addField('Cases Per Mil',
-                            `${data.casesPerOneMillion.toLocaleString()}`,
-                            true)
-                        .addField('Deaths Per Mil',
-                            `${data.deathsPerOneMillion.toLocaleString()}`,
-                            true)
-                        .addField('Public advice',
-                            '[Click here](https://www.who.int/emergencies/diseases/novel-coronavirus-2019/advice-for-public)')
+                        .addField('Cases Per Mil', `${data.casesPerOneMillion.toLocaleString()}`, true)
+                        .addField('Deaths Per Mil', `${data.deathsPerOneMillion.toLocaleString()}`, true)
+                        .addField('Public advice', '[Click here](https://www.who.int/emergencies/diseases/novel-coronavirus-2019/advice-for-public)')
                         .setFooter('Last updated')
                         .setTimestamp(data.updated);
 
@@ -66,30 +49,13 @@ module.exports = {
                         .addField('Total cases', data.cases.toLocaleString(), true)
                         .addField('Cases today', data.todayCases.toLocaleString(), true)
                         .addField('Deaths today', data.todayDeaths.toLocaleString(), true)
-                        .addField('Active cases',
-                            `${data.active.toLocaleString()} (${(
-                                (data.active / data.cases) * 100
-                            ).toFixed(2)}%)`,
-                            true)
-                        .addField('Total recovered',
-                            `${data.recovered.toLocaleString()} (${(
-                                (data.recovered / data.cases) * 100
-                            ).toFixed(2)}%)`,
-                            true)
-                        .addField('Total deaths',
-                            `${data.deaths.toLocaleString()} (${(
-                                (data.deaths / data.cases) * 100
-                            ).toFixed(2)}%)`,
-                            true)
+                        .addField('Active cases', `${data.active.toLocaleString()} (${((data.active / data.cases) * 100).toFixed(2)}%)`, true)
+                        .addField('Total recovered', `${data.recovered.toLocaleString()} (${((data.recovered / data.cases) * 100).toFixed(2)}%)`, true)
+                        .addField('Total deaths', `${data.deaths.toLocaleString()} (${((data.deaths / data.cases) * 100).toFixed(2)}%)`, true)
                         .addField('Tests', `${data.tests.toLocaleString()}`, true)
-                        .addField('Cases Per Mil',
-                            `${data.casesPerOneMillion.toLocaleString()}`,
-                            true)
-                        .addField('Deaths Per Mil',
-                            `${data.deathsPerOneMillion.toLocaleString()}`,
-                            true)
-                        .addField('Public advice',
-                            '[Click here](https://www.who.int/emergencies/diseases/novel-coronavirus-2019/advice-for-public)')
+                        .addField('Cases Per Mil', `${data.casesPerOneMillion.toLocaleString()}`, true)
+                        .addField('Deaths Per Mil', `${data.deathsPerOneMillion.toLocaleString()}`, true)
+                        .addField('Public advice', '[Click here](https://www.who.int/emergencies/diseases/novel-coronavirus-2019/advice-for-public)')
                         .setFooter('Last updated')
                         .setTimestamp(data.updated);
 
