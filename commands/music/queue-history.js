@@ -10,7 +10,8 @@ module.exports = {
         const guildData = interaction.client.guildData.get(interaction.guildId);
         if(!guildData) {
             return interaction.followUp('There is no music queue history!');
-        } else if(guildData) {
+        }
+        if(guildData) {
             if(!guildData.queueHistory.length) {
                 return interaction.followUp('There is no music queue history!');
             }

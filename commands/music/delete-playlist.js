@@ -16,13 +16,11 @@ module.exports = {
         const userData = await Member.findOne({memberId: interaction.member.id}).exec();
 
         if(!userData) {
-            interaction.reply('You have zero saved playlists!');
-            return;
+            return interaction.reply('You have zero saved playlists!');
         }
         const savedPlaylistsClone = userData.savedPlaylists;
         if(savedPlaylistsClone.length === 0) {
-            interaction.reply('You have zero saved playlists!');
-            return;
+            return interaction.reply('You have zero saved playlists!');
         }
 
         const location = savedPlaylistsClone.findIndex((value) => value.name == playlistName);

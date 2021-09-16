@@ -19,21 +19,18 @@ module.exports = {
             memberId: interaction.member.id
         }).exec();
         if(!userData) {
-            interaction.followUp('You have zero saved playlists!');
-            return;
+            return interaction.followUp('You have zero saved playlists!');
         }
         const savedPlaylistsClone = userData.savedPlaylists;
         if(savedPlaylistsClone.length === 0) {
-            interaction.followUp('You have zero saved playlists!');
-            return;
+            return interaction.followUp('You have zero saved playlists!');
         }
 
         const location = savedPlaylistsClone.findIndex((value) => value.name == playlistName);
         if(location === -1) {
             let urlsArrayClone = savedPlaylistsClone[location].urls;
             if(urlsArrayClone.length === 0) {
-                interaction.followUp(`**${playlistName}** is empty!`);
-                return;
+                return interaction.followUp(`**${playlistName}** is empty!`);
             }
             const savedPlaylistEmbed = new MessageEmbed()
                 .setColor('#ff7373')

@@ -14,13 +14,11 @@ module.exports = {
             memberId: interaction.member.id
         }).exec();
         if(!userData) {
-            interaction.followUp('You have zero saved playlists!');
-            return;
+            return interaction.followUp('You have zero saved playlists!');
         }
         const savedPlaylistsClone = userData.savedPlaylists;
         if(savedPlaylistsClone.length == 0) {
-            interaction.followUp('You have zero saved playlists!');
-            return;
+            return interaction.followUp('You have zero saved playlists!');
         }
         const fields = [];
         savedPlaylistsClone.forEach((playlist, i) =>

@@ -59,11 +59,7 @@ module.exports = {
                 } else {
                     urlsArrayClone.push(processedURL);
                     savedPlaylistsClone[location].urls = urlsArrayClone;
-                    interaction.followUp(`I added **${
-                        savedPlaylistsClone[location].urls[
-                            savedPlaylistsClone[location].urls.length - 1
-                        ].title
-                    }** to **${playlistName}**`);
+                    interaction.followUp(`I added **${savedPlaylistsClone[location].urls[savedPlaylistsClone[location].urls.length - 1].title}** to **${playlistName}**`);
                 }
                 Member.updateOne({memberId: interaction.member.id},
                     {savedPlaylists: savedPlaylistsClone}).exec();

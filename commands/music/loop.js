@@ -14,15 +14,14 @@ module.exports = {
         const player = interaction.client.playerManager.get(interaction.guildId);
         if(!player) {
             return interaction.reply('There is no song playing now!');
-        } else if(player.audioPlayer.state.status !== AudioPlayerStatus.Playing) {
+        }
+        if(player.audioPlayer.state.status !== AudioPlayerStatus.Playing) {
             return interaction.reply('There is no song playing now!');
-        } else if(
-            player.audioPlayer.state.status === AudioPlayerStatus.Playing && guildData.triviaData.isTriviaRunning
-        ) {
+        }
+        if(player.audioPlayer.state.status === AudioPlayerStatus.Playing && guildData.triviaData.isTriviaRunning) {
             return interaction.reply(`You can't use this command while a trivia is running!`);
-        } else if(
-            interaction.member.voice.channelId !== interaction.guild.me.voice.channelId
-        ) {
+        }
+        if(interaction.member.voice.channelId !== interaction.guild.me.voice.channelId) {
             return interaction.reply(`You must be in the same voice channel as the bot in order to use that!`);
         }
 

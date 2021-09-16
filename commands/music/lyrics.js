@@ -69,8 +69,7 @@ module.exports = {
 function cleanSongName(songName) {
     return songName
         .replace(/ *\([^)]*\) */g, '')
-        .replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g,
-            '');
+        .replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '');
 }
 
 function searchSong(query) {
@@ -92,9 +91,7 @@ function searchSong(query) {
 
 function getSongPageURL(url) {
     return new Promise(async function(resolve, reject) {
-        const headers = {
-            Authorization: `Bearer ${geniusLyricsAPI}`
-        };
+        const headers = {Authorization: `Bearer ${geniusLyricsAPI}`};
         try {
             const body = await fetch(url, {headers});
             const result = await body.json();

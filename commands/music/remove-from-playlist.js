@@ -44,18 +44,15 @@ module.exports = {
         if(found) {
             const urlsArrayClone = savedPlaylistsClone[location].urls;
             if(urlsArrayClone.length == 0) {
-                interaction.followUp(`**${playlistName}** is empty!`);
-                return;
+                return interaction.followUp(`**${playlistName}** is empty!`);
             }
             if(index > urlsArrayClone.length) {
-                interaction.followUp(`The index you provided is larger than the playlist's length`);
-                return;
+                return interaction.followUp(`The index you provided is larger than the playlist's length`);
             }
             const title = urlsArrayClone[index - 1].title;
             urlsArrayClone.splice(index - 1, 1);
             savedPlaylistsClone[location].urls = urlsArrayClone;
-            Member.updateOne({memberId: interaction.member.id},
-                {savedPlaylists: savedPlaylistsClone}).exec();
+            Member.updateOne({memberId: interaction.member.id}, {savedPlaylists: savedPlaylistsClone}).exec();
 
             interaction.followUp(`I removed **${title}** from **${savedPlaylistsClone[location].name}**`);
             return;

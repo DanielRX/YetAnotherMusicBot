@@ -19,7 +19,8 @@ module.exports = {
             if(player.queue.length == 0) {
                 return interaction.followUp(':x: There are no songs in queue!');
             }
-        } else if(!player) {
+        }
+        if(!player) {
             return interaction.followUp(':x: There is nothing playing right now!');
         }
 
@@ -31,10 +32,7 @@ module.exports = {
             const fields = [];
 
             playlistArray.forEach((element, index) => {
-                fields.push({
-                    name: `${index + 1 + i * 24}`,
-                    value: `${element.title}`
-                });
+                fields.push({name: `${index + 1 + i * 24}`, value: `${element.title}`});
             });
 
             embeds.push(new MessageEmbed().setTitle(`Page ${i}`).setFields(fields));
