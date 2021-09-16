@@ -15,7 +15,48 @@
     "//": "The no-console rule is only for development purposes",
     "no-console": "off",
     "no-useless-escape": "off",
-    "no-inner-declarations": "off"
+    "no-inner-declarations": "off",
+    "operator-linebreak": ["error", "none"],
+    "function-paren-newline": ["error", "never"],
+    "no-else-return": ["error"],
+    "import/no-unresolved": "off",
+    "no-trailing-spaces": ["error"],
+    "indent": [
+      "error",
+      4,
+      {
+        "MemberExpression": 1,
+        "SwitchCase": 1
+      }
+    ],
+    "linebreak-style": ["error", "unix"],
+    "quotes": [
+      "error",
+      "single",
+      {"avoidEscape": true, "allowTemplateLiterals": true}
+    ],
+    "require-await": ["off"],
+    "semi": ["error", "always"],
+    
+    "brace-style": ["error", "1tbs", {"allowSingleLine": true}],
+    "space-before-function-paren": ["error", "never"],
+    "object-curly-spacing": ["error", "never"],
+    "quote-props": ["error", "as-needed"],
+    "dot-location": ["error", "property"],
+    "max-statements": "off",
+    "no-multi-spaces": "error",
+    "padded-blocks": ["error", "never"],
+    "max-len": "off",
+    "id-length": "off",
+    "object-property-newline": ["error", {"allowAllPropertiesOnSameLine": true}],
+    "one-var": ["error", "never"],
+    "max-lines-per-function": "off",
+    "no-magic-numbers": "off",
+    "no-plusplus": "off",
+    "keyword-spacing": ["error", {"after": false, "overrides": {"try": {"after": true}, "const": {"after": true}, "else": {"after": true}, "return": {"after": true}}}],
+    "max-statements-per-line": "off",
+    "implicit-arrow-linebreak": "off",
+    "sort-keys": "off"
   },
   "parser": "babel-eslint"
 }
