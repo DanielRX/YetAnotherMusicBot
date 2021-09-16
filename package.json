@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "node .",
-    "pretest": "eslint --ignore-path .gitignore .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "pretest": "eslint --ignore-path .gitignore ."
   },
   "author": "Nir Gal",
   "license": "ISC",
@@ -24,15 +25,16 @@
     "iso-639-1": "^2.1.9",
     "libsodium-wrappers": "^0.7.9",
     "mongoose": "^5.13.5",
-    "simple-youtube-api": "^5.2.1",
     "spotify-url-info": "^2.2.3",
     "youtube-dl-exec": "^1.2.4",
-    "ytdl-core": "^4.9.1",
-    "ytsr": "^3.5.3"
+    "youtube-sr": "^4.1.7",
+    "ytdl-core": "^4.9.1"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
     "eslint": "^5.16.0",
+    "eslint-plugin-jest": "^24.4.0",
+    "jest": "^27.1.1",
     "nodemon": "^1.19.4",
     "prettier": "^1.19.1"
   }
