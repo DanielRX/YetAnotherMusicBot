@@ -1,6 +1,5 @@
 // @ts-check
 
-const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageEmbed} = require('discord.js');
 const {PagesBuilder} = require('discord.js-pages');
@@ -9,19 +8,20 @@ const cheerio = require('cheerio');
 const {geniusLyricsAPI} = require('../../config.json');
 
 // Skips loading if not found in config.json
-if(!geniusLyricsAPI) return;
+if(!geniusLyricsAPI) { return; } // TODO: Fix
+
+const name = 'lyrics';
+const description = 'Get the lyrics of any song or the lyrics of the currently playing song!';
 
 module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('lyrics')
-        .setDescription('Get the lyrics of any song or the lyrics of the currently playing song!')
+    data: new SlashCommandBuilder().setName(name).setDescription(description)
         .addStringOption((option) =>
             option
                 .setName('songname')
                 .setDescription(':mag: What song lyrics would you like to get?')),
     /**
-     * @param {CommandInteraction} interaction
-     * @returns {Promise<void>}
+     * @param {import('discord.js').CommandInteraction} interaction
+     * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
      */
 
     async execute(interaction) {
@@ -34,8 +34,9 @@ module.exports = {
         } else {
             if(!player) { return interaction.followUp('There is no song playing! Enter a song name or play a song'); }
             if(guildData) {
-                if(guildData.triviaData.isTriviaRunning)
+                if(guildData.triviaData.isTriviaRunning) {
                     return interaction.followUp(':x: Please try again after the trivia has ended');
+                }
             }
             songName = player.nowPlaying.title;
         }
@@ -49,7 +50,7 @@ module.exports = {
             const lyricsArray = [];
 
             for(let i = 1; i <= lyricsIndex; ++i) {
-                let b = i - 1;
+                const b = i - 1;
                 if(lyrics.trim().slice(b * 4096, i * 4096).length !== 0) {
                     lyricsArray.push(new MessageEmbed()
                         .setTitle(`Lyrics page #` + i)
@@ -63,8 +64,7 @@ module.exports = {
                 .setPages(lyricsArray)
                 .setColor('#9096e6')
                 .setURL(songPageURL)
-                .setAuthor(interaction.member.user.username,
-                    interaction.member.user.displayAvatarURL())
+                .setAuthor(interaction.member.user.username, interaction.member.user.displayAvatarURL())
                 .build();
         } catch(error) {
             console.error(error);
@@ -82,9 +82,7 @@ function cleanSongName(songName) {
 function searchSong(query) {
     return new Promise(async function(resolve, reject) {
         const searchURL = `https://api.genius.com/search?q=${encodeURI(query)}`;
-        const headers = {
-            Authorization: `Bearer ${geniusLyricsAPI}`
-        };
+        const headers = {Authorization: `Bearer ${geniusLyricsAPI}`};
         try {
             const body = await fetch(searchURL, {headers});
             const result = await body.json();
@@ -120,13 +118,9 @@ function getLyrics(url) {
             const response = await fetch(url);
             const text = await response.text();
             const $ = cheerio.load(text);
-            let lyrics = $('.lyrics')
-                .text()
-                .trim();
+            let lyrics = $('.lyrics').text().trim();
             if(!lyrics) {
-                $('.Lyrics__Container-sc-1ynbvzw-8')
-                    .find('br')
-                    .replaceWith('\n');
+                $('.Lyrics__Container-sc-1ynbvzw-8').find('br').replaceWith('\n');
                 lyrics = $('.Lyrics__Container-sc-1ynbvzw-8').text();
                 if(!lyrics) {
                     reject('There was a problem fetching lyrics for this song, please try again');
