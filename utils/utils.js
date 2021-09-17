@@ -29,6 +29,13 @@ const getRandom = (arr, n) => {
     return result;
 };
 
+/**
+ * @template T
+ * @param {T[]} arr Array to get a random element of
+ * @returns {T}
+ */
+const randomEl = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
 const shuffleArray = (arr) => {
     for(let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -44,4 +51,4 @@ const isYouTubePlaylistURL = (arg) => arg.match(/^https?:\/\/(music.)?(www.youtu
 
 const validateURL = (url) => isYouTubePlaylistURL(url) || isYouTubeVideoURL(url) || isSpotifyURL(url);
 
-module.exports = {arrayMove, getRandom, shuffleArray, isSpotifyURL, isYouTubePlaylistURL, isYouTubeVideoURL, validateURL};
+module.exports = {arrayMove, getRandom, shuffleArray, isSpotifyURL, isYouTubePlaylistURL, isYouTubeVideoURL, validateURL, randomEl};
