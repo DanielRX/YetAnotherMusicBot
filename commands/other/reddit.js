@@ -1,40 +1,34 @@
 // @ts-check
-
-const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageEmbed, MessageActionRow, MessageSelectMenu} = require('discord.js');
 const fetch = require('node-fetch');
 const {PagesBuilder} = require('discord.js-pages');
 const {MaxResponseTime} = require('../../options.json');
 
+const name = 'reddit';
+const description = 'Replies with 10 top daily posts in wanted subreddit, you can specify sorting and time!';
+
+const options = [
+    {name: 'subreddit', description: 'What subreddit would you like to search?', required: true, choices: []},
+    {name: 'sort', description: 'What posts do you want to see? Select from best/hot/top/new/controversial/rising', required: true, choices: ['best', 'hot', 'new', 'top', 'controversial', 'rising']},
+];
+
+const setupOption = (config) => (option) => {
+    option = option.setName(config.name).setDescription(config.description).setRequired(config.required);
+    for(const choice of config.choices) { option = option.addChoice(choice, choice); }
+    return option;
+};
+
 module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('reddit')
-        .setDescription('Replies with 10 top daily posts in wanted subreddit, you can specify sorting and time!')
-        .addStringOption((option) =>
-            option
-                .setName('subreddit')
-                .setDescription('What subreddit would you like to search?')
-                .setRequired(true))
-        .addStringOption((option) =>
-            option
-                .setName('sort')
-                .setDescription('What posts do you want to see? Select from best/hot/top/new/controversial/rising')
-                .addChoice('best', 'best')
-                .addChoice('hot', 'hot')
-                .addChoice('new', 'new')
-                .addChoice('top', 'top')
-                .addChoice('controversial', 'controversial')
-                .addChoice('rising', 'rising')
-                .setRequired(true)),
+    data: new SlashCommandBuilder().setName(name).setDescription(description)
+        .addStringOption(setupOption(options[0]))
+        .addStringOption(setupOption(options[1])),
     /**
-     * @param {CommandInteraction} interaction
+     * @param {import('discord.js').CommandInteraction} interaction
      * @returns {Promise<void>}
      */
     async execute(interaction) {
-        const message = await interaction.deferReply({
-            fetchReply: true
-        });
+        const message = await interaction.deferReply({fetchReply: true});
         const subreddit = interaction.options.get('subreddit').value;
         const sort = interaction.options.get('sort').value;
 
@@ -60,15 +54,12 @@ module.exports = {
             });
 
             collector.on('end', () => {
-                if(menu) menu.delete().catch(console.error);
+                if(menu) menu.delete().catch(console.error); //! Alt: menu?.delete().catch(console.error);
             });
 
             collector.on('collect', async(i) => {
                 if(i.user.id !== interaction.user.id) {
-                    i.reply({
-                        content: `This element is not for you!`,
-                        ephemeral: true
-                    });
+                    i.reply({content: `This element is not for you!`, ephemeral: true});
                 } else {
                     collector.stop();
                     const timeFilter = i.values[0];
@@ -81,24 +72,22 @@ module.exports = {
     }
 };
 
-async function fetchFromReddit(interaction,
-    subreddit,
-    sort,
-    timeFilter = 'day') {
-    const response = await fetch(`https://www.reddit.com/r/${subreddit}/${sort}/.json?limit=10&t=${
-        timeFilter ? timeFilter : 'day'
-    }`);
+async function fetchFromReddit(interaction, subreddit, sort, timeFilter = 'day') {
+    const response = await fetch(`https://www.reddit.com/r/${subreddit}/${sort}/.json?limit=10&t=${timeFilter}`);
     const json = await response.json();
     const dataArr = [];
 
     for(let i = 1; i <= json.data.children.length; ++i) {
-        var color = '#FE9004';
-        var redditPost = json.data.children[i - 1];
+        /**
+         * @type {'#FE9004' | '#CF000F'}
+         */
+        let color = '#FE9004';
+        const redditPost = json.data.children[i - 1];
 
         if(redditPost.data.title.length > 255)
             redditPost.data.title = redditPost.data.title.substring(0, 252) + '...'; // discord.js does not allow embed title lengths greater than 256
 
-        if(redditPost.data.over_18) color = '#cf000f';
+        if(redditPost.data.over_18) color = '#CF000F';
 
         dataArr.push(new MessageEmbed()
             .setColor(color) // if post is nsfw, color is red
