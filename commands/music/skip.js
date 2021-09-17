@@ -1,15 +1,14 @@
 // @ts-check
-
-const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {AudioPlayerStatus} = require('@discordjs/voice');
 
+const name = 'skip';
+const description = 'Skip the currently playing song!';
+
 module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('skip')
-        .setDescription('Skip the currently playing song!'),
+    data: new SlashCommandBuilder().setName(name).setDescription(description),
     /**
-     * @param {CommandInteraction} interaction
+     * @param {import('discord.js').CommandInteraction} interaction
      * @returns {Promise<void>}
      */
     async execute(interaction) {
