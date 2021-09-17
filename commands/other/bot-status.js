@@ -13,7 +13,7 @@ module.exports = {
         const owner = await interaction.guild.fetchOwner();
         const isOwner = owner.id == interaction.member.id ? true : false;
 
-        const pingMsg = await interaction.channel.send('Possessing...');
+        const pingMsg = await interaction.channel.send('Processing...');
 
         const commandTotal = interaction.client.commands.size;
         const platform = os
