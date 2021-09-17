@@ -1,5 +1,6 @@
 // @ts-check
 
+const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageEmbed} = require('discord.js');
 const fetch = require('node-fetch');
@@ -13,7 +14,11 @@ module.exports = {
                 .setName('query')
                 .setDescription('What do you want to search for?')
                 .setRequired(true)),
-    execute(interaction) {
+    /**
+     * @param {CommandInteraction} interaction
+     * @returns {Promise<void>}
+     */
+    async execute(interaction) {
         fetch(`https://api.urbandictionary.com/v0/define?term=${
             interaction.options.get('query').value
         }`)

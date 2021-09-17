@@ -1,5 +1,6 @@
 // @ts-check
 
+const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {AudioPlayerStatus} = require('@discordjs/voice');
 const createGuildData = require('../../utils/createGuildData');
@@ -7,6 +8,10 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('loop')
         .setDescription('Set a song to play on loop'),
+    /**
+     * @param {CommandInteraction} interaction
+     * @returns {Promise<void>}
+     */
 
     execute(interaction) {
         if(!interaction.client.guildData.get(interaction.guildId)) {

@@ -1,5 +1,6 @@
 // @ts-check
 
+const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const fetch = require('node-fetch');
 const {MessageEmbed} = require('discord.js');
@@ -8,6 +9,10 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('chucknorris')
         .setDescription('Get a satirical fact about Chuck Norris!'),
+    /**
+     * @param {CommandInteraction} interaction
+     * @returns {Promise<void>}
+     */
     execute(interaction) {
     // thanks to https://api.chucknorris.io
         fetch('https://api.chucknorris.io/jokes/random')

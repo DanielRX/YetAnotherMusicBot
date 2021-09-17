@@ -1,5 +1,6 @@
 // @ts-check
 
+const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const Member = require('../../utils/models/Member');
 
@@ -17,6 +18,10 @@ module.exports = {
                 .setName('index')
                 .setDescription('What is the index of the video you would like to delete from your saved playlist?')
                 .setRequired(true)),
+    /**
+     * @param {CommandInteraction} interaction
+     * @returns {Promise<void>}
+     */
     async execute(interaction) {
         await interaction.deferReply();
 

@@ -1,5 +1,6 @@
 // @ts-check
 
+const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {AudioPlayerStatus} = require('@discordjs/voice');
 const createGuildData = require('../../utils/createGuildData');
@@ -12,7 +13,10 @@ module.exports = {
             option
                 .setName('looptimes')
                 .setDescription('How many times do you want to loop the queue?')),
-
+    /**
+     * @param {CommandInteraction} interaction
+     * @returns {Promise<void>}
+     */
     execute(interaction) {
         if(!interaction.client.guildData.get(interaction.guildId)) {
             interaction.client.guildData.set(interaction.guildId, createGuildData());

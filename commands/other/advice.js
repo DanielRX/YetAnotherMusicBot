@@ -1,4 +1,5 @@
 // @ts-check
+const {CommandInteraction} = require('discord.js');
 const fetch = require('node-fetch');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageEmbed} = require('discord.js');
@@ -7,6 +8,10 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('advice')
         .setDescription('Get some advice!'),
+    /**
+     * @param {CommandInteraction} interaction
+     * @returns {Promise<void>}
+     */
     execute(interaction) {
         fetch('https://api.adviceslip.com/advice')
             .then((res) => res.json())

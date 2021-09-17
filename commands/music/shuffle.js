@@ -1,5 +1,6 @@
 // @ts-check
 
+const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {shuffleArray} = require('../../utils/utils');
 
@@ -7,6 +8,10 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('shuffle')
         .setDescription('Shuffle the music queue!'),
+    /**
+     * @param {CommandInteraction} interaction
+     * @returns {Promise<void>}
+     */
 
     execute(interaction) {
         interaction.deferReply();

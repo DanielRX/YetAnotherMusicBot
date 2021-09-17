@@ -1,5 +1,6 @@
 // @ts-check
 
+const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {AudioPlayerStatus} = require('@discordjs/voice');
 
@@ -7,6 +8,10 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('resume')
         .setDescription('Resume a paused track'),
+    /**
+     * @param {CommandInteraction} interaction
+     * @returns {Promise<void>}
+     */
     execute(interaction) {
         const voiceChannel = interaction.member.voice.channel;
         if(!voiceChannel) {

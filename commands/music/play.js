@@ -1,5 +1,6 @@
 // @ts-check
 
+const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageSelectMenu, MessageActionRow} = require('discord.js');
 const Player = require('../../utils/music/Player');
@@ -48,6 +49,10 @@ module.exports = {
                 .setName('query')
                 .setDescription(':notes: What song or playlist would you like to listen to? Add -s to shuffle a playlist')
                 .setRequired(true)),
+    /**
+     * @param {CommandInteraction} interaction
+     * @returns {Promise<void>}
+     */
     async execute(interaction) {
         if(!interaction.client.guildData.get(interaction.guildId)) {
             interaction.client.guildData.set(interaction.guildId, createGuildData());

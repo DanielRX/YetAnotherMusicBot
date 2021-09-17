@@ -1,5 +1,6 @@
 // @ts-check
 
+const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const Member = require('../../utils/models/Member');
 const {MessageEmbed} = require('discord.js');
@@ -13,6 +14,10 @@ module.exports = {
                 .setName('playlistname')
                 .setDescription('What is the name of the playlist you would like to display?')
                 .setRequired(true)),
+    /**
+     * @param {CommandInteraction} interaction
+     * @returns {Promise<void>}
+     */
     async execute(interaction) {
         interaction.deferReply();
         const playlistName = interaction.options.get('playlistname').value;

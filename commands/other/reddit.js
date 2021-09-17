@@ -1,5 +1,6 @@
 // @ts-check
 
+const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageEmbed, MessageActionRow, MessageSelectMenu} = require('discord.js');
 const fetch = require('node-fetch');
@@ -26,7 +27,10 @@ module.exports = {
                 .addChoice('controversial', 'controversial')
                 .addChoice('rising', 'rising')
                 .setRequired(true)),
-
+    /**
+     * @param {CommandInteraction} interaction
+     * @returns {Promise<void>}
+     */
     async execute(interaction) {
         const message = await interaction.deferReply({
             fetchReply: true

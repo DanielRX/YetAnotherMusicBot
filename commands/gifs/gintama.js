@@ -1,3 +1,6 @@
+//@ts-check 
+
+const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const fs = require('fs');
 
@@ -5,6 +8,10 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('gintama')
         .setDescription('Replies with a gintama gif!'),
+    /**
+     * @param {CommandInteraction} interaction
+     * @returns {Promise<void>}
+     */
     execute(interaction) {
         try {
             const linkArray = fs

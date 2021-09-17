@@ -1,5 +1,6 @@
 // @ts-check
 
+const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageEmbed} = require('discord.js');
 const {PagesBuilder} = require('discord.js-pages');
@@ -8,6 +9,10 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('queue')
         .setDescription('Display the music queue'),
+    /**
+     * @param {CommandInteraction} interaction
+     * @returns {Promise<void>}
+     */
     async execute(interaction) {
         await interaction.deferReply();
         const guildData = interaction.client.guildData.get(interaction.guildId);

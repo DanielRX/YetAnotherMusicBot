@@ -1,5 +1,6 @@
 // @ts-check
 
+const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageEmbed} = require('discord.js');
 const ISO6391 = require('iso-639-1');
@@ -19,6 +20,10 @@ module.exports = {
                 .setName('text')
                 .setDescription('What text do you want to translate?')
                 .setRequired(true)),
+    /**
+     * @param {CommandInteraction} interaction
+     * @returns {Promise<void>}
+     */
     execute(interaction) {
         const targetLang = interaction.options.get('targetlang').value;
         const langCode = ISO6391.getCode(targetLang);

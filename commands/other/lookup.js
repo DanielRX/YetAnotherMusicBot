@@ -1,5 +1,6 @@
 // @ts-check
 
+const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageEmbed} = require('discord.js');
 const fetch = require('node-fetch');
@@ -13,6 +14,10 @@ module.exports = {
                 .setName('query')
                 .setDescription('What do you want to lookup? Please enter a hostname/domain or IP address.')
                 .setRequired(true)),
+    /**
+     * @param {CommandInteraction} interaction
+     * @returns {Promise<void>}
+     */
     async execute(interaction) {
         const resl = interaction.options.get('query').value;
 

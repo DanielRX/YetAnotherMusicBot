@@ -1,11 +1,16 @@
 // @ts-check
 
+const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('stop-trivia')
         .setDescription('End a music trivia (if one is in play)'),
+    /**
+     * @param {CommandInteraction} interaction
+     * @returns {Promise<void>}
+     */
     execute(interaction) {
         const triviaPlayer = interaction.client.triviaManager.get(interaction.guildId);
         if(!triviaPlayer) {

@@ -1,5 +1,6 @@
 // @ts-check
 
+const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 
 module.exports = {
@@ -11,6 +12,10 @@ module.exports = {
                 .setName('position')
                 .setDescription('What song number do you want to remove from queue?')
                 .setRequired(true)),
+    /**
+     * @param {CommandInteraction} interaction
+     * @returns {Promise<void>}
+     */
     execute(interaction) {
         const position = interaction.options.get('position').value;
         const player = interaction.client.playerManager.get(interaction.guildId);

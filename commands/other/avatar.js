@@ -1,4 +1,5 @@
 // @ts-check
+const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageEmbed} = require('discord.js');
 
@@ -11,6 +12,10 @@ module.exports = {
                 .setName('user')
                 .setDescription('The user which avatar you want to display')
                 .setRequired(true)),
+    /**
+     * @param {CommandInteraction} interaction
+     * @returns {Promise<void>}
+     */
 
     execute(interaction) {
         const user = interaction.options.get('user').user;

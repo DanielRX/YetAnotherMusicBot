@@ -1,8 +1,14 @@
 // @ts-check
 
+const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {AudioPlayerStatus} = require('@discordjs/voice');
 
+
+/**
+ * @param {CommandInteraction} interaction
+ * @returns {string}
+ */
 const exec = (interaction) => {
     const voiceChannel = interaction.member.voice.channel;
     if(!voiceChannel) {
@@ -29,4 +35,9 @@ const exec = (interaction) => {
 };
 
 module.exports.data = new SlashCommandBuilder().setName('pause').setDescription('Pause the playing track');
+
+/**
+ * @param {CommandInteraction} interaction
+ * @returns {Promise<void>}
+ */
 module.exports.execute = (interaction) => interaction.reply(exec(interaction));

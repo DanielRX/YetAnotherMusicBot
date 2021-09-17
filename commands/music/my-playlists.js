@@ -1,5 +1,6 @@
 // @ts-check
 
+const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const Member = require('../../utils/models/Member');
 const {MessageEmbed} = require('discord.js');
@@ -8,7 +9,10 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('my-playlists')
         .setDescription('Lists your saved playlists'),
-
+    /**
+     * @param {CommandInteraction} interaction
+     * @returns {Promise<void>}
+     */
     async execute(interaction) {
         interaction.deferReply();
 

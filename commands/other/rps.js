@@ -1,5 +1,6 @@
 // @ts-check
 
+const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageEmbed} = require('discord.js');
 
@@ -12,6 +13,10 @@ module.exports = {
                 .setName('move')
                 .setDescription('You ready for a game of Rock, Paper, Scissors? \n What is your move?')
                 .setRequired(true)),
+    /**
+     * @param {CommandInteraction} interaction
+     * @returns {Promise<void>}
+     */
     execute(interaction) {
         const replies = ['Rock', 'Paper', 'Scissors'];
         const reply = replies[Math.floor(Math.random() * replies.length)];

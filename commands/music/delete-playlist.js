@@ -1,5 +1,6 @@
 // @ts-check
 
+const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const Member = require('../../utils/models/Member');
 
@@ -12,6 +13,10 @@ module.exports = {
                 .setName('playlistname')
                 .setDescription('Which playlist would you like to delete?')
                 .setRequired(true)),
+    /**
+     * @param {CommandInteraction} interaction
+     * @returns {Promise<void>}
+     */
     async execute(interaction) {
         const playlistName = interaction.options.get('playlistname').value;
         // Check if user has playlists or if user is saved in the DB

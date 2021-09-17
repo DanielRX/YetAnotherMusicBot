@@ -1,5 +1,6 @@
 // @ts-check
 
+const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageEmbed} = require('discord.js');
 const fs = require('fs');
@@ -13,6 +14,10 @@ module.exports = {
                 .setName('question')
                 .setDescription('What do you want to ask?')
                 .setRequired(true)),
+    /**
+     * @param {CommandInteraction} interaction
+     * @returns {Promise<void>}
+     */
     execute(interaction) {
         const question = interaction.options.get('question').value;
 

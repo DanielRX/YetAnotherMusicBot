@@ -1,5 +1,6 @@
 // @ts-check
 
+const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {AudioPlayerStatus} = require('@discordjs/voice');
 const createGuildData = require('../../utils/createGuildData');
@@ -19,7 +20,10 @@ module.exports = {
                 .setName('newposition')
                 .setDescription('What position do you want to move the song to?')
                 .setRequired(true)),
-
+    /**
+     * @param {CommandInteraction} interaction
+     * @returns {Promise<void>}
+     */
     execute(interaction) {
         if(!interaction.client.guildData.get(interaction.guildId)) {
             interaction.client.guildData.set(interaction.guildId, createGuildData());

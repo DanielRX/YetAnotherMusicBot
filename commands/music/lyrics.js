@@ -1,5 +1,6 @@
 // @ts-check
 
+const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageEmbed} = require('discord.js');
 const {PagesBuilder} = require('discord.js-pages');
@@ -18,6 +19,10 @@ module.exports = {
             option
                 .setName('songname')
                 .setDescription(':mag: What song lyrics would you like to get?')),
+    /**
+     * @param {CommandInteraction} interaction
+     * @returns {Promise<void>}
+     */
 
     async execute(interaction) {
         interaction.deferReply();

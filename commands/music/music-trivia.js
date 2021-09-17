@@ -1,5 +1,6 @@
 // @ts-check
 
+const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {joinVoiceChannel, VoiceConnectionStatus, entersState} = require('@discordjs/voice');
 const {MessageEmbed} = require('discord.js');
@@ -15,6 +16,10 @@ module.exports = {
             option
                 .setName('length')
                 .setDescription('How many songs would you like the trivia to have?')),
+    /**
+     * @param {CommandInteraction} interaction
+     * @returns {Promise<void>}
+     */
     async execute(interaction) {
         await interaction.deferReply();
         const voiceChannel = interaction.member.voice.channel;

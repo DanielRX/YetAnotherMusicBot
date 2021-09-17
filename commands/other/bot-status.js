@@ -1,5 +1,6 @@
 // @ts-check
 
+const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const Discord = require('discord.js');
 const os = require('os');
@@ -9,6 +10,10 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('bot-status')
         .setDescription('Shows the current system status'),
+    /**
+     * @param {CommandInteraction} interaction
+     * @returns {Promise<void>}
+     */
     async execute(interaction) {
         const owner = await interaction.guild.fetchOwner();
         const isOwner = owner.id == interaction.member.id ? true : false;

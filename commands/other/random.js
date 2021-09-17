@@ -1,5 +1,6 @@
 // @ts-check
 
+const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageEmbed} = require('discord.js');
 
@@ -17,7 +18,10 @@ module.exports = {
                 .setName('max')
                 .setDescription('What is the maximum number?')
                 .setRequired(true)),
-
+    /**
+     * @param {CommandInteraction} interaction
+     * @returns {Promise<void>}
+     */
     execute(interaction) {
         const min = Math.ceil(interaction.options.get('min').value);
         const max = Math.floor(interaction.options.get('max').value);

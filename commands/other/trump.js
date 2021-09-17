@@ -1,5 +1,6 @@
 // @ts-check
 
+const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const fetch = require('node-fetch');
 const {MessageEmbed} = require('discord.js');
@@ -8,7 +9,11 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('trump')
         .setDescription('Get a random quote from Donald Trump!'),
-    execute(interaction) {
+    /**
+     * @param {CommandInteraction} interaction
+     * @returns {Promise<void>}
+     */
+    async execute(interaction) {
         fetch('https://api.tronalddump.io/random/quote')
             .then((res) => res.json())
             .then((json) => {
