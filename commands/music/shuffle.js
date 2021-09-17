@@ -1,18 +1,17 @@
 // @ts-check
 
-const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {shuffleArray} = require('../../utils/utils');
 
-module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('shuffle')
-        .setDescription('Shuffle the music queue!'),
-    /**
-     * @param {CommandInteraction} interaction
-     * @returns {Promise<void>}
-     */
+const name = 'shuffle';
+const description = 'Shuffle the music queue!';
 
+module.exports = {
+    data: new SlashCommandBuilder().setName(name).setDescription(description),
+    /**
+     * @param {import('discord.js').CommandInteraction} interaction
+     * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
+     */
     execute(interaction) {
         interaction.deferReply();
         const voiceChannel = interaction.member.voice.channel;
