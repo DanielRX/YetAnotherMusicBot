@@ -1,12 +1,4 @@
-const {
-    AudioPlayerStatus,
-    createAudioPlayer,
-    entersState,
-    VoiceConnectionDisconnectReason,
-    VoiceConnectionStatus,
-    createAudioResource,
-    StreamType
-} = require('@discordjs/voice');
+const {AudioPlayerStatus, createAudioPlayer, entersState, VoiceConnectionDisconnectReason, VoiceConnectionStatus, createAudioResource, StreamType} = require('@discordjs/voice');
 const {setTimeout} = require('timers');
 const {promisify} = require('util');
 const ytdl = require('ytdl-core');
@@ -30,13 +22,9 @@ class MusicPlayer {
         this.connection = connection;
         this.connection.on('stateChange', async(_, newState) => {
             if(newState.status === VoiceConnectionStatus.Disconnected) {
-                if(
-                    newState.reason === VoiceConnectionDisconnectReason.WebSocketClose && newState.closeCode === 4014
-                ) {
+                if(newState.reason === VoiceConnectionDisconnectReason.WebSocketClose && newState.closeCode === 4014) {
                     try {
-                        await entersState(this.connection,
-                            VoiceConnectionStatus.Connecting,
-                            5000);
+                        await entersState(this.connection, VoiceConnectionStatus.Connecting, 5000);
                     } catch{
                         this.connection.destroy();
                     }
@@ -54,13 +42,9 @@ class MusicPlayer {
                         .queueHistory.unshift(this.nowPlaying);
                 }
                 this.stop();
-            } else if(
-                newState.status === VoiceConnectionStatus.Connecting || newState.status === VoiceConnectionStatus.Signalling
-            ) {
+            } else if(newState.status === VoiceConnectionStatus.Connecting || newState.status === VoiceConnectionStatus.Signalling) {
                 try {
-                    await entersState(this.connection,
-                        VoiceConnectionStatus.Ready,
-                        20000);
+                    await entersState(this.connection, VoiceConnectionStatus.Ready, 20000);
                 } catch{
                     if(this.connection.state.status !== VoiceConnectionStatus.Destroyed)
                         this.connection.destroy();
@@ -69,9 +53,7 @@ class MusicPlayer {
         });
 
         this.audioPlayer.on('stateChange', (oldState, newState) => {
-            if(
-                newState.status === AudioPlayerStatus.Idle && oldState.status !== AudioPlayerStatus.Idle
-            ) {
+            if(newState.status === AudioPlayerStatus.Idle && oldState.status !== AudioPlayerStatus.Idle) {
                 if(this.loopSong) {
                     this.process(this.queue.unshift(this.nowPlaying));
                 } else if(this.loopQueue) {
@@ -100,8 +82,7 @@ class MusicPlayer {
                     .setTitle(this.nowPlaying.title)
                     .setColor('#ff0000')
                     .addField('Duration', ':stopwatch: ' + this.nowPlaying.duration, true)
-                    .setFooter(`Requested by ${this.nowPlaying.memberDisplayName}!`,
-                        this.nowPlaying.memberAvatar);
+                    .setFooter(`Requested by ${this.nowPlaying.memberDisplayName}!`, this.nowPlaying.memberAvatar);
                 if(queueHistory.length) {
                     playingEmbed.addField('Previous Song', queueHistory[0].title, true);
                 }
@@ -109,7 +90,7 @@ class MusicPlayer {
             }
         });
 
-        this.audioPlayer.on('error', error => {
+        this.audioPlayer.on('error', (error) => {
             console.error(error);
         });
 
@@ -127,24 +108,15 @@ class MusicPlayer {
     }
 
     async process(queue) {
-        if(
-            this.audioPlayer.state.status !== AudioPlayerStatus.Idle || this.queue.length === 0
-        )
-            return;
+        if(this.audioPlayer.state.status !== AudioPlayerStatus.Idle || this.queue.length === 0) { return; }
 
         const song = this.queue.shift();
         this.nowPlaying = song;
         if(this.commandLock) this.commandLock = false;
         try {
             //const resource = await this.createAudioResource(song.url);
-            const stream = ytdl(song.url, {
-                filter: 'audio',
-                quality: 'highestaudio',
-                highWaterMark: 1 << 25
-            });
-            const resource = createAudioResource(stream, {
-                inputType: StreamType.Arbitrary
-            });
+            const stream = ytdl(song.url, {filter: 'audio', quality: 'highestaudio', highWaterMark: 1 << 25});
+            const resource = createAudioResource(stream, {inputType: StreamType.Arbitrary});
             this.audioPlayer.play(resource);
         } catch(err) {
             console.error(err);

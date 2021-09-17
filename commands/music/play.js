@@ -1,3 +1,5 @@
+// @ts-check
+
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageSelectMenu, MessageActionRow} = require('discord.js');
 const Player = require('../../utils/music/Player');
@@ -39,7 +41,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('play')
         .setDescription('Play any song or playlist from YouTube or Spotify!')
-        .addStringOption(option =>
+        .addStringOption((option) =>
             option
                 .setName('query')
                 .setDescription(':notes: What song or playlist would you like to listen to? Add -s to shuffle a playlist')
@@ -93,7 +95,7 @@ module.exports = {
 
         if(userData !== null) {
             const playlistsArray = userData.savedPlaylists;
-            const found = playlistsArray.find(playlist => playlist.name === query);
+            const found = playlistsArray.find((playlist) => playlist.name === query);
             // Found a playlist with a name matching the query and it's not empty
             if(found && playlistsArray[playlistsArray.indexOf(found)].urls.length) {
                 const fields = [
@@ -132,7 +134,7 @@ module.exports = {
                         clarificationOptions.delete().catch(console.error);
                 });
 
-                clarificationCollector.on('collect', async i => {
+                clarificationCollector.on('collect', async(i) => {
                     if(i.user.id !== interaction.user.id) {
                         i.reply({
                             content: `This element is not for you!`,
@@ -164,7 +166,7 @@ module.exports = {
                                 break;
                                 // 1: Play the saved playlist
                             case'playlist_option':
-                                playlistsArray[playlistsArray.indexOf(found)].urls.map(song => player.queue.push(song));
+                                playlistsArray[playlistsArray.indexOf(found)].urls.map((song) => player.queue.push(song));
                                 player.commandLock = false;
                                 await interaction.followUp('Added playlist to queue');
                                 if(player.audioPlayer.state.status === AudioPlayerStatus.Playing) {
@@ -184,7 +186,7 @@ module.exports = {
                                 break;
                                 // 2: Play the shuffled saved playlist
                             case'shuffle_option':
-                                shuffleArray(playlistsArray[playlistsArray.indexOf(found)].urls).map(song => player.queue.push(song));
+                                shuffleArray(playlistsArray[playlistsArray.indexOf(found)].urls).map((song) => player.queue.push(song));
 
                                 if(player.audioPlayer.state.status === AudioPlayerStatus.Playing) {
                                     // Send a message indicating that the playlist was added to the queue
@@ -242,7 +244,7 @@ module.exports = {
                 time: MaxResponseTime * 1000
             });
 
-            clarificationCollector.on('collect', async i => {
+            clarificationCollector.on('collect', async(i) => {
                 if(i.user.id !== interaction.user.id) {
                     i.reply({content: `This element is not for you!`, ephemeral: true});
                 } else {
@@ -285,7 +287,7 @@ module.exports = {
         }
         if(isSpotifyURL(query)) {
             getData(query)
-                .then(async data => {
+                .then(async(data) => {
                     // 'tracks' property only exists on a playlist data object
                     if(data.tracks) {
                         // handle playlist
@@ -344,7 +346,7 @@ module.exports = {
                         return interaction.followUp(error);
                     }
                 })
-                .catch(error => {
+                .catch((error) => {
                     deletePlayerIfNeeded(interaction);
                     console.error(error);
                     interaction.followUp(`I couldn't find what you were looking for :(`);
@@ -555,7 +557,7 @@ var searchYoutube = async(query, interaction, player, voiceChannel, nextFlag, ju
         }
     });
 
-    playOptionsCollector.on('collect', async i => {
+    playOptionsCollector.on('collect', async(i) => {
         if(i.user.id !== interaction.user.id) {
             i.reply({
                 content: 'This element is not for you!',
@@ -627,7 +629,7 @@ var searchYoutube = async(query, interaction, player, voiceChannel, nextFlag, ju
                     }
                     return;
                 })
-                .catch(error => {
+                .catch((error) => {
                     player.commandLock = false;
                     deletePlayerIfNeeded(interaction);
                     if(playOptions) playOptions.delete().catch(console.error);
@@ -652,11 +654,11 @@ const flagLogic = (interaction, video, jumpFlag) => {
 
 // var compose = (f, g) => x => f(g(x));
 
-const isYouTubeVideoURL = arg => arg.match(/^(http(s)?:\/\/)?(m.)?((w){3}.)?(music.)?youtu(be|.be)?(\.com)?\/.+/);
-const isYouTubePlaylistURL = arg => arg.match(/^https?:\/\/(music.)?(www.youtube.com|youtube.com)\/playlist(.*)$/);
-const isSpotifyURL = arg => arg.match(/^(spotify:|https:\/\/[a-z]+\.spotify\.com\/)/);
+const isYouTubeVideoURL = (arg) => arg.match(/^(http(s)?:\/\/)?(m.)?((w){3}.)?(music.)?youtu(be|.be)?(\.com)?\/.+/);
+const isYouTubePlaylistURL = (arg) => arg.match(/^https?:\/\/(music.)?(www.youtube.com|youtube.com)\/playlist(.*)$/);
+const isSpotifyURL = (arg) => arg.match(/^(spotify:|https:\/\/[a-z]+\.spotify\.com\/)/);
 
-const shuffleArray = arr => {
+const shuffleArray = (arr) => {
     for(let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [arr[i], arr[j]] = [arr[j], arr[i]];
@@ -681,7 +683,7 @@ const constructSongObj = (video, voiceChannel, user, timestamp) => {
     };
 };
 
-const createSelectMenu = namesArray =>
+const createSelectMenu = (namesArray) =>
     new MessageActionRow().addComponents(new MessageSelectMenu()
         .setCustomId('search-yt-menu')
         .setPlaceholder('Please select a video')
@@ -712,7 +714,7 @@ const createSelectMenu = namesArray =>
             }
         ]));
 
-const deletePlayerIfNeeded = interaction => {
+const deletePlayerIfNeeded = (interaction) => {
     const player = interaction.client.playerManager.get(interaction.guildId);
     if(player) {
         if(

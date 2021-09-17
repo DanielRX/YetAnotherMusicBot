@@ -1,3 +1,5 @@
+// @ts-check
+
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageEmbed} = require('discord.js');
 const fetch = require('node-fetch');
@@ -7,7 +9,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('speedrunner-stats')
         .setDescription('Show off your splits from Splits.io')
-        .addStringOption(option =>
+        .addStringOption((option) =>
             option
                 .setName('user')
                 .setDescription('Who do you want to look up?')
@@ -17,7 +19,7 @@ module.exports = {
         const userQuery = interaction.options.get('user').value;
 
         const userFiltered = userQuery.toLowerCase();
-        const userRes = await fetch(`https://splits.io/api/v4/runners?search=${userFiltered}`).then(userRes => userRes.json());
+        const userRes = await fetch(`https://splits.io/api/v4/runners?search=${userFiltered}`).then((userRes) => userRes.json());
 
         if(userRes.runners.length == 0) {
             return interaction.followUp(':x: The Runner ' + userQuery + ' was  not found.');
@@ -27,7 +29,7 @@ module.exports = {
             return interaction.followUp(':x: The Runner ' + userQuery + ' was  not found.');
         }
 
-        const pbsRes = await fetch(`https://splits.io/api/v4/runners/${userRes.runners[0].name}/pbs`).then(pbsRes => pbsRes.json());
+        const pbsRes = await fetch(`https://splits.io/api/v4/runners/${userRes.runners[0].name}/pbs`).then((pbsRes) => pbsRes.json());
 
         if(pbsRes.length == 0) {
             return interaction.followUp(':x: The Runner ' + userRes.runners[0].name + `s hasn't submitted any speedruns to Splits.io\n
@@ -37,7 +39,7 @@ module.exports = {
             return interaction.followUp(':x: The User ' + userQuery + 's stats were not found.');
         }
 
-        if(!userRes.runners.length == 0) {
+        if(userRes.runners.length != 0) {
             const pbArray = pbsRes.pbs;
             const pbEmbedArray = [];
 
@@ -45,27 +47,16 @@ module.exports = {
                 pbEmbedArray.push(new MessageEmbed()
                     .setTitle(`Entry #` + i + ' of ' + pbsRes.pbs.length)
                     .setURL('https://splits.io/' + pbArray[i - 1].id)
-                    .setAuthor(userRes.runners[0].name + '`s Speedrun Stats ',
-                        userRes.runners[0].avatar)
+                    .setAuthor(userRes.runners[0].name + '`s Speedrun Stats ', userRes.runners[0].avatar)
                     .setThumbnail(pbArray[i - 1].game.cover_url)
                     .addField('Game', pbArray[i - 1].game.name, true)
-
                     .addField(`Category`, pbArray[i - 1].category.name, true)
-                    .addField('Number of Segments',
-                        pbArray[i - 1].segments.length.toString(),
-                        true)
-                    .addField('Finish Time',
-
-                        convertTime(pbArray[i - 1].realtime_duration_ms),
-                        true)
-                    .addField('Sum Of Best',
-
-                        convertTime(pbArray[i - 1].realtime_sum_of_best_ms),
-                        true)
+                    .addField('Number of Segments', pbArray[i - 1].segments.length.toString(), true)
+                    .addField('Finish Time', convertTime(pbArray[i - 1].realtime_duration_ms), true)
+                    .addField('Sum Of Best', convertTime(pbArray[i - 1].realtime_sum_of_best_ms), true)
                     .addField('Attempts', pbArray[i - 1].attempts.toString(), true)
                     .addField('Timer Used', pbArray[i - 1].program)
-                    .setFooter('Powered by Splits.io! Run was submitted',
-                        'https://splits.io//assets/favicon/favicon-32x32-84a395f64a39ce95d7c51fecffdaa578e2277e340d47a50fdac7feb00bf3fd68.png')
+                    .setFooter('Powered by Splits.io! Run was submitted', 'https://splits.io//assets/favicon/favicon-32x32-84a395f64a39ce95d7c51fecffdaa578e2277e340d47a50fdac7feb00bf3fd68.png')
                     .setTimestamp(pbArray[i - 1].parsed_at));
             }
 

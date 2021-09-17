@@ -1,3 +1,5 @@
+// @ts-check
+
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageEmbed} = require('discord.js');
 const fetch = require('node-fetch');
@@ -7,7 +9,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('tv-show-search')
         .setDescription('Search for TV shows')
-        .addStringOption(option =>
+        .addStringOption((option) =>
             option
                 .setName('tvshow')
                 .setDescription('What TV show are you looking for?')
@@ -69,9 +71,7 @@ module.exports = {
                 var showNetwork = showResponse[i - 1].show.network;
                 if(showNetwork === null) showNetwork = 'None listed';
                 else
-                    showNetwork = `(**${
-                        showResponse[i - 1].show.network.country.code
-                    }**) ${showResponse[i - 1].show.network.name}`;
+                    showNetwork = `(**${showResponse[i - 1].show.network.country.code}**) ${showResponse[i - 1].show.network.name}`;
 
                 // Filter Runtime Row 3
                 var showRuntime = showResponse[i - 1].show.runtime;
@@ -99,8 +99,7 @@ module.exports = {
                     .addField('Runtime', showRuntime, true)
                 // Row 4
                     .addField('Average Rating', showRatings.toString())
-                    .setFooter(`(Page ${i}/${showResponse.length}) ` + 'Powered by tvmaze.com',
-                        'https://static.tvmaze.com/images/favico/favicon-32x32.png'));
+                    .setFooter(`(Page ${i}/${showResponse.length}) ` + 'Powered by tvmaze.com', 'https://static.tvmaze.com/images/favico/favicon-32x32.png'));
             }
 
             new PagesBuilder(interaction)

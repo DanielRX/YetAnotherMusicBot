@@ -1,3 +1,5 @@
+// @ts-check
+
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const Member = require('../../utils/models/Member');
 const {MessageEmbed} = require('discord.js');
@@ -6,7 +8,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('display-playlist')
         .setDescription('Display a saved playlist')
-        .addStringOption(option =>
+        .addStringOption((option) =>
             option
                 .setName('playlistname')
                 .setDescription('What is the name of the playlist you would like to display?')

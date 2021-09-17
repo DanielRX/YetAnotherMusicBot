@@ -1,3 +1,5 @@
+// @ts-check
+
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {AudioPlayerStatus} = require('@discordjs/voice');
 

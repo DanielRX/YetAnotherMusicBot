@@ -1,3 +1,5 @@
+// @ts-check
+
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const Member = require('../../utils/models/Member');
 const YouTube = require('youtube-sr').default;
@@ -8,12 +10,12 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('save-to-playlist')
         .setDescription('Save a song or a playlist to a custom playlist')
-        .addStringOption(option =>
+        .addStringOption((option) =>
             option
                 .setName('playlistname')
                 .setDescription('What is the playlist you would like to save to?')
                 .setRequired(true))
-        .addStringOption(option =>
+        .addStringOption((option) =>
             option
                 .setName('url')
                 .setDescription('What url would you like to save to playlist? It can also be a playlist url')
@@ -50,7 +52,7 @@ module.exports = {
         }
         if(found) {
             let urlsArrayClone = savedPlaylistsClone[location].urls;
-            processURL(url, interaction).then(processedURL => {
+            processURL(url, interaction).then((processedURL) => {
                 if(!processedURL) return;
                 if(Array.isArray(processedURL)) {
                     urlsArrayClone = urlsArrayClone.concat(processedURL);
@@ -93,7 +95,7 @@ async function processURL(url, interaction) {
     return new Promise(async function(resolve, reject) {
         if(isSpotifyURL(url)) {
             getData(url)
-                .then(async data => {
+                .then(async(data) => {
                     if(data.tracks) {
                         const spotifyPlaylistItems = data.tracks.items;
                         const urlsArr = [];
@@ -111,7 +113,7 @@ async function processURL(url, interaction) {
                         resolve(constructSongObj(video, interaction.member.user));
                     }
                 })
-                .catch(err => console.error(err));
+                .catch((err) => console.error(err));
         } else if(url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
             const playlist = await YouTube.getPlaylist(url).catch(function() {
                 reject(':x: Playlist is either private or it does not exist!');

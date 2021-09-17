@@ -1,3 +1,5 @@
+// @ts-check
+
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const Member = require('../../utils/models/Member');
 
@@ -5,12 +7,12 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('remove-from-playlist')
         .setDescription('Remove a song from a saved playlist')
-        .addStringOption(option =>
+        .addStringOption((option) =>
             option
                 .setName('playlist')
                 .setDescription('What is the playlist you would like to delete a song from?')
                 .setRequired(true))
-        .addStringOption(option =>
+        .addStringOption((option) =>
             option
                 .setName('index')
                 .setDescription('What is the index of the video you would like to delete from your saved playlist?')

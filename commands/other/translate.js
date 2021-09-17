@@ -1,3 +1,5 @@
+// @ts-check
+
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageEmbed} = require('discord.js');
 const ISO6391 = require('iso-639-1');
@@ -7,12 +9,12 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('translate')
         .setDescription('Translate to any language using Google translate.')
-        .addStringOption(option =>
+        .addStringOption((option) =>
             option
                 .setName('targetlang')
                 .setDescription('What is the target language?(language you want to translate to)')
                 .setRequired(true))
-        .addStringOption(option =>
+        .addStringOption((option) =>
             option
                 .setName('text')
                 .setDescription('What text do you want to translate?')
@@ -26,7 +28,7 @@ module.exports = {
         }
 
         translate(interaction.options.get('text').value, {to: targetLang})
-            .then(response => {
+            .then((response) => {
                 const embed = new MessageEmbed()
                     .setColor('#FF0000')
                     .setTitle('Google Translate: ')
@@ -35,7 +37,7 @@ module.exports = {
                     .setFooter('Powered by Google Translate!');
                 interaction.reply({embeds: [embed]});
             })
-            .catch(error => {
+            .catch((error) => {
                 interaction.reply(':x: Something went wrong when trying to translate the text');
                 console.error(error);
             });

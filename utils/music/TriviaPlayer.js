@@ -21,13 +21,9 @@ class TriviaPlayer {
         this.connection = connection;
         this.connection.on('stateChange', async(_, newState) => {
             if(newState.status === VoiceConnectionStatus.Disconnected) {
-                if(
-                    newState.reason === VoiceConnectionDisconnectReason.WebSocketClose && newState.closeCode === 4014
-                ) {
+                if(newState.reason === VoiceConnectionDisconnectReason.WebSocketClose && newState.closeCode === 4014) {
                     try {
-                        await entersState(this.connection,
-                            VoiceConnectionStatus.Connecting,
-                            5000);
+                        await entersState(this.connection, VoiceConnectionStatus.Connecting, 5000);
                     } catch{
                         this.connection.destroy();
                     }
@@ -42,9 +38,7 @@ class TriviaPlayer {
                 this.stop();
             } else if(newState.status === VoiceConnectionStatus.Connecting || newState.status === VoiceConnectionStatus.Signalling) {
                 try {
-                    await entersState(this.connection,
-                        VoiceConnectionStatus.Ready,
-                        20000);
+                    await entersState(this.connection, VoiceConnectionStatus.Ready, 20000);
                 } catch{
                     if(this.connection.state.status !== VoiceConnectionStatus.Destroyed) {
                         this.connection.destroy();
@@ -118,8 +112,7 @@ class TriviaPlayer {
                             msg.react('☑');
                             return collector.stop();
                         }
-                        this.score.set(msg.author.username,
-                            this.score.get(msg.author.username) + 2);
+                        this.score.set(msg.author.username, this.score.get(msg.author.username) + 2);
                         msg.react('☑');
                         return collector.stop();
                     } else if(guess.includes(singer)) { // If user guessed only the singer
@@ -131,8 +124,7 @@ class TriviaPlayer {
                             return collector.stop();
                         }
 
-                        this.score.set(msg.author.username,
-                            this.score.get(msg.author.username) + 1);
+                        this.score.set(msg.author.username, this.score.get(msg.author.username) + 1);
                         msg.react('☑');
                     } else if(guess.includes(title)) { // If user guessed song name
                         if(songNameFound) { return; } // If song name has already been found
@@ -143,8 +135,7 @@ class TriviaPlayer {
                             msg.react('☑');
                             return collector.stop();
                         }
-                        this.score.set(msg.author.username,
-                            this.score.get(msg.author.username) + 1);
+                        this.score.set(msg.author.username, this.score.get(msg.author.username) + 1);
                         msg.react('☑');
                     } else {
                         // Wrong answer
@@ -196,14 +187,8 @@ class TriviaPlayer {
     async process(queue) {
         const [song] = this.queue;
         try {
-            const stream = ytdl(song.url, {
-                filter: 'audio',
-                quality: 'highestaudio',
-                highWaterMark: 1 << 25
-            });
-            const resource = createAudioResource(stream, {
-                inputType: StreamType.Arbitrary
-            });
+            const stream = ytdl(song.url, { filter: 'audio', quality: 'highestaudio', highWaterMark: 1 << 25});
+            const resource = createAudioResource(stream, {inputType: StreamType.Arbitrary});
             this.audioPlayer.play(resource);
         } catch(err) {
             console.error(err);

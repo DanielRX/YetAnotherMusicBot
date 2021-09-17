@@ -1,3 +1,5 @@
+// @ts-check
+
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const fetch = require('node-fetch');
 const {MessageEmbed} = require('discord.js');
@@ -6,7 +8,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('covid')
         .setDescription('Displays COVID-19 stats.')
-        .addStringOption(option =>
+        .addStringOption((option) =>
             option
                 .setName('country')
                 .setDescription('What country do you like to search? Type `all` to display worldwide stats.')
@@ -15,7 +17,7 @@ module.exports = {
         const country = interaction.options.get('country').value;
         if(country === 'all' || country === 'world' || country === 'global') {
             await getWorldStats()
-                .then(data => {
+                .then((data) => {
                     const covidall = new MessageEmbed()
                         .setTitle('Worldwide Stats')
                         .setColor('RANDOM')
@@ -41,7 +43,7 @@ module.exports = {
                 });
         } else {
             await getCountryStats(country)
-                .then(data => {
+                .then((data) => {
                     const covidcountry = new MessageEmbed()
                         .setTitle(`Country Stats for ${data.country}`)
                         .setColor('RANDOM')

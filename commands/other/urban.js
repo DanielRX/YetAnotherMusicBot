@@ -1,3 +1,5 @@
+// @ts-check
+
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageEmbed} = require('discord.js');
 const fetch = require('node-fetch');
@@ -6,7 +8,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('urban')
         .setDescription('Get definitions from urban dictonary.')
-        .addStringOption(option =>
+        .addStringOption((option) =>
             option
                 .setName('query')
                 .setDescription('What do you want to search for?')
@@ -15,14 +17,12 @@ module.exports = {
         fetch(`https://api.urbandictionary.com/v0/define?term=${
             interaction.options.get('query').value
         }`)
-            .then(res => res.json())
-            .then(json => {
+            .then((res) => res.json())
+            .then((json) => {
                 const embed = new MessageEmbed()
                     .setColor('#BB7D61')
                     .setTitle(`${interaction.options.get('query').value}`)
-                    .setAuthor('Urban Dictionary',
-                        'https://i.imgur.com/vdoosDm.png',
-                        'https://urbandictionary.com')
+                    .setAuthor('Urban Dictionary', 'https://i.imgur.com/vdoosDm.png', 'https://urbandictionary.com')
                     .setDescription(`*${json.list[Math.floor(Math.random() * 1)].definition}*`)
                     .setURL(json.list[0].permalink)
                     .setTimestamp()

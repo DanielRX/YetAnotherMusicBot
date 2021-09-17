@@ -1,3 +1,5 @@
+// @ts-check
+
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageEmbed} = require('discord.js');
 const {PagesBuilder} = require('discord.js-pages');

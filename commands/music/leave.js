@@ -1,3 +1,5 @@
+// @ts-check
+
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {AudioPlayerStatus} = require('@discordjs/voice');
 
@@ -12,9 +14,7 @@ module.exports = {
         }
 
         const player = interaction.client.playerManager.get(interaction.guildId);
-        if(
-            player.audioPlayer.state.status !== AudioPlayerStatus.Playing || !player
-        ) {
+        if(player.audioPlayer.state.status !== AudioPlayerStatus.Playing || !player) {
             return interaction.reply('There is no song playing right now!');
         } else if(voiceChannel.id !== interaction.guild.me.voice.channel.id) {
             return interaction.reply('You must be in the same voice channel as the bot in order to skip!');

@@ -1,3 +1,5 @@
+// @ts-check
+
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {AudioPlayerStatus} = require('@discordjs/voice');
 const createGuildData = require('../../utils/createGuildData');
@@ -6,12 +8,12 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('move')
         .setDescription('Move a song to a desired position in queue!')
-        .addIntegerOption(option =>
+        .addIntegerOption((option) =>
             option
                 .setName('oldposition')
                 .setDescription('What is the position of the song you want to move?')
                 .setRequired(true))
-        .addIntegerOption(option =>
+        .addIntegerOption((option) =>
             option
                 .setName('newposition')
                 .setDescription('What position do you want to move the song to?')

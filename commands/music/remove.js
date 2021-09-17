@@ -1,10 +1,12 @@
+// @ts-check
+
 const {SlashCommandBuilder} = require('@discordjs/builders');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('remove')
         .setDescription('Remove a specific song from queue')
-        .addIntegerOption(option =>
+        .addIntegerOption((option) =>
             option
                 .setName('position')
                 .setDescription('What song number do you want to remove from queue?')

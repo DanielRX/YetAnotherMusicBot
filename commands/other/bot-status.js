@@ -1,3 +1,5 @@
+// @ts-check
+
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const Discord = require('discord.js');
 const os = require('os');
@@ -38,10 +40,7 @@ module.exports = {
         let mins = Math.floor((totalSeconds / 60) % 60);
 
         const guildCacheMap = interaction.client.guilds.cache;
-        const guildCacheArray = Array.from(guildCacheMap, ([name, value]) => ({
-            name,
-            value
-        }));
+        const guildCacheArray = Array.from(guildCacheMap, ([name, value]) => ({name, value}));
         let memberCount = 0;
         for(let i = 0; i < guildCacheArray.length; i++) {
             memberCount = memberCount + guildCacheArray[i].value.memberCount;
@@ -55,29 +54,17 @@ module.exports = {
             .setColor('#ff0000');
 
         if(isOwner) {
-            StatusEmbed.addField(`Memory Usage`,
-                `${Math.round(used * 100) / 100}MB`,
-                true).addField(`Platform`, `${platform} ${archInfo}`, true);
+            StatusEmbed.addField(`Memory Usage`, `${Math.round(used * 100) / 100}MB`, true).addField(`Platform`, `${platform} ${archInfo}`, true);
         }
 
-        StatusEmbed.addField('Ping',
-            `Round-trip took ${(pingMsg.editedTimestamp || pingMsg.createdTimestamp) - interaction.createdTimestamp}ms.
-			${
-    interaction.client.ws.ping ? `The heartbeat ping is ${Math.round(interaction.client.ws.ping)}ms.` : ''
-}`)
-            .addField(`Uptime`,
-                `${days} D ${hours} H : ${mins} M : ${realTotalSecs} S`)
+        StatusEmbed.addField('Ping', `Round-trip took ${(pingMsg.editedTimestamp || pingMsg.createdTimestamp) - interaction.createdTimestamp}ms. \n			${interaction.client.ws.ping ? `The heartbeat ping is ${Math.round(interaction.client.ws.ping)}ms.` : ''}`)
+            .addField(`Uptime`, `${days} D ${hours} H : ${mins} M : ${realTotalSecs} S`)
             .addField('Available Commands', `${commandTotal} Commands Available`)
-            .addField('Servers, Users',
-                `On ${interaction.client.guilds.cache.size} servers, with a total of ${memberCount} users.`)
-
+            .addField('Servers, Users', `On ${interaction.client.guilds.cache.size} servers, with a total of ${memberCount} users.`)
             .setFooter('Created', interaction.client.user.avatarURL())
             .setTimestamp(interaction.client.user.createdAt);
 
-        if(isOwner)
-            StatusEmbed.addField('Dependency List',
-                `node: ${process.version.replace(/v/, '')}
-        ${libList}`);
+        if(isOwner) { StatusEmbed.addField('Dependency List', `node: ${process.version.replace(/v/, '')}\n        ${libList}`); }
 
         interaction.reply({embeds: [StatusEmbed]});
         await pingMsg.delete();

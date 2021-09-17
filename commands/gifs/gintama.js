@@ -26,12 +26,10 @@ module.exports = {
       don't forget to uncomment the require for node-fetch and tenorAPI above
 
 
-       fetch(
-        `https://g.tenor.com/v1/random?key=${tenorAPI}&q=gintama&limit=1`
-      )
-        .then(res => res.json())
-        .then(json => message.channel.send(json.results[0].url))
-        .catch(e => {
+      fetch(`https://g.tenor.com/v1/random?key=${tenorAPI}&q=gintama&limit=1`)
+        .then((res) => res.json())
+        .then((json) => message.channel.send(json.results[0].url))
+        .catch((e) => {
           message.reply('Failed to fetch a gintama gif :slight_frown:');
           return console.error(e);
         })

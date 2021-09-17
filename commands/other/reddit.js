@@ -1,9 +1,7 @@
+// @ts-check
+
 const {SlashCommandBuilder} = require('@discordjs/builders');
-const {
-    MessageEmbed,
-    MessageActionRow,
-    MessageSelectMenu
-} = require('discord.js');
+const {MessageEmbed, MessageActionRow, MessageSelectMenu} = require('discord.js');
 const fetch = require('node-fetch');
 const {PagesBuilder} = require('discord.js-pages');
 const {MaxResponseTime} = require('../../options.json');
@@ -12,12 +10,12 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('reddit')
         .setDescription('Replies with 10 top daily posts in wanted subreddit, you can specify sorting and time!')
-        .addStringOption(option =>
+        .addStringOption((option) =>
             option
                 .setName('subreddit')
                 .setDescription('What subreddit would you like to search?')
                 .setRequired(true))
-        .addStringOption(option =>
+        .addStringOption((option) =>
             option
                 .setName('sort')
                 .setDescription('What posts do you want to see? Select from best/hot/top/new/controversial/rising')
@@ -41,26 +39,11 @@ module.exports = {
                 .setCustomId('top_or_controversial')
                 .setPlaceholder('Please select an option')
                 .addOptions([
-                    {
-                        label: 'hour',
-                        value: 'hour'
-                    },
-                    {
-                        label: 'week',
-                        value: 'week'
-                    },
-                    {
-                        label: 'month',
-                        value: 'month'
-                    },
-                    {
-                        label: 'year',
-                        value: 'year'
-                    },
-                    {
-                        label: 'all',
-                        value: 'all'
-                    }
+                    {label: 'hour', value: 'hour'},
+                    {label: 'week', value: 'week'},
+                    {label: 'month', value: 'month'},
+                    {label: 'year', value: 'year'},
+                    {label: 'all', value: 'all'}
                 ]));
             const menu = await message.channel.send({
                 content: `:loud_sound: Do you want to get the ${sort} posts from past hour/week/month/year or all?`,
@@ -76,7 +59,7 @@ module.exports = {
                 if(menu) menu.delete().catch(console.error);
             });
 
-            collector.on('collect', async i => {
+            collector.on('collect', async(i) => {
                 if(i.user.id !== interaction.user.id) {
                     i.reply({
                         content: `This element is not for you!`,

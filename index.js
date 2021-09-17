@@ -24,11 +24,11 @@ const commands = [];
 
 const commandFiles = fs
     .readdirSync('./commands')
-    .map(folder =>
+    .map((folder) =>
         fs
             .readdirSync(`./commands/${folder}`)
-            .filter(file => file.endsWith('.js'))
-            .map(file => `./commands/${folder}/${file}`))
+            .filter((file) => file.endsWith('.js'))
+            .map((file) => `./commands/${folder}/${file}`))
     .flat();
 
 for(const file of commandFiles) {
@@ -54,7 +54,7 @@ for(const file of commandFiles) {
 
 const eventFiles = fs
     .readdirSync('./events')
-    .filter(file => file.endsWith('.js'));
+    .filter((file) => file.endsWith('.js'));
 
 for(const file of eventFiles) {
     const event = require(`./events/${file}`);

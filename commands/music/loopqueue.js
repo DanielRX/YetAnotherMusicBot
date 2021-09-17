@@ -1,3 +1,5 @@
+// @ts-check
+
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {AudioPlayerStatus} = require('@discordjs/voice');
 const createGuildData = require('../../utils/createGuildData');
@@ -6,7 +8,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('loopqueue')
         .setDescription('Loop the queue x times! - (the default is 1 time)')
-        .addIntegerOption(option =>
+        .addIntegerOption((option) =>
             option
                 .setName('looptimes')
                 .setDescription('How many times do you want to loop the queue?')),
@@ -25,7 +27,7 @@ module.exports = {
         }
         if(player.audioPlayer.state.status === AudioPlayerStatus.Playing && guildData.triviaData.isTriviaRunning) {
             return interaction.reply(`You can't use this command while a trivia is running!`);
-        } 
+        }
         if(interaction.member.voice.channelId !== interaction.guild.me.voice.channelId) {
             return interaction.reply(`You must be in the same voice channel as the bot in order to use that!`);
         }

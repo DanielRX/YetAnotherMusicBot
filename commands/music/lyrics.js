@@ -1,3 +1,5 @@
+// @ts-check
+
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageEmbed} = require('discord.js');
 const {PagesBuilder} = require('discord.js-pages');
@@ -12,7 +14,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('lyrics')
         .setDescription('Get the lyrics of any song or the lyrics of the currently playing song!')
-        .addStringOption(option =>
+        .addStringOption((option) =>
             option
                 .setName('songname')
                 .setDescription(':mag: What song lyrics would you like to get?')),

@@ -1,3 +1,5 @@
+// @ts-check
+
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageEmbed} = require('discord.js');
 
@@ -5,12 +7,12 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('random')
         .setDescription('Generate a random number between two provided numbers!')
-        .addIntegerOption(option =>
+        .addIntegerOption((option) =>
             option
                 .setName('min')
                 .setDescription('What is the minimum number?')
                 .setRequired(true))
-        .addIntegerOption(option =>
+        .addIntegerOption((option) =>
             option
                 .setName('max')
                 .setDescription('What is the maximum number?')

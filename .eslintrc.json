@@ -56,7 +56,8 @@
     "keyword-spacing": ["error", {"after": false, "overrides": {"try": {"after": true}, "const": {"after": true}, "else": {"after": true}, "return": {"after": true}}}],
     "max-statements-per-line": "off",
     "implicit-arrow-linebreak": "off",
-    "sort-keys": "off"
+    "sort-keys": "off",
+    "arrow-parens": ["error", "always"]
   },
   "parser": "babel-eslint"
 }

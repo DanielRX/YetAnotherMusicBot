@@ -1,10 +1,12 @@
+// @ts-check
+
 const {SlashCommandBuilder} = require('@discordjs/builders');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('skipto')
         .setDescription('Skip to a song in queue')
-        .addIntegerOption(option =>
+        .addIntegerOption((option) =>
             option
                 .setName('position')
                 .setDescription('What is the position in queue you want to skip to?')

@@ -1,3 +1,5 @@
+// @ts-check
+
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const Member = require('../../utils/models/Member');
 const {MessageEmbed} = require('discord.js');

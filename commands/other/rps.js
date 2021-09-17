@@ -1,3 +1,5 @@
+// @ts-check
+
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageEmbed} = require('discord.js');
 
@@ -5,7 +7,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('rps')
         .setDescription('Rock paper scissors!')
-        .addStringOption(option =>
+        .addStringOption((option) =>
             option
                 .setName('move')
                 .setDescription('You ready for a game of Rock, Paper, Scissors? \n What is your move?')

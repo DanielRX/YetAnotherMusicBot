@@ -10,7 +10,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('game-search')
         .setDescription('Search for game information')
-        .addStringOption(option =>
+        .addStringOption((option) =>
             option
                 .setName('game')
                 .setDescription('What game are you looking for?')
@@ -110,22 +110,12 @@ module.exports = {
             // Page 2
             new MessageEmbed()
             // Row 1
-                .addField('Developer(s)',
-                    developerArray.toString().replace(/,/g, ', '),
-                    true)
-                .addField('Publisher(s)',
-                    publisherArray.toString().replace(/,/g, ', '),
-                    true)
-                .addField('Platform(s)',
-                    platformArray.toString().replace(/,/g, ', '),
-                    true)
+                .addField('Developer(s)', developerArray.toString().replace(/,/g, ', '), true) // TODO: Use join
+                .addField('Publisher(s)', publisherArray.toString().replace(/,/g, ', '), true) // TODO: Use join
+                .addField('Platform(s)', platformArray.toString().replace(/,/g, ', '), true) // TODO: Use join
             // Row 2
-                .addField('Genre(s)', genreArray.toString().replace(/,/g, ', '), true)
-                .addField('Retailer(s)',
-                    retailerArray
-                        .toString()
-                        .replace(/,/g, ', ')
-                        .replace(/`/g, '')));
+                .addField('Genre(s)', genreArray.toString().replace(/,/g, ', '), true) // TODO: Use join
+                .addField('Retailer(s)', retailerArray.toString() .replace(/,/g, ', ').replace(/`/g, ''))); // TODO: Use join
 
         const embed = new PagesBuilder(interaction)
             .setPages(embedArray)
