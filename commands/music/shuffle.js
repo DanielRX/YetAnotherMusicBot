@@ -1,6 +1,7 @@
 // @ts-check
 
 const {SlashCommandBuilder} = require('@discordjs/builders');
+const {shuffleArray} = require('../../utils/utils');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -32,15 +33,9 @@ module.exports = {
             return interaction.followUp('Please wait until play command is done processing');
         }
 
-        shuffleQueue(player.queue);
+        shuffleArray(player.queue);
 
         return interaction.followUp('The music queue has been shuffled!');
     }
 };
 
-function shuffleQueue(queue) {
-    for(let i = queue.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [queue[i], queue[j]] = [queue[j], queue[i]];
-    }
-}

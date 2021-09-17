@@ -10,6 +10,8 @@ const Member = require('../../utils/models/Member');
 const {joinVoiceChannel, entersState, VoiceConnectionStatus, AudioPlayerStatus} = require('@discordjs/voice');
 const createGuildData = require('../../utils/createGuildData');
 const {searchOne} = require('../../utils/music/searchOne');
+const {shuffleArray, isSpotifyURL, isYouTubeVideoURL, isYouTubePlaylistURL} = require('../../utils/utils');
+
 
 // Check If Options are Valid
 if(typeof playLiveStreams !== 'boolean') playLiveStreams = true;
@@ -653,18 +655,6 @@ const flagLogic = (interaction, video, jumpFlag) => {
 /********************************** Helper Functions *****************************/
 
 // var compose = (f, g) => x => f(g(x));
-
-const isYouTubeVideoURL = (arg) => arg.match(/^(http(s)?:\/\/)?(m.)?((w){3}.)?(music.)?youtu(be|.be)?(\.com)?\/.+/);
-const isYouTubePlaylistURL = (arg) => arg.match(/^https?:\/\/(music.)?(www.youtube.com|youtube.com)\/playlist(.*)$/);
-const isSpotifyURL = (arg) => arg.match(/^(spotify:|https:\/\/[a-z]+\.spotify\.com\/)/);
-
-const shuffleArray = (arr) => {
-    for(let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-};
 
 const constructSongObj = (video, voiceChannel, user, timestamp) => {
     let duration = video.durationFormatted;

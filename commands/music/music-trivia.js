@@ -1,14 +1,11 @@
 // @ts-check
 
 const {SlashCommandBuilder} = require('@discordjs/builders');
-const {
-    joinVoiceChannel,
-    VoiceConnectionStatus,
-    entersState
-} = require('@discordjs/voice');
+const {joinVoiceChannel, VoiceConnectionStatus, entersState} = require('@discordjs/voice');
 const {MessageEmbed} = require('discord.js');
 const fs = require('fs');
 const TriviaPlayer = require('../../utils/music/TriviaPlayer');
+const {getRandom} = require('../../utils/utils');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -88,17 +85,4 @@ const handleSubscription = async(interaction, player) => {
     Vote skip the song by entering the word 'skip'.
     You can end the trivia at any point by using the end-trivia command!`);
     return interaction.followUp({embeds: [startTriviaEmbed]});
-};
-
-const getRandom = (arr, n) => {
-    let result = new Array(n);
-    let len = arr.length;
-    let taken = new Array(len);
-    if(n > len) {throw new RangeError('getRandom: more elements taken than available!');}
-    while(n--) {
-        let x = Math.floor(Math.random() * len);
-        result[n] = arr[(x in taken) ? taken[x] : x];
-        taken[x] = (--len in taken) ? taken[len] : len;
-    }
-    return result;
 };

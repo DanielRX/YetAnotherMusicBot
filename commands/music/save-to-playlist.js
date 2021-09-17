@@ -5,6 +5,7 @@ const Member = require('../../utils/models/Member');
 const YouTube = require('youtube-sr').default;
 const {getData} = require('spotify-url-info');
 const {searchOne} = require('../../utils/music/searchOne');
+const {isSpotifyURL, validateURL} = require('../../utils/utils');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -72,12 +73,6 @@ module.exports = {
     }
 };
 
-function validateURL(url) {
-    return (
-        url.match(/^(?!.*\?.*\bv=)https:\/\/www\.youtube\.com\/.*\?.*\blist=.*$/) || url.match(/^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+/) || url.match(/^(?!.*\?.*\bv=)https:\/\/www\.youtube\.com\/.*\?.*\blist=.*$/) || url.match(/^(spotify:|https:\/\/[a-z]+\.spotify\.com\/)/)
-    );
-}
-
 function constructSongObj(video, user) {
     let duration = video.durationFormatted;
     return {
@@ -142,4 +137,4 @@ async function processURL(url, interaction) {
     });
 }
 
-const isSpotifyURL = (arg) => arg.match(/^(spotify:|https:\/\/[a-z]+\.spotify\.com\/)/);
+
