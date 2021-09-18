@@ -1,11 +1,7 @@
 //@ts-check 
-
-const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const fetch = require('node-fetch');
 const {tenorAPI} = require('../../config.json');
-
-if(!tenorAPI) return;
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -17,10 +13,11 @@ module.exports = {
                 .setDescription('What gif would you like to search for?')
                 .setRequired(true)),
     /**
-     * @param {CommandInteraction} interaction
+     * @param {import('discord.js').CommandInteraction} interaction
      * @returns {Promise<void>}
      */
     async execute(interaction) {
+        if(!tenorAPI) { return interaction.reply(':x: Tenor commands are not enabled'); }
         const gif = interaction.options.get('gif').value;
         fetch(`https://g.tenor.com/v1/random?key=${tenorAPI}&q=${gif}&limit=1`)
             .then((res) => res.json())
