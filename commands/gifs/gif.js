@@ -11,7 +11,7 @@ const options = [
     {name: 'gif', description: 'What gif would you like to search for?', required: true, choices: []}
 ];
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options));
+const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 /**
  * @param {import('discord.js').CommandInteraction} interaction
  * @returns {Promise<void>}
