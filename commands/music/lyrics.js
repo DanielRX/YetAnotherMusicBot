@@ -23,7 +23,6 @@ module.exports = {
      * @param {import('discord.js').CommandInteraction} interaction
      * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
      */
-
     async execute(interaction) {
         interaction.deferReply();
         const player = interaction.client.playerManager.get(interaction.guildId);
@@ -73,14 +72,22 @@ module.exports = {
     }
 };
 
-function cleanSongName(songName) {
+/**
+ * @param {string} songName
+ * @returns {string}
+ */
+const cleanSongName = (songName) => {
     return songName
         .replace(/ *\([^)]*\) */g, '')
         .replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '');
-}
+};
 
-function searchSong(query) {
-    return new Promise(async function(resolve, reject) {
+/**
+ * @param {string} query
+ * @returns {Promise<string>}
+ */
+const searchSong = (query) => {
+    return new Promise(async(resolve, reject) => {
         const searchURL = `https://api.genius.com/search?q=${encodeURI(query)}`;
         const headers = {Authorization: `Bearer ${geniusLyricsAPI}`};
         try {
@@ -92,10 +99,14 @@ function searchSong(query) {
             reject(':x: No song has been found for this query');
         }
     });
-}
+};
 
-function getSongPageURL(url) {
-    return new Promise(async function(resolve, reject) {
+/**
+ * @param {string} url
+ * @returns {Promise<string>}
+ */
+const getSongPageURL = (url) => {
+    return new Promise(async(resolve, reject) => {
         const headers = {Authorization: `Bearer ${geniusLyricsAPI}`};
         try {
             const body = await fetch(url, {headers});
@@ -110,9 +121,13 @@ function getSongPageURL(url) {
             reject('There was a problem finding a URL for this song');
         }
     });
-}
+};
 
-function getLyrics(url) {
+/**
+ * @param {string} url
+ * @returns {Promise<string>}
+ */
+const getLyrics = (url) => {
     return new Promise(async function(resolve, reject) {
         try {
             const response = await fetch(url);
