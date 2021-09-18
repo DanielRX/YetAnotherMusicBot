@@ -11,5 +11,5 @@ services:
   mongo:
     image: mongo:4-focal
     volumes:
-      - "./db/mongo:/data/db"
+      - ./db/mongo:/data/db
     restart: always
