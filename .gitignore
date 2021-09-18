@@ -4,3 +4,4 @@ test.js
 json.sqlite
 .vscode
 coverage
+db
