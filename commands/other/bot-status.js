@@ -38,18 +38,15 @@ module.exports = {
 
         const used = process.memoryUsage().heapUsed / 1024 / 1024;
 
-        let totalSeconds = process.uptime();
-        let realTotalSecs = Math.floor(totalSeconds % 60);
-        let days = Math.floor((totalSeconds % 31536000) / 86400);
-        let hours = Math.floor((totalSeconds / 3600) % 24);
-        let mins = Math.floor((totalSeconds / 60) % 60);
+        const totalSeconds = process.uptime();
+        const realTotalSecs = Math.floor(totalSeconds % 60);
+        const days = Math.floor((totalSeconds % 31536000) / 86400);
+        const hours = Math.floor((totalSeconds / 3600) % 24);
+        const mins = Math.floor((totalSeconds / 60) % 60);
 
         const guildCacheMap = interaction.client.guilds.cache;
         const guildCacheArray = Array.from(guildCacheMap, ([name, value]) => ({name, value}));
-        let memberCount = 0;
-        for(let i = 0; i < guildCacheArray.length; i++) {
-            memberCount = memberCount + guildCacheArray[i].value.memberCount;
-        }
+        const memberCount = guildCacheArray.reduce((prev, curr) => prev + curr.value.memberCount, 0);
 
         await pingMsg.edit('Complete');
 

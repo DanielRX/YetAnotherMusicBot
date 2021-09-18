@@ -3,10 +3,11 @@
 const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 
+const name = 'skipto';
+const description = 'Skip to a song in queue';
+
 module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('skipto')
-        .setDescription('Skip to a song in queue')
+    data: new SlashCommandBuilder().setName(name).setDescription(description)
         .addIntegerOption((option) =>
             option
                 .setName('position')

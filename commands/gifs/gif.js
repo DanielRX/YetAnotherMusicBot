@@ -26,9 +26,8 @@ module.exports = {
             .then((res) => res.json())
             .then((json) => interaction.reply(json.results[0].url))
             .catch(function onError() {
-                interaction.reply(':x: Failed to find a gif that matched your query!');
                 // console.error(e); // if you uncomment this, add an 'e' parameter to onError
-                return;
+                return interaction.reply(':x: Failed to find a gif that matched your query!');
             });
     }
 };
