@@ -402,9 +402,7 @@ module.exports = {
                 if(nextFlag || jumpFlag) {
                     player.queue.splice(key - skipAmount, 0, constructSongObj(video, interaction.member.voice.channel, interaction.member.user));
                 } else {
-                    player.queue.push(constructSongObj(video,
-                        interaction.member.voice.channel,
-                        interaction.member.user));
+                    player.queue.push(constructSongObj(video, interaction.member.voice.channel, interaction.member.user));
                 }
             });
             if(jumpFlag && player.audioPlayer.state.status === AudioPlayerStatus.Playing) {
@@ -467,8 +465,7 @@ module.exports = {
             }
 
             if(player.audioPlayer.state.status !== AudioPlayerStatus.Playing) {
-                handleSubscription(player.queue, interaction, player);
-                return;
+                return handleSubscription(player.queue, interaction, player);
             }
 
             // interactiveEmbed(interaction)
@@ -492,11 +489,7 @@ var handleSubscription = async(queue, interaction, player) => {
     const title = player.queue[0].title;
     let connection = player.connection;
     if(!connection) {
-        connection = joinVoiceChannel({
-            channelId: voiceChannel.id,
-            guildId: interaction.guild.id,
-            adapterCreator: interaction.guild.voiceAdapterCreator
-        });
+        connection = joinVoiceChannel({channelId: voiceChannel.id, guildId: interaction.guild.id, adapterCreator: interaction.guild.voiceAdapterCreator});
         connection.on('error', console.error);
     }
     player.textChannel = interaction.channel;
@@ -566,10 +559,7 @@ var searchYoutube = async(query, interaction, player, voiceChannel, nextFlag, ju
 
     playOptionsCollector.on('collect', async(i) => {
         if(i.user.id !== interaction.user.id) {
-            i.reply({
-                content: 'This element is not for you!',
-                ephemeral: true
-            });
+            i.reply({content: 'This element is not for you!', ephemeral: true});
         } else {
             playOptionsCollector.stop();
             const value = i.values[0];
@@ -683,39 +673,18 @@ const createSelectMenu = (namesArray) =>
         .setCustomId('search-yt-menu')
         .setPlaceholder('Please select a video')
         .addOptions([
-            {
-                label: `${namesArray[0]}`,
-                value: '1'
-            },
-            {
-                label: `${namesArray[1]}`,
-                value: '2'
-            },
-            {
-                label: `${namesArray[2]}`,
-                value: '3'
-            },
-            {
-                label: `${namesArray[3]}`,
-                value: '4'
-            },
-            {
-                label: `${namesArray[4]}`,
-                value: '5'
-            },
-            {
-                label: 'Cancel',
-                value: 'cancel_option'
-            }
+            {label: `${namesArray[0]}`, value: '1'},
+            {label: `${namesArray[1]}`, value: '2'},
+            {label: `${namesArray[2]}`, value: '3'},
+            {label: `${namesArray[3]}`, value: '4'},
+            {label: `${namesArray[4]}`, value: '5'},
+            {label: 'Cancel', value: 'cancel_option'}
         ]));
 
 const deletePlayerIfNeeded = (interaction) => {
     const player = interaction.client.playerManager.get(interaction.guildId);
     if(player) {
-        if(
-            (player.queue.length && !player.nowPlaying) || (!player.queue.length && !player.nowPlaying)
-        )
-            return;
+        if((player.queue.length && !player.nowPlaying) || (!player.queue.length && !player.nowPlaying)) { return; }
         return interaction.client.playerManager.delete(interaction.guildId);
     }
 };
