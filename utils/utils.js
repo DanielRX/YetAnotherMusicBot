@@ -44,6 +44,12 @@ const shuffleArray = (arr) => {
     return arr;
 };
 
+const setupOption = (config) => (option) => {
+    option = option.setName(config.name).setDescription(config.description).setRequired(config.required);
+    for(const choice of config.choices) { option = option.addChoice(choice, choice); }
+    return option;
+};
+
 const isSpotifyURL = (arg) => arg.match(/^(spotify:|https:\/\/[a-z]+\.spotify\.com\/)/);
 const isYouTubeVideoURL = (arg) => arg.match(/^(http(s)?:\/\/)?(m.)?((w){3}.)?(music.)?youtu(be|.be)?(\.com)?\/.+/);
 const isYouTubePlaylistURL = (arg) => arg.match(/^https?:\/\/(music.)?(www.youtube.com|youtube.com)\/playlist(.*)$/);
@@ -51,4 +57,4 @@ const isYouTubePlaylistURL = (arg) => arg.match(/^https?:\/\/(music.)?(www.youtu
 
 const validateURL = (url) => isYouTubePlaylistURL(url) || isYouTubeVideoURL(url) || isSpotifyURL(url);
 
-module.exports = {arrayMove, getRandom, shuffleArray, isSpotifyURL, isYouTubePlaylistURL, isYouTubeVideoURL, validateURL, randomEl};
+module.exports = {arrayMove, getRandom, shuffleArray, isSpotifyURL, isYouTubePlaylistURL, isYouTubeVideoURL, validateURL, randomEl, setupOption};
