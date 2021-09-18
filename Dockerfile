@@ -10,8 +10,7 @@ giflib-dev \
 librsvg-dev
 
 WORKDIR "/Master-Bot"
-COPY package.json package-lock.json ./
-RUN npm ci --production
-
-COPY ./ ./
+COPY ./ /Master-Bot
+RUN npm install
+RUN npm link
 CMD ["npm", "start"]

@@ -3,8 +3,13 @@ services:
     build: .
     depends_on: 
       - mongo
+    links:
+      - mongo
+    volumes:
+      - "./:/opt/Master-Bot"
+    restart: always
   mongo:
     image: mongo:4-focal
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: master-bot
-      MONGO_INITDB_ROOT_PASSWORD: admin
+    volumes:
+      - "./db/mongo:/data/db"
+    restart: always
