@@ -5,8 +5,6 @@ services:
       - mongo
     links:
       - mongo
-    volumes:
-      - "./:/opt/Master-Bot"
     restart: always
   mongo:
     image: mongo:4-focal

@@ -12,5 +12,6 @@ README.md
 
 # Node modules and lint settings
 node_modules
+db
 .eslintrc.json
 .prettierrc
