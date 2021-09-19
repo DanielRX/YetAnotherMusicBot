@@ -31,12 +31,11 @@ const execute = async(interaction) => {
 
     const location = savedPlaylistsClone.findIndex((value) => value.name == playlistName);
     if(location === -1) {
-        interaction.reply(`You have no playlist named ${playlistName}`);
-    } else {
-        savedPlaylistsClone.splice(location, 1);
-        await Member.updateOne({memberId: interaction.member.id}, {savedPlaylists: savedPlaylistsClone});
-        interaction.reply(`I removed **${playlistName}** from your saved playlists!`);
+        return interaction.reply(`You have no playlist named ${playlistName}`);
     }
+    savedPlaylistsClone.splice(location, 1);
+    await Member.updateOne({memberId: interaction.member.id}, {savedPlaylists: savedPlaylistsClone});
+    return interaction.reply(`I removed **${playlistName}** from your saved playlists!`);
 };
 
 module.exports = {data, execute};
