@@ -3,12 +3,12 @@ const {SlashCommandBuilder} = require('@discordjs/builders');
 const Member = require('../../utils/models/Member');
 const {setupOption} = require('../../utils/utils');
 
+const name = 'create-playlist';
+const description = 'Create a custom playlist that you can play anytime';
+
 const options = [
     {name: 'playlistname', description: 'What is the name of the playlist you would like to create?', required: true, choices: []}
 ];
-
-const name = 'create-playlist';
-const description = 'Create a custom playlist that you can play anytime';
 
 const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 

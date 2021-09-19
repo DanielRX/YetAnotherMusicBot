@@ -1,42 +1,42 @@
 // @ts-check
-
-const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const Member = require('../../utils/models/Member');
+const {setupOption} = require('../../utils/utils');
 
-module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('delete-playlist')
-        .setDescription('Delete a playlist from your saved playlists')
-        .addStringOption((option) =>
-            option
-                .setName('playlistname')
-                .setDescription('Which playlist would you like to delete?')
-                .setRequired(true)),
-    /**
-     * @param {CommandInteraction} interaction
-     * @returns {Promise<void>}
-     */
-    async execute(interaction) {
-        const playlistName = interaction.options.get('playlistname').value;
-        // Check if user has playlists or if user is saved in the DB
-        const userData = await Member.findOne({memberId: interaction.member.id}).exec();
+const name = 'delete-playlist';
+const description = 'Delete a playlist from your saved playlists';
 
-        if(!userData) {
-            return interaction.reply('You have zero saved playlists!');
-        }
-        const savedPlaylistsClone = userData.savedPlaylists;
-        if(savedPlaylistsClone.length === 0) {
-            return interaction.reply('You have zero saved playlists!');
-        }
+const options = [
+    {name: 'playlistname', description: 'Which playlist would you like to delete?', required: true, choices: []}
+];
 
-        const location = savedPlaylistsClone.findIndex((value) => value.name == playlistName);
-        if(location === -1) {
-            interaction.reply(`You have no playlist named ${playlistName}`);
-        } else {
-            savedPlaylistsClone.splice(location, 1);
-            await Member.updateOne({memberId: interaction.member.id}, {savedPlaylists: savedPlaylistsClone});
-            interaction.reply(`I removed **${playlistName}** from your saved playlists!`);
-        }
+const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
+
+/**
+* @param {import('discord.js').CommandInteraction} interaction
+* @returns {Promise<void>}
+*/
+const execute = async(interaction) => {
+    const playlistName = interaction.options.get('playlistname').value;
+    // Check if user has playlists or if user is saved in the DB
+    const userData = await Member.findOne({memberId: interaction.member.id}).exec();
+
+    if(!userData) {
+        return interaction.reply('You have zero saved playlists!');
+    }
+    const savedPlaylistsClone = userData.savedPlaylists;
+    if(savedPlaylistsClone.length === 0) {
+        return interaction.reply('You have zero saved playlists!');
+    }
+
+    const location = savedPlaylistsClone.findIndex((value) => value.name == playlistName);
+    if(location === -1) {
+        interaction.reply(`You have no playlist named ${playlistName}`);
+    } else {
+        savedPlaylistsClone.splice(location, 1);
+        await Member.updateOne({memberId: interaction.member.id}, {savedPlaylists: savedPlaylistsClone});
+        interaction.reply(`I removed **${playlistName}** from your saved playlists!`);
     }
 };
+
+module.exports = {data, execute};
