@@ -41,6 +41,7 @@ const execute = async(interaction) => {
     }
 
     const looptimes = (interaction.options.get('looptimes') ?? {value: 1}).value;
+    player.loopTimes = looptimes;
 
     if(player.loopQueue) {
         player.loopQueue = false;

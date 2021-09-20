@@ -23,7 +23,7 @@ const rest = new REST({version: '9'}).setToken(token);
 
 /**
  * @typedef CustomAudioPlayer
- * @type {{audioPlayer: AudioPlayer, nowPlaying: {title: string}, connection: VoiceConnection, loopSong: boolean, loopQueue: boolean, queue: Track[], commandLock: boolean, length: number, queueHistory: Track[]}}
+ * @type {{audioPlayer: AudioPlayer, loopTimes: number, nowPlaying: {title: string}, connection: VoiceConnection, loopSong: boolean, loopQueue: boolean, queue: Track[], commandLock: boolean, length: number, queueHistory: Track[]}}
  */
 
 /**
