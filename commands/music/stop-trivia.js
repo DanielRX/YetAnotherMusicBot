@@ -22,10 +22,7 @@ module.exports = {
         if(!triviaPlayer.score.has(interaction.member.user.username)) {
             return interaction.reply(':stop_sign: You need to participate in the trivia in order to end it');
         }
-        triviaPlayer.queue.length = 0;
-        triviaPlayer.wasTriviaEndCalled = true;
-        triviaPlayer.score.clear();
-        triviaPlayer.connection.destroy();
+        triviaPlayer.reset();
         interaction.client.triviaManager.delete(interaction.guildId);
 
         interaction.reply('Stopped the trivia! To start a new one, use the music-trivia command');

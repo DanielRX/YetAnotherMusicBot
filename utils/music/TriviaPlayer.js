@@ -48,9 +48,7 @@ class TriviaPlayer {
         });
 
         this.audioPlayer.on('stateChange', (oldState, newState) => {
-            if(
-                newState.status === AudioPlayerStatus.Idle && oldState.status !== AudioPlayerStatus.Idle
-            ) {
+            if(newState.status === AudioPlayerStatus.Idle && oldState.status !== AudioPlayerStatus.Idle) {
                 this.queue.shift();
                 // Finished playing audio
                 if(this.queue.length) {
@@ -182,6 +180,13 @@ class TriviaPlayer {
     stop() {
         this.queue.length = 0;
         this.audioPlayer.stop(true);
+    }
+
+    reset() {
+        this.queue.length = 0;
+        this.wasTriviaEndCalled = true;
+        this.score.clear();
+        this.connection.destroy();
     }
 
     async process(queue) {
