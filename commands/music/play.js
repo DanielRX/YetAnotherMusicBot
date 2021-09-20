@@ -218,8 +218,8 @@ const searchYoutube = async(interaction, voiceChannel) => {
             playerManager.queue.push(constructSongObj(video, voiceChannel, interaction.member.user));
         }
         if(audioPlayer.state.status !== AudioPlayerStatus.Playing) {
-            const player = playerManager;
-            void handleSubscription(player.queue, interaction, player);
+            const newPlayer = playerManager;
+            void handleSubscription(newPlayer.queue, interaction, newPlayer);
         } else if(audioPlayer.state.status === AudioPlayerStatus.Playing) {
             player.commandLock = false;
             return interaction.followUp(`Added **${video.title}** to queue`);

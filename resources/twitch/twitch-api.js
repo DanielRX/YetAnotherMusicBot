@@ -9,10 +9,10 @@ if(!twitchClientID || !twitchClientSecret) { return; } // TODO: Fix this, won't 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 module.exports = class TwitchAPI {
     //Access Token is valid for 24 Hours
-    static getToken(twitchClientID, twitchClientSecret, scope) {
+    static getToken(tClientID, tClientSecret, scope) {
         return new Promise(async function fetchToken(resolve, reject) {
             try {
-                const response = await fetch(`https://id.twitch.tv/oauth2/token?client_id=${twitchClientID}&client_secret=${twitchClientSecret}&grant_type=client_credentials&scope=${scope}`, {method: 'POST'});
+                const response = await fetch(`https://id.twitch.tv/oauth2/token?client_id=${tClientID}&client_secret=${tClientSecret}&grant_type=client_credentials&scope=${scope}`, {method: 'POST'});
                 const json = await response.json();
                 if(json.status == 400) {
                     reject('Something went wrong when trying to fetch a twitch access token');

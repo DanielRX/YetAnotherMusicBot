@@ -101,7 +101,6 @@
     "@typescript-eslint/no-implicit-any-catch": "off",
     "@typescript-eslint/promise-function-async": "off",
     "no-async-promise-executor": "off",
-    "@typescript-eslint/no-shadow": "off",
     "@typescript-eslint/return-await": "off",
     "@typescript-eslint/no-confusing-void-expression": "off",
     "@typescript-eslint/prefer-nullish-coalescing": "off",

@@ -34,9 +34,9 @@ const processURL = async(url, interaction) => {
     return new Promise(async function(resolve, reject) {
         if(isSpotifyURL(url)) {
             getData(url)
-                .then(async(data) => {
-                    if(data.tracks) {
-                        const spotifyPlaylistItems = data.tracks.items;
+                .then(async(res) => {
+                    if(res.tracks) {
+                        const spotifyPlaylistItems = res.tracks.items;
                         const urlsArr = [];
                         for(const track of spotifyPlaylistItems) {
                             try {
@@ -48,7 +48,7 @@ const processURL = async(url, interaction) => {
                         }
                         resolve(urlsArr);
                     } else {
-                        const video = await searchOne(data);
+                        const video = await searchOne(res);
                         resolve(constructSongObj(video, interaction.member.user));
                     }
                 })
