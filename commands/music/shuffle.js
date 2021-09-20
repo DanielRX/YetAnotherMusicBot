@@ -1,5 +1,4 @@
 // @ts-check
-
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {shuffleArray} = require('../../utils/utils');
 
@@ -9,7 +8,7 @@ const description = 'Shuffle the music queue!';
 module.exports = {
     data: new SlashCommandBuilder().setName(name).setDescription(description),
     /**
-     * @param {import('discord.js').CommandInteraction} interaction
+     * @param {import('../../').CustomInteraction} interaction
      * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
      */
     execute(interaction) {

@@ -13,9 +13,9 @@ const options = [
 const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
 /**
-* @param {import('discord.js').CommandInteraction} interaction
-* @returns {Promise<void>}
-*/
+ * @param {import('../../').CustomInteraction} interaction
+ * @returns {Promise<void>}
+ */
 const execute = async(interaction) => {
     const playlistName = interaction.options.get('playlistname').value;
     const {member: {id, user: {username}, joinedAt}} = interaction;

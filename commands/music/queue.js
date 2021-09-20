@@ -9,22 +9,18 @@ const description = 'Display the music queue';
 const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 /**
-* @param {import('discord.js').CommandInteraction} interaction
-* @returns {Promise<void>}
-*/
+ * @param {import('../../').CustomInteraction} interaction
+ * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
+ */
 const execute = async(interaction) => {
     await interaction.deferReply();
     const guildData = interaction.client.guildData.get(interaction.guildId);
-    if(guildData) {
-        if(guildData.triviaData.isTriviaRunning) {
-            return interaction.followUp(':x: Try again after the trivia has ended!');
-        }
+    if(guildData && guildData.triviaData.isTriviaRunning) {
+        return interaction.followUp(':x: Try again after the trivia has ended!');
     }
     const player = interaction.client.playerManager.get(interaction.guildId);
-    if(player) {
-        if(player.queue.length == 0) {
-            return interaction.followUp(':x: There are no songs in queue!');
-        }
+    if(player && player.queue.length == 0) {
+        return interaction.followUp(':x: There are no songs in queue!');
     }
     if(!player) {
         return interaction.followUp(':x: There is nothing playing right now!');

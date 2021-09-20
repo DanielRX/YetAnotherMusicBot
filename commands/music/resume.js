@@ -1,6 +1,4 @@
 // @ts-check
-
-const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {AudioPlayerStatus} = require('@discordjs/voice');
 
@@ -9,7 +7,7 @@ module.exports = {
         .setName('resume')
         .setDescription('Resume a paused track'),
     /**
-     * @param {CommandInteraction} interaction
+     * @param {import('../../').CustomInteraction} interaction
      * @returns {Promise<void>}
      */
     execute(interaction) {

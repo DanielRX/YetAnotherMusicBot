@@ -17,9 +17,9 @@ const options = [
 const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
 /**
-* @param {import('discord.js').CommandInteraction} interaction
-* @returns {Promise<void>}
-*/
+ * @param {import('../../').CustomInteraction} interaction
+ * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
+ */
 const execute = async(interaction) => {
     await interaction.deferReply();
     const voiceChannel = interaction.member.voice.channel;

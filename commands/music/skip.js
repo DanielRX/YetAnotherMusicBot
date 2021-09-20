@@ -8,7 +8,7 @@ const description = 'Skip the currently playing song!';
 module.exports = {
     data: new SlashCommandBuilder().setName(name).setDescription(description),
     /**
-     * @param {import('discord.js').CommandInteraction} interaction
+     * @param {import('../../').CustomInteraction} interaction
      * @returns {Promise<void>}
      */
     async execute(interaction) {
@@ -24,7 +24,7 @@ module.exports = {
         if(voiceChannel.id !== interaction.guild.me.voice.channel.id) {
             return interaction.reply('You must be in the same voice channel as the bot in order to skip!');
         }
-        if(interaction.guild.client.guildData.get(interaction.guild.id).isTriviaRunning) {
+        if(interaction.guild.client.guildData.get(interaction.guild.id).triviaData.isTriviaRunning) {
             return interaction.reply(`You can't skip a trivia! Use end-trivia command instead`);
         }
         interaction.reply(`Skipped **${interaction.client.playerManager.get(interaction.guildId).nowPlaying.title}**`);

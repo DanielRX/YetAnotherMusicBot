@@ -8,9 +8,9 @@ const description = 'Leaves a voice channel if in one!';
 const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 /**
-* @param {import('discord.js').CommandInteraction} interaction
-* @returns {Promise<void>}
-*/
+ * @param {import('../../').CustomInteraction} interaction
+ * @returns {Promise<void>}
+ */
 const execute = async(interaction) => {
     const voiceChannel = interaction.member.voice.channel;
     if(!voiceChannel) {

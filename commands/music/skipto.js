@@ -1,6 +1,4 @@
 // @ts-check
-
-const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 
 const name = 'skipto';
@@ -14,7 +12,7 @@ module.exports = {
                 .setDescription('What is the position in queue you want to skip to?')
                 .setRequired(true)),
     /**
-     * @param {CommandInteraction} interaction
+     * @param {import('../../').CustomInteraction} interaction
      * @returns {Promise<void>}
      */
 

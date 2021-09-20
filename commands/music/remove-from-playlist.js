@@ -19,7 +19,7 @@ module.exports = {
                 .setDescription('What is the index of the video you would like to delete from your saved playlist?')
                 .setRequired(true)),
     /**
-     * @param {CommandInteraction} interaction
+     * @param {import('../../').CustomInteraction} interaction
      * @returns {Promise<void>}
      */
     async execute(interaction) {

@@ -10,9 +10,9 @@ const description = 'Set a song to play on loop';
 const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 /**
-* @param {import('discord.js').CommandInteraction} interaction
-* @returns {Promise<void>}
-*/
+ * @param {import('../../').CustomInteraction} interaction
+ * @returns {Promise<void>}
+ */
 const execute = async(interaction) => {
     if(!interaction.client.guildData.get(interaction.guildId)) {
         interaction.client.guildData.set(interaction.guildId, createGuildData());

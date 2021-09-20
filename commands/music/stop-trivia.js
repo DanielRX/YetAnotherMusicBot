@@ -1,6 +1,4 @@
 // @ts-check
-
-const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 
 module.exports = {
@@ -8,7 +6,7 @@ module.exports = {
         .setName('stop-trivia')
         .setDescription('End a music trivia (if one is in play)'),
     /**
-     * @param {CommandInteraction} interaction
+     * @param {import('../../').CustomInteraction} interaction
      * @returns {Promise<void>}
      */
     execute(interaction) {

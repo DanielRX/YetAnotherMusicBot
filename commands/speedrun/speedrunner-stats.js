@@ -1,6 +1,4 @@
 // @ts-check
-
-const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageEmbed} = require('discord.js');
 const fetch = require('node-fetch');
@@ -16,8 +14,8 @@ module.exports = {
                 .setDescription('Who do you want to look up?')
                 .setRequired(true)),
     /**
-     * @param {CommandInteraction} interaction
-     * @returns {Promise<void>}
+     * @param {import('../../').CustomInteraction} interaction
+     * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
      */
     async execute(interaction) {
         interaction.deferReply();
@@ -65,10 +63,7 @@ module.exports = {
                     .setTimestamp(pbArray[i - 1].parsed_at));
             }
 
-            return new PagesBuilder(interaction)
-                .setPages(pbEmbedArray)
-                .setColor('#3E8657')
-                .build();
+            return new PagesBuilder(interaction).setPages(pbEmbedArray).setColor('#3E8657').build();
         }
     }
 };

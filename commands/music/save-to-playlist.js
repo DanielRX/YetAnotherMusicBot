@@ -1,6 +1,4 @@
 // @ts-check
-
-const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const Member = require('../../utils/models/Member');
 const YouTube = require('youtube-sr').default;
@@ -23,7 +21,7 @@ module.exports = {
                 .setDescription('What url would you like to save to playlist? It can also be a playlist url')
                 .setRequired(true)),
     /**
-     * @param {CommandInteraction} interaction
+     * @param {import('../../').CustomInteraction} interaction
      * @returns {Promise<void>}
      */
     async execute(interaction) {

@@ -1,6 +1,4 @@
 // @ts-check
-
-const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 
 module.exports = {
@@ -13,7 +11,7 @@ module.exports = {
                 .setDescription('What song number do you want to remove from queue?')
                 .setRequired(true)),
     /**
-     * @param {CommandInteraction} interaction
+     * @param {import('../../').CustomInteraction} interaction
      * @returns {Promise<void>}
      */
     execute(interaction) {
