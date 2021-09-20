@@ -66,50 +66,11 @@ module.exports = {
                 .addField('Score', userRating, true)
         ];
 
-        const developerArray = [];
-        if(response.developers.length > 0) {
-            for(let i = 0; i < response.developers.length; ++i) {
-                developerArray.push(response.developers[i].name);
-            }
-        } else {
-            developerArray.push('None Listed.');
-        }
-
-        const publisherArray = [];
-        if(response.publishers.length > 0) {
-            for(let i = 0; i < response.publishers.length; ++i) {
-                publisherArray.push(response.publishers[i].name);
-            }
-        } else {
-            publisherArray.push('None Listed.');
-        }
-
-        const platformArray = [];
-        if(response.platforms.length > 0) {
-            for(let i = 0; i < response.platforms.length; ++i) {
-                platformArray.push(response.platforms[i].platform.name);
-            }
-        } else {
-            platformArray.push('None Listed.');
-        }
-
-        const genreArray = [];
-        if(response.genres.length > 0) {
-            for(let i = 0; i < response.genres.length; ++i) {
-                genreArray.push(response.genres[i].name);
-            }
-        } else {
-            genreArray.push('None Listed.');
-        }
-
-        const retailerArray = [];
-        if(response.stores.length > 0) {
-            for(let i = 0; i < response.stores.length; ++i) {
-                retailerArray.push(`[${response.stores[i].store.name}](${response.stores[i].url})`);
-            }
-        } else {
-            retailerArray.push('None Listed.');
-        }
+        const developerArray = (response.developers.length > 0) ? response.developers.map((e) => e.name) : ['None Listed.'];
+        const publisherArray = (response.publishers.length > 0) ? response.publishers.map((e) => e.name) : ['None Listed.'];
+        const platformArray = (response.platforms.length > 0) ? response.platforms.map((e) => e.platform.name) : ['None Listed.'];
+        const genreArray = (response.genres.length > 0) ? response.genres.map((e) => e.name) : ['None Listed.'];
+        const retailerArray = (response.stores.length > 0) ? response.stores.map((e) => `[${e.store.name}](${e.url})`) : ['None Listed.'];
 
         embedArray.push(
             // Page 2

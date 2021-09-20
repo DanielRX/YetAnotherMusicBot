@@ -77,9 +77,9 @@ async function processURL(url, interaction) {
                     if(data.tracks) {
                         const spotifyPlaylistItems = data.tracks.items;
                         const urlsArr = [];
-                        for(let i = 0; i < spotifyPlaylistItems.length; i++) {
+                        for(const track of spotifyPlaylistItems) {
                             try {
-                                const video = await searchOne(spotifyPlaylistItems[i].track);
+                                const video = await searchOne(track.track);
                                 urlsArr.push(constructSongObj(video, interaction.member.user));
                             } catch(error) {
                                 console.error(error);
@@ -99,11 +99,10 @@ async function processURL(url, interaction) {
             let videosArr = await playlist.fetch();
             videosArr = videosArr.videos;
             let urlsArr = [];
-            for(let i = 0; i < videosArr.length; i++) {
-                if(videosArr[i].private) {
+            for(const video of videosArr) {
+                if(video.private) {
                     continue;
                 } else {
-                    const video = videosArr[i];
                     urlsArr.push(constructSongObj(video, interaction.member.user));
                 }
             }

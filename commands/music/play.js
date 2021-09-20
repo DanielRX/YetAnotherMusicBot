@@ -1,6 +1,6 @@
 // @ts-check
 const {SlashCommandBuilder} = require('@discordjs/builders');
-const {MessageSelectMenu, MessageActionRow, VoiceChannel} = require('discord.js');
+const {MessageSelectMenu, MessageActionRow} = require('discord.js');
 const Player = require('../../utils/music/Player');
 const {getData} = require('spotify-url-info');
 const YouTube = require('youtube-sr').default;
@@ -120,7 +120,7 @@ const handleSubscription = async(queue, interaction, player) => {
 
 /**
  * @param {import('../../').CustomInteraction} interaction
- * @param {VoiceChannel} voiceChannel
+ * @param {import('discord.js').VoiceChannel} voiceChannel
  * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
  */
 const searchYoutube = async(interaction, voiceChannel) => {
