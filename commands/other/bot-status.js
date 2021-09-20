@@ -1,6 +1,4 @@
 // @ts-check
-
-const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const Discord = require('discord.js');
 const os = require('os');
@@ -11,7 +9,7 @@ module.exports = {
         .setName('bot-status')
         .setDescription('Shows the current system status'),
     /**
-     * @param {CommandInteraction} interaction
+     * @param {import('../../').CustomInteraction} interaction
      * @returns {Promise<void>}
      */
     async execute(interaction) {

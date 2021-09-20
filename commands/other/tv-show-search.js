@@ -1,6 +1,4 @@
 // @ts-check
-
-const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageEmbed} = require('discord.js');
 const fetch = require('node-fetch');
@@ -16,8 +14,8 @@ module.exports = {
                 .setDescription('What TV show are you looking for?')
                 .setRequired(true)),
     /**
-     * @param {CommandInteraction} interaction
-     * @returns {Promise<void>}
+     * @param {import('../../').CustomInteraction} interaction
+     * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
      */
     async execute(interaction) {
         const tvshow = interaction.options.get('tvshow').value;
@@ -113,7 +111,7 @@ module.exports = {
                 .build();
         } catch(error) {
             console.log(error);
-            return interaction.reply(':x: Something went wrong with your request.');
+            return interaction.followUp(':x: Something went wrong with your request.');
         }
     }
 };

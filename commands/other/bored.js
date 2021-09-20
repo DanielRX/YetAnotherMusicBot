@@ -1,5 +1,4 @@
 // @ts-check
-const {CommandInteraction} = require('discord.js');
 const fetch = require('node-fetch');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageEmbed} = require('discord.js');
@@ -9,11 +8,11 @@ module.exports = {
         .setName('bored')
         .setDescription('Generate a random activity!'),
     /**
-     * @param {CommandInteraction} interaction
+     * @param {import('../../').CustomInteraction} interaction
      * @returns {Promise<void>}
      */
     execute(interaction) {
-        fetch('https://www.boredapi.com/api/activity?participants=1')
+        return fetch('https://www.boredapi.com/api/activity?participants=1')
             .then((res) => res.json())
             .then((json) => {
                 const embed = new MessageEmbed()

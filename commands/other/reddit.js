@@ -24,7 +24,7 @@ module.exports = {
         .addStringOption(setupOption(options[0]))
         .addStringOption(setupOption(options[1])),
     /**
-     * @param {import('discord.js').CommandInteraction} interaction
+     * @param {import('../../').CustomInteraction} interaction
      * @returns {Promise<void>}
      */
     async execute(interaction) {

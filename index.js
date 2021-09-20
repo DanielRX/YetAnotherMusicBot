@@ -3,12 +3,42 @@
 const fs = require('fs');
 const {REST} = require('@discordjs/rest');
 const {Routes} = require('discord-api-types/v9');
-const {Client, Collection, Intents} = require('discord.js');
+const {Client, Collection, Intents, GuildMember, Message} = require('discord.js');
 const {token, mongo_URI, client_id} = require('./config.json');
 const mongoose = require('mongoose');
+const { AudioPlayer, VoiceConnection } = require('@discordjs/voice');
+const TriviaPlayer = require('./utils/music/TriviaPlayer');
 
 const rest = new REST({version: '9'}).setToken(token);
 
+/**
+ * @typedef GuildData
+ * @type {{triviaData: {isTriviaRunning: boolean}, queueHistory: Track[]}}
+ */
+
+/**
+ * @typedef Track
+ * @type {{title: string, url: string, singer: string}}
+ */
+
+/**
+ * @typedef CustomAudioPlayer
+ * @type {{audioPlayer: AudioPlayer, nowPlaying: {title: string}, connection: VoiceConnection, loopSong: boolean, loopQueue: boolean, queue: Track[], commandLock: boolean, length: number, queueHistory: Track[]}}
+ */
+
+/**
+ * @typedef CustomClient
+ * @type {Client & {playerManager: Map<string, CustomAudioPlayer>; commands: Collection<string, any>, guildData: Map<string, GuildData>, triviaManager: Map<string, TriviaPlayer>}}
+ */
+
+/**
+ * @typedef CustomInteraction
+ * @type {Omit<import('discord.js').CommandInteraction, 'deferReply'> & {client: CustomClient, guild: {client: CustomClient}, member: GuildMember, deferReply: (x?: {fetchReply: boolean}) => Promise<import('discord.js').Message>}}
+ */
+
+/**
+ * @type {CustomClient}
+ */
 const client = new Client({
     intents: [
         Intents.FLAGS.GUILDS,

@@ -1,6 +1,4 @@
 // @ts-check
-
-const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const fs = require('fs');
 const {MessageEmbed} = require('discord.js');
@@ -10,7 +8,7 @@ module.exports = {
         .setName('motivation')
         .setDescription('Get a random motivational quote!'),
     /**
-     * @param {CommandInteraction} interaction
+     * @param {import('../../').CustomInteraction} interaction
      * @returns {Promise<void>}
      */
     execute(interaction) {
