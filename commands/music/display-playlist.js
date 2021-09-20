@@ -31,7 +31,7 @@ const execute = async(interaction) => {
     }
 
     const location = savedPlaylistsClone.findIndex((value) => value.name == playlistName);
-    if(location === -1) {
+    if(location !== -1) {
         const urlsArrayClone = savedPlaylistsClone[location].urls;
         if(urlsArrayClone.length === 0) {
             return interaction.followUp(`**${playlistName}** is empty!`); //TODO: Swap to reply?
