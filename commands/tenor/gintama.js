@@ -9,9 +9,9 @@ const description = 'Replies with a gintama gif!';
 const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 /**
-* @param {import('discord.js').CommandInteraction} interaction
-* @returns {Promise<void>}
-*/
+ * @param {import('../..').CustomInteraction} interaction
+ * @returns {Promise<void>}
+ */
 const execute = async(interaction) => {
     try {
         const linkArray = await fs.readFile('./resources/gifs/gintamalinks.txt', 'utf8').then((links) => links.split('\n'));

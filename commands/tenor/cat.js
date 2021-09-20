@@ -1,6 +1,4 @@
 // @ts-check
-
-const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const fetch = require('node-fetch');
 const {tenorAPI} = require('../../config.json');
@@ -10,11 +8,11 @@ module.exports = {
         .setName('cat')
         .setDescription('Replies with a cute cat picture!'),
     /**
-     * @param {CommandInteraction} interaction
+     * @param {import('../..').CustomInteraction} interaction
      * @returns {Promise<void>}
      */
     execute(interaction) {
-        fetch(`https://api.tenor.com/v1/random?key=${tenorAPI}&q=cat&limit=1`)
+        return fetch(`https://api.tenor.com/v1/random?key=${tenorAPI}&q=cat&limit=1`)
             .then((res) => res.json())
             .then((json) => interaction.reply({content: json.results[0].url}))
             .catch((err) => {

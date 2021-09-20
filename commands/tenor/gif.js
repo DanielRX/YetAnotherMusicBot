@@ -13,7 +13,7 @@ const options = [
 
 const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 /**
- * @param {import('discord.js').CommandInteraction} interaction
+ * @param {import('../..').CustomInteraction} interaction
  * @returns {Promise<void>}
  */
 const execute = async(interaction) => {
