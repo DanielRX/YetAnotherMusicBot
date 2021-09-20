@@ -1,5 +1,9 @@
 const {MessageSelectMenu, MessageActionRow} = require('discord.js');
 
+/**
+ * @param {string} query
+ * @returns
+ */
 const getFlags = (query) => {
     let splitQuery = query.split(' ');
     let shuffleFlag = splitQuery[splitQuery.length - 1] === '-s';

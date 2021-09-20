@@ -49,7 +49,7 @@ module.exports = {
         const userQuery = interaction.options.get('user').value;
 
         const userFiltered = userQuery.toLowerCase();
-        const userRes = await fetch(`https://splits.io/api/v4/runners?search=${userFiltered}`).then((userRes) => userRes.json());
+        const userRes = await fetch(`https://splits.io/api/v4/runners?search=${userFiltered}`).then((res) => res.json());
 
         if(userRes.runners.length == 0) {
             return interaction.followUp(':x: The Runner ' + userQuery + ' was  not found.');
@@ -59,7 +59,7 @@ module.exports = {
             return interaction.followUp(':x: The Runner ' + userQuery + ' was  not found.');
         }
 
-        const pbsRes = await fetch(`https://splits.io/api/v4/runners/${userRes.runners[0].name}/pbs`).then((pbsRes) => pbsRes.json());
+        const pbsRes = await fetch(`https://splits.io/api/v4/runners/${userRes.runners[0].name}/pbs`).then((res) => res.json());
 
         if(pbsRes.length == 0) {
             return interaction.followUp(':x: The Runner ' + userRes.runners[0].name + `s hasn't submitted any speedruns to Splits.io\n

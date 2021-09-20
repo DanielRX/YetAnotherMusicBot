@@ -20,6 +20,11 @@ const rest = new REST({version: '9'}).setToken(token);
  */
 
 /**
+ * @typedef TrackT
+ * @type {{name: string, url: string, artists: string[]}}
+ */
+
+/**
  * @typedef CustomAudioPlayer
  * @type {{audioPlayer: import('@discordjs/voice').AudioPlayer, loopTimes: number, nowPlaying?: {title: string}, connection: import('@discordjs/voice').VoiceConnection, loopSong: boolean, loopQueue: boolean, queue: Track[], commandLock: boolean, length: number, queueHistory: Track[]}}
  */

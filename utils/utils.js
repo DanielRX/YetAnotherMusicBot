@@ -1,4 +1,11 @@
 // https://stackoverflow.com/a/5306832/9421002
+/**
+ * @template T
+ * @param {T[]} arr
+ * @param {number} old_index
+ * @param {number} new_index
+ * @returns {T[]}
+ */
 const arrayMove = (arr, old_index, new_index) => {
     while(old_index < 0) {
         old_index += arr.length;
@@ -16,6 +23,11 @@ const arrayMove = (arr, old_index, new_index) => {
     return arr;
 };
 
+/**
+ * @template T
+ * @param {T[]} arr
+ * @returns
+ */
 const shuffleArray = (arr) => {
     for(let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
