@@ -17,7 +17,7 @@ const execute = async(interaction) => {
     if(!guildData) {
         return interaction.followUp('There is no music queue history!');
     }
-    if(guildData && !guildData.queueHistory.length) {
+    if(!guildData.queueHistory.length) {
         return interaction.followUp('There is no music queue history!');
     }
 

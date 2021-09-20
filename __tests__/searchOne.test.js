@@ -1,5 +1,15 @@
 const {searchOne} = require('../utils/music/searchOne');
 
+const mockData = {
+    artists: [
+        {
+            name: 'Kanye West',
+            type: 'artist'
+        }
+    ],
+    name: 'Stronger'
+};
+
 it('should return data', () => {
     return searchOne(mockData).then((video) => {
         expect(video).toHaveProperty('title');
@@ -10,12 +20,4 @@ it('should return data', () => {
     });
 });
 
-const mockData = {
-    artists: [
-        {
-            name: 'Kanye West',
-            type: 'artist'
-        }
-    ],
-    name: 'Stronger'
-};
+

@@ -21,57 +21,6 @@ const options = [
 const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
 /**
- * @param {import('../../').CustomInteraction} interaction
- * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
- */
-const execute = async(interaction) => {
-    interaction.deferReply();
-    const player = interaction.client.playerManager.get(interaction.guildId);
-    const guildData = interaction.client.guildData.get(interaction.guildId);
-    let songName = interaction.options.get('songname');
-    if(songName) {
-        songName = songName.value;
-    } else {
-        if(!player) { return interaction.followUp('There is no song playing! Enter a song name or play a song'); }
-        if(guildData) {
-            if(guildData.triviaData.isTriviaRunning) {
-                return interaction.followUp(':x: Please try again after the trivia has ended');
-            }
-        }
-        songName = player.nowPlaying.title;
-    }
-
-    try {
-        const url = await searchSong(cleanSongName(songName));
-        const songPageURL = await getSongPageURL(url);
-        const lyrics = await getLyrics(songPageURL);
-
-        const lyricsIndex = Math.round(lyrics.length / 4096) + 1;
-        const lyricsArray = [];
-
-        for(let i = 1; i <= lyricsIndex; ++i) {
-            if(lyrics.trim().slice((i - 1) * 4096, i * 4096).length !== 0) {
-                lyricsArray.push(new MessageEmbed()
-                    .setTitle(`Lyrics page #` + i)
-                    .setDescription(lyrics.slice((i - 1) * 4096, i * 4096))
-                    .setFooter('Provided by genius.com'));
-            }
-        }
-
-        new PagesBuilder(interaction)
-            .setTitle(`${songName} lyrics`)
-            .setPages(lyricsArray)
-            .setColor('#9096e6')
-            .setURL(songPageURL)
-            .setAuthor(interaction.member.user.username, interaction.member.user.displayAvatarURL())
-            .build();
-    } catch(error) {
-        console.error(error);
-        return interaction.followUp('Something went wrong! Please try again later');
-    }
-};
-
-/**
 * @param {string} songName
 * @returns {string}
 */
@@ -149,6 +98,57 @@ const getLyrics = (url) => {
             reject('There was a problem fetching lyrics for this song, please try again');
         }
     });
+};
+
+/**
+ * @param {import('../../').CustomInteraction} interaction
+ * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
+ */
+const execute = async(interaction) => {
+    interaction.deferReply();
+    const player = interaction.client.playerManager.get(interaction.guildId);
+    const guildData = interaction.client.guildData.get(interaction.guildId);
+    let songName = interaction.options.get('songname');
+    if(songName) {
+        songName = songName.value;
+    } else {
+        if(!player) { return interaction.followUp('There is no song playing! Enter a song name or play a song'); }
+        if(guildData) {
+            if(guildData.triviaData.isTriviaRunning) {
+                return interaction.followUp(':x: Please try again after the trivia has ended');
+            }
+        }
+        songName = player.nowPlaying.title;
+    }
+
+    try {
+        const url = await searchSong(cleanSongName(songName));
+        const songPageURL = await getSongPageURL(url);
+        const lyrics = await getLyrics(songPageURL);
+
+        const lyricsIndex = Math.round(lyrics.length / 4096) + 1;
+        const lyricsArray = [];
+
+        for(let i = 1; i <= lyricsIndex; ++i) {
+            if(lyrics.trim().slice((i - 1) * 4096, i * 4096).length !== 0) {
+                lyricsArray.push(new MessageEmbed()
+                    .setTitle(`Lyrics page #` + i)
+                    .setDescription(lyrics.slice((i - 1) * 4096, i * 4096))
+                    .setFooter('Provided by genius.com'));
+            }
+        }
+
+        new PagesBuilder(interaction)
+            .setTitle(`${songName} lyrics`)
+            .setPages(lyricsArray)
+            .setColor('#9096e6')
+            .setURL(songPageURL)
+            .setAuthor(interaction.member.user.username, interaction.member.user.displayAvatarURL())
+            .build();
+    } catch(error) {
+        console.error(error);
+        return interaction.followUp('Something went wrong! Please try again later');
+    }
 };
 
 module.exports = {data, execute};

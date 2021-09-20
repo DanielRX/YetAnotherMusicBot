@@ -6,13 +6,43 @@ const ytdl = require('ytdl-core');
 const {MessageEmbed} = require('discord.js');
 const wait = promisify(setTimeout);
 
+const capitalize_Words = (str) => {
+    return str.replace(/\w\S*/g, function(txt) {
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
+};
+
+var normalizeValue = (value) =>
+    value
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+        .replace(/[^0-9a-zA-Z\s]/g, '') // Remove non-alphanumeric characters
+        .trim()
+        .replace(/\s+/g, ' ')
+        .toLowerCase(); // Remove duplicate spaces
+
+const getLeaderBoard = (arr) => {
+    if(!arr) { return; }
+    if(!arr[0]) { return; } // Issue #422
+    let leaderBoard = '';
+
+    leaderBoard = `👑   **${arr[0][0]}:** ${arr[0][1]}  points`;
+
+    if(arr.length > 1) {
+        for(let i = 1; i < arr.length; i++) {
+            leaderBoard += `\n\n   ${i + 1}: ${arr[i][0]}: ${arr[i][1]}  points`;
+        }
+    }
+    return leaderBoard;
+};
+
 class TriviaPlayer {
     constructor() {
         this.connection = null;
         this.audioPlayer = createAudioPlayer();
         this.score = new Map();
         this.queue = [];
-        this.textChannel;
+        this.textChannel = null;
         this.wasTriviaEndCalled = false;
     }
 
@@ -115,7 +145,7 @@ class TriviaPlayer {
                     } else if(guess.includes(singer)) { // If user guessed only the singer
                         if(songSingerFound) { return; } // Already been found
                         songSingerFound = true;
-                        if(songNameFound && songSingerFound) {
+                        if(songNameFound) {
                             this.score.set(msg.author.username, this.score.get(msg.author.username) + 1);
                             msg.react('☑');
                             return collector.stop();
@@ -126,8 +156,7 @@ class TriviaPlayer {
                     } else if(guess.includes(title)) { // If user guessed song name
                         if(songNameFound) { return; } // If song name has already been found
                         songNameFound = true;
-
-                        if(songNameFound && songSingerFound) {
+                        if(songSingerFound) {
                             this.score.set(msg.author.username, this.score.get(msg.author.username) + 1);
                             msg.react('☑');
                             return collector.stop();
@@ -200,35 +229,5 @@ class TriviaPlayer {
         }
     }
 }
-
-const getLeaderBoard = (arr) => {
-    if(!arr) { return; }
-    if(!arr[0]) { return; } // Issue #422
-    let leaderBoard = '';
-
-    leaderBoard = `👑   **${arr[0][0]}:** ${arr[0][1]}  points`;
-
-    if(arr.length > 1) {
-        for(let i = 1; i < arr.length; i++) {
-            leaderBoard += `\n\n   ${i + 1}: ${arr[i][0]}: ${arr[i][1]}  points`;
-        }
-    }
-    return leaderBoard;
-};
-
-const capitalize_Words = (str) => {
-    return str.replace(/\w\S*/g, function(txt) {
-        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-    });
-};
-
-var normalizeValue = (value) =>
-    value
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
-        .replace(/[^0-9a-zA-Z\s]/g, '') // Remove non-alphanumeric characters
-        .trim()
-        .replace(/\s+/g, ' ')
-        .toLowerCase(); // Remove duplicate spaces
 
 module.exports = TriviaPlayer;

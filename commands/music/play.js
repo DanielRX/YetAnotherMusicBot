@@ -27,6 +27,64 @@ options.MaxResponseTime = Math.max(Math.min(options.MaxResponseTime, 150), 5);
 
 /**
  * @param {import('../../').CustomInteraction} interaction
+ * @returns {boolean}
+ */
+const deletePlayerIfNeeded = (interaction) => {
+    const player = interaction.client.playerManager.get(interaction.guildId);
+    if(player) {
+        if((player.queue.length && !player.nowPlaying) || (!player.queue.length && !player.nowPlaying)) { return; }
+        return interaction.client.playerManager.delete(interaction.guildId);
+    }
+};
+
+const constructSongObj = (video, voiceChannel, user, timestamp) => {
+    const {url, title, duration: rawDuration, durationFormatted, thumbnail} = video;
+    let duration = durationFormatted;
+    if(duration === '00:00') duration = 'Live Stream';
+    // checks if the user searched for a song using a Spotify URL
+    return {url, title, rawDuration, duration, timestamp, thumbnail: thumbnail.url, voiceChannel, memberDisplayName: user.username, memberAvatar: user.avatarURL('webp', false, 16)};
+};
+
+const handleSubscription = async(queue, interaction, player) => {
+    let voiceChannel = queue[0].voiceChannel;
+    if(!voiceChannel) {
+        // happens when loading a saved playlist
+        voiceChannel = interaction.member.voice.channel;
+    }
+
+    const title = player.queue[0].title;
+    let connection = player.connection;
+    if(!connection) {
+        connection = joinVoiceChannel({channelId: voiceChannel.id, guildId: interaction.guild.id, adapterCreator: interaction.guild.voiceAdapterCreator});
+        connection.on('error', console.error);
+    }
+    player.textChannel = interaction.channel;
+    player.passConnection(connection);
+
+    try {
+        await entersState(player.connection, VoiceConnectionStatus.Ready, 10000);
+    } catch(err) {
+        player.commandLock = false;
+        deletePlayerIfNeeded(interaction);
+        console.error(err);
+        await interaction.followUp({content: 'Failed to join your channel!'});
+        return;
+    }
+    player.process(player.queue);
+    await interaction.followUp(`Enqueued ${title}`);
+};
+
+
+const flagLogic = (interaction, video, jumpFlag) => {
+    const player = interaction.client.playerManager.get(interaction.guildId);
+    player.queue.splice(0, 0, constructSongObj(video, interaction.member.voice.channel, interaction.member.user));
+    if(jumpFlag && player.audioPlayer.state.status === AudioPlayerStatus.Playing) {
+        player.loopSong = false;
+        player.audioPlayer.stop();
+    }
+};
+/**
+ * @param {import('../../').CustomInteraction} interaction
  * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
  */
 const handleSpotifyURL = (interaction) => {
@@ -89,34 +147,6 @@ const handleSpotifyURL = (interaction) => {
     });
 };
 
-const handleSubscription = async(queue, interaction, player) => {
-    let voiceChannel = queue[0].voiceChannel;
-    if(!voiceChannel) {
-        // happens when loading a saved playlist
-        voiceChannel = interaction.member.voice.channel;
-    }
-
-    const title = player.queue[0].title;
-    let connection = player.connection;
-    if(!connection) {
-        connection = joinVoiceChannel({channelId: voiceChannel.id, guildId: interaction.guild.id, adapterCreator: interaction.guild.voiceAdapterCreator});
-        connection.on('error', console.error);
-    }
-    player.textChannel = interaction.channel;
-    player.passConnection(connection);
-
-    try {
-        await entersState(player.connection, VoiceConnectionStatus.Ready, 10000);
-    } catch(err) {
-        player.commandLock = false;
-        deletePlayerIfNeeded(interaction);
-        console.error(err);
-        await interaction.followUp({content: 'Failed to join your channel!'});
-        return;
-    }
-    player.process(player.queue);
-    await interaction.followUp(`Enqueued ${title}`);
-};
 
 /**
  * @param {import('../../').CustomInteraction} interaction
@@ -226,34 +256,7 @@ const searchYoutube = async(interaction, voiceChannel) => {
     });
 };
 
-const flagLogic = (interaction, video, jumpFlag) => {
-    const player = interaction.client.playerManager.get(interaction.guildId);
-    player.queue.splice(0, 0, constructSongObj(video, interaction.member.voice.channel, interaction.member.user));
-    if(jumpFlag && player.audioPlayer.state.status === AudioPlayerStatus.Playing) {
-        player.loopSong = false;
-        player.audioPlayer.stop();
-    }
-};
 
-const constructSongObj = (video, voiceChannel, user, timestamp) => {
-    const {url, title, duration: rawDuration, durationFormatted, thumbnail} = video;
-    let duration = durationFormatted;
-    if(duration === '00:00') duration = 'Live Stream';
-    // checks if the user searched for a song using a Spotify URL
-    return {url, title, rawDuration, duration, timestamp, thumbnail: thumbnail.url, voiceChannel, memberDisplayName: user.username, memberAvatar: user.avatarURL('webp', false, 16)};
-};
-
-/**
- * @param {import('../../').CustomInteraction} interaction
- * @returns {boolean}
- */
-const deletePlayerIfNeeded = (interaction) => {
-    const player = interaction.client.playerManager.get(interaction.guildId);
-    if(player) {
-        if((player.queue.length && !player.nowPlaying) || (!player.queue.length && !player.nowPlaying)) { return; }
-        return interaction.client.playerManager.delete(interaction.guildId);
-    }
-};
 
 /**
  * @param {import('../../').CustomInteraction} interaction

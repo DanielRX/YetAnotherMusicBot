@@ -17,46 +17,7 @@ const options = [
 
 const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0])).addStringOption(setupOption(options[1]));
 
-
-/**
- * @param {import('../../').CustomInteraction} interaction
- * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
- */
-const execute = async(interaction) => {
-    await interaction.deferReply();
-
-    const playlistName = interaction.options.get('playlistname').value;
-    const url = interaction.options.get('url').value;
-
-    const userData = await Member.findOne({memberId: interaction.member.id}).exec();
-    if(!userData) { return interaction.followUp('You have no custom playlists!'); }
-    const savedPlaylistsClone = userData.savedPlaylists;
-    if(savedPlaylistsClone.length == 0) { return interaction.followUp('You have no custom playlists!'); }
-
-    if(!validateURL(url)) { return interaction.followUp('Please enter a valid YouTube or Spotify URL!'); }
-
-    const location = savedPlaylistsClone.findIndex((value) => value.name == playlistName);
-    if(location !== -1) {
-        let urlsArrayClone = savedPlaylistsClone[location].urls;
-        processURL(url, interaction).then((processedURL) => {
-            if(!processedURL) return;
-            if(Array.isArray(processedURL)) {
-                urlsArrayClone = urlsArrayClone.concat(processedURL);
-                savedPlaylistsClone[location].urls = urlsArrayClone;
-                interaction.followUp('The playlist you provided was successfully saved!');
-            } else {
-                urlsArrayClone.push(processedURL);
-                savedPlaylistsClone[location].urls = urlsArrayClone;
-                interaction.followUp(`I added **${savedPlaylistsClone[location].urls[savedPlaylistsClone[location].urls.length - 1].title}** to **${playlistName}**`);
-            }
-            Member.updateOne({memberId: interaction.member.id}, {savedPlaylists: savedPlaylistsClone}).exec();
-        });
-    } else {
-        return interaction.followUp(`You have no playlist named ${playlistName}`);
-    }
-};
-
-function constructSongObj(video, user) {
+const constructSongObj = (video, user)=> {
     let {durationFormatted: duration, duration: rawDuration, title, thumbnail: {url}} = video.durationFormatted;
     return {
         url: `https://www.youtube.com/watch?v=${video.id}`,
@@ -67,9 +28,9 @@ function constructSongObj(video, user) {
         memberDisplayName: user.username,
         memberAvatar: user.avatarURL('webp', false, 16)
     };
-}
+};
 
-async function processURL(url, interaction) {
+const processURL = async(url, interaction) => {
     return new Promise(async function(resolve, reject) {
         if(isSpotifyURL(url)) {
             getData(url)
@@ -117,6 +78,44 @@ async function processURL(url, interaction) {
             resolve(constructSongObj(video, interaction.member.user));
         }
     });
-}
+};
+
+/**
+ * @param {import('../../').CustomInteraction} interaction
+ * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
+ */
+const execute = async(interaction) => {
+    await interaction.deferReply();
+
+    const playlistName = interaction.options.get('playlistname').value;
+    const url = interaction.options.get('url').value;
+
+    const userData = await Member.findOne({memberId: interaction.member.id}).exec();
+    if(!userData) { return interaction.followUp('You have no custom playlists!'); }
+    const savedPlaylistsClone = userData.savedPlaylists;
+    if(savedPlaylistsClone.length == 0) { return interaction.followUp('You have no custom playlists!'); }
+
+    if(!validateURL(url)) { return interaction.followUp('Please enter a valid YouTube or Spotify URL!'); }
+
+    const location = savedPlaylistsClone.findIndex((value) => value.name == playlistName);
+    if(location !== -1) {
+        let urlsArrayClone = savedPlaylistsClone[location].urls;
+        processURL(url, interaction).then((processedURL) => {
+            if(!processedURL) return;
+            if(Array.isArray(processedURL)) {
+                urlsArrayClone = urlsArrayClone.concat(processedURL);
+                savedPlaylistsClone[location].urls = urlsArrayClone;
+                interaction.followUp('The playlist you provided was successfully saved!');
+            } else {
+                urlsArrayClone.push(processedURL);
+                savedPlaylistsClone[location].urls = urlsArrayClone;
+                interaction.followUp(`I added **${savedPlaylistsClone[location].urls[savedPlaylistsClone[location].urls.length - 1].title}** to **${playlistName}**`);
+            }
+            Member.updateOne({memberId: interaction.member.id}, {savedPlaylists: savedPlaylistsClone}).exec();
+        });
+    } else {
+        return interaction.followUp(`You have no playlist named ${playlistName}`);
+    }
+};
 
 module.exports = {data, execute};

@@ -4,6 +4,33 @@ const {MessageEmbed} = require('discord.js');
 const fetch = require('node-fetch');
 const {PagesBuilder} = require('discord.js-pages');
 
+const convertTime = (time) => {
+    let str; let hr; let min; let sec; let ms;
+    let parts = time.toString().split('.');
+    ms = parseInt(parts[0].substr(parts[0].length - 3));
+    sec = parseInt(parts[0] / 1000);
+    if(sec >= 60) {
+        min = Math.floor(sec / 60);
+        sec = sec % 60;
+        sec = (sec < 10) ? ('0' + sec) : sec;
+    }
+    if(min >= 60) {
+        hr = Math.floor(min / 60);
+        min = min % 60;
+        min = (min < 10) ? ('0' + min) : min;
+    }
+    if(ms < 10) ms = '00' + ms;
+    else if(ms < 100) ms = '0' + ms;
+    if(min === undefined) {
+        str = (ms === undefined) ? (sec.toString() + 's') : (sec.toString() + 's ' + ms.toString() + 'ms');
+    } else if(hr === undefined) {
+        str = (ms === undefined) ? (min.toString() + 'm ' + sec.toString() + 's') : (min.toString() + 'm ' + sec.toString() + 's ' + ms.toString() + 'ms');
+    } else {
+        str = (ms === undefined) ? (hr.toString() + 'h ' + min.toString() + 'm ' + sec.toString() + 's') : (hr.toString() + 'h ' + min.toString() + 'm ' + sec.toString() + 's ' + ms.toString() + 'ms');
+    }
+    return str;
+};
+
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('speedrunner-stats')
@@ -68,30 +95,4 @@ module.exports = {
     }
 };
 
-// prettier-ignore
-function convertTime(time) {
-    let str; let hr; let min; let sec; let ms;
-    let parts = time.toString().split('.');
-    ms = parseInt(parts[0].substr(parts[0].length - 3));
-    sec = parseInt(parts[0] / 1000);
-    if(sec >= 60) {
-        min = Math.floor(sec / 60);
-        sec = sec % 60;
-        sec = (sec < 10) ? ('0' + sec) : sec;
-    }
-    if(min >= 60) {
-        hr = Math.floor(min / 60);
-        min = min % 60;
-        min = (min < 10) ? ('0' + min) : min;
-    }
-    if(ms < 10) ms = '00' + ms;
-    else if(ms < 100) ms = '0' + ms;
-    if(min === undefined) {
-        str = (ms === undefined) ? (sec.toString() + 's') : (sec.toString() + 's ' + ms.toString() + 'ms');
-    } else if(hr === undefined) {
-        str = (ms === undefined) ? (min.toString() + 'm ' + sec.toString() + 's') : (min.toString() + 'm ' + sec.toString() + 's ' + ms.toString() + 'ms');
-    } else {
-        str = (ms === undefined) ? (hr.toString() + 'h ' + min.toString() + 'm ' + sec.toString() + 's') : (hr.toString() + 'h ' + min.toString() + 'm ' + sec.toString() + 's ' + ms.toString() + 'ms');
-    }
-    return str;
-}
+

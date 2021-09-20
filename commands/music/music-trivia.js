@@ -16,6 +16,35 @@ const options = [
 
 const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
+const handleSubscription = async(interaction, player) => {
+    const {queue} = player;
+    let {voiceChannel} = queue[0];
+
+    const connection = joinVoiceChannel({
+        channelId: voiceChannel.id,
+        guildId: interaction.guild.id,
+        adapterCreator: interaction.guild.voiceAdapterCreator
+    });
+
+    player.textChannel = interaction.channel;
+    player.passConnection(connection);
+    try {
+        await entersState(player.connection, VoiceConnectionStatus.Ready, 10000);
+    } catch(err) {
+        console.error(err);
+        return interaction.followUp({content: 'Failed to join your channel!'});
+    }
+    player.process(player.queue);
+
+    const startTriviaEmbed = new MessageEmbed()
+        .setColor('#ff7373')
+        .setTitle(':notes: Starting Music Quiz!')
+        .setDescription(`:notes: Get ready! There are ${queue.length} songs, you have 30 seconds to guess either the singer/band or the name of the song. Good luck!
+    Vote skip the song by entering the word 'skip'.
+    You can end the trivia at any point by using the end-trivia command!`);
+    return interaction.followUp({embeds: [startTriviaEmbed]});
+};
+
 /**
  * @param {import('../../').CustomInteraction} interaction
  * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
@@ -59,36 +88,6 @@ const execute = async(interaction) => {
 
     // play and display embed that says trivia started and how many songs are going to be
     handleSubscription(interaction, triviaPlayer);
-};
-
-
-const handleSubscription = async(interaction, player) => {
-    const {queue} = player;
-    let {voiceChannel} = queue[0];
-
-    const connection = joinVoiceChannel({
-        channelId: voiceChannel.id,
-        guildId: interaction.guild.id,
-        adapterCreator: interaction.guild.voiceAdapterCreator
-    });
-
-    player.textChannel = interaction.channel;
-    player.passConnection(connection);
-    try {
-        await entersState(player.connection, VoiceConnectionStatus.Ready, 10000);
-    } catch(err) {
-        console.error(err);
-        return interaction.followUp({content: 'Failed to join your channel!'});
-    }
-    player.process(player.queue);
-
-    const startTriviaEmbed = new MessageEmbed()
-        .setColor('#ff7373')
-        .setTitle(':notes: Starting Music Quiz!')
-        .setDescription(`:notes: Get ready! There are ${queue.length} songs, you have 30 seconds to guess either the singer/band or the name of the song. Good luck!
-    Vote skip the song by entering the word 'skip'.
-    You can end the trivia at any point by using the end-trivia command!`);
-    return interaction.followUp({embeds: [startTriviaEmbed]});
 };
 
 module.exports = {data, execute};

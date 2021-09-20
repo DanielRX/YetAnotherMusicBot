@@ -19,6 +19,34 @@ const setupOption = (config) => (option) => {
     return option;
 };
 
+const fetchFromReddit = async(interaction, subreddit, sort, timeFilter = 'day') => {
+    const response = await fetch(`https://www.reddit.com/r/${subreddit}/${sort}/.json?limit=10&t=${timeFilter}`);
+    const json = await response.json();
+    const dataArr = [];
+
+    for(let i = 1; i <= json.data.children.length; ++i) {
+        /**
+         * @type {'#FE9004' | '#CF000F'}
+         */
+        let color = '#FE9004';
+        const redditPost = json.data.children[i - 1];
+
+        if(redditPost.data.title.length > 255)
+            redditPost.data.title = redditPost.data.title.substring(0, 252) + '...'; // discord.js does not allow embed title lengths greater than 256
+
+        if(redditPost.data.over_18) color = '#CF000F';
+
+        dataArr.push(new MessageEmbed()
+            .setColor(color) // if post is nsfw, color is red
+            .setTitle(redditPost.data.title)
+            .setURL(`https://www.reddit.com${redditPost.data.permalink}`)
+            .setDescription(`Upvotes: ${redditPost.data.score} :thumbsup: `)
+            .setAuthor(redditPost.data.author));
+    }
+
+    return new PagesBuilder(interaction).setPages(dataArr).build();
+};
+
 module.exports = {
     data: new SlashCommandBuilder().setName(name).setDescription(description)
         .addStringOption(setupOption(options[0]))
@@ -71,31 +99,3 @@ module.exports = {
         }
     }
 };
-
-async function fetchFromReddit(interaction, subreddit, sort, timeFilter = 'day') {
-    const response = await fetch(`https://www.reddit.com/r/${subreddit}/${sort}/.json?limit=10&t=${timeFilter}`);
-    const json = await response.json();
-    const dataArr = [];
-
-    for(let i = 1; i <= json.data.children.length; ++i) {
-        /**
-         * @type {'#FE9004' | '#CF000F'}
-         */
-        let color = '#FE9004';
-        const redditPost = json.data.children[i - 1];
-
-        if(redditPost.data.title.length > 255)
-            redditPost.data.title = redditPost.data.title.substring(0, 252) + '...'; // discord.js does not allow embed title lengths greater than 256
-
-        if(redditPost.data.over_18) color = '#CF000F';
-
-        dataArr.push(new MessageEmbed()
-            .setColor(color) // if post is nsfw, color is red
-            .setTitle(redditPost.data.title)
-            .setURL(`https://www.reddit.com${redditPost.data.permalink}`)
-            .setDescription(`Upvotes: ${redditPost.data.score} :thumbsup: `)
-            .setAuthor(redditPost.data.author));
-    }
-
-    return new PagesBuilder(interaction).setPages(dataArr).build();
-}

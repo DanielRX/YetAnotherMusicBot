@@ -4,6 +4,32 @@ const {MessageEmbed} = require('discord.js');
 const fetch = require('node-fetch');
 const {PagesBuilder} = require('discord.js-pages');
 
+const getShowSearch = async(showQuery) => {
+    return new Promise(async function(resolve, reject) {
+        const url = `http://api.tvmaze.com/search/shows?q=${encodeURI(showQuery)}`;
+        try {
+            const body = await fetch(url);
+            if(body.status == `429`) {
+                reject(':x: Rate Limit exceeded. Please try again in a few minutes.');
+            }
+            if(body.status == `503`) {
+                reject(':x: The service is currently unavailable. Please try again later.');
+            }
+            if(body.status !== 200) {
+                reject('There was a problem getting data from the API, make sure you entered a valid TV show name');
+            }
+            const data = await body.json();
+            if(!data.length) {
+                reject('There was a problem getting data from the API, make sure you entered a valid TV show name');
+            }
+            resolve(data);
+        } catch(e) {
+            console.error(e);
+            reject('There was a problem getting data from the API, make sure you entered a valid TV show name');
+        }
+    });
+};
+
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('tv-show-search')
@@ -116,28 +142,4 @@ module.exports = {
     }
 };
 
-async function getShowSearch(showQuery) {
-    return new Promise(async function(resolve, reject) {
-        const url = `http://api.tvmaze.com/search/shows?q=${encodeURI(showQuery)}`;
-        try {
-            const body = await fetch(url);
-            if(body.status == `429`) {
-                reject(':x: Rate Limit exceeded. Please try again in a few minutes.');
-            }
-            if(body.status == `503`) {
-                reject(':x: The service is currently unavailable. Please try again later.');
-            }
-            if(body.status !== 200) {
-                reject('There was a problem getting data from the API, make sure you entered a valid TV show name');
-            }
-            const data = await body.json();
-            if(!data.length) {
-                reject('There was a problem getting data from the API, make sure you entered a valid TV show name');
-            }
-            resolve(data);
-        } catch(e) {
-            console.error(e);
-            reject('There was a problem getting data from the API, make sure you entered a valid TV show name');
-        }
-    });
-}
+

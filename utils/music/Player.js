@@ -15,7 +15,7 @@ class MusicPlayer {
         this.loopQueue = false;
         this.volume = 1;
         this.commandLock = false;
-        this.textChannel;
+        this.textChannel = null;
     }
 
     passConnection(connection) {

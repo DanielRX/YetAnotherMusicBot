@@ -1,6 +1,13 @@
 // @ts-check
 const YouTube = require('youtube-sr').default;
 
+const concatSongNameAndArtists = (data) => {
+    let artists = '';
+    data.artists.forEach((artist) => (artists = artists.concat(' ', artist.name)));
+    const songName = data.name;
+    return `${songName} ${artists}`;
+};
+
 module.exports.searchOne = async(track) => {
     return new Promise(async(resolve, reject) => {
         const artistsAndName = concatSongNameAndArtists(track);
@@ -20,9 +27,4 @@ module.exports.searchOne = async(track) => {
     });
 };
 
-var concatSongNameAndArtists = (data) => {
-    let artists = '';
-    data.artists.forEach((artist) => (artists = artists.concat(' ', artist.name)));
-    const songName = data.name;
-    return `${songName} ${artists}`;
-};
+

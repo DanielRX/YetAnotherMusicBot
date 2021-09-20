@@ -3,6 +3,39 @@ const {SlashCommandBuilder} = require('@discordjs/builders');
 const fetch = require('node-fetch');
 const {MessageEmbed} = require('discord.js');
 
+const getWorldStats = async() => {
+    return new Promise(async function(resolve, reject) {
+        const url = 'https://disease.sh/v3/covid-19/all';
+        try {
+            const body = await fetch(url);
+            if(body.status !== 200) {
+                reject(`The covid API can't be accessed at the moment, please try later`);
+            }
+            const data = await body.json();
+            resolve(data);
+        } catch(e) {
+            console.error(e);
+            reject(`The covid API can't be accessed at the moment, please try later`);
+        }
+    });
+};
+const getCountryStats = async(country) => {
+    return new Promise(async function(resolve, reject) {
+        const url = `https://disease.sh/v3/covid-19/countries/${country}`;
+        try {
+            const body = await fetch(url);
+            if(body.status !== 200) {
+                reject(`There was a problem getting data from the API, make sure you entered a valid country name`);
+            }
+            const data = await body.json();
+            resolve(data);
+        } catch(e) {
+            console.error(e);
+            reject(`There was a problem getting data from the API, make sure you entered a valid country name`);
+        }
+    });
+};
+
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('covid')
@@ -70,38 +103,6 @@ module.exports = {
                     console.error(err);
                     interaction.reply('Something went wrong!');
                 });
-        }
-        function getWorldStats() {
-            return new Promise(async function(resolve, reject) {
-                const url = 'https://disease.sh/v3/covid-19/all';
-                try {
-                    const body = await fetch(url);
-                    if(body.status !== 200) {
-                        reject(`The covid API can't be accessed at the moment, please try later`);
-                    }
-                    const data = await body.json();
-                    resolve(data);
-                } catch(e) {
-                    console.error(e);
-                    reject(`The covid API can't be accessed at the moment, please try later`);
-                }
-            });
-        }
-        function getCountryStats(country) {
-            return new Promise(async function(resolve, reject) {
-                const url = `https://disease.sh/v3/covid-19/countries/${country}`;
-                try {
-                    const body = await fetch(url);
-                    if(body.status !== 200) {
-                        reject(`There was a problem getting data from the API, make sure you entered a valid country name`);
-                    }
-                    const data = await body.json();
-                    resolve(data);
-                } catch(e) {
-                    console.error(e);
-                    reject(`There was a problem getting data from the API, make sure you entered a valid country name`);
-                }
-            });
         }
     }
 };
