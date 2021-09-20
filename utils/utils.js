@@ -16,17 +16,24 @@ const arrayMove = (arr, old_index, new_index) => {
     return arr;
 };
 
-const getRandom = (arr, n) => {
-    let result = new Array(n);
-    let len = arr.length;
-    let taken = new Array(len);
-    if(n > len) {throw new RangeError('getRandom: more elements taken than available!');}
-    while(n--) {
-        let x = Math.floor(Math.random() * len);
-        result[n] = arr[(x in taken) ? taken[x] : x];
-        taken[x] = (--len in taken) ? taken[len] : len;
+const shuffleArray = (arr) => {
+    for(let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
     }
-    return result;
+    return arr;
+};
+
+
+/**
+ * @template T
+ * @param {T[]} arr
+ * @param {number} n
+ * @returns {T[]}
+ */
+const getRandom = (arr, n) => {
+    if(n > arr.length) {throw new RangeError('getRandom: more elements taken than available!');}
+    return shuffleArray(arr).slice(0, n);
 };
 
 /**
@@ -36,13 +43,6 @@ const getRandom = (arr, n) => {
  */
 const randomEl = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
-const shuffleArray = (arr) => {
-    for(let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-};
 
 const setupOption = (config) => (option) => {
     option = option.setName(config.name).setDescription(config.description).setRequired(config.required);
