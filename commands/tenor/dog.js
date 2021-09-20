@@ -1,6 +1,4 @@
 // @ts-check
-
-const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const fetch = require('node-fetch');
 const {tenorAPI} = require('../../config.json');
@@ -13,7 +11,7 @@ module.exports = {
         .setName('dog')
         .setDescription('Replies with a cute dog picture!'),
     /**
-     * @param {CommandInteraction} interaction
+     * @param {import('../../').CustomInteraction} interaction
      * @returns {Promise<void>}
      */
     async execute(interaction) {

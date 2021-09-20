@@ -1,5 +1,4 @@
 // @ts-check
-
 const {AudioPlayerStatus, createAudioPlayer, entersState, VoiceConnectionDisconnectReason, VoiceConnectionStatus, createAudioResource, StreamType} = require('@discordjs/voice');
 const {setTimeout} = require('timers');
 const {promisify} = require('util');
@@ -192,7 +191,7 @@ class TriviaPlayer {
     async process(queue) {
         const [song] = this.queue;
         try {
-            const stream = ytdl(song.url, { filter: 'audio', quality: 'highestaudio', highWaterMark: 1 << 25});
+            const stream = ytdl(song.url, {filter: 'audio', quality: 'highestaudio', highWaterMark: 1 << 25});
             const resource = createAudioResource(stream, {inputType: StreamType.Arbitrary});
             this.audioPlayer.play(resource);
         } catch(err) {

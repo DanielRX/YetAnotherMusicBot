@@ -120,6 +120,4 @@ async function processURL(url, interaction) {
     });
 }
 
-
-
 module.exports = {data, execute};

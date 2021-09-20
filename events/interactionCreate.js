@@ -1,10 +1,9 @@
 // @ts-check
-const {CommandInteraction} = require('discord.js');
 
 module.exports = {
     name: 'interactionCreate',
     /**
-     * @param {CommandInteraction} interaction
+     * @param {import('../').CustomInteraction} interaction
      * @returns {Promise<void>}
      */
     async execute(interaction) {

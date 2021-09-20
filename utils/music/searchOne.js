@@ -1,21 +1,18 @@
 // @ts-check
-
 const YouTube = require('youtube-sr').default;
 
-module.exports.searchOne = async function searchOne(track) {
+module.exports.searchOne = async(track) => {
     return new Promise(async(resolve, reject) => {
         const artistsAndName = concatSongNameAndArtists(track);
 
         try {
             const {title, id, thumbnail, duration, durationFormatted} = await YouTube.searchOne(artistsAndName);
             resolve({
-                title: title,
+                title,
                 url: `https://www.youtube.com/watch?v=${id}`,
-                thumbnail: {
-                    url: thumbnail.url
-                },
-                durationFormatted: durationFormatted,
-                duration: duration
+                thumbnail: {url: thumbnail.url},
+                durationFormatted,
+                duration
             });
         } catch{
             reject('Something went wrong when searching for the track!');

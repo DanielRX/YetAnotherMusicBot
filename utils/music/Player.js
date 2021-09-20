@@ -90,10 +90,7 @@ class MusicPlayer {
             }
         });
 
-        this.audioPlayer.on('error', (error) => {
-            console.error(error);
-        });
-
+        this.audioPlayer.on('error', (error) => { console.error(error); });
         this.connection.subscribe(this.audioPlayer);
     }
 
