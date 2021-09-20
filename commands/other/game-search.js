@@ -66,7 +66,7 @@ module.exports = {
         try {
             var response = await getGameDetails(gameTitleFiltered);
         } catch(error) {
-            return interaction.reply(error);
+            return void interaction.reply(error);
         }
 
         let releaseDate;
@@ -125,6 +125,6 @@ module.exports = {
         if(response.background_image) {
             embed.setThumbnail(response.background_image);
         }
-        embed.build();
+        void embed.build();
     }
 };

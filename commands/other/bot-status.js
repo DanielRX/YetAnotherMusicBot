@@ -66,7 +66,7 @@ module.exports = {
 
         if(isOwner) { StatusEmbed.addField('Dependency List', `node: ${process.version.replace(/v/, '')}\n        ${libList}`); }
 
-        interaction.reply({embeds: [StatusEmbed]});
+        void interaction.reply({embeds: [StatusEmbed]});
         await pingMsg.delete();
     }
 };

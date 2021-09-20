@@ -26,7 +26,7 @@ const execute = async(interaction) => {
     triviaPlayer.reset();
     interaction.client.triviaManager.delete(interaction.guildId);
 
-    interaction.reply('Stopped the trivia! To start a new one, use the music-trivia command');
+    return interaction.reply('Stopped the trivia! To start a new one, use the music-trivia command');
 };
 
 module.exports = {data, execute};

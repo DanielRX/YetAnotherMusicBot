@@ -46,10 +46,9 @@ const execute = async(interaction) => {
         const title = urlsArrayClone[index - 1].title;
         urlsArrayClone.splice(index - 1, 1);
         savedPlaylistsClone[location].urls = urlsArrayClone;
-        Member.updateOne({memberId: interaction.member.id}, {savedPlaylists: savedPlaylistsClone}).exec();
+        void Member.updateOne({memberId: interaction.member.id}, {savedPlaylists: savedPlaylistsClone}).exec();
 
-        interaction.followUp(`I removed **${title}** from **${savedPlaylistsClone[location].name}**`);
-        return;
+        return interaction.followUp(`I removed **${title}** from **${savedPlaylistsClone[location].name}**`);
     }
     return interaction.followUp(`You have no playlist named ${playlistName}`);
 };

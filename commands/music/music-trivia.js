@@ -87,7 +87,7 @@ const execute = async(interaction) => {
     });
 
     // play and display embed that says trivia started and how many songs are going to be
-    handleSubscription(interaction, triviaPlayer);
+    return handleSubscription(interaction, triviaPlayer);
 };
 
 module.exports = {data, execute};

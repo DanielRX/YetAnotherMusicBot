@@ -6,6 +6,7 @@ const {twitchClientID, twitchClientSecret} = require('../../config.json');
 // Skips loading if not found in config.json
 if(!twitchClientID || !twitchClientSecret) { return; } // TODO: Fix this, won't play nice with ts
 
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 module.exports = class TwitchAPI {
     //Access Token is valid for 24 Hours
     static getToken(twitchClientID, twitchClientSecret, scope) {
@@ -111,7 +112,7 @@ module.exports = class TwitchAPI {
 const TwitchAPI = require('./twitch-api.js'); // TODO: Fix - having this at the Top gives a Circular Error Message - Possible fix: Remove and use TwitchAPI from this file
 const scope = 'user:read:email';
 // get first access_token
-(async function() {
+void (async function() {
     await TwitchAPI.getToken(twitchClientID, twitchClientSecret, scope)
         .then((result) => {
             module.exports.access_token = result;

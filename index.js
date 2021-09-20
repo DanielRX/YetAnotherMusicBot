@@ -66,7 +66,7 @@ for(const file of commandFiles) {
     client.commands.set(command.data.name, command);
 }
 
-(async() => {
+void (async() => {
     try {
         console.log('Started refreshing application (/) commands.');
 
@@ -111,4 +111,4 @@ client.once('ready', () => {
     console.log('Ready!');
 });
 
-client.login(token);
+void client.login(token);

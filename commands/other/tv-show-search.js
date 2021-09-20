@@ -131,10 +131,7 @@ module.exports = {
                     .setFooter(`(Page ${i}/${showResponse.length}) ` + 'Powered by tvmaze.com', 'https://static.tvmaze.com/images/favico/favicon-32x32.png'));
             }
 
-            new PagesBuilder(interaction)
-                .setPages(embedArray)
-                .setColor('#17a589')
-                .build();
+            void new PagesBuilder(interaction).setPages(embedArray).setColor('#17a589').build();
         } catch(error) {
             console.log(error);
             return interaction.followUp(':x: Something went wrong with your request.');

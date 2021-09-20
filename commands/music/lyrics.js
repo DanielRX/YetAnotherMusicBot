@@ -105,7 +105,7 @@ const getLyrics = (url) => {
  * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
  */
 const execute = async(interaction) => {
-    interaction.deferReply();
+    void interaction.deferReply();
     const player = interaction.client.playerManager.get(interaction.guildId);
     const guildData = interaction.client.guildData.get(interaction.guildId);
     let songName = interaction.options.get('songname');
@@ -138,7 +138,7 @@ const execute = async(interaction) => {
             }
         }
 
-        new PagesBuilder(interaction)
+        void new PagesBuilder(interaction)
             .setTitle(`${songName} lyrics`)
             .setPages(lyricsArray)
             .setColor('#9096e6')

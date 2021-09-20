@@ -71,11 +71,11 @@ module.exports = {
                         .setFooter('Last updated')
                         .setTimestamp(data.updated);
 
-                    interaction.reply({embeds: [covidall]});
+                    return interaction.reply({embeds: [covidall]});
                 })
                 .catch(function onError(err) {
                     console.error(err);
-                    interaction.reply('Something went wrong!');
+                    return interaction.reply('Something went wrong!');
                 });
         } else {
             await getCountryStats(country)
@@ -97,11 +97,11 @@ module.exports = {
                         .setFooter('Last updated')
                         .setTimestamp(data.updated);
 
-                    interaction.reply({embeds: [covidcountry]});
+                    return interaction.reply({embeds: [covidcountry]});
                 })
                 .catch(function onError(err) {
                     console.error(err);
-                    interaction.reply('Something went wrong!');
+                    return interaction.reply('Something went wrong!');
                 });
         }
     }

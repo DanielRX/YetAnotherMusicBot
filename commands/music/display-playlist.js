@@ -18,7 +18,7 @@ const data = new SlashCommandBuilder().setName(name).setDescription(description)
  * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
  */
 const execute = async(interaction) => {
-    interaction.deferReply();
+    void interaction.deferReply();
     const playlistName = interaction.options.get('playlistname').value;
     // Check if user has playlists or if user is saved in the DB
     const userData = await Member.findOne({memberId: interaction.member.id}).exec();

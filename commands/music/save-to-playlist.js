@@ -100,18 +100,18 @@ const execute = async(interaction) => {
     const location = savedPlaylistsClone.findIndex((value) => value.name == playlistName);
     if(location !== -1) {
         let urlsArrayClone = savedPlaylistsClone[location].urls;
-        processURL(url, interaction).then((processedURL) => {
+        void processURL(url, interaction).then((processedURL) => {
             if(!processedURL) return;
             if(Array.isArray(processedURL)) {
                 urlsArrayClone = urlsArrayClone.concat(processedURL);
                 savedPlaylistsClone[location].urls = urlsArrayClone;
-                interaction.followUp('The playlist you provided was successfully saved!');
+                void interaction.followUp('The playlist you provided was successfully saved!');
             } else {
                 urlsArrayClone.push(processedURL);
                 savedPlaylistsClone[location].urls = urlsArrayClone;
-                interaction.followUp(`I added **${savedPlaylistsClone[location].urls[savedPlaylistsClone[location].urls.length - 1].title}** to **${playlistName}**`);
+                void interaction.followUp(`I added **${savedPlaylistsClone[location].urls[savedPlaylistsClone[location].urls.length - 1].title}** to **${playlistName}**`);
             }
-            Member.updateOne({memberId: interaction.member.id}, {savedPlaylists: savedPlaylistsClone}).exec();
+            return Member.updateOne({memberId: interaction.member.id}, {savedPlaylists: savedPlaylistsClone}).exec();
         });
     } else {
         return interaction.followUp(`You have no playlist named ${playlistName}`);

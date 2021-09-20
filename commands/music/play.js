@@ -110,11 +110,11 @@ const handleSpotifyURL = (interaction) => {
                         player.queue.push(constructSongObj(video, interaction.member.voice.channel, interaction.member.user));
                     }
                 } catch(err) {
-                    processingMessage.delete();
+                    void processingMessage.delete();
                     return interaction.followUp('Failed to process playlist, please try again later');
                 }
             }
-            processingMessage.edit('Playlist Processed!');
+            void processingMessage.edit('Playlist Processed!');
             if(player.audioPlayer.state.status !== AudioPlayerStatus.Playing) {
                 return handleSubscription(player.queue, interaction, player);
             }
@@ -143,7 +143,7 @@ const handleSpotifyURL = (interaction) => {
     getData(query).then(handleSpotifyData).catch((error) => {
         deletePlayerIfNeeded(interaction);
         console.error(error);
-        interaction.followUp(`I couldn't find what you were looking for :(`);
+        return interaction.followUp(`I couldn't find what you were looking for :(`);
     });
 };
 
@@ -219,7 +219,7 @@ const searchYoutube = async(interaction, voiceChannel) => {
         }
         if(audioPlayer.state.status !== AudioPlayerStatus.Playing) {
             const player = playerManager;
-            handleSubscription(player.queue, interaction, player);
+            void handleSubscription(player.queue, interaction, player);
         } else if(audioPlayer.state.status === AudioPlayerStatus.Playing) {
             player.commandLock = false;
             return interaction.followUp(`Added **${video.title}** to queue`);
@@ -229,16 +229,14 @@ const searchYoutube = async(interaction, voiceChannel) => {
 
     playOptionsCollector.on('collect', async(i) => {
         if(i.user.id !== interaction.user.id) {
-            i.reply({content: 'This element is not for you!', ephemeral: true});
-            return;
+            return i.reply({content: 'This element is not for you!', ephemeral: true});
         }
         playOptionsCollector.stop();
         const value = i.values[0];
         if(value === 'cancel_option') {
             if(playOptions) {
-                interaction.followUp('Search canceled');
                 player.commandLock = false;
-                return;
+                void interaction.followUp('Search canceled');
             }
         }
         const videoIndex = parseInt(value);
@@ -260,7 +258,7 @@ const searchYoutube = async(interaction, voiceChannel) => {
 
 /**
  * @param {import('../../').CustomInteraction} interaction
- * @returns {Promise<void>}
+ * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
  */
 const handleYoutubeURL = async(interaction) => {
     const player = interaction.client.playerManager.get(interaction.guildId);
@@ -281,27 +279,24 @@ const handleYoutubeURL = async(interaction) => {
 
     const video = await YouTube.getVideo(query).catch(function() {
         deletePlayerIfNeeded(interaction);
-        interaction.followUp(':x: There was a problem getting the video you provided!');
+        return interaction.followUp(':x: There was a problem getting the video you provided!');
     });
     if(!video) return;
     if(video.live === 'live' && !options.playLiveStreams) {
         player.commandLock = false;
         deletePlayerIfNeeded(interaction);
-        interaction.followUp('Live streams are disabled in this server! Contact the owner');
-        return;
+        return interaction.followUp('Live streams are disabled in this server! Contact the owner');
     }
 
     if(video.duration.hours !== 0 && !options.playVideosLongerThan1Hour) {
         player.commandLock = false;
         deletePlayerIfNeeded(interaction);
-        interaction.followUp('Videos longer than 1 hour are disabled in this server! Contact the owner');
-        return;
+        return interaction.followUp('Videos longer than 1 hour are disabled in this server! Contact the owner');
     }
 
     if(player.length > options.maxQueueLength) {
         player.commandLock = false;
-        interaction.followUp(`The queue hit its limit of ${options.maxQueueLength}, please wait a bit before attempting to play more songs`);
-        return;
+        return interaction.followUp(`The queue hit its limit of ${options.maxQueueLength}, please wait a bit before attempting to play more songs`);
     }
     if(nextFlag || jumpFlag) {
         flagLogic(interaction, video, jumpFlag);
@@ -310,7 +305,7 @@ const handleYoutubeURL = async(interaction) => {
     }
 
     if(player.audioPlayer.state.status !== AudioPlayerStatus.Playing) {
-        return handleSubscription(player.queue, interaction, player);
+        void handleSubscription(player.queue, interaction, player);
     }
 };
 
@@ -371,7 +366,7 @@ const handleYoutubePlaylistURL = async(interaction) => {
         player.audioPlayer.stop();
     }
     if(player.audioPlayer.state.status !== AudioPlayerStatus.Playing) {
-        return handleSubscription(player.queue, interaction, player);
+        return void handleSubscription(player.queue, interaction, player);
     }
     // interactiveEmbed(interaction)
     //   .addField('Added Playlist', `[${playlist.title}](${playlist.url})`)
@@ -414,7 +409,7 @@ const handlePlayFromHistory = async(interaction, message) => {
             case'history_option':
                 if(player.audioPlayer.state.status !== AudioPlayerStatus.Playing) {
                     player.queue.unshift(player.queueHistory[index]);
-                    handleSubscription(player.queue, interaction, player);
+                    void handleSubscription(player.queue, interaction, player);
                     break;
                 }
                 if(nextFlag || jumpFlag) {
@@ -427,7 +422,7 @@ const handlePlayFromHistory = async(interaction, message) => {
                     player.queue.push(player.queueHistory[index]);
                 }
                 player.commandLock = false;
-                interaction.followUp(`'${player.queueHistory[index].title}' was added to queue!`);
+                void interaction.followUp(`'${player.queueHistory[index].title}' was added to queue!`);
                 break;
                 // 2: Search for the query on YouTube
             case'youtube_option':
@@ -436,7 +431,7 @@ const handlePlayFromHistory = async(interaction, message) => {
                 // 3: Cancel
             case'cancel_option':
                 deletePlayerIfNeeded(interaction);
-                interaction.followUp('Canceled search');
+                void interaction.followUp('Canceled search');
                 break;
         }
     });
@@ -492,7 +487,7 @@ const handlePlayPlaylist = async(interaction, message, playlistsArray, found) =>
                 if(!hasHistoryField) break;
                 if(player.audioPlayer.state.status !== AudioPlayerStatus.Playing) {
                     player.queue.unshift(player.queueHistory[index]);
-                    handleSubscription(player.queue, interaction, player);
+                    void handleSubscription(player.queue, interaction, player);
                     break;
                 }
                 if(nextFlag || jumpFlag) {
@@ -505,7 +500,7 @@ const handlePlayPlaylist = async(interaction, message, playlistsArray, found) =>
                     player.queue.push(player.queueHistory[index]);
                 }
                 player.commandLock = false;
-                interaction.followUp(`'${player.queueHistory[index].title}' was added to queue!`);
+                void interaction.followUp(`'${player.queueHistory[index].title}' was added to queue!`);
                 break;
                 // 1: Play the saved playlist
             case'playlist_option':
@@ -524,7 +519,7 @@ const handlePlayPlaylist = async(interaction, message, playlistsArray, found) =>
                     //   )
                     //   .build();
                 } else {
-                    handleSubscription(player.queue, interaction, player);
+                    void handleSubscription(player.queue, interaction, player);
                 }
                 break;
                 // 2: Play the shuffled saved playlist
@@ -543,7 +538,7 @@ const handlePlayPlaylist = async(interaction, message, playlistsArray, found) =>
                     //   )
                     //   .build();
                 } else {
-                    handleSubscription(player.queue, interaction, player);
+                    void handleSubscription(player.queue, interaction, player);
                 }
                 break;
                 // 3: Search for the query on YouTube
@@ -553,7 +548,7 @@ const handlePlayPlaylist = async(interaction, message, playlistsArray, found) =>
                 // 4: Cancel
             case'cancel_option':
                 player.commandLock = false;
-                interaction.followUp('Canceled search');
+                void interaction.followUp('Canceled search');
                 deletePlayerIfNeeded(interaction);
                 break;
         }

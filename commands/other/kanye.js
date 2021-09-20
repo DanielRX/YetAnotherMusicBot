@@ -24,8 +24,8 @@ const execute = async(interaction) => {
         .then((res) => res.json())
         .then((json) => interaction.reply({embeds: [makeEmbed(json.quote)]}))
         .catch((err) => {
-            interaction.reply('Failed to deliver quote :sob:');
-            return console.error(err);
+            console.error(err);
+            return interaction.reply('Failed to deliver quote :sob:');
         });
 };
 

@@ -38,11 +38,11 @@ module.exports = {
                     .setURL('https://translate.google.com/')
                     .setDescription(response.text)
                     .setFooter('Powered by Google Translate!');
-                interaction.reply({embeds: [embed]});
+                return interaction.reply({embeds: [embed]});
             })
             .catch((error) => {
-                interaction.reply(':x: Something went wrong when trying to translate the text');
                 console.error(error);
+                return interaction.reply(':x: Something went wrong when trying to translate the text');
             });
     }
 };

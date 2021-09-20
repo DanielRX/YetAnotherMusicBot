@@ -30,13 +30,11 @@ module.exports = {
                     .setURL(json.list[0].permalink)
                     .setTimestamp()
                     .setFooter('Powered by UrbanDictionary', '');
-                interaction.reply({embeds: [embed]});
-                return;
+                return interaction.reply({embeds: [embed]});
             })
             .catch(() => {
-                interaction.reply('Failed to deliver definition :sob:');
                 // console.error(err); // no need to spam console for each time it doesn't find a query
-                return;
+                return interaction.reply('Failed to deliver definition :sob:');
             });
     }
 };

@@ -38,7 +38,7 @@ const execute = async(interaction) => {
         embeds.push(new MessageEmbed().setTitle(`Page ${i}`).setFields(fields));
     }
 
-    new PagesBuilder(interaction)
+    void new PagesBuilder(interaction)
         .setTitle('Music Queue')
         .setPages(embeds)
         .setListenTimeout(2 * 60 * 1000)

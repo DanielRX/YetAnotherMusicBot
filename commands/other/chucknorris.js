@@ -22,12 +22,11 @@ module.exports = {
                     .setDescription(json.value)
                     .setTimestamp()
                     .setFooter('Powered by chucknorris.io', '');
-                interaction.reply({embeds: [embed]});
-                return;
+                return interaction.reply({embeds: [embed]});
             })
             .catch((err) => {
-                interaction.reply(':x: An error occured, Chuck is investigating this!');
-                return console.error(err);
+                console.error(err);
+                return interaction.reply(':x: An error occured, Chuck is investigating this!');
             });
     }
 };

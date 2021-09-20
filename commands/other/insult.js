@@ -22,12 +22,11 @@ module.exports = {
                     .setDescription(json.insult)
                     .setTimestamp()
                     .setFooter('Powered by evilinsult.com', '');
-                interaction.reply({embeds: [embed]});
-                return;
+                return interaction.reply({embeds: [embed]});
             })
             .catch((err) => {
-                interaction.reply(':x: Failed to deliver insult!');
-                return console.error(err);
+                console.error(err);
+                return interaction.reply(':x: Failed to deliver insult!');
             });
     }
 };

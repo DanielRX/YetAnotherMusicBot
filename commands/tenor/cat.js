@@ -15,8 +15,8 @@ module.exports = {
         return fetch(`https://api.tenor.com/v1/random?key=${tenorAPI}&q=cat&limit=1`)
             .then((res) => res.json())
             .then((json) => interaction.reply({content: json.results[0].url}))
-            .catch((err) => {
-                interaction.reply(':x: Request to find a kitty failed!');
+            .catch(async(err) => {
+                await interaction.reply(':x: Request to find a kitty failed!');
                 return console.error(err);
             });
     }

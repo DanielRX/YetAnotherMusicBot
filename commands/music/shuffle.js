@@ -12,7 +12,7 @@ const data = new SlashCommandBuilder().setName(name).setDescription(description)
  * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
  */
 const execute = async(interaction) => {
-    interaction.deferReply();
+    void interaction.deferReply();
     const voiceChannel = interaction.member.voice.channel;
     if(!voiceChannel) { return interaction.followUp(`:no_entry: You must be in the same voice channel as the bot in order to use that!`); }
     if(voiceChannel.id !== interaction.guild.me.voice.channel.id) { return interaction.followUp(`:no_entry: You must be in the same voice channel as the bot in order to use that!`); }

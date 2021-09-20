@@ -37,11 +37,10 @@ module.exports = {
                     {name: 'OBO', value: json.as, inline: false})
                 .setTimestamp(); //img here
 
-            interaction.reply({embeds: [embed]});
+            return interaction.reply({embeds: [embed]});
         } catch(e) {
             console.error(e);
-            interaction.reply('Something went wrong looking for that result, is the api throttled?');
-            return;
+            return interaction.reply('Something went wrong looking for that result, is the api throttled?');
         }
     }
 };

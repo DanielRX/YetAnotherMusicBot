@@ -10,10 +10,10 @@ const data = new SlashCommandBuilder().setName(name).setDescription(description)
 
 /**
 * @param {import('discord.js').CommandInteraction} interaction
-* @returns {Promise<void>}
+* @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
 */
 const execute = async(interaction) => {
-    interaction.deferReply();
+    void interaction.deferReply();
 
     const userData = await Member.findOne({memberId: interaction.member.id}).exec();
     if(!userData) {
@@ -29,7 +29,7 @@ const execute = async(interaction) => {
         .setFields(fields)
         .setTimestamp();
 
-    interaction.followUp({embeds: [playlistsEmbed]});
+    return interaction.followUp({embeds: [playlistsEmbed]});
 };
 
 module.exports = {data, execute};

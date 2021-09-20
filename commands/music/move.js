@@ -48,7 +48,7 @@ const execute = async(interaction) => {
     const songName = player.queue[oldPosition - 1].title;
     arrayMove(player.queue, oldPosition - 1, newPosition - 1);
 
-    interaction.reply(`**${songName}** moved to position ${newPosition}`);
+    return interaction.reply(`**${songName}** moved to position ${newPosition}`);
 };
 
 module.exports = {data, execute};

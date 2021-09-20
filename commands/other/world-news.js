@@ -37,7 +37,7 @@ module.exports = {
 
             return new PagesBuilder(interaction).setPages(articleArr).build();
         } catch(e) {
-            interaction.reply(':x: Something failed along the way!');
+            await interaction.reply(':x: Something failed along the way!');
             return console.error(e);
         }
     }

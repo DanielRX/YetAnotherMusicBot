@@ -21,12 +21,11 @@ module.exports = {
                     .setDescription(json.activity)
                     .setTimestamp()
                     .setFooter('Powered by boredapi.com', '');
-                interaction.reply({embeds: [embed]});
-                return;
+                return interaction.reply({embeds: [embed]});
             })
             .catch((err) => {
-                interaction.reply('Failed to deliver activity :sob:');
-                return console.error(err);
+                console.error(err);
+                return interaction.reply('Failed to deliver activity :sob:');
             });
     }
 };

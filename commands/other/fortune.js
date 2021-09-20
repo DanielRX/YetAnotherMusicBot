@@ -21,11 +21,10 @@ module.exports = {
                 .setDescription(json.fortune)
                 .setTimestamp()
                 .setFooter('Powered by yerkee.com', '');
-            interaction.reply({embeds: [embed]});
-            return;
+            return interaction.reply({embeds: [embed]});
         } catch(e) {
-            interaction.reply(':x: Could not obtain a fortune cookie!');
-            return console.error(e);
+            console.error(e);
+            return interaction.reply(':x: Could not obtain a fortune cookie!');
         }
     }
 };

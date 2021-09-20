@@ -21,12 +21,11 @@ module.exports = {
                     .setDescription(json.slip.advice)
                     .setTimestamp()
                     .setFooter('Powered by adviceslip.com', '');
-                interaction.reply({embeds: [embed]});
-                return;
+                return interaction.reply({embeds: [embed]});
             })
             .catch((err) => {
-                interaction.reply('Failed to deliver advice :sob:');
-                return console.error(err);
+                console.error(err);
+                return interaction.reply('Failed to deliver advice :sob:');
             });
     }
 };

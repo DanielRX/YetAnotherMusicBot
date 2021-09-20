@@ -18,8 +18,8 @@ module.exports = {
         fetch(`https://api.tenor.com/v1/random?key=${tenorAPI}&q=dog&limit=1`)
             .then((res) => res.json())
             .then((json) => interaction.reply(json.results[0].url))
-            .catch((err) => {
-                interaction.reply(':x: Request to find a doggo failed!');
+            .catch(async(err) => {
+                await interaction.reply(':x: Request to find a doggo failed!');
                 return console.error(err);
             });
     }

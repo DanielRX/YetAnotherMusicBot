@@ -44,7 +44,7 @@ const fetchFromReddit = async(interaction, subreddit, sort, timeFilter = 'day') 
             .setAuthor(redditPost.data.author));
     }
 
-    return new PagesBuilder(interaction).setPages(dataArr).build();
+    void new PagesBuilder(interaction).setPages(dataArr).build();
 };
 
 module.exports = {
@@ -87,15 +87,14 @@ module.exports = {
 
             collector.on('collect', async(i) => {
                 if(i.user.id !== interaction.user.id) {
-                    i.reply({content: `This element is not for you!`, ephemeral: true});
-                } else {
-                    collector.stop();
-                    const timeFilter = i.values[0];
-                    fetchFromReddit(interaction, subreddit, sort, timeFilter);
+                    return i.reply({content: `This element is not for you!`, ephemeral: true});
                 }
+                collector.stop();
+                const timeFilter = i.values[0];
+                return fetchFromReddit(interaction, subreddit, sort, timeFilter);
             });
         } else {
-            fetchFromReddit(interaction, subreddit, sort);
+            return fetchFromReddit(interaction, subreddit, sort);
         }
     }
 };

@@ -45,7 +45,7 @@ module.exports = {
      * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
      */
     async execute(interaction) {
-        interaction.deferReply();
+        void interaction.deferReply();
         const userQuery = interaction.options.get('user').value;
 
         const userFiltered = userQuery.toLowerCase();

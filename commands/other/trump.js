@@ -21,11 +21,10 @@ module.exports = {
                     .setDescription(json.value)
                     .setTimestamp(json.appeared_at)
                     .setFooter('Powered by tronalddump.io! Quote was posted', ' ');
-                interaction.reply({embeds: [embed]});
-                return;
+                return interaction.reply({embeds: [embed]});
             })
-            .catch((err) => {
-                interaction.reply('Failed to deliver quote :sob:');
+            .catch(async(err) => {
+                await interaction.reply('Failed to deliver quote :sob:');
                 return console.error(err);
             });
     }
