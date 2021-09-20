@@ -1,12 +1,9 @@
 // @ts-check
-
-const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {AudioPlayerStatus} = require('@discordjs/voice');
 
-
 /**
- * @param {CommandInteraction} interaction
+ * @param {import('discord.js').CommandInteraction} interaction
  * @returns {string}
  */
 const exec = (interaction) => {
@@ -34,10 +31,12 @@ const exec = (interaction) => {
     return 'I was unable to pause this song, please try again soon';
 };
 
-module.exports.data = new SlashCommandBuilder().setName('pause').setDescription('Pause the playing track');
+const data = new SlashCommandBuilder().setName('pause').setDescription('Pause the playing track');
 
 /**
- * @param {CommandInteraction} interaction
- * @returns {Promise<void>}
- */
-module.exports.execute = (interaction) => interaction.reply(exec(interaction));
+* @param {import('discord.js').CommandInteraction} interaction
+* @returns {Promise<void>}
+*/
+const execute = (interaction) => interaction.reply(exec(interaction));
+
+module.exports = {data, execute};

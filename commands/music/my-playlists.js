@@ -1,40 +1,35 @@
 // @ts-check
-
-const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const Member = require('../../utils/models/Member');
 const {MessageEmbed} = require('discord.js');
 
-module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('my-playlists')
-        .setDescription('Lists your saved playlists'),
-    /**
-     * @param {CommandInteraction} interaction
-     * @returns {Promise<void>}
-     */
-    async execute(interaction) {
-        interaction.deferReply();
+const name = 'my-playlists';
+const description = 'Lists your saved playlists';
 
-        const userData = await Member.findOne({
-            memberId: interaction.member.id
-        }).exec();
-        if(!userData) {
-            return interaction.followUp('You have zero saved playlists!');
-        }
-        const savedPlaylistsClone = userData.savedPlaylists;
-        if(savedPlaylistsClone.length == 0) {
-            return interaction.followUp('You have zero saved playlists!');
-        }
-        const fields = [];
-        savedPlaylistsClone.forEach((playlist, i) =>
-            fields.push({name: `${i + 1}`, value: playlist.name, inline: true}));
+const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
-        const playlistsEmbed = new MessageEmbed()
-            .setTitle('Your saved playlists')
-            .setFields(fields)
-            .setTimestamp();
+/**
+* @param {import('discord.js').CommandInteraction} interaction
+* @returns {Promise<void>}
+*/
+const execute = async(interaction) => {
+    interaction.deferReply();
 
-        interaction.followUp({embeds: [playlistsEmbed]});
+    const userData = await Member.findOne({memberId: interaction.member.id}).exec();
+    if(!userData) {
+        return interaction.followUp('You have zero saved playlists!');
     }
+    const savedPlaylistsClone = userData.savedPlaylists;
+    if(savedPlaylistsClone.length == 0) {
+        return interaction.followUp('You have zero saved playlists!');
+    }
+    const fields = savedPlaylistsClone.map((playlist, i) => ({name: `${i + 1}`, value: playlist.name, inline: true}));
+    const playlistsEmbed = new MessageEmbed()
+        .setTitle('Your saved playlists')
+        .setFields(fields)
+        .setTimestamp();
+
+    interaction.followUp({embeds: [playlistsEmbed]});
 };
+
+module.exports = {data, execute};

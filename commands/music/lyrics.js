@@ -6,6 +6,7 @@ const {PagesBuilder} = require('discord.js-pages');
 const fetch = require('node-fetch');
 const cheerio = require('cheerio');
 const {geniusLyricsAPI} = require('../../config.json');
+const {setupOption} = require('../../utils/utils');
 
 // Skips loading if not found in config.json
 if(!geniusLyricsAPI) { return; } // TODO: Fix
@@ -13,69 +14,67 @@ if(!geniusLyricsAPI) { return; } // TODO: Fix
 const name = 'lyrics';
 const description = 'Get the lyrics of any song or the lyrics of the currently playing song!';
 
-module.exports = {
-    data: new SlashCommandBuilder().setName(name).setDescription(description)
-        .addStringOption((option) =>
-            option
-                .setName('songname')
-                .setDescription(':mag: What song lyrics would you like to get?')),
-    /**
-     * @param {import('discord.js').CommandInteraction} interaction
-     * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
-     */
-    async execute(interaction) {
-        interaction.deferReply();
-        const player = interaction.client.playerManager.get(interaction.guildId);
-        const guildData = interaction.client.guildData.get(interaction.guildId);
-        let songName = interaction.options.get('songname');
-        if(songName) {
-            songName = songName.value;
-        } else {
-            if(!player) { return interaction.followUp('There is no song playing! Enter a song name or play a song'); }
-            if(guildData) {
-                if(guildData.triviaData.isTriviaRunning) {
-                    return interaction.followUp(':x: Please try again after the trivia has ended');
-                }
+const options = [
+    {name: 'songname', description: ':mag: What song lyrics would you like to get?', required: true, choices: []}
+];
+
+const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
+
+/**
+* @param {import('discord.js').CommandInteraction} interaction
+* @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
+*/
+const execute = async(interaction) => {
+    interaction.deferReply();
+    const player = interaction.client.playerManager.get(interaction.guildId);
+    const guildData = interaction.client.guildData.get(interaction.guildId);
+    let songName = interaction.options.get('songname');
+    if(songName) {
+        songName = songName.value;
+    } else {
+        if(!player) { return interaction.followUp('There is no song playing! Enter a song name or play a song'); }
+        if(guildData) {
+            if(guildData.triviaData.isTriviaRunning) {
+                return interaction.followUp(':x: Please try again after the trivia has ended');
             }
-            songName = player.nowPlaying.title;
+        }
+        songName = player.nowPlaying.title;
+    }
+
+    try {
+        const url = await searchSong(cleanSongName(songName));
+        const songPageURL = await getSongPageURL(url);
+        const lyrics = await getLyrics(songPageURL);
+
+        const lyricsIndex = Math.round(lyrics.length / 4096) + 1;
+        const lyricsArray = [];
+
+        for(let i = 1; i <= lyricsIndex; ++i) {
+            if(lyrics.trim().slice((i - 1) * 4096, i * 4096).length !== 0) {
+                lyricsArray.push(new MessageEmbed()
+                    .setTitle(`Lyrics page #` + i)
+                    .setDescription(lyrics.slice((i - 1) * 4096, i * 4096))
+                    .setFooter('Provided by genius.com'));
+            }
         }
 
-        try {
-            const url = await searchSong(cleanSongName(songName));
-            const songPageURL = await getSongPageURL(url);
-            const lyrics = await getLyrics(songPageURL);
-
-            const lyricsIndex = Math.round(lyrics.length / 4096) + 1;
-            const lyricsArray = [];
-
-            for(let i = 1; i <= lyricsIndex; ++i) {
-                const b = i - 1;
-                if(lyrics.trim().slice(b * 4096, i * 4096).length !== 0) {
-                    lyricsArray.push(new MessageEmbed()
-                        .setTitle(`Lyrics page #` + i)
-                        .setDescription(lyrics.slice(b * 4096, i * 4096))
-                        .setFooter('Provided by genius.com'));
-                }
-            }
-
-            new PagesBuilder(interaction)
-                .setTitle(`${songName} lyrics`)
-                .setPages(lyricsArray)
-                .setColor('#9096e6')
-                .setURL(songPageURL)
-                .setAuthor(interaction.member.user.username, interaction.member.user.displayAvatarURL())
-                .build();
-        } catch(error) {
-            console.error(error);
-            return interaction.followUp('Something went wrong! Please try again later');
-        }
+        new PagesBuilder(interaction)
+            .setTitle(`${songName} lyrics`)
+            .setPages(lyricsArray)
+            .setColor('#9096e6')
+            .setURL(songPageURL)
+            .setAuthor(interaction.member.user.username, interaction.member.user.displayAvatarURL())
+            .build();
+    } catch(error) {
+        console.error(error);
+        return interaction.followUp('Something went wrong! Please try again later');
     }
 };
 
 /**
- * @param {string} songName
- * @returns {string}
- */
+* @param {string} songName
+* @returns {string}
+*/
 const cleanSongName = (songName) => {
     return songName
         .replace(/ *\([^)]*\) */g, '')
@@ -83,9 +82,9 @@ const cleanSongName = (songName) => {
 };
 
 /**
- * @param {string} query
- * @returns {Promise<string>}
- */
+* @param {string} query
+* @returns {Promise<string>}
+*/
 const searchSong = (query) => {
     return new Promise(async(resolve, reject) => {
         const searchURL = `https://api.genius.com/search?q=${encodeURI(query)}`;
@@ -102,9 +101,9 @@ const searchSong = (query) => {
 };
 
 /**
- * @param {string} url
- * @returns {Promise<string>}
- */
+* @param {string} url
+* @returns {Promise<string>}
+*/
 const getSongPageURL = (url) => {
     return new Promise(async(resolve, reject) => {
         const headers = {Authorization: `Bearer ${geniusLyricsAPI}`};
@@ -124,9 +123,9 @@ const getSongPageURL = (url) => {
 };
 
 /**
- * @param {string} url
- * @returns {Promise<string>}
- */
+* @param {string} url
+* @returns {Promise<string>}
+*/
 const getLyrics = (url) => {
     return new Promise(async function(resolve, reject) {
         try {
@@ -150,4 +149,6 @@ const getLyrics = (url) => {
             reject('There was a problem fetching lyrics for this song, please try again');
         }
     });
-}
+};
+
+module.exports = {data, execute};

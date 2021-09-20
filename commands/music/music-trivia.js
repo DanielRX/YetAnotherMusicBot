@@ -1,67 +1,66 @@
 // @ts-check
-
-const {CommandInteraction} = require('discord.js');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {joinVoiceChannel, VoiceConnectionStatus, entersState} = require('@discordjs/voice');
 const {MessageEmbed} = require('discord.js');
-const fs = require('fs');
+const fs = require('fs-extra');
 const TriviaPlayer = require('../../utils/music/TriviaPlayer');
 const {getRandom} = require('../../utils/utils');
+const {setupOption} = require('../../utils/utils');
 
-module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('music-trivia')
-        .setDescription('Engage in a music quiz with your friends!')
-        .addStringOption((option) =>
-            option
-                .setName('length')
-                .setDescription('How many songs would you like the trivia to have?')),
-    /**
-     * @param {CommandInteraction} interaction
-     * @returns {Promise<void>}
-     */
-    async execute(interaction) {
-        await interaction.deferReply();
-        const voiceChannel = interaction.member.voice.channel;
-        if(!voiceChannel) {
-            return interaction.followUp(':no_entry: Please join a voice channel and try again!');
-        }
+const name = 'music-trivia';
+const description = 'Engage in a music quiz with your friends!';
 
-        if(interaction.client.playerManager.get(interaction.guildId)) {
-            return interaction.followUp(`You can't use this while a track is playing!`);
-        }
+const options = [
+    {name: 'length', description: 'How many songs would you like the trivia to have?', required: true, choices: []}
+];
 
-        if(interaction.client.triviaManager.get(interaction.guildId)) {
-            return interaction.followUp('There is already a trivia in play!');
-        }
+const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
-        const numberOfSongs = interaction.options.get('length') ? interaction.options.get('length').value : 5;
-
-        const jsonSongs = fs.readFileSync('././resources/music/musictrivia.json', 'utf8');
-        const videoDataArray = JSON.parse(jsonSongs).songs;
-        // Get random numberOfSongs videos from the array
-
-        const randomLinks = getRandom(videoDataArray, numberOfSongs);
-        interaction.client.triviaManager.set(interaction.guildId,
-            new TriviaPlayer());
-
-        const triviaPlayer = interaction.client.triviaManager.get(interaction.guildId);
-
-        randomLinks.forEach(({url, singer, title}) => {
-            triviaPlayer.queue.push({url, singer, title, voiceChannel});
-        });
-
-        const membersInChannel = interaction.member.voice.channel.members;
-
-        membersInChannel.each((user) => {
-            if(user.user.bot) { return; }
-            triviaPlayer.score.set(user.user.username, 0);
-        });
-
-        // play and display embed that says trivia started and how many songs are going to be
-        handleSubscription(interaction, triviaPlayer);
+/**
+* @param {import('discord.js').CommandInteraction} interaction
+* @returns {Promise<void>}
+*/
+const execute = async(interaction) => {
+    await interaction.deferReply();
+    const voiceChannel = interaction.member.voice.channel;
+    if(!voiceChannel) {
+        return interaction.followUp(':no_entry: Please join a voice channel and try again!');
     }
+
+    if(interaction.client.playerManager.get(interaction.guildId)) {
+        return interaction.followUp(`You can't use this while a track is playing!`);
+    }
+
+    if(interaction.client.triviaManager.get(interaction.guildId)) {
+        return interaction.followUp('There is already a trivia in play!');
+    }
+
+    const numberOfSongs = interaction.options.get('length') ? interaction.options.get('length').value : 5;
+
+    const jsonSongs = await fs.readJSON('./resources/music/musictrivia.json');
+    const videoDataArray = jsonSongs.songs;
+    // Get random numberOfSongs videos from the array
+
+    const randomLinks = getRandom(videoDataArray, numberOfSongs);
+    interaction.client.triviaManager.set(interaction.guildId, new TriviaPlayer());
+
+    const triviaPlayer = interaction.client.triviaManager.get(interaction.guildId);
+
+    randomLinks.forEach(({url, singer, title}) => {
+        triviaPlayer.queue.push({url, singer, title, voiceChannel});
+    });
+
+    const membersInChannel = interaction.member.voice.channel.members;
+
+    membersInChannel.each((user) => {
+        if(user.user.bot) { return; }
+        triviaPlayer.score.set(user.user.username, 0);
+    });
+
+    // play and display embed that says trivia started and how many songs are going to be
+    handleSubscription(interaction, triviaPlayer);
 };
+
 
 const handleSubscription = async(interaction, player) => {
     const {queue} = player;
@@ -91,3 +90,5 @@ const handleSubscription = async(interaction, player) => {
     You can end the trivia at any point by using the end-trivia command!`);
     return interaction.followUp({embeds: [startTriviaEmbed]});
 };
+
+module.exports = {data, execute};
