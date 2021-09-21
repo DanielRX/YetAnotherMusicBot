@@ -44,7 +44,7 @@ const execute = async(interaction) => {
     const mins = Math.floor((totalSeconds / 60) % 60);
 
     const guildCacheMap = interaction.client.guilds.cache;
-    const guildCacheArray = Array.from(guildCacheMap, ([name, value]) => ({name, value}));
+    const guildCacheArray = Array.from(guildCacheMap, ([key, value]) => ({name: key, value}));
     const memberCount = guildCacheArray.reduce((prev, curr) => prev + curr.value.memberCount, 0);
 
     await pingMsg.edit('Complete');

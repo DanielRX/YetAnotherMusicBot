@@ -19,5 +19,3 @@ it('should return data', () => {
         expect(video).toHaveProperty('duration');
     });
 });
-
-

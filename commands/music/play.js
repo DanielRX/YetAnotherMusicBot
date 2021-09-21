@@ -74,7 +74,6 @@ const handleSubscription = async(queue, interaction, player) => {
     await interaction.followUp(`Enqueued ${title}`);
 };
 
-
 const flagLogic = (interaction, video, jumpFlag) => {
     const player = interaction.client.playerManager.get(interaction.guildId);
     player.queue.splice(0, 0, constructSongObj(video, interaction.member.voice.channel, interaction.member.user));
@@ -139,14 +138,12 @@ const handleSpotifyURL = (interaction) => {
         }
     };
 
-
     getData(query).then(handleSpotifyData).catch((error) => {
         deletePlayerIfNeeded(interaction);
         console.error(error);
         return interaction.followUp(`I couldn't find what you were looking for :(`);
     });
 };
-
 
 /**
  * @param {import('../../').CustomInteraction} interaction
@@ -241,7 +238,6 @@ const searchYoutube = async(interaction, voiceChannel) => {
         }
         const videoIndex = parseInt(value);
 
-
         YouTube.getVideo(`https://www.youtube.com/watch?v=${videos[videoIndex - 1].id}`)
             .then(handleYoutubeData)
             .catch((error) => {
@@ -253,8 +249,6 @@ const searchYoutube = async(interaction, voiceChannel) => {
             });
     });
 };
-
-
 
 /**
  * @param {import('../../').CustomInteraction} interaction
@@ -347,7 +341,7 @@ const handleYoutubePlaylistURL = async(interaction) => {
     videosArr = videosArr.splice(0, options.maxQueueLength - player.queue.length);
 
     //variable to know how many songs were skipped because of privacyStatus
-    var skipAmount = 0;
+    let skipAmount = 0;
 
     await videosArr.reduce(async(__, video, key) => {
         // don't process private videos
@@ -436,7 +430,6 @@ const handlePlayFromHistory = async(interaction, message) => {
         }
     });
 };
-
 
 /**
  * @param {import('../../').CustomInteraction} interaction

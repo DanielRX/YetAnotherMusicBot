@@ -21,8 +21,8 @@ const getWorldStats = async() => {
             if(body.status !== 200) {
                 reject(`The covid API can't be accessed at the moment, please try later`);
             }
-            const data = await body.json();
-            resolve(data);
+            const json = await body.json();
+            resolve(json);
         } catch(e) {
             console.error(e);
             reject(`The covid API can't be accessed at the moment, please try later`);
@@ -37,8 +37,8 @@ const getCountryStats = async(country) => {
             if(body.status !== 200) {
                 reject(`There was a problem getting data from the API, make sure you entered a valid country name`);
             }
-            const data = await body.json();
-            resolve(data);
+            const json = await body.json();
+            resolve(json);
         } catch(e) {
             console.error(e);
             reject(`There was a problem getting data from the API, make sure you entered a valid country name`);

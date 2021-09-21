@@ -28,11 +28,11 @@ const getShowSearch = async(showQuery) => {
             if(body.status !== 200) {
                 reject('There was a problem getting data from the API, make sure you entered a valid TV show name');
             }
-            const data = await body.json();
-            if(!data.length) {
+            const json = await body.json();
+            if(!json.length) {
                 reject('There was a problem getting data from the API, make sure you entered a valid TV show name');
             }
-            resolve(data);
+            resolve(json);
         } catch(e) {
             console.error(e);
             reject('There was a problem getting data from the API, make sure you entered a valid TV show name');
@@ -58,13 +58,17 @@ const execute = async(interaction) => {
         for(let i = 1; i <= showResponse.length; ++i) {
             // Filter Thumbnail URL
             let showThumbnail = showResponse[i - 1].show.image;
-            if(showThumbnail == null) { showThumbnail = 'https://static.tvmaze.com/images/no-img/no-img-portrait-text.png'; }
-            else showThumbnail = showResponse[i - 1].show.image.original;
+            if(showThumbnail == null) {
+                showThumbnail = 'https://static.tvmaze.com/images/no-img/no-img-portrait-text.png';
+            } else {
+                showThumbnail = showResponse[i - 1].show.image.original;
+            }
 
             // Filter Summary Row 1
             let showSummary = showResponse[i - 1].show.summary;
-            if(showSummary == null) showSummary = 'None listed';
-            else {
+            if(showSummary == null) {
+                showSummary = 'None listed';
+            } else {
                 showSummary = showResponse[i - 1].show.summary
                     .replace(/<(\/)?b>/g, '**')
                     .replace(/<(\/)?i>/g, '*')

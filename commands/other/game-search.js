@@ -33,16 +33,16 @@ const getGameDetails = async(query) => {
                 reject(':x: There was a problem getting data from the API, make sure you entered a valid game tittle');
             }
 
-            let data = await body.json();
-            if(data.redirect) {
+            let json = await body.json();
+            if(json.redirect) {
                 const redirect = await fetch(`https://api.rawg.io/api/games/${body.slug}?key=${rawgAPI}`);
-                data = await redirect.json();
+                json = await redirect.json();
             }
             // 'id' is the only value that must be present to all valid queries
-            if(!data.id) {
+            if(!json.id) {
                 reject(':x: There was a problem getting data from the API, make sure you entered a valid game title');
             }
-            resolve(data);
+            resolve(json);
         } catch(e) {
             console.error(e);
             reject('There was a problem getting data from the API, make sure you entered a valid game title');
@@ -63,8 +63,9 @@ const execute = async(interaction) => {
         .toLowerCase();
 
     // using this link it provides all the info, instead of using search
+    let response;
     try {
-        var response = await getGameDetails(gameTitleFiltered);
+        response = await getGameDetails(gameTitleFiltered);
     } catch(error) {
         return void interaction.reply(error);
     }
@@ -73,14 +74,11 @@ const execute = async(interaction) => {
     const esrbRating = (response.esrb_rating == null) ? 'None Listed.' : response.esrb_rating.name;
     const userRating = (response.rating == null) ? 'None Listed.' : response.rating + '/5';
 
-    const embedArray = [
-        // Page 1
-        new MessageEmbed()
-            .setDescription('**Game Description**\n' + response.description_raw.slice(0, 2000) + '...')
-            .addField('Released', releaseDate, true)
-            .addField('ESRB Rating', esrbRating, true)
-            .addField('Score', userRating, true)
-    ];
+    const page1 = new MessageEmbed()
+        .setDescription('**Game Description**\n' + response.description_raw.slice(0, 2000) + '...')
+        .addField('Released', releaseDate, true)
+        .addField('ESRB Rating', esrbRating, true)
+        .addField('Score', userRating, true);
 
     const developerArray = (response.developers.length > 0) ? response.developers.map((e) => e.name) : ['None Listed.'];
     const publisherArray = (response.publishers.length > 0) ? response.publishers.map((e) => e.name) : ['None Listed.'];
@@ -88,19 +86,17 @@ const execute = async(interaction) => {
     const genreArray = (response.genres.length > 0) ? response.genres.map((e) => e.name) : ['None Listed.'];
     const retailerArray = (response.stores.length > 0) ? response.stores.map((e) => `[${e.store.name}](${e.url})`) : ['None Listed.'];
 
-    embedArray.push(
-        // Page 2
-        new MessageEmbed()
-            // Row 1
-            .addField('Developer(s)', developerArray.toString().replace(/,/g, ', '), true) // TODO: Use join
-            .addField('Publisher(s)', publisherArray.toString().replace(/,/g, ', '), true) // TODO: Use join
-            .addField('Platform(s)', platformArray.toString().replace(/,/g, ', '), true) // TODO: Use join
-            // Row 2
-            .addField('Genre(s)', genreArray.toString().replace(/,/g, ', '), true) // TODO: Use join
-            .addField('Retailer(s)', retailerArray.toString() .replace(/,/g, ', ').replace(/`/g, ''))); // TODO: Use join
+    const page2 = new MessageEmbed()
+        // Row 1
+        .addField('Developer(s)', developerArray.join(', '), true)
+        .addField('Publisher(s)', publisherArray.join(', '), true)
+        .addField('Platform(s)', platformArray.join(', '), true)
+        // Row 2
+        .addField('Genre(s)', genreArray.join(', '), true)
+        .addField('Retailer(s)', retailerArray.join(', ').replace(/`/g, ''));
 
     const embed = new PagesBuilder(interaction)
-        .setPages(embedArray)
+        .setPages([page1, page2])
         .setTitle(response.name)
         .setColor(`#b5b5b5`);
     if(response.background_image) {
