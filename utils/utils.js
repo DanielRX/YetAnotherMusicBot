@@ -14,7 +14,7 @@ const arrayMove = (arr, old_index, new_index) => {
         new_index += arr.length;
     }
     if(new_index >= arr.length) {
-        var k = new_index - arr.length + 1;
+        let k = new_index - arr.length + 1;
         while(k--) {
             arr.push(undefined);
         }
@@ -36,7 +36,6 @@ const shuffleArray = (arr) => {
     return arr;
 };
 
-
 /**
  * @template T
  * @param {T[]} arr
@@ -55,7 +54,6 @@ const getRandom = (arr, n) => {
  */
 const randomEl = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
-
 const setupOption = (config) => (option) => {
     option = option.setName(config.name).setDescription(config.description).setRequired(config.required);
     for(const choice of config.choices) { option = option.addChoice(choice, choice); }
@@ -65,7 +63,6 @@ const setupOption = (config) => (option) => {
 const isSpotifyURL = (arg) => arg.match(/^(spotify:|https:\/\/[a-z]+\.spotify\.com\/)/);
 const isYouTubeVideoURL = (arg) => arg.match(/^(http(s)?:\/\/)?(m.)?((w){3}.)?(music.)?youtu(be|.be)?(\.com)?\/.+/);
 const isYouTubePlaylistURL = (arg) => arg.match(/^https?:\/\/(music.)?(www.youtube.com|youtube.com)\/playlist(.*)$/);
-
 
 const validateURL = (url) => isYouTubePlaylistURL(url) || isYouTubeVideoURL(url) || isSpotifyURL(url);
 

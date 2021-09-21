@@ -7,7 +7,6 @@ const mongoose = require('mongoose');
  * @type {{memberId: string, username: string, joinedAt: Date, savedPlaylist: import('../..').Track[]}}
  */
 
-
 /**
  * @type {mongoose.Schema<MemberT>}
  */

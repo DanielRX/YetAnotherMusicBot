@@ -9,7 +9,7 @@ const description = 'Lists your saved playlists';
 const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 /**
-* @param {import('discord.js').CommandInteraction} interaction
+* @param {import('../../').CustomInteraction} interaction
 * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
 */
 const execute = async(interaction) => {

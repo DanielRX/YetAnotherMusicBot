@@ -54,6 +54,7 @@
     "id-length": "off",
     "object-property-newline": ["error", {"allowAllPropertiesOnSameLine": true}],
     "one-var": ["error", "never"],
+    "no-var": "error",
     "max-lines-per-function": "off",
     "no-magic-numbers": "off",
     "no-plusplus": "off",
@@ -69,11 +70,11 @@
     "implicit-arrow-linebreak": "off",
     "sort-keys": "off",
     "arrow-parens": ["error", "always"],
-
-
     "@typescript-eslint/lines-between-class-members": ["error", "always", {"exceptAfterSingleLine": true}],
     "@typescript-eslint/consistent-indexed-object-style": ["error", "index-signature"],
     "@typescript-eslint/consistent-type-imports": "error",
+    "no-multiple-empty-lines": ["error", {"max": 1}],
+    "eol-last": ["error", "always"],
     // Remove these:
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/require-await": ["off"],

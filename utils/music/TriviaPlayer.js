@@ -12,7 +12,7 @@ const capitalize_Words = (str) => {
     });
 };
 
-var normalizeValue = (value) =>
+const normalizeValue = (value) =>
     value
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '') // Remove diacritics

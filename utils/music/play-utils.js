@@ -28,7 +28,6 @@ const createSelectMenu = (namesArray) =>
             {label: 'Cancel', value: 'cancel_option'}
         ]));
 
-
 const createHistoryRow = (query) => new MessageActionRow()
     .addComponents(new MessageSelectMenu()
         .setCustomId('history-select')
