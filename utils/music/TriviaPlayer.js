@@ -104,6 +104,7 @@ class TriviaPlayer {
                 }
             } else if(newState.status === AudioPlayerStatus.Playing) {
                 // Trivia logic
+                const start = Date.now();
                 let songNameFoundTime = -1;
                 let songNameWinners = {};
                 let songSignerWinners = {};
@@ -113,7 +114,7 @@ class TriviaPlayer {
                 let skipCounter = 0;
                 const skippedArray = [];
 
-                const collector = this.textChannel.createMessageCollector({time: 30000});
+                const collector = this.textChannel.createMessageCollector({time: 60000});
 
                 collector.on('collect', (msg) => {
                     if(!this.score.has(msg.author.username)) { return; }
@@ -121,6 +122,18 @@ class TriviaPlayer {
                     let guess = normalizeValue(msg.content);
                     let title = normalizeValue(this.queue[0].title);
                     let singer = normalizeValue(this.queue[0].singer);
+
+                    if(guess === 'hint') {
+                        if(time - start > 1 * 1000) {
+                            const song = `${Array(this.queue[0].singer.length).fill('*')}: ${Array(this.queue[0].title.length).fill('*')}`;
+
+                            const embed = new MessageEmbed()
+                                .setColor('#ff7373')
+                                .setTitle(`:musical_note: The song is:  ${song}`);
+                            this.textChannel.send({embeds: [embed]});
+                        }
+                        return;
+                    }
 
                     if(guess === 'skip') {
                         if(skippedArray.includes(msg.author.username)) { return; }
