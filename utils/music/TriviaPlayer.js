@@ -196,7 +196,7 @@ class TriviaPlayer {
 
                     const embed = new MessageEmbed()
                         .setColor('#ff7373')
-                        .setTitle(`:musical_note: The song was:  ${song} (${this.queue.length} left)`)
+                        .setTitle(`:musical_note: The song was:  ${song} (${Math.max(this.queue.length - 1, 0)} left)`)
                         .setDescription(getLeaderBoard(Array.from(sortedScoreMap.entries())));
 
                     this.textChannel.send({embeds: [embed]});
