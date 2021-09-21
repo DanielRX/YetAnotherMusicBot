@@ -128,7 +128,7 @@ class TriviaPlayer {
                     if(guess === 'hint') {
                         if(time - start > (5 + (5 * hints)) * 1000) {
                             clearTimeout(timeoutId);
-                            setTimeout(() => collector.stop(), 40000 + (5000 * hints) + (time - start));
+                            setTimeout(() => collector.stop(), Math.min(40000 + (5000 * hints), 60000) + (time - start));
                             const signerHint = [...singer].map((_, i) => i < hints ? _ : _ === ' ' ? ' ' : '*').join('');
                             const titleHint = [...title].map((_, i) => i < hints ? _ : _ === ' ' ? ' ' : '*').join('');
                             const song = `\`${songSignerFoundTime === -1 ? signerHint : singer}: ${songNameFoundTime === -1 ? titleHint : title}\``;
