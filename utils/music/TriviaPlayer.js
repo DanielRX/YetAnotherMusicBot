@@ -114,7 +114,7 @@ class TriviaPlayer {
                 let skipCounter = 0;
                 const skippedArray = [];
 
-                const collector = this.textChannel.createMessageCollector({time: 60000});
+                const collector = this.textChannel.createMessageCollector({time: 30000});
 
                 collector.on('collect', (msg) => {
                     if(!this.score.has(msg.author.username)) { return; }
@@ -125,7 +125,7 @@ class TriviaPlayer {
 
                     if(guess === 'hint') {
                         if(time - start > 1 * 1000) {
-                            const song = `${Array(this.queue[0].singer.length).fill('*')}: ${Array(this.queue[0].title.length).fill('*')}`;
+                            const song = `${Array(this.queue[0].singer.length).fill(0).map((_) => '*').join('')}: ${Array(this.queue[0].title.length).fill(0).map((_) => '*').join('')}`;
 
                             const embed = new MessageEmbed()
                                 .setColor('#ff7373')
