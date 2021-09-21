@@ -552,11 +552,11 @@ const handlePlayPlaylist = async(interaction, message, playlistsArray, found) =>
 const name = 'play';
 const description = 'Play any song or playlist from YouTube or Spotify!';
 
-const options = [
+const options2 = [
     {name: 'query', description: ':notes: What song or playlist would you like to listen to? Add -s to shuffle a playlist', required: true, choices: []}
 ];
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
+const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options2[0]));
 
 /**
  * @param {import('../../').CustomInteraction} interaction
