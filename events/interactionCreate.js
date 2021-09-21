@@ -1,6 +1,6 @@
 // @ts-check
 
-const name = 'interactionCreate',;
+const name = 'interactionCreate';
 /**
  * @param {import('../').CustomInteraction} interaction
  * @returns {Promise<void>}
