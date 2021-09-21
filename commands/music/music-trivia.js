@@ -11,7 +11,7 @@ const name = 'music-trivia';
 const description = 'Engage in a music quiz with your friends!';
 
 const options = [
-    {name: 'length', description: 'How many songs would you like the trivia to have?', required: true, choices: []}
+    {name: 'length', description: 'How many songs would you like the trivia to have?', required: false, choices: []}
 ];
 
 const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
