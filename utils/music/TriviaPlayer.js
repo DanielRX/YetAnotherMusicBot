@@ -126,7 +126,7 @@ class TriviaPlayer {
                     if(guess === 'hint') {
                         if(time - start > 1 * 1000) {
                             const song = `${[...singer].map(() => '*').join('')}: ${[...title].map(() => '*').join('')}`;
-
+                            console.log(song, singer, title);
                             const embed = new MessageEmbed()
                                 .setColor('#ff7373')
                                 .setTitle(`:musical_note: The song is:  ${song}`);
