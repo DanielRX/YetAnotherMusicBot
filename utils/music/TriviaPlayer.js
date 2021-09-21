@@ -125,7 +125,7 @@ class TriviaPlayer {
 
                     if(guess === 'hint') {
                         if(time - start > 1 * 1000) {
-                            const song = `${Array(singer.length).fill('*').join('')}: ${Array(title.length).fill('*').join('')}`;
+                            const song = `${[...singer].map(() => '*').join('')}: ${[...title].map(() => '*').join('')}`;
 
                             const embed = new MessageEmbed()
                                 .setColor('#ff7373')
