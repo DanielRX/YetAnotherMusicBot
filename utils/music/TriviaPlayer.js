@@ -104,15 +104,14 @@ class TriviaPlayer {
                 }
             } else if(newState.status === AudioPlayerStatus.Playing) {
                 // Trivia logic
-                let songNameFound = false;
-                let songSingerFound = false;
+                let songNameFoundTime = -1;
+                let songSignerFoundTime = -1;
+                const answerTimeout = 1000;
 
                 let skipCounter = 0;
                 const skippedArray = [];
 
-                const collector = this.textChannel.createMessageCollector({
-                    time: 30000
-                });
+                const collector = this.textChannel.createMessageCollector({time: 30000});
 
                 collector.on('collect', (msg) => {
                     if(!this.score.has(msg.author.username)) { return; }
@@ -121,45 +120,46 @@ class TriviaPlayer {
                     let singer = normalizeValue(this.queue[0].singer);
 
                     if(guess === 'skip') {
-                        if(skippedArray.includes(msg.author.username)) {
-                            return;
-                        }
+                        if(skippedArray.includes(msg.author.username)) { return; }
                         skippedArray.push(msg.author.username);
                         skipCounter++;
-                        if(skipCounter > this.score.size * 0.6) {
-                            return collector.stop();
-                        }
+                        if(skipCounter > this.score.size * 0.6) { return collector.stop(); }
                         return;
                     }
 
                     // If user guessed both singer and song name
                     if(guess.includes(singer) && guess.includes(title)) {
-                        if((songSingerFound && !songNameFound) || (songNameFound && !songSingerFound)) {
+                        if((songNameFoundTime === -1 && songSignerFoundTime !== -1) || Date.now() - songNameFoundTime < answerTimeout) {
                             this.score.set(msg.author.username, this.score.get(msg.author.username) + 1);
                             msg.react('☑');
-                            return collector.stop();
+                            return setTimeout(() => collector.stop(), 1000);
+                        }
+                        if((songNameFoundTime !== -1 && songSignerFoundTime === -1) || Date.now() - songSignerFoundTime < answerTimeout) {
+                            this.score.set(msg.author.username, this.score.get(msg.author.username) + 1);
+                            msg.react('☑');
+                            return setTimeout(() => collector.stop(), 1000);
                         }
                         this.score.set(msg.author.username, this.score.get(msg.author.username) + 2);
                         msg.react('☑');
-                        return collector.stop();
+                        return setTimeout(() => collector.stop(), 1000);
                     } else if(guess.includes(singer)) { // If user guessed only the singer
-                        if(songSingerFound) { return; } // Already been found
-                        songSingerFound = true;
-                        if(songNameFound) {
+                        if(songSignerFoundTime !== -1 && (Date.now() - songSignerFoundTime < answerTimeout)) { return; } // Already been found
+                        if(songSignerFoundTime === -1) { songSignerFoundTime = Date.now(); } // Already been found
+                        if(songNameFoundTime !== -1) {
                             this.score.set(msg.author.username, this.score.get(msg.author.username) + 1);
                             msg.react('☑');
-                            return collector.stop();
+                            return setTimeout(() => collector.stop(), 1000)
                         }
 
                         this.score.set(msg.author.username, this.score.get(msg.author.username) + 1);
                         msg.react('☑');
                     } else if(guess.includes(title)) { // If user guessed song name
-                        if(songNameFound) { return; } // If song name has already been found
-                        songNameFound = true;
-                        if(songSingerFound) {
+                        if(songNameFoundTime !== -1 && (Date.now() - songNameFoundTime < answerTimeout)) { return; } // If song name has already been found
+                        if(songNameFoundTime === -1) { songNameFoundTime = Date.now(); } // Already been found
+                        if(songSignerFoundTime !== -1) {
                             this.score.set(msg.author.username, this.score.get(msg.author.username) + 1);
                             msg.react('☑');
-                            return collector.stop();
+                            return setTimeout(() => collector.stop(), 1000);
                         }
                         this.score.set(msg.author.username, this.score.get(msg.author.username) + 1);
                         msg.react('☑');
@@ -181,9 +181,7 @@ class TriviaPlayer {
 
                     this.audioPlayer.stop();
 
-                    const sortedScoreMap = new Map([...this.score.entries()].sort(function(a, b) {
-                        return b[1] - a[1];
-                    }));
+                    const sortedScoreMap = new Map([...this.score.entries()].sort((a, b) => b[1] - a[1]));
 
                     const song = `${capitalize_Words(this.queue[0].singer)}: ${capitalize_Words(this.queue[0].title)}`;
 
@@ -198,9 +196,7 @@ class TriviaPlayer {
             }
         });
 
-        this.audioPlayer.on('error', (error) => {
-            console.error(error);
-        });
+        this.audioPlayer.on('error', (error) => { console.error(error); });
 
         this.connection.subscribe(this.audioPlayer);
     }
