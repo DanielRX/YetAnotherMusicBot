@@ -5,7 +5,7 @@ const createGuildData = require('../../utils/createGuildData');
 
 const {setupOption} = require('../../utils/utils');
 
-const name = 'loopqueue';
+const name = 'loop-queue';
 const description = 'Loop the queue x times! - (the default is 1 time)';
 
 const options = [
@@ -15,7 +15,7 @@ const options = [
 const data = new SlashCommandBuilder().setName(name).setDescription(description).addIntegerOption(setupOption(options[0]));
 
 /**
- * @param {import('../../').CustomInteraction} interaction
+ * @param {import('../..').CustomInteraction} interaction
  * @returns {Promise<void>}
  */
 const execute = async(interaction) => {
@@ -52,4 +52,4 @@ const execute = async(interaction) => {
     return interaction.reply(':repeat: The queue is now playing on **loop**');
 };
 
-module.exports = {data, execute};
+module.exports = {data, execute, name, description};

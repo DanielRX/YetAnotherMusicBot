@@ -11,6 +11,7 @@ const createGuildData = require('../../utils/createGuildData');
 const {searchOne} = require('../../utils/music/searchOne');
 const {shuffleArray, isSpotifyURL, isYouTubeVideoURL, isYouTubePlaylistURL} = require('../../utils/utils');
 const {getFlags, createSelectMenu, createHistoryRow} = require('../../utils/music/play-utils');
+const {setupOption} = require('../../utils/utils');
 
 // Check If Options are Valid
 if(typeof options.playLiveStreams !== 'boolean') options.playLiveStreams = true;
@@ -548,68 +549,73 @@ const handlePlayPlaylist = async(interaction, message, playlistsArray, found) =>
     });
 };
 
-module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('play')
-        .setDescription('Play any song or playlist from YouTube or Spotify!')
-        .addStringOption((option) =>
-            option
-                .setName('query')
-                .setDescription(':notes: What song or playlist would you like to listen to? Add -s to shuffle a playlist')
-                .setRequired(true)),
-    async execute(interaction) {
-        if(!interaction.client.guildData.get(interaction.guildId)) {
-            interaction.client.guildData.set(interaction.guildId, createGuildData());
-        }
-        const message = await interaction.deferReply({fetchReply: true});
-        // Make sure that only users present in a voice channel can use 'play'
-        if(!interaction.member.voice.channel) {
-            return interaction.followUp(':no_entry: Please join a voice channel and try again!');
-        }
-        // Make sure there isn't a 'music-trivia' running
-        if(interaction.client.guildData.get(interaction.guild.id).triviaData.isTriviaRunning) {
-            return interaction.followUp(':x: Please try after the trivia has ended!');
-        }
-        const query = interaction.options.get('query').value;
-        //Parse query to check for flags
-        const splitQuery = query.split(' ');
-        const flags = ['s', 'r', 'n', 'j'].map((f) => `-${f}`);
-        if(flags.includes(splitQuery[splitQuery.length - 1])) splitQuery.pop();
-        const cleanQuery = splitQuery.join(' ');
+const name = 'play';
+const description = 'Play any song or playlist from YouTube or Spotify!';
 
-        let player = interaction.client.playerManager.get(interaction.guildId);
+const options = [
+    {name: 'query', description: ':notes: What song or playlist would you like to listen to? Add -s to shuffle a playlist', required: true, choices: []}
+];
 
-        if(!player) {
-            player = new Player();
-            interaction.client.playerManager.set(interaction.guildId, player);
-        }
+const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
-        if(player.commandLock) {
-            return interaction.followUp('Please wait until the last play call is processed');
-        }
-
-        player.commandLock = true;
-
-        // Check if the query is actually a saved playlist name
-
-        const userData = await Member.findOne({memberId: interaction.member.id}).exec(); // Object
-
-        if(userData !== null) {
-            const playlistsArray = userData.savedPlaylists;
-            const found = playlistsArray.find((playlist) => playlist.name === cleanQuery);
-            // Found a playlist with a name matching the query and it's not empty
-            if(found && playlistsArray[playlistsArray.indexOf(found)].urls.length) {
-                return handlePlayPlaylist(interaction, message, playlistsArray, found);
-            }
-        }
-
-        // check if the user wants to play a song from the history queue
-        if(Number(cleanQuery)) { return handlePlayFromHistory(interaction, message); }
-        if(isSpotifyURL(cleanQuery)) { return handleSpotifyURL(interaction); }
-        if(isYouTubePlaylistURL(cleanQuery)) { return handleYoutubePlaylistURL(interaction); }
-        if(isYouTubeVideoURL(cleanQuery)) { return handleYoutubeURL(interaction); }
-
-        // If user provided a song/video name
-        await searchYoutube(interaction, interaction.member.voice.channel);
+/**
+ * @param {import('../../').CustomInteraction} interaction
+ * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
+ */
+const execute = async(interaction) => {
+    if(!interaction.client.guildData.get(interaction.guildId)) {
+        interaction.client.guildData.set(interaction.guildId, createGuildData());
     }
+    const message = await interaction.deferReply({fetchReply: true});
+    // Make sure that only users present in a voice channel can use 'play'
+    if(!interaction.member.voice.channel) {
+        return interaction.followUp(':no_entry: Please join a voice channel and try again!');
+    }
+    // Make sure there isn't a 'music-trivia' running
+    if(interaction.client.guildData.get(interaction.guild.id).triviaData.isTriviaRunning) {
+        return interaction.followUp(':x: Please try after the trivia has ended!');
+    }
+    const query = interaction.options.get('query').value;
+    //Parse query to check for flags
+    const splitQuery = query.split(' ');
+    const flags = ['s', 'r', 'n', 'j'].map((f) => `-${f}`);
+    if(flags.includes(splitQuery[splitQuery.length - 1])) splitQuery.pop();
+    const cleanQuery = splitQuery.join(' ');
+
+    let player = interaction.client.playerManager.get(interaction.guildId);
+
+    if(!player) {
+        player = new Player();
+        interaction.client.playerManager.set(interaction.guildId, player);
+    }
+
+    if(player.commandLock) {
+        return interaction.followUp('Please wait until the last play call is processed');
+    }
+
+    player.commandLock = true;
+
+    // Check if the query is actually a saved playlist name
+
+    const userData = await Member.findOne({memberId: interaction.member.id}).exec(); // Object
+
+    if(userData !== null) {
+        const playlistsArray = userData.savedPlaylists;
+        const found = playlistsArray.find((playlist) => playlist.name === cleanQuery);
+        // Found a playlist with a name matching the query and it's not empty
+        if(found && playlistsArray[playlistsArray.indexOf(found)].urls.length) {
+            return handlePlayPlaylist(interaction, message, playlistsArray, found);
+        }
+    }
+
+    // check if the user wants to play a song from the history queue
+    if(Number(cleanQuery)) { return handlePlayFromHistory(interaction, message); }
+    if(isSpotifyURL(cleanQuery)) { return handleSpotifyURL(interaction); }
+    if(isYouTubePlaylistURL(cleanQuery)) { return handleYoutubePlaylistURL(interaction); }
+    if(isYouTubeVideoURL(cleanQuery)) { return handleYoutubeURL(interaction); }
+
+    // If user provided a song/video name
+    await searchYoutube(interaction, interaction.member.voice.channel);
 };
+
+module.exports = {data, execute, name, description};

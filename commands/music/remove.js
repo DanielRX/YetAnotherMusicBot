@@ -40,4 +40,4 @@ const execute = async(interaction) => {
     return interaction.reply(`:wastebasket: Removed song number ${position} from queue!`);
 };
 
-module.exports = {data, execute};
+module.exports = {data, execute, name, description};

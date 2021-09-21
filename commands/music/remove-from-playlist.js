@@ -53,4 +53,4 @@ const execute = async(interaction) => {
     return interaction.followUp(`You have no playlist named ${playlistName}`);
 };
 
-module.exports = {data, execute};
+module.exports = {data, execute, name, description};

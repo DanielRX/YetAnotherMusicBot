@@ -5,7 +5,7 @@ const fs = require('fs');
 
 const {setupOption} = require('../../utils/utils');
 
-const name = 'create-playlist';
+const name = '8ball';
 const description = 'Get the answer to anything!';
 
 const options = [
@@ -40,5 +40,5 @@ const execute = async(interaction) => {
     return interaction.reply({embeds: [answerEmbed]});
 };
 
-module.exports = {data, execute};
+module.exports = {data, execute, name, description};
 

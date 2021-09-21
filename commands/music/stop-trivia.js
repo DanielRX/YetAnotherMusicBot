@@ -29,4 +29,4 @@ const execute = async(interaction) => {
     return interaction.reply('Stopped the trivia! To start a new one, use the music-trivia command');
 };
 
-module.exports = {data, execute};
+module.exports = {data, execute, name, description};

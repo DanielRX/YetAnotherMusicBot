@@ -105,4 +105,4 @@ const execute = async(interaction) => {
     void embed.build();
 };
 
-module.exports = {data, execute};
+module.exports = {data, execute, name, description};

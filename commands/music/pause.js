@@ -2,6 +2,9 @@
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {AudioPlayerStatus} = require('@discordjs/voice');
 
+const name = 'pause';
+const description = 'Pause the playing track';
+
 /**
  * @param {import('../../').CustomInteraction} interaction
  * @returns {string}
@@ -31,7 +34,7 @@ const exec = (interaction) => {
     return 'I was unable to pause this song, please try again soon';
 };
 
-const data = new SlashCommandBuilder().setName('pause').setDescription('Pause the playing track');
+const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 /**
  * @param {import('../../').CustomInteraction} interaction
@@ -39,4 +42,4 @@ const data = new SlashCommandBuilder().setName('pause').setDescription('Pause th
  */
 const execute = (interaction) => interaction.reply(exec(interaction));
 
-module.exports = {data, execute};
+module.exports = {data, execute, name, description};

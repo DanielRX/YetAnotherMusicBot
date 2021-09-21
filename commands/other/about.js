@@ -14,4 +14,4 @@ const execute = async(interaction) => {
     return interaction.reply('Made by @DanielRX#6669 with :heart: code is available on GitHub (coming soon)');
 };
 
-module.exports = {data, execute};
+module.exports = {data, execute, name, description};

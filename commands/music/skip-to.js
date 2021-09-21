@@ -2,7 +2,7 @@
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {setupOption} = require('../../utils/utils');
 
-const name = 'skipto';
+const name = 'skip-to';
 const description = 'Skip to a song in queue';
 
 const options = [
@@ -12,7 +12,7 @@ const options = [
 const data = new SlashCommandBuilder().setName(name).setDescription(description).addIntegerOption(setupOption(options[0]));
 
 /**
- * @param {import('../../').CustomInteraction} interaction
+ * @param {import('../..').CustomInteraction} interaction
  * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
  */
 const execute = async(interaction) => {
@@ -38,4 +38,4 @@ const execute = async(interaction) => {
     return interaction.followUp(`Skipped to **${player.queue[0].title}**`);
 };
 
-module.exports = {data, execute};
+module.exports = {data, execute, name, description};

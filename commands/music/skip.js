@@ -22,4 +22,4 @@ const execute = async(interaction) => {
     player.audioPlayer.stop();
 };
 
-module.exports = {data, execute};
+module.exports = {data, execute, name, description};

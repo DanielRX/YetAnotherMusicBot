@@ -26,4 +26,4 @@ const execute = async(interaction) => {
     return interaction.reply('I was unable to unpause this song, please try again soon');
 };
 
-module.exports = {data, execute};
+module.exports = {data, execute, name, description};

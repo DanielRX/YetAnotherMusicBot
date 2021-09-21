@@ -38,4 +38,4 @@ const execute = async(interaction) => {
     return interaction.reply(`I removed **${playlistName}** from your saved playlists!`);
 };
 
-module.exports = {data, execute};
+module.exports = {data, execute, name, description};

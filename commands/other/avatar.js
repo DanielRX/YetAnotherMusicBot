@@ -26,4 +26,4 @@ const execute = async(interaction) => {
     return interaction.reply({embeds: [embed]});
 };
 
-module.exports = {data, execute};
+module.exports = {data, execute, name, description};

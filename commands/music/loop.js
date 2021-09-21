@@ -42,5 +42,5 @@ const execute = async(interaction) => {
     return interaction.reply(`**${player.nowPlaying.title}** is now playing on repeat :repeat: `);
 };
 
-module.exports = {data, execute};
+module.exports = {data, execute, name, description};
 

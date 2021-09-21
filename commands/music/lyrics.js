@@ -8,9 +8,6 @@ const cheerio = require('cheerio');
 const {geniusLyricsAPI} = require('../../config.json');
 const {setupOption} = require('../../utils/utils');
 
-// Skips loading if not found in config.json
-if(!geniusLyricsAPI) { return; } // TODO: Fix
-
 const name = 'lyrics';
 const description = 'Get the lyrics of any song or the lyrics of the currently playing song!';
 
@@ -105,6 +102,7 @@ const getLyrics = (url) => {
  * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
  */
 const execute = async(interaction) => {
+    if(!geniusLyricsAPI) { return interaction.reply(':x: Lyrics command is not enabled'); }
     void interaction.deferReply();
     const player = interaction.client.playerManager.get(interaction.guildId);
     const guildData = interaction.client.guildData.get(interaction.guildId);
@@ -151,4 +149,4 @@ const execute = async(interaction) => {
     }
 };
 
-module.exports = {data, execute};
+module.exports = {data, execute, name, description};

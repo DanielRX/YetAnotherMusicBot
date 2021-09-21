@@ -90,4 +90,4 @@ const execute = async(interaction) => {
     return handleSubscription(interaction, triviaPlayer);
 };
 
-module.exports = {data, execute};
+module.exports = {data, execute, name, description};

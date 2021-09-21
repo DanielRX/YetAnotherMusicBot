@@ -30,5 +30,5 @@ const execute = async(interaction) => {
     return interaction.reply('Left your voice channel!');
 };
 
-module.exports = {data, execute};
+module.exports = {data, execute, name, description};
 

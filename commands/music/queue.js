@@ -47,5 +47,5 @@ const execute = async(interaction) => {
         .build();
 };
 
-module.exports = {data, execute};
+module.exports = {data, execute, name, description};
 

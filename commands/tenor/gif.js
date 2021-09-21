@@ -29,4 +29,4 @@ const execute = async(interaction) => {
         });
 };
 
-module.exports = {data, execute};
+module.exports = {data, execute, name, description};

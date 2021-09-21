@@ -71,4 +71,4 @@ const execute = async(interaction) => {
     await pingMsg.delete();
 };
 
-module.exports = {data, execute};
+module.exports = {data, execute, name, description};

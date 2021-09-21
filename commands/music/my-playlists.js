@@ -32,4 +32,4 @@ const execute = async(interaction) => {
     return interaction.followUp({embeds: [playlistsEmbed]});
 };
 
-module.exports = {data, execute};
+module.exports = {data, execute, name, description};

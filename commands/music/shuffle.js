@@ -27,4 +27,4 @@ const execute = async(interaction) => {
     return interaction.followUp('The music queue has been shuffled!');
 };
 
-module.exports = {data, execute};
+module.exports = {data, execute, name, description};
