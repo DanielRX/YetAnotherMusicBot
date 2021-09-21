@@ -109,7 +109,7 @@ class TriviaPlayer {
                 let songNameWinners = {};
                 let songSignerWinners = {};
                 let songSignerFoundTime = -1;
-                const answerTimeout = 1000;
+                const answerTimeout = 2000;
 
                 let skipCounter = 0;
                 const skippedArray = [];
