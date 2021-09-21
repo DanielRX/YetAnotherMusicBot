@@ -2,6 +2,16 @@
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const fetch = require('node-fetch');
 const {MessageEmbed} = require('discord.js');
+const {setupOption} = require('../../utils/utils');
+
+const name = 'covid';
+const description = 'Displays COVID-19 stats.';
+
+const options = [
+    {name: 'country', description: 'What country do you like to search? Type `all` to display worldwide stats.', required: true, choices: []}
+];
+
+const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
 const getWorldStats = async() => {
     return new Promise(async function(resolve, reject) {
@@ -36,73 +46,64 @@ const getCountryStats = async(country) => {
     });
 };
 
-module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('covid')
-        .setDescription('Displays COVID-19 stats.')
-        .addStringOption((option) =>
-            option
-                .setName('country')
-                .setDescription('What country do you like to search? Type `all` to display worldwide stats.')
-                .setRequired(true)),
-    /**
+/**
      * @param {import('../../').CustomInteraction} interaction
      * @returns {Promise<void>}
      */
-    async execute(interaction) {
-        const country = interaction.options.get('country').value;
-        if(country === 'all' || country === 'world' || country === 'global') {
-            await getWorldStats()
-                .then((data) => {
-                    const covidall = new MessageEmbed()
-                        .setTitle('Worldwide Stats')
-                        .setColor('RANDOM')
-                        .setThumbnail('https://i.imgur.com/a4014ev.png') // World Globe image
-                        .addField('Total cases', data.cases.toLocaleString(), true)
-                        .addField('Cases today', data.todayCases.toLocaleString(), true)
-                        .addField('Deaths today', data.todayDeaths.toLocaleString(), true)
-                        .addField('Active cases', `${data.active.toLocaleString()} (${((data.active / data.cases) * 100).toFixed(2)}%)`, true)
-                        .addField('Total recovered', `${data.recovered.toLocaleString()} (${((data.recovered / data.cases) * 100).toFixed(2)}%)`, true)
-                        .addField('Total deaths', `${data.deaths.toLocaleString()} (${((data.deaths / data.cases) * 100).toFixed(2)}%)`, true)
-                        .addField('Tests', `${data.tests.toLocaleString()}`, true)
-                        .addField('Cases Per Mil', `${data.casesPerOneMillion.toLocaleString()}`, true)
-                        .addField('Deaths Per Mil', `${data.deathsPerOneMillion.toLocaleString()}`, true)
-                        .addField('Public advice', '[Click here](https://www.who.int/emergencies/diseases/novel-coronavirus-2019/advice-for-public)')
-                        .setFooter('Last updated')
-                        .setTimestamp(data.updated);
+const execute = async(interaction) => {
+    const country = interaction.options.get('country').value;
+    if(country === 'all' || country === 'world' || country === 'global') {
+        return getWorldStats()
+            .then((res) => {
+                const covidall = new MessageEmbed()
+                    .setTitle('Worldwide Stats')
+                    .setColor('RANDOM')
+                    .setThumbnail('https://i.imgur.com/a4014ev.png') // World Globe image
+                    .addField('Total cases', res.cases.toLocaleString(), true)
+                    .addField('Cases today', res.todayCases.toLocaleString(), true)
+                    .addField('Deaths today', res.todayDeaths.toLocaleString(), true)
+                    .addField('Active cases', `${res.active.toLocaleString()} (${((res.active / res.cases) * 100).toFixed(2)}%)`, true)
+                    .addField('Total recovered', `${res.recovered.toLocaleString()} (${((res.recovered / res.cases) * 100).toFixed(2)}%)`, true)
+                    .addField('Total deaths', `${res.deaths.toLocaleString()} (${((res.deaths / res.cases) * 100).toFixed(2)}%)`, true)
+                    .addField('Tests', `${res.tests.toLocaleString()}`, true)
+                    .addField('Cases Per Mil', `${res.casesPerOneMillion.toLocaleString()}`, true)
+                    .addField('Deaths Per Mil', `${res.deathsPerOneMillion.toLocaleString()}`, true)
+                    .addField('Public advice', '[Click here](https://www.who.int/emergencies/diseases/novel-coronavirus-2019/advice-for-public)')
+                    .setFooter('Last updated')
+                    .setTimestamp(res.updated);
 
-                    return interaction.reply({embeds: [covidall]});
-                })
-                .catch(function onError(err) {
-                    console.error(err);
-                    return interaction.reply('Something went wrong!');
-                });
-        } else {
-            await getCountryStats(country)
-                .then((data) => {
-                    const covidcountry = new MessageEmbed()
-                        .setTitle(`Country Stats for ${data.country}`)
-                        .setColor('RANDOM')
-                        .setThumbnail(data.countryInfo.flag)
-                        .addField('Total cases', data.cases.toLocaleString(), true)
-                        .addField('Cases today', data.todayCases.toLocaleString(), true)
-                        .addField('Deaths today', data.todayDeaths.toLocaleString(), true)
-                        .addField('Active cases', `${data.active.toLocaleString()} (${((data.active / data.cases) * 100).toFixed(2)}%)`, true)
-                        .addField('Total recovered', `${data.recovered.toLocaleString()} (${((data.recovered / data.cases) * 100).toFixed(2)}%)`, true)
-                        .addField('Total deaths', `${data.deaths.toLocaleString()} (${((data.deaths / data.cases) * 100).toFixed(2)}%)`, true)
-                        .addField('Tests', `${data.tests.toLocaleString()}`, true)
-                        .addField('Cases Per Mil', `${data.casesPerOneMillion.toLocaleString()}`, true)
-                        .addField('Deaths Per Mil', `${data.deathsPerOneMillion.toLocaleString()}`, true)
-                        .addField('Public advice', '[Click here](https://www.who.int/emergencies/diseases/novel-coronavirus-2019/advice-for-public)')
-                        .setFooter('Last updated')
-                        .setTimestamp(data.updated);
-
-                    return interaction.reply({embeds: [covidcountry]});
-                })
-                .catch(function onError(err) {
-                    console.error(err);
-                    return interaction.reply('Something went wrong!');
-                });
-        }
+                return interaction.reply({embeds: [covidall]});
+            })
+            .catch(function onError(err) {
+                console.error(err);
+                return interaction.reply('Something went wrong!');
+            });
     }
+    await getCountryStats(country)
+        .then((res) => {
+            const covidcountry = new MessageEmbed()
+                .setTitle(`Country Stats for ${res.country}`)
+                .setColor('RANDOM')
+                .setThumbnail(res.countryInfo.flag)
+                .addField('Total cases', res.cases.toLocaleString(), true)
+                .addField('Cases today', res.todayCases.toLocaleString(), true)
+                .addField('Deaths today', res.todayDeaths.toLocaleString(), true)
+                .addField('Active cases', `${res.active.toLocaleString()} (${((res.active / res.cases) * 100).toFixed(2)}%)`, true)
+                .addField('Total recovered', `${res.recovered.toLocaleString()} (${((res.recovered / res.cases) * 100).toFixed(2)}%)`, true)
+                .addField('Total deaths', `${res.deaths.toLocaleString()} (${((res.deaths / res.cases) * 100).toFixed(2)}%)`, true)
+                .addField('Tests', `${res.tests.toLocaleString()}`, true)
+                .addField('Cases Per Mil', `${res.casesPerOneMillion.toLocaleString()}`, true)
+                .addField('Deaths Per Mil', `${res.deathsPerOneMillion.toLocaleString()}`, true)
+                .addField('Public advice', '[Click here](https://www.who.int/emergencies/diseases/novel-coronavirus-2019/advice-for-public)')
+                .setFooter('Last updated')
+                .setTimestamp(res.updated);
+
+            return interaction.reply({embeds: [covidcountry]});
+        })
+        .catch(function onError(err) {
+            console.error(err);
+            return interaction.reply('Something went wrong!');
+        });
 };
+
+module.exports = {data, execute};
