@@ -95,4 +95,4 @@ const execute = async(interaction) => {
     }
 };
 
-module.exports = {data, execute, name, description};name, description};
+module.exports = {data, execute, name, description};
