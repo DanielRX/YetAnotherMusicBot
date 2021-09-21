@@ -105,6 +105,8 @@ class TriviaPlayer {
             } else if(newState.status === AudioPlayerStatus.Playing) {
                 // Trivia logic
                 let songNameFoundTime = -1;
+                let songNameWinners = {};
+                let songSignerWinners = {};
                 let songSignerFoundTime = -1;
                 const answerTimeout = 1000;
 
@@ -115,6 +117,7 @@ class TriviaPlayer {
 
                 collector.on('collect', (msg) => {
                     if(!this.score.has(msg.author.username)) { return; }
+                    const time = Date.now();
                     let guess = normalizeValue(msg.content);
                     let title = normalizeValue(this.queue[0].title);
                     let singer = normalizeValue(this.queue[0].singer);
@@ -127,46 +130,35 @@ class TriviaPlayer {
                         return;
                     }
 
-                    // If user guessed both singer and song name
-                    if(guess.includes(singer) && guess.includes(title)) {
-                        if((songNameFoundTime === -1 && songSignerFoundTime !== -1) || Date.now() - songNameFoundTime < answerTimeout) {
-                            this.score.set(msg.author.username, this.score.get(msg.author.username) + 1);
-                            msg.react('☑');
-                            return setTimeout(() => collector.stop(), 1000);
-                        }
-                        if((songNameFoundTime !== -1 && songSignerFoundTime === -1) || Date.now() - songSignerFoundTime < answerTimeout) {
-                            this.score.set(msg.author.username, this.score.get(msg.author.username) + 1);
-                            msg.react('☑');
-                            return setTimeout(() => collector.stop(), 1000);
-                        }
-                        this.score.set(msg.author.username, this.score.get(msg.author.username) + 2);
-                        msg.react('☑');
-                        return setTimeout(() => collector.stop(), 1000);
-                    } else if(guess.includes(singer)) { // If user guessed only the singer
-                        if(songSignerFoundTime !== -1 && (Date.now() - songSignerFoundTime < answerTimeout)) { return; } // Already been found
-                        if(songSignerFoundTime === -1) { songSignerFoundTime = Date.now(); } // Already been found
-                        if(songNameFoundTime !== -1) {
-                            this.score.set(msg.author.username, this.score.get(msg.author.username) + 1);
-                            msg.react('☑');
-                            return setTimeout(() => collector.stop(), 1000)
-                        }
+                    const gotSigner = guess.includes(singer);
+                    const gotName = guess.includes(title);
 
+                    if(!gotSigner && !gotName) { return msg.react('❌'); }
+
+                    let gotSignerInTime = false;
+                    let gotNameInTime = false;
+
+                    const firstSignerGuess = songSignerFoundTime === -1 && gotSigner;
+                    const firstNameGuess = songNameFoundTime === -1 && gotName;
+
+                    if(firstSignerGuess) { songSignerFoundTime = time; }
+                    if((time - songSignerFoundTime) < answerTimeout) { gotSignerInTime = true; }
+                    if(firstNameGuess) { songNameFoundTime = time; }
+                    if((time - songNameFoundTime) < answerTimeout) { gotNameInTime = true; }
+
+                    if(gotSignerInTime && !songSignerWinners[msg.author.username]) {
+                        songSignerWinners[msg.author.username] = true;
                         this.score.set(msg.author.username, this.score.get(msg.author.username) + 1);
                         msg.react('☑');
-                    } else if(guess.includes(title)) { // If user guessed song name
-                        if(songNameFoundTime !== -1 && (Date.now() - songNameFoundTime < answerTimeout)) { return; } // If song name has already been found
-                        if(songNameFoundTime === -1) { songNameFoundTime = Date.now(); } // Already been found
-                        if(songSignerFoundTime !== -1) {
-                            this.score.set(msg.author.username, this.score.get(msg.author.username) + 1);
-                            msg.react('☑');
-                            return setTimeout(() => collector.stop(), 1000);
-                        }
-                        this.score.set(msg.author.username, this.score.get(msg.author.username) + 1);
-                        msg.react('☑');
-                    } else {
-                        // Wrong answer
-                        return msg.react('❌');
                     }
+
+                    if(gotNameInTime && !songNameWinners[msg.author.username]) {
+                        songNameWinners[msg.author.username] = true;
+                        this.score.set(msg.author.username, this.score.get(msg.author.username) + 1);
+                        msg.react('☑');
+                    }
+
+                    if((songSignerFoundTime !== -1) && (songNameFoundTime !== -1)) { setTimeout(() => collector.stop(), 1000); }
                 });
 
                 collector.on('end', () => {
