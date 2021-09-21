@@ -126,26 +126,15 @@ class TriviaPlayer {
                     let singer = normalizeValue(this.queue[0].singer);
 
                     if(guess === 'hint') {
-                        if(time - start > 10 * 1000) {
-                            if(hints === 0) {
-                                clearTimeout(timeoutId);
-                                setTimeout(() => collector.stop(), 40000 + (time - start));
-                                const signerHint = [...singer].map((_) => _ === ' ' ? ' ' : '*').join('');
-                                const titleHint = [...title].map((_) => _ === ' ' ? ' ' : '*').join('');
-                                const song = `\`${songSignerFoundTime === -1 ? signerHint : singer}: ${songNameFoundTime === -1 ? titleHint : title}\``;
-                                const embed = new MessageEmbed().setColor('#ff7373').setTitle(`:musical_note: The song is:  ${song}`);
-                                this.textChannel.send({embeds: [embed]});
-                                hints++;
-                            } else if(hints === 1) {
-                                clearTimeout(timeoutId);
-                                setTimeout(() => collector.stop(), 50000 + (time - start));
-                                const signerHint = [...singer].map((_, i) => i === 0 ? _ : _ === ' ' ? ' ' : '*').join('');
-                                const titleHint = [...title].map((_, i) => i === 0 ? _ : _ === ' ' ? ' ' : '*').join('');
-                                const song = `\`${songSignerFoundTime === -1 ? signerHint : singer}: ${songNameFoundTime === -1 ? titleHint : title}\``;
-                                const embed = new MessageEmbed().setColor('#ff7373').setTitle(`:musical_note: The song is:  ${song}`);
-                                this.textChannel.send({embeds: [embed]});
-                                hints++;
-                            }
+                        if(time - start > (5 + (5 * hints)) * 1000) {
+                            clearTimeout(timeoutId);
+                            setTimeout(() => collector.stop(), 40000 + (5000 * hints) + (time - start));
+                            const signerHint = [...singer].map((_, i) => i < hints ? _ : _ === ' ' ? ' ' : '*').join('');
+                            const titleHint = [...title].map((_, i) => i < hints ? _ : _ === ' ' ? ' ' : '*').join('');
+                            const song = `\`${songSignerFoundTime === -1 ? signerHint : singer}: ${songNameFoundTime === -1 ? titleHint : title}\``;
+                            const embed = new MessageEmbed().setColor('#ff7373').setTitle(`:musical_note: The song is:  ${song}`);
+                            this.textChannel.send({embeds: [embed]});
+                            hints++;
                         }
                         return;
                     }
