@@ -3,7 +3,7 @@ const {AudioPlayerStatus, createAudioPlayer, entersState, VoiceConnectionDisconn
 const {setTimeout} = require('timers');
 const {promisify} = require('util');
 const ytdl = require('ytdl-core');
-const {MessageEmbed} = require('discord.js');
+const {MessageEmbed, GuildChannel, BaseGuildTextChannel, Message} = require('discord.js');
 const wait = promisify(setTimeout);
 
 const capitalize_Words = (str) => {
@@ -46,6 +46,9 @@ class TriviaPlayer {
         this.audioPlayer = createAudioPlayer();
         this.score = new Map();
         this.queue = [];
+        /**
+         * @type {BaseGuildTextChannel}
+         */
         this.textChannel = null;
         this.wasTriviaEndCalled = false;
     }
@@ -99,7 +102,7 @@ class TriviaPlayer {
                         .setColor('#ff7373')
                         .setTitle(`Music Quiz Results:`)
                         .setDescription(getLeaderBoard(Array.from(sortedScoreMap.entries())));
-                    this.textChannel.send({embeds: [embed]});
+                    void this.textChannel.send({embeds: [embed]});
 
                     // Leave channel close connection and subscription
                     if(this.connection._state.status !== 'destroyed') {
@@ -115,6 +118,10 @@ class TriviaPlayer {
                 let songSignerWinners = {};
                 let songSignerFoundTime = -1;
                 const answerTimeout = 1500;
+                /**
+                 * @type {Message}
+                 */
+                let lastMessage = null;
 
                 let skipCounter = 0;
                 const skippedArray = [];
@@ -123,19 +130,22 @@ class TriviaPlayer {
                 if(!this.useYoutube) { time = 30000; }
                 const collector = this.textChannel.createMessageCollector({time});
 
-                const showHint = (singer, title) => {
+                const showHint = async(singer, title) => {
                     const signerHint = [...singer].map((_, i) => i < hints ? _ : _ === ' ' ? ' ' : '*').join('');
                     const titleHint = [...title].map((_, i) => i < hints ? _ : _ === ' ' ? ' ' : '*').join('');
                     const song = `\`${songSignerFoundTime === -1 ? signerHint : singer}: ${songNameFoundTime === -1 ? titleHint : title}\``;
                     const embed = new MessageEmbed().setColor('#ff7373').setTitle(`:musical_note: The song is:  ${song}`);
-                    this.textChannel.send({embeds: [embed]});
+                    if(lastMessage !== null) {
+                        await lastMessage.delete();
+                    }
+                    lastMessage = this.textChannel.send({embeds: [embed]});
                     nextHintInt = setTimeout(() => { showHint(this.queue[0].singer, this.queue[0].title); }, 7500);
                     hints++;
                 };
                 // let timeoutId = setTimeout(() => collector.stop(), 30000);
 
                 nextHintInt = setTimeout(() => {
-                    showHint(this.queue[0].singer, this.queue[0].title);
+                    void showHint(normalizeValue(this.queue[0].singer), normalizeValue(this.queue[0].title));
                 }, 7500);
 
                 collector.on('collect', (msg) => {
@@ -202,6 +212,9 @@ class TriviaPlayer {
                 collector.on('end', () => {
                     if(nextHintInt !== -1) {
                         clearTimeout(nextHintInt);
+                    }
+                    if(lastMessage !== null) {
+                        lastMessage.delete();
                     }
                     /*The reason for this if statement is that we don't want to get an empty embed returned via chat by the bot if end-trivia command was called */
                     if(this.wasTriviaEndCalled) {
