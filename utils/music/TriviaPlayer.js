@@ -19,6 +19,7 @@ const normalizeValue = (value) =>
         .replace(/[^0-9a-zA-Z\s]/g, '') // Remove non-alphanumeric characters
         .replace(/ - .*/g, '')
         .replace(/ \(.*\)/g, '')
+        .replace(/ \[.*\]/g, '')
         .trim()
         .replace(/\s+/g, ' ')
         .toLowerCase(); // Remove duplicate spaces
