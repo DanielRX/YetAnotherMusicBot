@@ -15,7 +15,7 @@ const options = [
     {name: 'youtube', description: 'Use youtube for songs?', required: false, choices: []},
 ];
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
+const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0])).addBooleanOption(setupOption(options[1]));
 
 const handleSubscription = async(interaction, player) => {
     const {queue} = player;
