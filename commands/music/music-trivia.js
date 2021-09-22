@@ -69,7 +69,7 @@ const execute = async(interaction) => {
     const songs = await fs.readJSON('./resources/music/mk2/trivia.json');
     const albums = await fs.readJSON('./resources/music/mk2/albums.json');
     const artists = await fs.readJSON('./resources/music/mk2/artists.json');
-    const videoDataArray = songs.map((track) => {track.artists = track.artists.map((id) => artists[id]); track.album = albums[track.album]; });
+    const videoDataArray = songs.map((track) => {track.artists = track.artists.map((id) => artists[id]); track.album = albums[track.album]; return track; });
     // Get random numberOfSongs videos from the array
 
     const randomLinks = getRandom(videoDataArray, numberOfSongs);
