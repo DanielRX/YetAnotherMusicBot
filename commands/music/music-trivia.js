@@ -11,7 +11,8 @@ const name = 'music-trivia';
 const description = 'Engage in a music quiz with your friends!';
 
 const options = [
-    {name: 'length', description: 'How many songs would you like the trivia to have?', required: false, choices: []}
+    {name: 'length', description: 'How many songs would you like the trivia to have?', required: false, choices: []},
+    {name: 'youtube', description: 'Use youtube for songs?', required: false, choices: []},
 ];
 
 const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
@@ -65,6 +66,7 @@ const execute = async(interaction) => {
     }
 
     const numberOfSongs = interaction.options.get('length') ? interaction.options.get('length').value : 5;
+    const useYoutube = interaction.options.get('youtube') ? interaction.options.get('youtube').value : true;
 
     const songs = await fs.readJSON('./resources/music/mk2/trivia.json');
     const albums = await fs.readJSON('./resources/music/mk2/albums.json');
@@ -73,7 +75,7 @@ const execute = async(interaction) => {
     // Get random numberOfSongs videos from the array
 
     const randomLinks = getRandom(videoDataArray, numberOfSongs);
-    interaction.client.triviaManager.set(interaction.guildId, new TriviaPlayer());
+    interaction.client.triviaManager.set(interaction.guildId, new TriviaPlayer(useYoutube));
 
     const triviaPlayer = interaction.client.triviaManager.get(interaction.guildId);
 

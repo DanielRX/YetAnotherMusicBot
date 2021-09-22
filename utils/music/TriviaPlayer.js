@@ -37,7 +37,8 @@ const getLeaderBoard = (arr) => {
 };
 
 class TriviaPlayer {
-    constructor() {
+    constructor(useYoutube) {
+        this.useYoutube = useYoutube;
         this.connection = null;
         this.audioPlayer = createAudioPlayer();
         this.score = new Map();
@@ -227,9 +228,15 @@ class TriviaPlayer {
     async process(queue) {
         const [song] = this.queue;
         try {
-            const stream = ytdl(song.url, {filter: 'audio', quality: 'highestaudio', highWaterMark: 1 << 25});
-            const resource = createAudioResource(stream, {inputType: StreamType.Arbitrary});
-            this.audioPlayer.play(resource);
+            if(!this.useYoutube && song.preview_url) {
+                const stream = ytdl(song.preview_url, {filter: 'audio', quality: 'highestaudio', highWaterMark: 1 << 25});
+                const resource = createAudioResource(stream, {inputType: StreamType.Arbitrary});
+                this.audioPlayer.play(resource);
+            } else {
+                const stream = ytdl(song.url, {filter: 'audio', quality: 'highestaudio', highWaterMark: 1 << 25});
+                const resource = createAudioResource(stream, {inputType: StreamType.Arbitrary});
+                this.audioPlayer.play(resource);
+            }
         } catch(err) {
             console.error(err);
             return this.process(queue);
