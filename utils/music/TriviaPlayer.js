@@ -139,14 +139,14 @@ class TriviaPlayer {
                         await lastMessage.delete();
                     }
                     lastMessage = await this.textChannel.send({embeds: [embed]});
-                    nextHintInt = setTimeout(() => { showHint(this.queue[0].singer, this.queue[0].title); }, 7500);
+                    nextHintInt = setTimeout(() => { showHint(this.queue[0].singer, this.queue[0].title); }, 5000);
                     hints++;
                 };
                 // let timeoutId = setTimeout(() => collector.stop(), 30000);
 
                 nextHintInt = setTimeout(() => {
                     void showHint(normalizeValue(this.queue[0].singer), normalizeValue(this.queue[0].title));
-                }, 7500);
+                }, 5000);
 
                 collector.on('collect', (msg) => {
                     if(!this.score.has(msg.author.username)) { return; }
