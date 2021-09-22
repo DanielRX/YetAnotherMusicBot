@@ -124,6 +124,7 @@ class TriviaPlayer {
                     let guess = normalizeValue(msg.content);
                     let title = normalizeValue(this.queue[0].title);
                     let singer = normalizeValue(this.queue[0].singer);
+                    let singers = this.queue[0].artists.map(normalizeValue);
 
                     if(guess === 'hint') {
                         if(time - start > (5 + (5 * hints)) * 1000) {
@@ -147,16 +148,17 @@ class TriviaPlayer {
                         return;
                     }
 
+                    const gotAnArtist = singers.map((singer) => guess.includes(singer));
                     const gotSigner = guess.includes(singer);
                     const gotName = guess.includes(title);
 
-                    if(!gotSigner && !gotName) { return msg.react('❌'); }
+                    if(!gotSigner && !gotName && !gotAnArtist) { return msg.react('❌'); }
 
                     let gotSignerInTime = false;
                     let gotNameInTime = false;
 
-                    const firstSignerGuess = songSignerFoundTime === -1 && gotSigner;
-                    const firstNameGuess = songNameFoundTime === -1 && gotName;
+                    const firstSignerGuess = songSignerFoundTime === -1 && (gotSigner && gotAnArtist);
+                    const firstNameGuess = songNameFoundTime === -1 && (gotName);
 
                     if(firstSignerGuess) { songSignerFoundTime = time; }
                     if((time - songSignerFoundTime) < answerTimeout) { gotSignerInTime = true; }
