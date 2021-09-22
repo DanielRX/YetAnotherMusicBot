@@ -229,8 +229,7 @@ class TriviaPlayer {
         const [song] = this.queue;
         try {
             if(!this.useYoutube && song.preview_url) {
-                const stream = ytdl(song.preview_url, {filter: 'audio', quality: 'highestaudio', highWaterMark: 1 << 25});
-                const resource = createAudioResource(stream, {inputType: StreamType.Arbitrary});
+                const resource = createAudioResource(song.preview_url, {inputType: StreamType.Arbitrary});
                 this.audioPlayer.play(resource);
             } else {
                 const stream = ytdl(song.url, {filter: 'audio', quality: 'highestaudio', highWaterMark: 1 << 25});
