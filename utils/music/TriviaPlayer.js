@@ -144,9 +144,9 @@ class TriviaPlayer {
                 };
                 // let timeoutId = setTimeout(() => collector.stop(), 30000);
 
-                nextHintInt = setTimeout(() => {
-                    void showHint(normalizeValue(this.queue[0].singer), normalizeValue(this.queue[0].title));
-                }, 5000);
+                // nextHintInt = setTimeout(() => {
+                //     void showHint(normalizeValue(this.queue[0].singer), normalizeValue(this.queue[0].title));
+                // }, 5000);
 
                 collector.on('collect', (msg) => {
                     if(!this.score.has(msg.author.username)) { return; }
