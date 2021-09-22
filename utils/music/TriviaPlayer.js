@@ -139,7 +139,7 @@ class TriviaPlayer {
                         await lastMessage.delete();
                     }
                     lastMessage = await this.textChannel.send({embeds: [embed]});
-                    nextHintInt = setTimeout(() => { showHint(this.queue[0].singer, this.queue[0].title); }, 5000);
+                    nextHintInt = setTimeout(() => { showHint(normalizeValue(this.queue[0].singer), normalizeValue(this.queue[0].title)); }, 5000);
                     hints++;
                 };
                 // let timeoutId = setTimeout(() => collector.stop(), 30000);
