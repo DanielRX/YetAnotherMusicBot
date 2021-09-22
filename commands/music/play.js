@@ -83,6 +83,36 @@ const flagLogic = (interaction, video, jumpFlag) => {
         player.audioPlayer.stop();
     }
 };
+
+/**
+ * @param {import('../../').CustomInteraction} interaction
+ * @returns {Promise<void>}
+ */
+const handleSpotifyPlaylistData = async(interaction, data) => {
+    const player = interaction.client.playerManager.get(interaction.guildId);
+    const rawQuery = interaction.options.get('query').value;
+    const {nextFlag, jumpFlag} = getFlags(rawQuery);
+    const spotifyPlaylistItems = data.tracks.items;
+    const processingMessage = await interaction.channel.send({content: 'Processing Playlist...'});
+    for(const item of spotifyPlaylistItems) {
+        const {artists, name, track} = item;
+        try {
+            const trackData = (data.type == 'album') ? {artists, name} : track;
+            const video = await searchOne(trackData);
+            if(nextFlag || jumpFlag) {
+                flagLogic(interaction, video, jumpFlag);
+            } else {
+                player.queue.push(constructSongObj(video, interaction.member.voice.channel, interaction.member.user));
+            }
+        } catch(err) {
+            void processingMessage.delete();
+            return void interaction.followUp('Failed to process playlist, please try again later');
+        }
+    }
+    void processingMessage.edit('Playlist Processed!');
+    if(player.audioPlayer.state.status !== AudioPlayerStatus.Playing) { return handleSubscription(player.queue, interaction, player); }
+}
+
 /**
  * @param {import('../../').CustomInteraction} interaction
  * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
@@ -95,30 +125,7 @@ const handleSpotifyURL = (interaction) => {
         // 'tracks' property only exists on a playlist data object
         if(data.tracks) {
             // handle playlist
-            const spotifyPlaylistItems = data.tracks.items;
-            const processingMessage = await interaction.channel.send({content: 'Processing Playlist...'});
-            for(const item of spotifyPlaylistItems) {
-                const {artists, name, track} = item;
-                try {
-                    const trackData = (data.type == 'album') ? {artists, name} : track;
-
-                    const video = await searchOne(trackData);
-
-                    if(nextFlag || jumpFlag) {
-                        flagLogic(interaction, video, jumpFlag);
-                    } else {
-                        player.queue.push(constructSongObj(video, interaction.member.voice.channel, interaction.member.user));
-                    }
-                } catch(err) {
-                    void processingMessage.delete();
-                    return interaction.followUp('Failed to process playlist, please try again later');
-                }
-            }
-            void processingMessage.edit('Playlist Processed!');
-            if(player.audioPlayer.state.status !== AudioPlayerStatus.Playing) {
-                return handleSubscription(player.queue, interaction, player);
-            }
-            return;
+            return handleSpotifyPlaylistData(interaction, data);
         }
         // single track
 
