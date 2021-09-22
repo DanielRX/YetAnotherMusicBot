@@ -232,7 +232,7 @@ class TriviaPlayer {
     async process(queue) {
         const [song] = this.queue;
         try {
-            if(!this.useYoutube && song.preview_url) {
+            if(!this.useYoutube && song.preview_url !== '') {
                 const resource = createAudioResource(`${song.preview_url}.mp3`, {inputType: StreamType.Arbitrary});
                 this.audioPlayer.play(resource);
             } else {
