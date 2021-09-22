@@ -199,7 +199,7 @@ class TriviaPlayer {
 
                     const sortedScoreMap = new Map([...this.score.entries()].sort((a, b) => b[1] - a[1]));
 
-                    const song = `${capitalize_Words(normalizeValue(this.queue[0].singer))}: ${capitalize_Words(normalizeValue(this.queue[0].title))}`;
+                    const song = `${capitalize_Words(this.queue[0].singer)}: ${capitalize_Words(this.queue[0].title)}`;
 
                     const embed = new MessageEmbed()
                         .setColor('#ff7373')
