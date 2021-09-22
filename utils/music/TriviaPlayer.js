@@ -18,7 +18,7 @@ const normalizeValue = (value) =>
         .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
         .replace(/[^0-9a-zA-Z\s]/g, '') // Remove non-alphanumeric characters
         .replace(/ - .*/g, '')
-        .replace(/\(.*\)/g, '')
+        .replace(/ \(.*\)/g, '')
         .trim()
         .replace(/\s+/g, ' ')
         .toLowerCase(); // Remove duplicate spaces
@@ -198,7 +198,7 @@ class TriviaPlayer {
 
                     const sortedScoreMap = new Map([...this.score.entries()].sort((a, b) => b[1] - a[1]));
 
-                    const song = `${capitalize_Words(this.queue[0].singer)}: ${capitalize_Words(this.queue[0].title)}`;
+                    const song = `${capitalize_Words(normalizeValue(this.queue[0].singer))}: ${capitalize_Words(normalizeValue(this.queue[0].title))}`;
 
                     const embed = new MessageEmbed()
                         .setColor('#ff7373')
