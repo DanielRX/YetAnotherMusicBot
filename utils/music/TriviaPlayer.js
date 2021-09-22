@@ -81,6 +81,7 @@ class TriviaPlayer {
         });
 
         this.audioPlayer.on('stateChange', (oldState, newState) => {
+            let nextHintInt = -1;
             if(newState.status === AudioPlayerStatus.Idle && oldState.status !== AudioPlayerStatus.Idle) {
                 this.queue.shift();
                 // Finished playing audio
@@ -113,7 +114,7 @@ class TriviaPlayer {
                 let songNameWinners = {};
                 let songSignerWinners = {};
                 let songSignerFoundTime = -1;
-                const answerTimeout = 2000;
+                const answerTimeout = 1500;
 
                 let skipCounter = 0;
                 const skippedArray = [];
@@ -121,7 +122,21 @@ class TriviaPlayer {
                 let time = 60000;
                 if(!this.useYoutube) { time = 30000; }
                 const collector = this.textChannel.createMessageCollector({time});
+
+                const showHint = (singer, title) => {
+                    const signerHint = [...singer].map((_, i) => i < hints ? _ : _ === ' ' ? ' ' : '*').join('');
+                    const titleHint = [...title].map((_, i) => i < hints ? _ : _ === ' ' ? ' ' : '*').join('');
+                    const song = `\`${songSignerFoundTime === -1 ? signerHint : singer}: ${songNameFoundTime === -1 ? titleHint : title}\``;
+                    const embed = new MessageEmbed().setColor('#ff7373').setTitle(`:musical_note: The song is:  ${song}`);
+                    this.textChannel.send({embeds: [embed]});
+                    nextHintInt = setTimeout(() => { showHint(this.queue[0].singer, this.queue[0].title); }, 7500);
+                    hints++;
+                };
                 // let timeoutId = setTimeout(() => collector.stop(), 30000);
+
+                nextHintInt = setTimeout(() => {
+                    showHint(this.queue[0].singer, this.queue[0].title);
+                }, 7500);
 
                 collector.on('collect', (msg) => {
                     if(!this.score.has(msg.author.username)) { return; }
@@ -131,19 +146,18 @@ class TriviaPlayer {
                     let singer = normalizeValue(this.queue[0].singer);
                     // let singers = this.queue[0].artists.map(normalizeValue);
 
-                    if(guess === 'hint') {
-                        if(time - start > (5 + (5 * hints)) * 1000) {
-                            // clearTimeout(timeoutId);
-                            // setTimeout(() => collector.stop(), Math.min(40000 + (5000 * hints), 60000) + (time - start));
-                            const signerHint = [...singer].map((_, i) => i < hints ? _ : _ === ' ' ? ' ' : '*').join('');
-                            const titleHint = [...title].map((_, i) => i < hints ? _ : _ === ' ' ? ' ' : '*').join('');
-                            const song = `\`${songSignerFoundTime === -1 ? signerHint : singer}: ${songNameFoundTime === -1 ? titleHint : title}\``;
-                            const embed = new MessageEmbed().setColor('#ff7373').setTitle(`:musical_note: The song is:  ${song}`);
-                            this.textChannel.send({embeds: [embed]});
-                            hints++;
-                        }
-                        return;
-                    }
+                    // if(guess === 'hint') {
+                    //     if(time - start > (5 + (5 * hints)) * 1000) {
+                    //         // clearTimeout(timeoutId);
+                    //         // setTimeout(() => collector.stop(), Math.min(40000 + (5000 * hints), 60000) + (time - start));
+                    //         const signerHint = [...singer].map((_, i) => i < hints ? _ : _ === ' ' ? ' ' : '*').join('');
+                    //         const titleHint = [...title].map((_, i) => i < hints ? _ : _ === ' ' ? ' ' : '*').join('');
+                    //         const song = `\`${songSignerFoundTime === -1 ? signerHint : singer}: ${songNameFoundTime === -1 ? titleHint : title}\``;
+                    //         const embed = new MessageEmbed().setColor('#ff7373').setTitle(`:musical_note: The song is:  ${song}`);
+                    //         this.textChannel.send({embeds: [embed]});
+                    //     }
+                    //     return;
+                    // }
 
                     if(guess === 'skip') {
                         if(skippedArray.includes(msg.author.username)) { return; }
@@ -186,10 +200,10 @@ class TriviaPlayer {
                 });
 
                 collector.on('end', () => {
-                    /*
-            The reason for this if statement is that we don't want to get an
-            empty embed returned via chat by the bot if end-trivia command was called
-            */
+                    if(nextHintInt !== -1) {
+                        clearTimeout(nextHintInt);
+                    }
+                    /*The reason for this if statement is that we don't want to get an empty embed returned via chat by the bot if end-trivia command was called */
                     if(this.wasTriviaEndCalled) {
                         this.wasTriviaEndCalled = false;
                         return;
