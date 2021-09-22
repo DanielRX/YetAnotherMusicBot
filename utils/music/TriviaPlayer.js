@@ -135,7 +135,7 @@ class TriviaPlayer {
                     const titleHint = [...title].map((_, i) => i < hints ? _ : _ === ' ' ? ' ' : '*').join('');
                     const song = `${songSignerFoundTime === -1 ? signerHint : singer}: ${songNameFoundTime === -1 ? titleHint : title}`;
                     const embed = new MessageEmbed().setColor('#ff7373').setTitle(`:musical_note: The song is:  \`${song}\``);
-                    if(lastMessage !== null) { await lastMessage.delete().catch(() => {}); }
+                    if(lastMessage !== null) { lastMessage.delete().catch(() => {}); }
                     lastMessage = await this.textChannel.send({embeds: [embed]});
                     nextHintInt = setTimeout(() => { showHint(normalizeValue(this.queue[0].singer), normalizeValue(this.queue[0].title)); }, 5000);
                     hints++;
