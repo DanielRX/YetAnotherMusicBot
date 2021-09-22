@@ -17,6 +17,8 @@ const normalizeValue = (value) =>
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
         .replace(/[^0-9a-zA-Z\s]/g, '') // Remove non-alphanumeric characters
+        .replace(/ - .*/g, '')
+        .replace(/\(.*\)/g, '')
         .trim()
         .replace(/\s+/g, ' ')
         .toLowerCase(); // Remove duplicate spaces
@@ -115,8 +117,9 @@ class TriviaPlayer {
                 let skipCounter = 0;
                 const skippedArray = [];
                 let hints = 0;
-
-                const collector = this.textChannel.createMessageCollector({time: 60000});
+                let time = 60000;
+                if(!this.useYoutube) { time = 30000; }
+                const collector = this.textChannel.createMessageCollector({time});
                 let timeoutId = setTimeout(() => collector.stop(), 30000);
 
                 collector.on('collect', (msg) => {
@@ -125,7 +128,7 @@ class TriviaPlayer {
                     let guess = normalizeValue(msg.content);
                     let title = normalizeValue(this.queue[0].title);
                     let singer = normalizeValue(this.queue[0].singer);
-                    let singers = this.queue[0].artists.map(normalizeValue);
+                    // let singers = this.queue[0].artists.map(normalizeValue);
 
                     if(guess === 'hint') {
                         if(time - start > (5 + (5 * hints)) * 1000) {
