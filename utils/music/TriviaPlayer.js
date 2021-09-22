@@ -138,7 +138,7 @@ class TriviaPlayer {
                     if(lastMessage !== null) {
                         await lastMessage.delete();
                     }
-                    lastMessage = this.textChannel.send({embeds: [embed]});
+                    lastMessage = await this.textChannel.send({embeds: [embed]});
                     nextHintInt = setTimeout(() => { showHint(this.queue[0].singer, this.queue[0].title); }, 7500);
                     hints++;
                 };
