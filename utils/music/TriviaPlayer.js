@@ -175,6 +175,7 @@ class TriviaPlayer {
                         return;
                     }
 
+                    if(msg.content.includes(':')) { return; }
                     // const gotAnArtist = singers.map((singer) => guess.includes(singer));
                     const gotSigner = guess.includes(singer);
                     const gotName = guess.includes(title);
