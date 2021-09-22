@@ -149,16 +149,16 @@ class TriviaPlayer {
                         return;
                     }
 
-                    const gotAnArtist = singers.map((singer) => guess.includes(singer));
+                    // const gotAnArtist = singers.map((singer) => guess.includes(singer));
                     const gotSigner = guess.includes(singer);
                     const gotName = guess.includes(title);
 
-                    if(!gotSigner && !gotName && !gotAnArtist) { return msg.react('❌'); }
+                    if(!gotSigner && !gotName) { return msg.react('❌'); }
 
                     let gotSignerInTime = false;
                     let gotNameInTime = false;
 
-                    const firstSignerGuess = songSignerFoundTime === -1 && (gotSigner && gotAnArtist);
+                    const firstSignerGuess = songSignerFoundTime === -1 && (gotSigner);
                     const firstNameGuess = songNameFoundTime === -1 && (gotName);
 
                     if(firstSignerGuess) { songSignerFoundTime = time; }
