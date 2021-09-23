@@ -2,7 +2,7 @@
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const Discord = require('discord.js');
 const os = require('os');
-const pkg = require('../../package.json');
+const pkg = require('../../../package.json');
 
 const name = 'bot-status';
 const description = 'Shows the current system status';
