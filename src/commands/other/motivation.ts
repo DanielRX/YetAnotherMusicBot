@@ -3,16 +3,16 @@ const {SlashCommandBuilder} = require('@discordjs/builders');
 const fs = require('fs');
 const {MessageEmbed} = require('discord.js');
 
-const name = 'motivation';
-const description = 'Get a random motivational quote!';
+export const namest name = 'motivation';
+export const description = 'Get a random motivational quote!';
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description);
+export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 /**
  * @param {import('../../').CustomInteraction} interaction
  * @returns {Promise<void>}
  */
-const execute = async(interaction) => {
+export const execute = async(interaction) => {
     // thanks to https://type.fit/api/quotes
 
     const jsonQuotes = fs.readFileSync('././resources/quotes/motivational.json', 'utf8');
@@ -29,4 +29,4 @@ const execute = async(interaction) => {
     return interaction.reply({embeds: [quoteEmbed]});
 };
 
-module.exports = {data, execute, name, description};
+

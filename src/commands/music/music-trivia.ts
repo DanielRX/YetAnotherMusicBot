@@ -7,15 +7,15 @@ const TriviaPlayer = require('../../utils/music/TriviaPlayer');
 const {getRandom} = require('../../utils/utils');
 const {setupOption} = require('../../utils/utils');
 
-const name = 'music-trivia';
-const description = 'Engage in a music quiz with your friends!';
+export const name = 'music-trivia';
+export const description = 'Engage in a music quiz with your friends!';
 
-const options = [
+export const options = [
     {name: 'length', description: 'How many songs would you like the trivia to have?', required: false, choices: []},
     {name: 'youtube', description: 'Use youtube for songs?', required: false, choices: []},
 ];
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0])).addBooleanOption(setupOption(options[1]));
+export const datast data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0])).addBooleanOption(setupOption(options[1]));
 
 /**
  *
@@ -56,7 +56,7 @@ const handleSubscription = async(interaction, player) => {
  * @param {import('../..').CustomInteraction} interaction
  * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
  */
-const execute = async(interaction) => {
+export const execute = async(interaction) => {
     await interaction.deferReply();
     const voiceChannel = interaction.member.voice.channel;
     if(!voiceChannel) {
@@ -103,4 +103,4 @@ const execute = async(interaction) => {
     return handleSubscription(interaction, triviaPlayer);
 };
 
-module.exports = {data, execute, name, description};
+

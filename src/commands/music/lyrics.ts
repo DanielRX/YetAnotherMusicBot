@@ -7,14 +7,14 @@ const cheerio = require('cheerio');
 const {geniusLyricsAPI} = require('../../utils/config');
 const {setupOption, fetch} = require('../../utils/utils');
 
-const name = 'lyrics';
-const description = 'Get the lyrics of any song or the lyrics of the currently playing song!';
+export const name = 'lyrics';
+export const description = 'Get the lyrics of any song or the lyrics of the currently playing song!';
 
-const options = [
+export const options = [
     {name: 'songname', description: ':mag: What song lyrics would you like to get?', required: true, choices: []}
 ];
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
+export const datast datast data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
 /**
 * @param {string} songName
@@ -94,7 +94,7 @@ const getLyrics = async(url) => {
  * @param {import('../..').CustomInteraction} interaction
  * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
  */
-const execute = async(interaction) => {
+export const execute = async(interaction) => {
     if(!geniusLyricsAPI) { return interaction.reply(':x: Lyrics command is not enabled'); }
     void interaction.deferReply();
     const player = interaction.client.playerManager.get(interaction.guildId);
@@ -142,4 +142,4 @@ const execute = async(interaction) => {
     }
 };
 
-module.exports = {data, execute, name, description};
+

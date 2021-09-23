@@ -1,21 +1,16 @@
-// @ts-check
+import type {CustomInteraction} from '../utils/types';
 
-const name = 'interactionCreate';
-/**
- * @param {import('..').CustomInteraction} interaction
- * @returns {Promise<void>}
- */
-const execute = async(interaction) => {
+export const name = 'interactionCreate';
+
+export const execute = async(interaction: CustomInteraction): Promise<void> => {
     if(!interaction.isCommand()) return;
 
     if(!interaction.client.commands.has(interaction.commandName)) return;
 
     try {
-        await interaction.client.commands.get(interaction.commandName).execute(interaction);
+        await interaction.client.commands.get(interaction.commandName)?.execute(interaction);
     } catch(error) {
         console.error(error);
         return interaction.reply({content: 'There was an error while executing this command!', ephemeral: true});
     }
 };
-
-module.exports = {name, execute};

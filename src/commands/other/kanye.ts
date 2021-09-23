@@ -3,10 +3,10 @@ const {SlashCommandBuilder} = require('@discordjs/builders');
 const {fetch} = require('../../utils/utils');
 const {MessageEmbed} = require('discord.js');
 
-const name = 'kanye';
-const description = 'Get a random Kanye quote.';
+export const name = 'kanye';
+export const description = 'Get a random Kanye quote.';
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description);
+export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 const makeEmbed = (quote) => new MessageEmbed()
     .setColor('#AF6234')
@@ -19,7 +19,7 @@ const makeEmbed = (quote) => new MessageEmbed()
  * @param {import('../..').CustomInteraction} interaction
  * @returns {Promise<void>}
  */
-const execute = async(interaction) => {
+export const execute = async(interaction) => {
     return fetch('https://api.kanye.rest/?format=json')
         .then((res) => res.json())
         .then((json) => interaction.reply({embeds: [makeEmbed(json.quote)]}))
@@ -29,4 +29,4 @@ const execute = async(interaction) => {
         });
 };
 
-module.exports = {data, execute, name, description};
+

@@ -1,15 +1,8 @@
 // https://stackoverflow.com/a/5306832/9421002
-const fetch = require('node-fetch');
-const {SlashCommandStringOption, SlashCommandIntegerOption, SlashCommandBooleanOption} = require('@discordjs/builders');
+import fetch from 'node-fetch';
+import {SlashCommandStringOption, SlashCommandIntegerOption, SlashCommandBooleanOption} from '@discordjs/builders';
 
-/**
- * @template T
- * @param {T[]} arr
- * @param {number} old_index
- * @param {number} new_index
- * @returns {T[]}
- */
-const arrayMove = (arr, old_index, new_index) => {
+const arrayMove = <T>(arr: T[], old_index: number, new_index: number): T[] => {
     while(old_index < 0) {
         old_index += arr.length;
     }
@@ -26,12 +19,7 @@ const arrayMove = (arr, old_index, new_index) => {
     return arr;
 };
 
-/**
- * @template T
- * @param {T[]} arr
- * @returns
- */
-const shuffleArray = (arr) => {
+const shuffleArray = <T>(arr: T[]): T[] => {
     for(let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [arr[i], arr[j]] = [arr[j], arr[i]];
@@ -39,46 +27,25 @@ const shuffleArray = (arr) => {
     return arr;
 };
 
-/**
- * @template T
- * @param {T[]} arr
- * @param {number} n
- * @returns {T[]}
- */
-const getRandom = (arr, n) => {
+const getRandom = <T>(arr: T[], n: number): T[] => {
     if(n > arr.length) {throw new RangeError('getRandom: more elements taken than available!');}
     return shuffleArray(arr).slice(0, n);
 };
 
-/**
- * @template T
- * @param {T[]} arr Array to get a random element of
- * @returns {T}
- */
-const randomEl = (arr) => arr[Math.floor(Math.random() * arr.length)];
+const randomEl = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
 
-/**
- * @template {SlashCommandStringOption | SlashCommandIntegerOption | SlashCommandBooleanOption } T
- * @param {{name: string, description: string, required: boolean, choices: string[]}} config
- * @returns {(option: T) => T}
- */
-const setupOption = (config) => (option) => {
+const setupOption = (config: {name: string, description: string, required: boolean, choices: string[]}) => (option: SlashCommandBooleanOption | SlashCommandIntegerOption | SlashCommandStringOption) => {
     option = option.setName(config.name).setDescription(config.description).setRequired(config.required);
     if(option instanceof SlashCommandBooleanOption && config.choices.length > 0) { throw new Error('Unable to add choice to boolean command option'); }
-    if(option instanceof SlashCommandIntegerOption || option instanceof SlashCommandStringOption) {
-        for(const choice of config.choices) { option = option.addChoice(choice, choice); }
-    }
+    if(option instanceof SlashCommandIntegerOption) { for(const choice of config.choices) { option = option.addChoice(choice, choice); } }
+    if(option instanceof SlashCommandStringOption) { for(const choice of config.choices) { option = option.addChoice(choice, choice); } }
     return option;
 };
 
-/** @param {string} arg */
-const isSpotifyURL = (arg) => /^(spotify:|https:\/\/[a-z]+\.spotify\.com\/)/.exec(arg);
-/** @param {string} arg */
-const isYouTubeVideoURL = (arg) => /^(http(s)?:\/\/)?(m.)?((w){3}.)?(music.)?youtu(be|.be)?(\.com)?\/.+/.exec(arg);
-/** @param {string} arg */
-const isYouTubePlaylistURL = (arg) => /^https?:\/\/(music.)?(www.youtube.com|youtube.com)\/playlist(.*)$/.exec(arg);
+const isSpotifyURL = (arg: string): RegExpExecArray | null => /^(spotify:|https:\/\/[a-z]+\.spotify\.com\/)/.exec(arg);
+const isYouTubeVideoURL = (arg: string): RegExpExecArray | null => /^(http(s)?:\/\/)?(m.)?((w){3}.)?(music.)?youtu(be|.be)?(\.com)?\/.+/.exec(arg);
+const isYouTubePlaylistURL = (arg: string): RegExpExecArray | null => /^https?:\/\/(music.)?(www.youtube.com|youtube.com)\/playlist(.*)$/.exec(arg);
 
-/** @param {string} url */
-const validateURL = (url) => isYouTubePlaylistURL(url) || isYouTubeVideoURL(url) || isSpotifyURL(url);
+const validateURL = (url: string): RegExpExecArray | null => isYouTubePlaylistURL(url) || isYouTubeVideoURL(url) || isSpotifyURL(url);
 
-module.exports = {fetch, arrayMove, getRandom, shuffleArray, isSpotifyURL, isYouTubePlaylistURL, isYouTubeVideoURL, validateURL, randomEl, setupOption};
+export {fetch, arrayMove, getRandom, shuffleArray, isSpotifyURL, isYouTubePlaylistURL, isYouTubeVideoURL, validateURL, randomEl, setupOption};

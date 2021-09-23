@@ -1,19 +1,16 @@
+import type {CustomInteraction} from '../../utils/types';
 
 // @ts-check
-const {SlashCommandBuilder} = require('@discordjs/builders');
-const {AudioPlayerStatus} = require('@discordjs/voice');
-const createGuildData = require('../../utils/createGuildData');
+import {SlashCommandBuilder} from '@discordjs/builders';
+import {AudioPlayerStatus} from '@discordjs/voice';
+import createGuildData from '../../utils/createGuildData';
 
-const name = 'loop';
-const description = 'Set a song to play on loop';
+export const name = 'loop';
+export const description = 'Set a song to play on loop';
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description);
+export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
-/**
- * @param {import('../../').CustomInteraction} interaction
- * @returns {Promise<void>}
- */
-const execute = async(interaction) => {
+export const executeexecute = async(interaction: CustomInteraction): Promise<void> => {
     if(!interaction.client.guildData.get(interaction.guildId)) {
         interaction.client.guildData.set(interaction.guildId, createGuildData());
     }
@@ -41,6 +38,4 @@ const execute = async(interaction) => {
     player.loopSong = true;
     return interaction.reply(`**${player.nowPlaying.title}** is now playing on repeat :repeat: `);
 };
-
-module.exports = {data, execute, name, description};
 

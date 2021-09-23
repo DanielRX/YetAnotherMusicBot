@@ -5,14 +5,14 @@ const {PagesBuilder} = require('discord.js-pages');
 const {rawgAPI} = require('../../utils/config');
 const {setupOption, fetch} = require('../../utils/utils');
 
-const name = 'game-search';
-const description = 'Search for game information';
+export const name = 'game-search';
+export const description = 'Search for game information';
 
-const options = [
+export const options = [
     {name: 'game', description: 'What game are you looking for?', required: true, choices: []}
 ];
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
+export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
 const getGameDetails = async(query) => {
     const url = `https://api.rawg.io/api/games/${query}?key=${rawgAPI}`;
@@ -51,7 +51,7 @@ const getGameDetails = async(query) => {
  * @param {import('../..').CustomInteraction} interaction
  * @returns {Promise<void>}
  */
-const execute = async(interaction) => {
+export const execute = async(interaction) => {
     if(!rawgAPI) { return interaction.reply('This command is not enabled on this bot!'); }
     const gameTitleFiltered = interaction.options
         .get('game')
@@ -102,4 +102,4 @@ const execute = async(interaction) => {
     void embed.build();
 };
 
-module.exports = {data, execute, name, description};
+

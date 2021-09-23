@@ -3,20 +3,20 @@ const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageEmbed} = require('discord.js');
 const {setupOption} = require('../../utils/utils');
 
-const name = 'rps';
-const description = 'Rock paper scissors!';
+export const name = 'rps';
+export const description = 'Rock paper scissors!';
 
-const options = [
+export const options = [
     {name: 'move', description: 'You ready for a game of Rock, Paper, Scissors? \n What is your move?', required: true, choices: []}
 ];
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
+export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
 /**
      * @param {import('../../').CustomInteraction} interaction
      * @returns {Promise<void>}
      */
-const execute = async(interaction) => {
+export const executeexecuteexecute = async(interaction) => {
     const replies = ['Rock', 'Paper', 'Scissors'];
     const reply = replies[Math.floor(Math.random() * replies.length)];
 
@@ -27,4 +27,4 @@ const execute = async(interaction) => {
     return interaction.reply({embeds: [embed]});
 };
 
-module.exports = {data, execute, name, description};
+

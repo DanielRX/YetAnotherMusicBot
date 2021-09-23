@@ -3,16 +3,16 @@ const {SlashCommandBuilder} = require('@discordjs/builders');
 const {fetch} = require('../../utils/utils');
 const {MessageEmbed} = require('discord.js');
 
-const name = 'insult';
-const description = 'Generate an evil insult!';
+export const name = 'insult';
+export const description = 'Generate an evil insult!';
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description);
+export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 /**
  * @param {import('../..').CustomInteraction} interaction
  * @returns {Promise<void>}
  */
-const execute = async(interaction) => {
+export const executeexecute = async(interaction) => {
     // thanks to https://evilinsult.com :)
     return fetch('https://evilinsult.com/generate_insult.php?lang=en&type=json')
         .then((res) => res.json())
@@ -31,4 +31,4 @@ const execute = async(interaction) => {
         });
 };
 
-module.exports = {data, execute, name, description};
+

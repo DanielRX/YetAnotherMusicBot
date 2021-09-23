@@ -3,16 +3,16 @@ const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageEmbed} = require('discord.js');
 const {PagesBuilder} = require('discord.js-pages');
 
-const name = 'queue-history';
-const description = 'Display the music queue history';
+export const name = 'queue-history';
+export const descriptionription = 'Display the music queue history';
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description);
+export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 /**
  * @param {import('../../').CustomInteraction} interaction
  * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
  */
-const execute = async(interaction) => {
+export const executeexecute = async(interaction) => {
     const guildData = interaction.client.guildData.get(interaction.guildId);
     if(!guildData) {
         return interaction.followUp('There is no music queue history!');
@@ -42,5 +42,5 @@ const execute = async(interaction) => {
         .build();
 };
 
-module.exports = {data, execute, name, description};
+
 

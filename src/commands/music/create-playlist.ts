@@ -1,23 +1,21 @@
+import type {CustomInteraction} from '../../utils/types';
+
 // @ts-check
-const {SlashCommandBuilder} = require('@discordjs/builders');
-const Member = require('../../utils/models/Member');
-const {setupOption} = require('../../utils/utils');
+import {SlashCommandBuilder} from '@discordjs/builders';
+import Member from '../../utils/models/Member';
+import {setupOption} from '../../utils/utils';
 
-const name = 'create-playlist';
-const description = 'Create a custom playlist that you can play anytime';
+export const name = 'create-playlist';
+export const description = 'Create a custom playlist that you can play anytime';
 
-const options = [
+export const options = [
     {name: 'playlistname', description: 'What is the name of the playlist you would like to create?', required: true, choices: []}
 ];
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
+export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
-/**
- * @param {import('../../').CustomInteraction} interaction
- * @returns {Promise<void>}
- */
-const execute = async(interaction) => {
-    const playlistName = interaction.options.get('playlistname').value;
+export const execute = async(interaction: CustomInteraction): Promise<void> => {
+    const playlistName = interaction.options.get('playlistname')?.value;
     const {member: {id, user: {username}, joinedAt}} = interaction;
     // Check if the user exists in the db
     const userData = await Member.findOne({memberId: id}).exec(); // A clone object
@@ -45,4 +43,3 @@ const execute = async(interaction) => {
     }
 };
 
-module.exports = {data, execute, name, description};

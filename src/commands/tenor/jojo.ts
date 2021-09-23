@@ -3,16 +3,16 @@ const {SlashCommandBuilder} = require('@discordjs/builders');
 const fs = require('fs-extra');
 const {randomEl} = require('../../utils/utils');
 
-const name = 'jojo';
-const description = 'Replies with a random jojo gif!';
+export const name = 'jojo';
+export const description = 'Replies with a random jojo gif!';
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description);
+export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 /**
  * @param {import('../..').CustomInteraction} interaction
  * @returns {Promise<void>}
  */
-const execute = async(interaction) => {
+export const execute = async(interaction) => {
     try {
         const linkArray = await fs.readFile('./resources/gifs/jojolinks.txt', 'utf8').then((links) => links.split('\n'));
         const link = randomEl(linkArray);
@@ -23,7 +23,7 @@ const execute = async(interaction) => {
     }
 };
 
-module.exports = {data, execute, name, description};
+
 
 /*
     fetch(`https://g.tenor.com/v1/random?key=${tenorAPI}&q=jojos-bizarre-adventure&limit=1`)

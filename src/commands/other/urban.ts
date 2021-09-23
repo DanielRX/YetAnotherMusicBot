@@ -3,20 +3,20 @@ const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageEmbed} = require('discord.js');
 const {setupOption, fetch} = require('../../utils/utils');
 
-const name = 'urban';
-const description = 'Get definitions from urban dictonary.';
+export const namest name = 'urban';
+export const description = 'Get definitions from urban dictonary.';
 
-const options = [
+export const options = [
     {name: 'query', description: 'What do you want to search for?', required: true, choices: []},
 ];
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
+export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
 /**
  * @param {import('../..').CustomInteraction} interaction
  * @returns {Promise<void>}
  */
-const execute = async(interaction) => {
+export const execute = async(interaction) => {
     return fetch(`https://api.urbandictionary.com/v0/define?term=${
         interaction.options.get('query').value
     }`)
@@ -38,4 +38,4 @@ const execute = async(interaction) => {
         });
 };
 
-module.exports = {data, execute, name, description};
+

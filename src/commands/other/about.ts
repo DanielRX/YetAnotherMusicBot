@@ -1,17 +1,17 @@
 // @ts-check
 const {SlashCommandBuilder} = require('@discordjs/builders');
 
-const name = 'about';
-const description = 'Info about the bot and its creator!';
+export const name = 'about';
+export const descriptionription = 'Info about the bot and its creator!';
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description);
+export const datast data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 /**
  * @param {import('../../').CustomInteraction} interaction
  * @returns {Promise<void>}
  */
-const execute = async(interaction) => {
+export const executeexecute = async(interaction) => {
     return interaction.reply('Made by @DanielRX#6669 with :heart: code is available on GitHub (coming soon)');
 };
 
-module.exports = {data, execute, name, description};
+

@@ -1,24 +1,21 @@
-// @ts-check
-const {SlashCommandBuilder} = require('@discordjs/builders');
-const {AudioPlayerStatus} = require('@discordjs/voice');
-const createGuildData = require('../../utils/createGuildData');
+import type {CustomInteraction} from '../../utils/types';
 
-const {setupOption} = require('../../utils/utils');
+import {SlashCommandBuilder} from '@discordjs/builders';
+import {AudioPlayerStatus} from '@discordjs/voice';
+import createGuildData from '../../utils/createGuildData';
 
-const name = 'loop-queue';
-const description = 'Loop the queue x times! - (the default is 1 time)';
+import {setupOption} from '../../utils/utils';
 
-const options = [
+export const name = 'loop-queue';
+export const description = 'Loop the queue x times! - (the default is 1 time)';
+
+export const options = [
     {name: 'looptimes', description: 'How many times do you want to loop the queue?', required: true, choices: []}
 ];
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description).addIntegerOption(setupOption(options[0]));
+export const data = new SlashCommandBuilder().setName(name).setDescription(description).addIntegerOption(setupOption(options[0]));
 
-/**
- * @param {import('../..').CustomInteraction} interaction
- * @returns {Promise<void>}
- */
-const execute = async(interaction) => {
+export const execute = async(interaction: CustomInteraction): Promise<void> => {
     if(!interaction.client.guildData.get(interaction.guildId)) {
         interaction.client.guildData.set(interaction.guildId, createGuildData());
     }
@@ -52,4 +49,3 @@ const execute = async(interaction) => {
     return interaction.reply(':repeat: The queue is now playing on **loop**');
 };
 
-module.exports = {data, execute, name, description};

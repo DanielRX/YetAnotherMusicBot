@@ -3,16 +3,16 @@ const {SlashCommandBuilder} = require('@discordjs/builders');
 const {fetch} = require('../../utils/utils');
 const {MessageEmbed} = require('discord.js');
 
-const name = 'chucknorris';
-const description = 'Get a satirical fact about Chuck Norris!';
+export const namest name = 'chucknorris';
+export const description = 'Get a satirical fact about Chuck Norris!';
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description);
+export const datast data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 /**
  * @param {import('../..').CustomInteraction} interaction
  * @returns {Promise<void>}
  */
-const execute = async(interaction) => {
+export const execute = async(interaction) => {
     // thanks to https://api.chucknorris.io
     return fetch('https://api.chucknorris.io/jokes/random')
         .then((res) => res.json())
@@ -31,4 +31,4 @@ const execute = async(interaction) => {
         });
 };
 
-module.exports = {data, execute, name, description};
+

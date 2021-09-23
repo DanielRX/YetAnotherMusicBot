@@ -5,21 +5,21 @@ const createGuildData = require('../../utils/createGuildData');
 const {arrayMove} = require('../../utils/utils');
 const {setupOption} = require('../../utils/utils');
 
-const name = 'move';
-const description = 'Move a song to a desired position in queue!';
+export const namest name = 'move';
+export const description = 'Move a song to a desired position in queue!';
 
-const options = [
+export const options = [
     {name: 'oldposition', description: 'What is the position of the song you want to move?', required: true, choices: []},
     {name: 'newposition', description: 'What position do you want to move the song to?', required: true, choices: []}
 ];
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description).addIntegerOption(setupOption(options[0])).addIntegerOption(setupOption(options[1]));
+export const datast datast data = new SlashCommandBuilder().setName(name).setDescription(description).addIntegerOption(setupOption(options[0])).addIntegerOption(setupOption(options[1]));
 
 /**
  * @param {import('../../').CustomInteraction} interaction
  * @returns {Promise<void>}
  */
-const execute = async(interaction) => {
+export const execute = async(interaction) => {
     if(!interaction.client.guildData.get(interaction.guildId)) {
         interaction.client.guildData.set(interaction.guildId, createGuildData());
     }
@@ -51,4 +51,4 @@ const execute = async(interaction) => {
     return interaction.reply(`**${songName}** moved to position ${newPosition}`);
 };
 
-module.exports = {data, execute, name, description};
+

@@ -1,27 +1,24 @@
 // @ts-check
-const {SlashCommandBuilder} = require('@discordjs/builders');
-const {AudioPlayerStatus} = require('@discordjs/voice');
+import {SlashCommandBuilder} from '@discordjs/builders';
+import {AudioPlayerStatus} from '@discordjs/voice';
+import type {CustomInteraction} from '../../utils/types';
 
-const name = 'leave';
-const description = 'Leaves a voice channel if in one!';
+export const name = 'leave';
+export const description = 'Leaves a voice channel if in one!';
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description);
+export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
-/**
- * @param {import('../../').CustomInteraction} interaction
- * @returns {Promise<void>}
- */
-const execute = async(interaction) => {
+export const execute = async(interaction: CustomInteraction): Promise<void> => {
     const voiceChannel = interaction.member.voice.channel;
     if(!voiceChannel) {
         return interaction.reply('Please join a voice channel and try again!');
     }
 
     const player = interaction.client.playerManager.get(interaction.guildId);
-    if(player.audioPlayer.state.status !== AudioPlayerStatus.Playing || !player) {
+    if(player?.audioPlayer.state.status !== AudioPlayerStatus.Playing || !player) {
         return interaction.reply('There is no song playing right now!');
     }
-    if(voiceChannel.id !== interaction.guild.me.voice.channel.id) {
+    if(voiceChannel.id !== interaction.guild.me?.voice.channel?.id) {
         return interaction.reply('You must be in the same voice channel as the bot in order to skip!');
     }
 
@@ -29,6 +26,4 @@ const execute = async(interaction) => {
     interaction.client.playerManager.delete(interaction.guildId);
     return interaction.reply('Left your voice channel!');
 };
-
-module.exports = {data, execute, name, description};
 

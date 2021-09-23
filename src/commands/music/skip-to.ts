@@ -2,20 +2,20 @@
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {setupOption} = require('../../utils/utils');
 
-const name = 'skip-to';
-const description = 'Skip to a song in queue';
+export const namest name = 'skip-to';
+export const description = 'Skip to a song in queue';
 
-const options = [
+export const options = [
     {name: 'position', description: 'What is the position in queue you want to skip to?', required: true, choices: []},
 ];
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description).addIntegerOption(setupOption(options[0]));
+export const data = new SlashCommandBuilder().setName(name).setDescription(description).addIntegerOption(setupOption(options[0]));
 
 /**
  * @param {import('../..').CustomInteraction} interaction
  * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
  */
-const execute = async(interaction) => {
+export const execute = async(interaction) => {
     void interaction.deferReply();
     const voiceChannel = interaction.member.voice.channel;
     if(!voiceChannel) { return interaction.followUp(`:no_entry: You must be in the same voice channel as the bot in order to use that!`); }
@@ -38,4 +38,4 @@ const execute = async(interaction) => {
     return interaction.followUp(`Skipped to **${player.queue[0].title}**`);
 };
 
-module.exports = {data, execute, name, description};
+

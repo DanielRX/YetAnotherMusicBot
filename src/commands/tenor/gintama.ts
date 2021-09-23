@@ -3,16 +3,16 @@ const {SlashCommandBuilder} = require('@discordjs/builders');
 const fs = require('fs-extra');
 const {randomEl} = require('../../utils/utils');
 
-const name = 'gintama';
-const description = 'Replies with a gintama gif!';
+export const name = 'gintama';
+export const description = 'Replies with a gintama gif!';
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description);
+export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 /**
  * @param {import('../..').CustomInteraction} interaction
  * @returns {Promise<void>}
  */
-const execute = async(interaction) => {
+export const execute = async(interaction) => {
     try {
         const linkArray = await fs.readFile('./resources/gifs/gintamalinks.txt', 'utf8').then((links) => links.split('\n'));
         const link = randomEl(linkArray);
@@ -23,7 +23,7 @@ const execute = async(interaction) => {
     }
 };
 
-module.exports = {data, execute, name, description};
+
 
 /*
 fetch(`https://g.tenor.com/v1/random?key=${tenorAPI}&q=gintama&limit=1`)

@@ -5,16 +5,16 @@ const {fetch} = require('../../utils/utils');
 const {PagesBuilder} = require('discord.js-pages');
 const {newsAPI} = require('../../utils/config');
 
-const name = 'world-news';
-const description = 'Replies with the 10 latest world news headlines!';
+export const name = 'world-news';
+export const description = 'Replies with the 10 latest world news headlines!';
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description);
+export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 /**
  * @param {import('../..').CustomInteraction} interaction
  * @returns {Promise<void>}
  */
-const execute = async(interaction) => {
+export const executeexecute = async(interaction) => {
     if(!newsAPI) { return interaction.reply(':x: This command is not enabled'); }
     // powered by NewsAPI.org
     try {
@@ -41,4 +41,4 @@ const execute = async(interaction) => {
     }
 };
 
-module.exports = {data, execute, name, description};
+

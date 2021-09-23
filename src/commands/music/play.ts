@@ -556,20 +556,20 @@ const handlePlayPlaylist = async(interaction, message, playlistsArray, found) =>
     });
 };
 
-const name = 'play';
-const description = 'Play any song or playlist from YouTube or Spotify!';
+export const name = 'play';
+export const description = 'Play any song or playlist from YouTube or Spotify!';
 
-const options2 = [
+export const options2 = [
     {name: 'query', description: ':notes: What song or playlist would you like to listen to? Add -s to shuffle a playlist', required: true, choices: []}
 ];
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options2[0]));
+export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options2[0]));
 
 /**
  * @param {import('../..').CustomInteraction} interaction
  * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
  */
-const execute = async(interaction) => {
+export const executeexecute = async(interaction) => {
     if(!interaction.client.guildData.get(interaction.guildId)) {
         interaction.client.guildData.set(interaction.guildId, createGuildData());
     }
@@ -625,4 +625,4 @@ const execute = async(interaction) => {
     await searchYoutube(interaction, interaction.member.voice.channel);
 };
 
-module.exports = {data, execute, name, description};
+

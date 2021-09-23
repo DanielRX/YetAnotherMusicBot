@@ -7,15 +7,15 @@ const {searchOne} = require('../../utils/music/searchOne');
 const {isSpotifyURL, validateURL} = require('../../utils/utils');
 const {setupOption} = require('../../utils/utils');
 
-const name = 'save-to-playlist';
-const description = 'Save a song or a playlist to a custom playlist';
+export const name = 'save-to-playlist';
+export const description = 'Save a song or a playlist to a custom playlist';
 
-const options = [
+export const options = [
     {name: 'playlistname', description: 'What is the playlist you would like to save to?', required: true, choices: []},
     {name: 'url', description: 'What url would you like to save to playlist? It can also be a playlist url?', required: true, choices: []}
 ];
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0])).addStringOption(setupOption(options[1]));
+export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0])).addStringOption(setupOption(options[1]));
 
 const constructSongObj = (video, user)=> {
     let {durationFormatted: duration, duration: rawDuration, title, thumbnail: {url}} = video.durationFormatted;
@@ -81,7 +81,7 @@ const processURL = async(url, interaction) => {
  * @param {import('../..').CustomInteraction} interaction
  * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
  */
-const execute = async(interaction) => {
+export const execute = async(interaction) => {
     await interaction.deferReply();
 
     const playlistName = interaction.options.get('playlistname').value;
@@ -115,4 +115,4 @@ const execute = async(interaction) => {
     }
 };
 
-module.exports = {data, execute, name, description};
+

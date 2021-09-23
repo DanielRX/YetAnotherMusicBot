@@ -1,25 +1,17 @@
 // @ts-check
 
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
+import type {Track} from '../types';
 
-/**
- * @typedef MemberT
- * @type {{memberId: string, username: string, joinedAt: Date, savedPlaylist: import('../..').Track[]}}
- */
+type MemberT = {memberId: string, username: string, joinedAt: Date, savedPlaylist: Track[]}
 
-/**
- * @type {mongoose.Schema<MemberT>}
- */
-const schema = new mongoose.Schema({
+const schema = new mongoose.Schema<MemberT>({
     memberId: String,
     username: String,
     joinedAt: Date,
     savedPlaylists: Array
 });
 
-/**
- * @type {mongoose.Model<MemberT>}
- */
 const Member = mongoose.model('Member', schema);
 
-module.exports = Member;
+export default Member;

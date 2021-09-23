@@ -3,16 +3,16 @@ const {fetch} = require('../../utils/utils');
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageEmbed} = require('discord.js');
 
-const name = 'advice';
-const description = 'Get some advice!';
+export const name = 'advice';
+export const description = 'Get some advice!';
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description);
+export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 /**
  * @param {import('../..').CustomInteraction} interaction
  * @returns {Promise<void>}
  */
-const execute = async(interaction) => {
+export const execute = async(interaction) => {
     return fetch('https://api.adviceslip.com/advice')
         .then((res) => res.json())
         .then((json) => {
@@ -30,4 +30,4 @@ const execute = async(interaction) => {
         });
 };
 
-module.exports = {data, execute, name, description};
+

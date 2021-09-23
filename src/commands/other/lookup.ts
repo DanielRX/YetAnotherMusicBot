@@ -4,20 +4,20 @@ const {MessageEmbed} = require('discord.js');
 const {fetch} = require('../../utils/utils');
 const {setupOption} = require('../../utils/utils');
 
-const name = 'lookup';
-const description = 'Resolve an IP address or hostname with additional info.';
+export const name = 'lookup';
+export const description = 'Resolve an IP address or hostname with additional info.';
 
-const options = [
+export const optionsoptionsoptions = [
     {name: 'query', description: 'What do you want to lookup? Please enter a hostname/domain or IP address.', required: true, choices: []}
 ];
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
+export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
 /**
  * @param {import('../..').CustomInteraction} interaction
  * @returns {Promise<void>}
  */
-const execute = async(interaction) => {
+export const execute = async(interaction) => {
     const resl = interaction.options.get('query').value;
 
     try {
@@ -43,4 +43,4 @@ const execute = async(interaction) => {
     }
 };
 
-module.exports = {data, execute, name, description};
+

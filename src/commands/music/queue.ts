@@ -3,16 +3,16 @@ const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageEmbed} = require('discord.js');
 const {PagesBuilder} = require('discord.js-pages');
 
-const name = 'queue';
-const description = 'Display the music queue';
+export const name = 'queue';
+export const descriptionription = 'Display the music queue';
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description);
+export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 /**
  * @param {import('../../').CustomInteraction} interaction
  * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
  */
-const execute = async(interaction) => {
+export const execute = async(interaction) => {
     await interaction.deferReply();
     const guildData = interaction.client.guildData.get(interaction.guildId);
     if(guildData && guildData.triviaData.isTriviaRunning) {
@@ -47,5 +47,5 @@ const execute = async(interaction) => {
         .build();
 };
 
-module.exports = {data, execute, name, description};
+
 

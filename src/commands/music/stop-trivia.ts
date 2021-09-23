@@ -1,16 +1,16 @@
 // @ts-check
 const {SlashCommandBuilder} = require('@discordjs/builders');
 
-const name = 'stop-trivia';
-const description = 'End a music trivia (if one is in play)';
+export const name = 'stop-trivia';
+export const description = 'End a music trivia (if one is in play)';
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description);
+export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 /**
  * @param {import('../../').CustomInteraction} interaction
  * @returns {Promise<void>}
  */
-const execute = async(interaction) => {
+export const execute = async(interaction) => {
     const triviaPlayer = interaction.client.triviaManager.get(interaction.guildId);
     if(!triviaPlayer) {
         return interaction.reply(':x: No trivia is currently running!');
@@ -29,4 +29,4 @@ const execute = async(interaction) => {
     return interaction.reply('Stopped the trivia! To start a new one, use the music-trivia command');
 };
 
-module.exports = {data, execute, name, description};
+

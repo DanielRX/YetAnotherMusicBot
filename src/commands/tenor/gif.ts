@@ -3,20 +3,20 @@ const {SlashCommandBuilder} = require('@discordjs/builders');
 const {tenorAPI} = require('../../utils/config');
 const {setupOption, fetch} = require('../../utils/utils');
 
-const name = 'gif';
-const description = 'Replies with a gif matching your query!';
+export const name = 'gif';
+export const descriptionription = 'Replies with a gif matching your query!';
 
-const options = [
+export const options = [
     {name: 'gif', description: 'What gif would you like to search for?', required: true, choices: []}
 ];
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
+export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
 /**
  * @param {import('../..').CustomInteraction} interaction
  * @returns {Promise<void>}
  */
-const execute = async(interaction) => {
+export const execute = async(interaction) => {
     if(!tenorAPI) { return interaction.reply(':x: Tenor commands are not enabled'); }
     const gif = interaction.options.get('gif').value;
     fetch(`https://g.tenor.com/v1/random?key=${tenorAPI}&q=${gif}&limit=1`)
@@ -28,4 +28,4 @@ const execute = async(interaction) => {
         });
 };
 
-module.exports = {data, execute, name, description};
+

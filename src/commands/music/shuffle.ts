@@ -2,16 +2,16 @@
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {shuffleArray} = require('../../utils/utils');
 
-const name = 'shuffle';
-const description = 'Shuffle the music queue!';
+export const namest name = 'shuffle';
+export const description = 'Shuffle the music queue!';
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description);
+export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 /**
  * @param {import('../../').CustomInteraction} interaction
  * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
  */
-const execute = async(interaction) => {
+export const execute = async(interaction) => {
     void interaction.deferReply();
     const voiceChannel = interaction.member.voice.channel;
     if(!voiceChannel) { return interaction.followUp(`:no_entry: You must be in the same voice channel as the bot in order to use that!`); }
@@ -27,4 +27,4 @@ const execute = async(interaction) => {
     return interaction.followUp('The music queue has been shuffled!');
 };
 
-module.exports = {data, execute, name, description};
+

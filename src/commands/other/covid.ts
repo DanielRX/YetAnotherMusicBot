@@ -3,14 +3,14 @@ const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageEmbed} = require('discord.js');
 const {setupOption, fetch} = require('../../utils/utils');
 
-const name = 'covid';
-const description = 'Displays COVID-19 stats.';
+export const name = 'covid';
+export const description = 'Displays COVID-19 stats.';
 
-const options = [
+export const options = [
     {name: 'country', description: 'What country do you like to search? Type `all` to display worldwide stats.', required: true, choices: []}
 ];
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
+export const datast data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
 const getWorldStats = async() => {
     const url = 'https://disease.sh/v3/covid-19/all';
@@ -45,7 +45,7 @@ const getCountryStats = async(country) => {
      * @param {import('../..').CustomInteraction} interaction
      * @returns {Promise<void>}
      */
-const execute = async(interaction) => {
+export const execute = async(interaction) => {
     const country = interaction.options.get('country').value;
     if(country === 'all' || country === 'world' || country === 'global') {
         return getWorldStats()
@@ -101,4 +101,4 @@ const execute = async(interaction) => {
         });
 };
 
-module.exports = {data, execute, name, description};
+

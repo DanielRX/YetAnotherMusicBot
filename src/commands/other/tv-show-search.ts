@@ -4,14 +4,14 @@ const {MessageEmbed} = require('discord.js');
 const {PagesBuilder} = require('discord.js-pages');
 const {setupOption, fetch} = require('../../utils/utils');
 
-const name = 'tv-show-search';
-const description = 'Search for TV shows';
+export const namest name = 'tv-show-search';
+export const description = 'Search for TV shows';
 
-const options = [
+export const options = [
     {name: 'tvshow', description: 'What TV show are you looking for?', required: true, choices: []},
 ];
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
+export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
 const getShowSearch = async(showQuery) => {
     const url = `http://api.tvmaze.com/search/shows?q=${encodeURI(showQuery)}`;
@@ -41,7 +41,7 @@ const getShowSearch = async(showQuery) => {
  * @param {import('../..').CustomInteraction} interaction
  * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
  */
-const execute = async(interaction) => {
+export const execute = async(interaction) => {
     const tvshow = interaction.options.get('tvshow').value;
     let showResponse;
     try {
@@ -135,4 +135,4 @@ const execute = async(interaction) => {
     }
 };
 
-module.exports = {data, execute, name, description};
+

@@ -42,7 +42,7 @@ const getLeaderBoard = (arr) => {
     return leaderBoard;
 };
 
-class TriviaPlayer {
+export class TriviaPlayer {
     /**
      * @param {boolean} useYoutube
      */
@@ -279,4 +279,4 @@ class TriviaPlayer {
     }
 }
 
-module.exports = TriviaPlayer;
+export default TriviaPlayer;

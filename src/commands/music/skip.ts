@@ -2,15 +2,15 @@
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {AudioPlayerStatus} = require('@discordjs/voice');
 
-const name = 'skip';
-const description = 'Skip the currently playing song!';
+export const name = 'skip';
+export const description = 'Skip the currently playing song!';
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description);
+export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 /**
  * @param {import('../../').CustomInteraction} interaction
  * @returns {Promise<void>}
  */
-const execute = async(interaction) => {
+export const execute = async(interaction) => {
     const voiceChannel = interaction.member.voice.channel;
     if(!voiceChannel) { return interaction.reply('Please join a voice channel and try again!'); }
 
@@ -22,4 +22,4 @@ const execute = async(interaction) => {
     player.audioPlayer.stop();
 };
 
-module.exports = {data, execute, name, description};
+

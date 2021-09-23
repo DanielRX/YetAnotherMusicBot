@@ -5,20 +5,20 @@ const fs = require('fs');
 
 const {setupOption} = require('../../utils/utils');
 
-const name = '8ball';
-const description = 'Get the answer to anything!';
+export const name = '8ball';
+export const description = 'Get the answer to anything!';
 
-const options = [
+export const options = [
     {name: 'question', description: 'What do you want to ask?', required: true, choices: []}
 ];
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
+export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
 /**
  * @param {import('../../').CustomInteraction} interaction
  * @returns {Promise<void>}
  */
-const execute = async(interaction) => {
+export const executeexecute = async(interaction) => {
     const question = interaction.options.get('question').value;
 
     if(question.length > 255) {
@@ -40,5 +40,5 @@ const execute = async(interaction) => {
     return interaction.reply({embeds: [answerEmbed]});
 };
 
-module.exports = {data, execute, name, description};
+
 

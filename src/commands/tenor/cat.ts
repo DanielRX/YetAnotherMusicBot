@@ -3,16 +3,16 @@ const {SlashCommandBuilder} = require('@discordjs/builders');
 const {fetch} = require('../../utils/utils');
 const {tenorAPI} = require('../../utils/config');
 
-const name = 'cat';
-const description = 'Replies with a cute cat picture!';
+export const name = 'cat';
+export const description = 'Replies with a cute cat picture!';
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description);
+export const datast data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 /**
  * @param {import('../..').CustomInteraction} interaction
  * @returns {Promise<void>}
  */
-const execute = async(interaction) => {
+export const execute = async(interaction) => {
     if(!tenorAPI) { return interaction.reply(':x: Tenor commands are not enabled'); }
 
     return fetch(`https://api.tenor.com/v1/random?key=${tenorAPI}&q=cat&limit=1`)
@@ -24,4 +24,4 @@ const execute = async(interaction) => {
         });
 };
 
-module.exports = {data, execute, name, description};
+

@@ -1,23 +1,21 @@
+import type {CustomInteraction} from '../../utils/types';
+
 // @ts-check
-const {SlashCommandBuilder} = require('@discordjs/builders');
-const Member = require('../../utils/models/Member');
-const {setupOption} = require('../../utils/utils');
+import {SlashCommandBuilder} from '@discordjs/builders';
+import Member from '../../utils/models/Member';
+import {setupOption} from '../../utils/utils';
 
-const name = 'delete-playlist';
-const description = 'Delete a playlist from your saved playlists';
+export const name = 'delete-playlist';
+export const description = 'Delete a playlist from your saved playlists';
 
-const options = [
+export const options = [
     {name: 'playlistname', description: 'Which playlist would you like to delete?', required: true, choices: []}
 ];
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
+export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
-/**
- * @param {import('../../').CustomInteraction} interaction
- * @returns {Promise<void>}
- */
-const execute = async(interaction) => {
-    const playlistName = interaction.options.get('playlistname').value;
+export const execute = async(interaction: CustomInteraction): Promise<void> => {
+    const playlistName = interaction.options.get('playlistname')?.value;
     // Check if user has playlists or if user is saved in the DB
     const userData = await Member.findOne({memberId: interaction.member.id}).exec();
 
@@ -37,5 +35,3 @@ const execute = async(interaction) => {
     await Member.updateOne({memberId: interaction.member.id}, {savedPlaylists: savedPlaylistsClone});
     return interaction.reply(`I removed **${playlistName}** from your saved playlists!`);
 };
-
-module.exports = {data, execute, name, description};

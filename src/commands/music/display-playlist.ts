@@ -1,25 +1,24 @@
-// @ts-check
-const {SlashCommandBuilder} = require('@discordjs/builders');
-const Member = require('../../utils/models/Member');
-const {MessageEmbed} = require('discord.js');
-const {setupOption} = require('../../utils/utils');
+import type {CustomInteraction} from '../../utils/types';
 
-const name = 'display-playlist';
-const description = 'Display a saved playlist';
+import {SlashCommandBuilder} from '@discordjs/builders';
+import Member from '../../utils/models/Member';
+import type {Message} from 'discord.js';
+import {MessageEmbed} from 'discord.js';
+import {setupOption} from '../../utils/utils';
+import type {APIMessage} from 'discord-api-types';
 
-const options = [
+export const name = 'display-playlist';
+export const description = 'Display a saved playlist';
+
+export const options = [
     {name: 'playlistname', description: 'What is the name of the playlist you would like to display?', required: true, choices: []}
 ];
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
+export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
-/**
- * @param {import('../../').CustomInteraction} interaction
- * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
- */
-const execute = async(interaction) => {
+export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message> => {
     void interaction.deferReply();
-    const playlistName = interaction.options.get('playlistname').value;
+    const playlistName = interaction.options.get('playlistname')?.value;
     // Check if user has playlists or if user is saved in the DB
     const userData = await Member.findOne({memberId: interaction.member.id}).exec();
     if(!userData) {
@@ -48,4 +47,3 @@ const execute = async(interaction) => {
     return interaction.followUp(`You have no playlist named ${playlistName}`); //TODO: Swap to reply?
 };
 
-module.exports = {data, execute, name, description};

@@ -4,14 +4,14 @@ const {MessageEmbed} = require('discord.js');
 const {PagesBuilder} = require('discord.js-pages');
 const {setupOption, fetch} = require('../../utils/utils');
 
-const name = 'speedrunner-stats';
-const description = 'Show off your splits from Splits.io';
+export const name = 'speedrunner-stats';
+export const description = 'Show off your splits from Splits.io';
 
-const options = [
+export const options = [
     {name: 'user', description: 'Who do you want to look up?', required: true, choices: []},
 ];
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
+export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
 const convertTime = (time) => {
     let str; let hr; let min; let sec; let ms;
@@ -44,7 +44,7 @@ const convertTime = (time) => {
  * @param {import('../..').CustomInteraction} interaction
  * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
  */
-const execute = async(interaction) => {
+export const executeexecute = async(interaction) => {
     void interaction.deferReply();
     const userQuery = interaction.options.get('user').value;
 
@@ -94,4 +94,4 @@ const execute = async(interaction) => {
     }
 };
 
-module.exports = {data, execute, name, description};
+

@@ -2,16 +2,16 @@
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {AudioPlayerStatus} = require('@discordjs/voice');
 
-const name = 'resume';
-const description = 'Resume a paused track';
+export const name = 'resume';
+export const description = 'Resume a paused track';
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description);
+export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 /**
  * @param {import('../../').CustomInteraction} interaction
  * @returns {Promise<void>}
  */
-const execute = async(interaction) => {
+export const execute = async(interaction) => {
     const voiceChannel = interaction.member.voice.channel;
     if(!voiceChannel) { return interaction.reply('Please join a voice channel and try again!'); }
 
@@ -26,4 +26,4 @@ const execute = async(interaction) => {
     return interaction.reply('I was unable to unpause this song, please try again soon');
 };
 
-module.exports = {data, execute, name, description};
+

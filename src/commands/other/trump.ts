@@ -3,16 +3,16 @@ const {SlashCommandBuilder} = require('@discordjs/builders');
 const {fetch} = require('../../utils/utils');
 const {MessageEmbed} = require('discord.js');
 
-const name = 'trump';
-const description = 'Get a random quote from Donald Trump!';
+export const name = 'trump';
+export const description = 'Get a random quote from Donald Trump!';
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description);
+export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 /**
  * @param {import('../..').CustomInteraction} interaction
  * @returns {Promise<void>}
  */
-const execute = async(interaction) => {
+export const execute = async(interaction) => {
     return fetch('https://api.tronalddump.io/random/quote')
         .then((res) => res.json())
         .then((json) => {
@@ -30,4 +30,4 @@ const execute = async(interaction) => {
         });
 };
 
-module.exports = {data, execute, name, description};
+

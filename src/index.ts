@@ -1,60 +1,17 @@
 // @ts-check
 
-const fs = require('fs');
-const {REST} = require('@discordjs/rest');
-const {Routes} = require('discord-api-types/v9');
-const {Client, Collection, Intents} = require('discord.js');
-const mongoose = require('mongoose');
-const {SlashCommandBuilder} = require('@discordjs/builders');
+import fs from 'fs';
+import {REST} from '@discordjs/rest';
+import {Routes} from 'discord-api-types/v9';
+import {Client, Collection, Intents} from 'discord.js';
+import mongoose from 'mongoose';
+import type {Command, CustomClient, CustomInteraction} from './utils/types';
 
-const {token, mongo_URI, client_id} = require('./utils/config');
+import {config} from './utils/config';
 
-const rest = new REST({version: '9'}).setToken(token);
+const rest = new REST({version: '9'}).setToken(config.token);
 
-/**
- * @typedef GuildData
- * @type {{triviaData: {isTriviaRunning: boolean}, queueHistory: Track[]}}
- */
-
-/**
- * @typedef PlayTrack
- * @type {{url: string, title: string, rawDuration: string, duration: string, timestamp: String, thumbnail: string, voiceChannel: *, memberDisplayName: string, memberAvatar: string}}
- */
-
-/**
- * @typedef Artist
- * @type {{name: string}}
- */
-
-/**
- * @typedef Track
- * @type {{name: string, url: string, artists: string[], preview_url: string}}
- */
-
-/**
- * @typedef CustomAudioPlayer
- * @type {{audioPlayer: import('@discordjs/voice').AudioPlayer, loopTimes: number, nowPlaying?: {title: string}, connection: import('@discordjs/voice').VoiceConnection, loopSong: boolean, loopQueue: boolean, queue: Track[], commandLock: boolean, length: number, queueHistory: Track[]}}
- */
-
-/**
- * @typedef Command
- * @type {{data: SlashCommandBuilder, execute: (interaction: CustomInteraction) => Promise<void>}}
- */
-
-/**
- * @typedef CustomClient
- * @type {Client & {playerManager: Map<string, CustomAudioPlayer>; commands: Collection<string, Command>, guildData: Map<string, GuildData>, triviaManager: Map<string, import('./utils/music/TriviaPlayer.js')>}}
- */
-
-/**
- * @typedef CustomInteraction
- * @type {Omit<import('discord.js').CommandInteraction, 'deferReply'> & {client: CustomClient, guild: {client: CustomClient}, member: import('discord.js').GuildMember, deferReply: (x?: {fetchReply: boolean}) => Promise<import('discord.js').Message>}}
- */
-
-/**
- * @type {CustomClient}
- */
-const client = new Client({
+const client: CustomClient = new Client({
     intents: [
         Intents.FLAGS.GUILDS,
         Intents.FLAGS.GUILD_MEMBERS,
@@ -62,7 +19,7 @@ const client = new Client({
         Intents.FLAGS.GUILDS,
         Intents.FLAGS.GUILD_VOICE_STATES
     ]
-});
+}) as any;
 
 client.commands = new Collection();
 const commands = [];
@@ -72,23 +29,22 @@ const commandFiles = fs
     .map((folder) =>
         fs
             .readdirSync(`./commands/${folder}`)
-            .filter((file) => file.endsWith('.js'))
+            .filter((file) => file.endsWith('.ts'))
             .map((file) => `./commands/${folder}/${file}`))
     .flat();
 
 for(const file of commandFiles) {
-    /** @type {Command} */
-    const command = require(`${file}`);
+    const command: Command = require(`${file}`);
     if(Object.keys(command).length === 0) continue;
     commands.push(command.data.toJSON());
-    client.commands.set(command.data.name, command);
+    (client as any).commands.set(command.data.name, command);
 }
 
 void (async() => {
     try {
         console.log('Started refreshing application (/) commands.');
 
-        await rest.put(Routes.applicationCommands(client_id), {
+        await rest.put(Routes.applicationCommands(config.client_id), {
             body: commands
         });
 
@@ -98,17 +54,17 @@ void (async() => {
     }
 })();
 
-const interactionCreate = require('./events/interactionCreate');
+import * as interactionCreate from './events/interactionCreate';
 
-client.on(interactionCreate.name, (interaction) => interactionCreate.execute(interaction));
+client.on(interactionCreate.name, (interaction) => interactionCreate.execute(interaction as CustomInteraction));
 
 client.once('ready', () => {
-    client.playerManager = new Map();
-    client.triviaManager = new Map();
-    client.guildData = new Collection();
-    client.user.setActivity('/', {type: 'WATCHING'});
+    (client as any).playerManager = new Map();
+    (client as any).triviaManager = new Map();
+    (client as any).guildData = new Collection();
+    client.user?.setActivity('/', {type: 'WATCHING'});
     mongoose
-        .connect(encodeURI(mongo_URI), {
+        .connect(encodeURI(config.mongo_URI), {
             useNewUrlParser: true,
             useUnifiedTopology: true
         })
@@ -120,4 +76,4 @@ client.once('ready', () => {
     console.log('Ready!');
 });
 
-void client.login(token);
+void client.login(config.token);

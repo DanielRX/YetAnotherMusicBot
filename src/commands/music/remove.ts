@@ -2,20 +2,20 @@
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {setupOption} = require('../../utils/utils');
 
-const name = 'remove';
-const description = 'Remove a specific song from queue';
+export const name = 'remove';
+export const description = 'Remove a specific song from queue';
 
-const options = [
+export const options = [
     {name: 'position', description: 'What song number do you want to remove from queue?', required: true, choices: []}
 ];
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description).addIntegerOption(setupOption(options[0]));
+export const data = new SlashCommandBuilder().setName(name).setDescription(description).addIntegerOption(setupOption(options[0]));
 
 /**
  * @param {import('../../').CustomInteraction} interaction
  * @returns {Promise<void>}
  */
-const execute = async(interaction) => {
+export const execute = async(interaction) => {
     const position = interaction.options.get('position').value;
     const player = interaction.client.playerManager.get(interaction.guildId);
 
@@ -40,4 +40,4 @@ const execute = async(interaction) => {
     return interaction.reply(`:wastebasket: Removed song number ${position} from queue!`);
 };
 
-module.exports = {data, execute, name, description};
+

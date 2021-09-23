@@ -5,10 +5,10 @@ const {fetch} = require('../../utils/utils');
 const {PagesBuilder} = require('discord.js-pages');
 const {MaxResponseTime} = require('../../../options.json');
 
-const name = 'reddit';
-const description = 'Replies with 10 top daily posts in wanted subreddit, you can specify sorting and time!';
+export const name = 'reddit';
+export const description = 'Replies with 10 top daily posts in wanted subreddit, you can specify sorting and time!';
 
-const options = [
+export const options = [
     {name: 'subreddit', description: 'What subreddit would you like to search?', required: true, choices: []},
     {name: 'sort', description: 'What posts do you want to see? Select from best/hot/top/new/controversial/rising', required: true, choices: ['best', 'hot', 'new', 'top', 'controversial', 'rising']},
 ];
@@ -47,12 +47,12 @@ const fetchFromReddit = async(interaction, subreddit, sort, timeFilter = 'day') 
     void new PagesBuilder(interaction).setPages(dataArr).build();
 };
 
-const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0])).addStringOption(setupOption(options[1]));
+export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0])).addStringOption(setupOption(options[1]));
 /**
  * @param {import('../..').CustomInteraction} interaction
  * @returns {Promise<void>}
  */
-const execute = async(interaction) => {
+export const execute = async(interaction) => {
     const message = await interaction.deferReply({fetchReply: true});
     const subreddit = interaction.options.get('subreddit').value;
     const sort = interaction.options.get('sort').value;
@@ -95,5 +95,5 @@ const execute = async(interaction) => {
     }
 };
 
-module.exports = {data, execute, name, description};
+
 
