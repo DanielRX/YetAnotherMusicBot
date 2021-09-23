@@ -1,6 +1,8 @@
 // @ts-check
 const YouTube = require('youtube-sr').default;
 
+const youtubeNoTrack = 'Something went wrong when searching for the track!';
+
 /**
  * @param {import('../..').TrackT} data
  * @returns
@@ -12,19 +14,18 @@ const concatSongNameAndArtists = (data) => {
     return `${songName} ${artists}`;
 };
 
-/**
- * @param {import('../..').Track} track
- * @returns
- */
-module.exports.searchOne = async(track) => {
-    return new Promise(async(resolve, reject) => {
-        const artistsAndName = concatSongNameAndArtists(track);
-        try {
-            const {title, id, thumbnail, duration, durationFormatted} = await YouTube.searchOne(artistsAndName);
-            resolve({title, url: `https://www.youtube.com/watch?v=${id}`, thumbnail: {url: thumbnail.url}, durationFormatted, duration});
-        } catch{
-            reject('Something went wrong when searching for the track!');
-        }
-    });
+const structureData = (youtubeData) => {
+    const {title, id, thumbnail, duration, durationFormatted} = youtubeData;
+    return {title, url: `https://www.youtube.com/watch?v=${id}`, thumbnail: {url: thumbnail.url}, durationFormatted, duration};
 };
 
+/**
+ * @param {import('../..').TrackT} track
+ * @returns
+ */
+const searchOne = async(track) => {
+    const artistsAndName = concatSongNameAndArtists(track);
+    return YouTube.searchOne(artistsAndName).then(structureData).catch(() => new Error(youtubeNoTrack));
+};
+
+module.exports = {searchOne};
