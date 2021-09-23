@@ -115,8 +115,8 @@ class TriviaPlayer {
                 const start = Date.now();
                 let songNameFoundTime = -1;
                 let songNameWinners = {};
-                let songSignerWinners = {};
-                let songSignerFoundTime = -1;
+                let songSingerWinners = {};
+                let songSingerFoundTime = -1;
                 const answerTimeout = 1500;
                 /**
                  * @type {Message}
@@ -131,9 +131,9 @@ class TriviaPlayer {
                 const collector = this.textChannel.createMessageCollector({time});
 
                 const showHint = async(singer, title) => {
-                    const signerHint = [...singer].map((_, i) => i < hints ? _ : _ === ' ' ? ' ' : '*').join('');
+                    const singerHint = [...singer].map((_, i) => i < hints ? _ : _ === ' ' ? ' ' : '*').join('');
                     const titleHint = [...title].map((_, i) => i < hints ? _ : _ === ' ' ? ' ' : '*').join('');
-                    const song = `${songSignerFoundTime === -1 ? signerHint : singer}: ${songNameFoundTime === -1 ? titleHint : title}`;
+                    const song = `${songSingerFoundTime === -1 ? singerHint : singer}: ${songNameFoundTime === -1 ? titleHint : title}`;
                     const embed = new MessageEmbed().setColor('#ff7373').setTitle(`:musical_note: The song is:  \`${song}\``);
                     if(lastMessage !== null) { lastMessage.delete().catch(() => {}); }
                     lastMessage = await this.textChannel.send({embeds: [embed]});
@@ -154,18 +154,6 @@ class TriviaPlayer {
                     let singer = normalizeValue(this.queue[0].singer);
                     // let singers = this.queue[0].artists.map(normalizeValue);
 
-                    // if(guess === 'hint') {
-                    //     if(time - start > (5 + (5 * hints)) * 1000) {
-                    //         // clearTimeout(timeoutId);
-                    //         // setTimeout(() => collector.stop(), Math.min(40000 + (5000 * hints), 60000) + (time - start));
-                    //         const signerHint = [...singer].map((_, i) => i < hints ? _ : _ === ' ' ? ' ' : '*').join('');
-                    //         const titleHint = [...title].map((_, i) => i < hints ? _ : _ === ' ' ? ' ' : '*').join('');
-                    //         const song = `\`${songSignerFoundTime === -1 ? signerHint : singer}: ${songNameFoundTime === -1 ? titleHint : title}\``;
-                    //         const embed = new MessageEmbed().setColor('#ff7373').setTitle(`:musical_note: The song is:  ${song}`);
-                    //         this.textChannel.send({embeds: [embed]});
-                    //     }
-                    //     return;
-                    // }
 
                     if(guess === 'skip') {
                         if(skippedArray.includes(msg.author.username)) { return; }
@@ -177,24 +165,24 @@ class TriviaPlayer {
 
                     if(msg.content.includes(':')) { return; }
                     // const gotAnArtist = singers.map((singer) => guess.includes(singer));
-                    const gotSigner = guess.includes(singer);
+                    const gotSinger = guess.includes(singer);
                     const gotName = guess.includes(title);
 
-                    if(!gotSigner && !gotName) { return msg.react('❌'); }
+                    if(!gotSinger && !gotName) { return void msg.react('❌'); }
 
-                    let gotSignerInTime = false;
+                    let gotSingerInTime = false;
                     let gotNameInTime = false;
 
-                    const firstSignerGuess = songSignerFoundTime === -1 && (gotSigner);
+                    const firstSingerGuess = songSingerFoundTime === -1 && (gotSinger);
                     const firstNameGuess = songNameFoundTime === -1 && (gotName);
 
-                    if(firstSignerGuess) { songSignerFoundTime = time; }
-                    if((time - songSignerFoundTime) < answerTimeout) { gotSignerInTime = true; }
+                    if(firstSingerGuess) { songSingerFoundTime = time; }
+                    if((time - songSingerFoundTime) < answerTimeout) { gotSingerInTime = true; }
                     if(firstNameGuess) { songNameFoundTime = time; }
                     if((time - songNameFoundTime) < answerTimeout) { gotNameInTime = true; }
 
-                    if(gotSignerInTime && !songSignerWinners[msg.author.username]) {
-                        songSignerWinners[msg.author.username] = true;
+                    if(gotSingerInTime && !songSingerWinners[msg.author.username]) {
+                        songSingerWinners[msg.author.username] = true;
                         this.score.set(msg.author.username, this.score.get(msg.author.username) + 1);
                         msg.react('☑');
                     }
@@ -205,7 +193,7 @@ class TriviaPlayer {
                         msg.react('☑');
                     }
 
-                    if((songSignerFoundTime !== -1) && (songNameFoundTime !== -1)) { setTimeout(() => collector.stop(), 1000); }
+                    if((songSingerFoundTime !== -1) && (songNameFoundTime !== -1)) { setTimeout(() => collector.stop(), 1000); }
                 });
 
                 collector.on('end', () => {
