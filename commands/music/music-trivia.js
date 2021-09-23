@@ -17,6 +17,12 @@ const options = [
 
 const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0])).addBooleanOption(setupOption(options[1]));
 
+/**
+ *
+ *
+ * @param {import('../../').CustomInteraction} interaction
+ * @param {import('../../').CustomAudioPlayer} player
+ */
 const handleSubscription = async(interaction, player) => {
     const {queue} = player;
     let {voiceChannel} = queue[0];
@@ -68,10 +74,13 @@ const execute = async(interaction) => {
     const numberOfSongs = interaction.options.get('length') ? interaction.options.get('length').value : 5;
     const useYoutube = interaction.options.get('youtube') ? interaction.options.get('youtube').value : true;
 
+    /** @type {({youtubeUrl: string, preview_url: string, artists: string[], album: string, name: string})[]} */
     const songs = await fs.readJSON('./resources/music/mk2/trivia.json');
+    /** @type {{[key: string]: {}}} */
     const albumData = await fs.readJSON('./resources/music/mk2/albums.json');
+    /** @type {{[key: string]: string}} */
     const artistsData = await fs.readJSON('./resources/music/mk2/artists.json');
-    const videoDataArray = songs.map((track) => {track.artists = track.artists.map((id) => artistsData[id]); track.album = albumData[track.album]; return track; });
+    const videoDataArray = songs.map((track) => ({...track, album: albumData[track.album], artists: track.artists.map((id) => artistsData[id])}));
     // Get random numberOfSongs videos from the array
 
     const randomLinks = getRandom(videoDataArray, numberOfSongs);
@@ -79,8 +88,8 @@ const execute = async(interaction) => {
 
     const triviaPlayer = interaction.client.triviaManager.get(interaction.guildId);
 
-    randomLinks.forEach(({artists, name: title, preview_url, youtubeUrl}) => {
-        triviaPlayer.queue.push({url: youtubeUrl, singer: artists[0], artists, preview_url, title, voiceChannel});
+    randomLinks.forEach(({artists, name, preview_url, youtubeUrl}) => {
+        triviaPlayer.queue.push({url: youtubeUrl, artists, preview_url, name, voiceChannel});
     });
 
     const membersInChannel = interaction.member.voice.channel.members;

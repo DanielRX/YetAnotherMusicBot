@@ -1,8 +1,7 @@
 // @ts-check
 const {SlashCommandBuilder} = require('@discordjs/builders');
-const fetch = require('node-fetch');
 const {MessageEmbed} = require('discord.js');
-const {setupOption} = require('../../utils/utils');
+const {setupOption, fetch} = require('../../utils/utils');
 
 const name = 'covid';
 const description = 'Displays COVID-19 stats.';

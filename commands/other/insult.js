@@ -1,6 +1,6 @@
 // @ts-check
 const {SlashCommandBuilder} = require('@discordjs/builders');
-const fetch = require('node-fetch');
+const {fetch} = require('../../utils/utils');
 const {MessageEmbed} = require('discord.js');
 
 const name = 'insult';

@@ -3,10 +3,9 @@
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageEmbed} = require('discord.js');
 const {PagesBuilder} = require('discord.js-pages');
-const fetch = require('node-fetch');
 const cheerio = require('cheerio');
-const {geniusLyricsAPI} = require('../../config.json');
-const {setupOption} = require('../../utils/utils');
+const {geniusLyricsAPI} = require('../../utils/config');
+const {setupOption, fetch} = require('../../utils/utils');
 
 const name = 'lyrics';
 const description = 'Get the lyrics of any song or the lyrics of the currently playing song!';

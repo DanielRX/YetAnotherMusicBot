@@ -1,7 +1,7 @@
 //@ts-check
 const {SlashCommandBuilder} = require('@discordjs/builders');
-const fetch = require('node-fetch');
-const {tenorAPI} = require('../../config.json');
+const {fetch} = require('../../utils/utils');
+const {tenorAPI} = require('../../utils/config');
 
 const name = 'pokimane';
 const description = 'Responds with a random pokimane gif!';
@@ -14,12 +14,10 @@ const data = new SlashCommandBuilder().setName(name).setDescription(description)
  */
 const execute = async(interaction) => {
     if(!tenorAPI) { return interaction.reply(':x: Tenor commands are not enabled'); }
-    fetch(`https://g.tenor.com/v1/random?key=${tenorAPI}&q=pokimane&limit=50`)
+    return fetch(`https://g.tenor.com/v1/random?key=${tenorAPI}&q=pokimane&limit=50`)
         .then((res) => res.json())
         .then((json) => interaction.reply(json.results[Math.floor(Math.random() * 49)].url))
-        .catch(function onError() {
-            return interaction.reply(':x: Failed to find a gif!');
-        });
+        .catch(() => interaction.reply(':x: Failed to find a gif!'));
 };
 
 module.exports = {data, execute, name, description};

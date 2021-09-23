@@ -4,8 +4,9 @@ const fs = require('fs');
 const {REST} = require('@discordjs/rest');
 const {Routes} = require('discord-api-types/v9');
 const {Client, Collection, Intents} = require('discord.js');
-const {token, mongo_URI, client_id} = require('./config.json');
 const mongoose = require('mongoose');
+
+const {token, mongo_URI, client_id} = require('./utils/config');
 
 const rest = new REST({version: '9'}).setToken(token);
 
@@ -15,13 +16,18 @@ const rest = new REST({version: '9'}).setToken(token);
  */
 
 /**
- * @typedef Track
- * @type {{title: string, url: string, singer: string}}
+ * @typedef PlayTrack
+ * @type {{url: string, title: string, rawDuration: string, duration: string, timestamp: String, thumbnail: string, voiceChannel: *, memberDisplayName: string, memberAvatar: string}}
  */
 
 /**
- * @typedef TrackT
- * @type {{name: string, url: string, artists: string[]}}
+ * @typedef Artist
+ * @type {{name: string}}
+ */
+
+/**
+ * @typedef Track
+ * @type {{name: string, url: string, artists: string[], preview_url: string}}
  */
 
 /**
@@ -30,8 +36,13 @@ const rest = new REST({version: '9'}).setToken(token);
  */
 
 /**
+ * @typedef Command
+ * @type {{data: {name: string, toJSON: () => string}, execute: (interaction: CustomInteraction) => Promise<void>}}
+ */
+
+/**
  * @typedef CustomClient
- * @type {Client & {playerManager: Map<string, CustomAudioPlayer>; commands: Collection<string, any>, guildData: Map<string, GuildData>, triviaManager: Map<string, import('./utils/music/TriviaPlayer.js')>}}
+ * @type {Client & {playerManager: Map<string, CustomAudioPlayer>; commands: Collection<string, Command>, guildData: Map<string, GuildData>, triviaManager: Map<string, import('./utils/music/TriviaPlayer.js')>}}
  */
 
 /**
@@ -65,6 +76,7 @@ const commandFiles = fs
     .flat();
 
 for(const file of commandFiles) {
+    /** @type {Command} */
     const command = require(`${file}`);
     if(Object.keys(command).length === 0) continue;
     commands.push(command.data.toJSON());
@@ -85,18 +97,9 @@ void (async() => {
     }
 })();
 
-const eventFiles = fs
-    .readdirSync('./events')
-    .filter((file) => file.endsWith('.js'));
+const interactionCreate = require('./events/interactionCreate');
 
-for(const file of eventFiles) {
-    const event = require(`./events/${file}`);
-    if(event.once) {
-        client.once(event.name, (...args) => event.execute(...args, client));
-    } else {
-        client.on(event.name, (...args) => event.execute(...args, client));
-    }
-}
+client.on(interactionCreate.name, (interaction) => interactionCreate.execute(interaction));
 
 client.once('ready', () => {
     client.playerManager = new Map();

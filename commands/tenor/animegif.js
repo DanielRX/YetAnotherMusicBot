@@ -1,7 +1,7 @@
 //@ts-check
 const {SlashCommandBuilder} = require('@discordjs/builders');
-const fetch = require('node-fetch');
-const {tenorAPI} = require('../../config.json');
+const {fetch} = require('../../utils/utils');
+const {tenorAPI} = require('../../utils/config');
 
 const name = 'animegif';
 const description = 'Responds with a random anime gif';

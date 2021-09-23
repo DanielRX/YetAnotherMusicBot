@@ -1,7 +1,7 @@
 // @ts-check
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageEmbed, MessageActionRow, MessageSelectMenu} = require('discord.js');
-const fetch = require('node-fetch');
+const {fetch} = require('../../utils/utils');
 const {PagesBuilder} = require('discord.js-pages');
 const {MaxResponseTime} = require('../../options.json');
 

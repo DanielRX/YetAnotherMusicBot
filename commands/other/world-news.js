@@ -1,9 +1,9 @@
 // @ts-check
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageEmbed} = require('discord.js');
-const fetch = require('node-fetch');
+const {fetch} = require('../../utils/utils');
 const {PagesBuilder} = require('discord.js-pages');
-const {newsAPI} = require('../../config.json');
+const {newsAPI} = require('../../utils/config');
 
 const name = 'world-news';
 const description = 'Replies with the 10 latest world news headlines!';

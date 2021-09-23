@@ -1,8 +1,7 @@
 //@ts-check
 const {SlashCommandBuilder} = require('@discordjs/builders');
-const fetch = require('node-fetch');
-const {tenorAPI} = require('../../config.json');
-const {setupOption} = require('../../utils/utils');
+const {tenorAPI} = require('../../utils/config');
+const {setupOption, fetch} = require('../../utils/utils');
 
 const name = 'gif';
 const description = 'Replies with a gif matching your query!';

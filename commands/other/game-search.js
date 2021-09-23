@@ -1,10 +1,9 @@
 //@ts-check
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageEmbed} = require('discord.js');
-const fetch = require('node-fetch');
 const {PagesBuilder} = require('discord.js-pages');
-const {rawgAPI} = require('../../config.json');
-const {setupOption} = require('../../utils/utils');
+const {rawgAPI} = require('../../utils/config');
+const {setupOption, fetch} = require('../../utils/utils');
 
 const name = 'game-search';
 const description = 'Search for game information';

@@ -1,8 +1,7 @@
 // @ts-check
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageEmbed} = require('discord.js');
-const fetch = require('node-fetch');
-const {setupOption} = require('../../utils/utils');
+const {setupOption, fetch} = require('../../utils/utils');
 
 const name = 'urban';
 const description = 'Get definitions from urban dictonary.';

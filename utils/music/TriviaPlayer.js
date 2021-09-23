@@ -6,12 +6,14 @@ const ytdl = require('ytdl-core');
 const {MessageEmbed} = require('discord.js');
 const wait = promisify(setTimeout);
 
+/** @param {string} str */
 const capitalize_Words = (str) => {
     return str.replace(/\w\S*/g, function(txt) {
         return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
     });
 };
 
+/** @param {string} value */
 const normalizeValue = (value) =>
     value
         .normalize('NFD')
@@ -24,6 +26,7 @@ const normalizeValue = (value) =>
         .replace(/\s+/g, ' ')
         .toLowerCase(); // Remove duplicate spaces
 
+/** @param {string[][]} arr */
 const getLeaderBoard = (arr) => {
     if(!arr) { return; }
     if(!arr[0]) { return; } // Issue #422
@@ -40,19 +43,25 @@ const getLeaderBoard = (arr) => {
 };
 
 class TriviaPlayer {
+    /**
+     * @param {boolean} useYoutube
+     */
     constructor(useYoutube) {
         this.useYoutube = useYoutube;
+        /** @type {import('@discordjs/voice').VoiceConnection} */
         this.connection = null;
         this.audioPlayer = createAudioPlayer();
         this.score = new Map();
+        /** @type {import('../..').Track[]} */
         this.queue = [];
-        /**
-         * @type {import('discord.js').BaseGuildTextChannel}
-         */
+        /** @type {import('discord.js').BaseGuildTextChannel} */
         this.textChannel = null;
         this.wasTriviaEndCalled = false;
     }
 
+    /**
+     * @param {import('@discordjs/voice').VoiceConnection} connection
+     */
     passConnection(connection) {
         this.connection = connection;
         this.connection.on('stateChange', async(_, newState) => {
@@ -63,8 +72,8 @@ class TriviaPlayer {
                     } catch{
                         this.connection.destroy();
                     }
-                } else if(this.connection.rejoinAttemps < 5) {
-                    await wait((this.connection.rejoinAttemps + 1) * 5000);
+                } else if(this.connection.rejoinAttempts < 5) {
+                    await wait((this.connection.rejoinAttempts + 1) * 5000);
                     this.connection.rejoin();
                 } else {
                     this.connection.destroy();
@@ -84,13 +93,16 @@ class TriviaPlayer {
         });
 
         this.audioPlayer.on('stateChange', (oldState, newState) => {
-            let nextHintInt = -1;
+            /**
+             * @type {NodeJS.Timeout}
+             */
+            let nextHintInt;
             if(newState.status === AudioPlayerStatus.Idle && oldState.status !== AudioPlayerStatus.Idle) {
                 this.queue.shift();
                 // Finished playing audio
                 if(this.queue.length) {
                     // Play next song
-                    this.process(this.queue);
+                    void this.process(this.queue);
                 } else {
                     const sortedScoreMap = new Map([...this.score.entries()].sort(function(a, b) {
                         return b[1] - a[1];
@@ -105,10 +117,12 @@ class TriviaPlayer {
                     void this.textChannel.send({embeds: [embed]});
 
                     // Leave channel close connection and subscription
+                    /* eslint-disable */
                     if(this.connection._state.status !== 'destroyed') {
                         this.connection.destroy();
                         this.textChannel.client.triviaManager.delete(this.textChannel.guildId);
                     }
+                    /* eslint-enable */
                 }
             } else if(newState.status === AudioPlayerStatus.Playing) {
                 // Trivia logic
@@ -129,28 +143,32 @@ class TriviaPlayer {
                 if(!this.useYoutube) { timeForSong = 30000; }
                 const collector = this.textChannel.createMessageCollector({time: timeForSong});
 
+                /**
+                 * @param {string} singer
+                 * @param {string} title
+                 */
                 const showHint = async(singer, title) => {
                     const singerHint = [...singer].map((_, i) => i < hints ? _ : _ === ' ' ? ' ' : '*').join('');
                     const titleHint = [...title].map((_, i) => i < hints ? _ : _ === ' ' ? ' ' : '*').join('');
                     const song = `${songSingerFoundTime === -1 ? singerHint : singer}: ${songNameFoundTime === -1 ? titleHint : title}`;
                     const embed = new MessageEmbed().setColor('#ff7373').setTitle(`:musical_note: The song is:  \`${song}\``);
-                    if(lastMessage !== null) { lastMessage.delete().catch((e) => { console.log({e}); }); }
+                    if(lastMessage !== null) { lastMessage.delete().catch(() => { console.log('Failed to delete message'); }); }
                     lastMessage = await this.textChannel.send({embeds: [embed]});
-                    nextHintInt = setTimeout(() => { void showHint(normalizeValue(this.queue[0].singer), normalizeValue(this.queue[0].title)); }, 5000);
+                    nextHintInt = setTimeout(() => { void showHint(normalizeValue(this.queue[0].artists[0]), normalizeValue(this.queue[0].name)); }, 5000);
                     hints++;
                 };
                 // let timeoutId = setTimeout(() => collector.stop(), 30000);
 
                 nextHintInt = setTimeout(() => {
-                    void showHint(normalizeValue(this.queue[0].singer), normalizeValue(this.queue[0].title));
+                    void showHint(normalizeValue(this.queue[0].artists[0]), normalizeValue(this.queue[0].name));
                 }, 5000);
 
                 collector.on('collect', (msg) => {
                     if(!this.score.has(msg.author.username)) { return; }
                     const time = Date.now();
                     let guess = normalizeValue(msg.content);
-                    let title = normalizeValue(this.queue[0].title);
-                    let singer = normalizeValue(this.queue[0].singer);
+                    let title = normalizeValue(this.queue[0].name);
+                    let singer = normalizeValue(this.queue[0].artists[0]);
                     // let singers = this.queue[0].artists.map(normalizeValue);
 
                     if(guess === 'skip') {
@@ -195,10 +213,10 @@ class TriviaPlayer {
                 });
 
                 collector.on('end', () => {
-                    if(nextHintInt !== -1) {
+                    if(typeof nextHintInt !== 'undefined') {
                         clearTimeout(nextHintInt);
                     }
-                    if(lastMessage !== null) { void lastMessage.delete().catch((e) => { console.log({e}); }); }
+                    if(lastMessage !== null) { void lastMessage.delete().catch(() => { console.log('Failed to delete message'); }); }
                     /*The reason for this if statement is that we don't want to get an empty embed returned via chat by the bot if end-trivia command was called */
                     if(this.wasTriviaEndCalled) {
                         this.wasTriviaEndCalled = false;
@@ -209,7 +227,7 @@ class TriviaPlayer {
 
                     const sortedScoreMap = new Map([...this.score.entries()].sort((a, b) => b[1] - a[1]));
 
-                    const song = `${capitalize_Words(this.queue[0].singer)}: ${capitalize_Words(this.queue[0].title)}`;
+                    const song = `${capitalize_Words(this.queue[0].artists[0])}: ${capitalize_Words(this.queue[0].name)}`;
 
                     const embed = new MessageEmbed()
                         .setColor('#ff7373')
@@ -239,6 +257,10 @@ class TriviaPlayer {
         this.connection.destroy();
     }
 
+    /**
+     * @param {import('../..').Track[]} queue
+     * @returns {Promise<void>}
+     */
     async process(queue) {
         const [song] = this.queue;
         try {

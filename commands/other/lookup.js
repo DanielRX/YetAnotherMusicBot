@@ -1,7 +1,7 @@
 // @ts-check
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageEmbed} = require('discord.js');
-const fetch = require('node-fetch');
+const {fetch} = require('../../utils/utils');
 const {setupOption} = require('../../utils/utils');
 
 const name = 'lookup';

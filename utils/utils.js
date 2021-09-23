@@ -1,4 +1,7 @@
 // https://stackoverflow.com/a/5306832/9421002
+const fetch = require('node-fetch');
+const {SlashCommandStringOption, SlashCommandIntegerOption, SlashCommandBooleanOption} = require('@discordjs/builders');
+
 /**
  * @template T
  * @param {T[]} arr
@@ -54,16 +57,28 @@ const getRandom = (arr, n) => {
  */
 const randomEl = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
+/**
+ * @template {SlashCommandStringOption | SlashCommandIntegerOption | SlashCommandBooleanOption } T
+ * @param {{name: string, description: string, required: boolean, choices: string[]}} config
+ * @returns {(option: T) => T}
+ */
 const setupOption = (config) => (option) => {
     option = option.setName(config.name).setDescription(config.description).setRequired(config.required);
-    for(const choice of config.choices) { option = option.addChoice(choice, choice); }
+    if(option instanceof SlashCommandBooleanOption && config.choices.length > 0) { throw new Error('Unable to add choice to boolean command option'); }
+    if(option instanceof SlashCommandIntegerOption || option instanceof SlashCommandStringOption) {
+        for(const choice of config.choices) { option = option.addChoice(choice, choice); }
+    }
     return option;
 };
 
-const isSpotifyURL = (arg) => arg.match(/^(spotify:|https:\/\/[a-z]+\.spotify\.com\/)/);
-const isYouTubeVideoURL = (arg) => arg.match(/^(http(s)?:\/\/)?(m.)?((w){3}.)?(music.)?youtu(be|.be)?(\.com)?\/.+/);
-const isYouTubePlaylistURL = (arg) => arg.match(/^https?:\/\/(music.)?(www.youtube.com|youtube.com)\/playlist(.*)$/);
+/** @param {string} arg */
+const isSpotifyURL = (arg) => /^(spotify:|https:\/\/[a-z]+\.spotify\.com\/)/.exec(arg);
+/** @param {string} arg */
+const isYouTubeVideoURL = (arg) => /^(http(s)?:\/\/)?(m.)?((w){3}.)?(music.)?youtu(be|.be)?(\.com)?\/.+/.exec(arg);
+/** @param {string} arg */
+const isYouTubePlaylistURL = (arg) => /^https?:\/\/(music.)?(www.youtube.com|youtube.com)\/playlist(.*)$/.exec(arg);
 
+/** @param {string} url */
 const validateURL = (url) => isYouTubePlaylistURL(url) || isYouTubeVideoURL(url) || isSpotifyURL(url);
 
-module.exports = {arrayMove, getRandom, shuffleArray, isSpotifyURL, isYouTubePlaylistURL, isYouTubeVideoURL, validateURL, randomEl, setupOption};
+module.exports = {fetch, arrayMove, getRandom, shuffleArray, isSpotifyURL, isYouTubePlaylistURL, isYouTubeVideoURL, validateURL, randomEl, setupOption};

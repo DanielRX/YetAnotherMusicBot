@@ -1,9 +1,8 @@
 // @ts-check
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const {MessageEmbed} = require('discord.js');
-const fetch = require('node-fetch');
 const {PagesBuilder} = require('discord.js-pages');
-const {setupOption} = require('../../utils/utils');
+const {setupOption, fetch} = require('../../utils/utils');
 
 const name = 'tv-show-search';
 const description = 'Search for TV shows';

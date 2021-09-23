@@ -1,9 +1,6 @@
 const {MessageSelectMenu, MessageActionRow} = require('discord.js');
 
-/**
- * @param {string} query
- * @returns
- */
+/** @param {string} query */
 const getFlags = (query) => {
     let splitQuery = query.split(' ');
     let shuffleFlag = splitQuery[splitQuery.length - 1] === '-s';
@@ -15,6 +12,7 @@ const getFlags = (query) => {
     return {shuffleFlag, reverseFlag, jumpFlag, nextFlag, query};
 };
 
+/** @param {string[]} namesArray */
 const createSelectMenu = (namesArray) =>
     new MessageActionRow().addComponents(new MessageSelectMenu()
         .setCustomId('search-yt-menu')

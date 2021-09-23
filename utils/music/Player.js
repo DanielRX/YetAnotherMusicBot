@@ -7,17 +7,32 @@ const wait = promisify(setTimeout);
 
 class MusicPlayer {
     constructor() {
+        /**
+         * @type {import('@discordjs/voice').VoiceConnection}
+         */
         this.connection = null;
+        /** @type {import('@discordjs/voice').AudioPlayer} */
         this.audioPlayer = createAudioPlayer();
+        /** @type {import('../..').PlayTrack[]} */
         this.queue = [];
         this.skipTimer = false;
         this.loopSong = false;
         this.loopQueue = false;
         this.volume = 1;
         this.commandLock = false;
+        /** @type {import('discord.js').BaseGuildTextChannel} */
         this.textChannel = null;
     }
 
+    /** @returns {import('../..').PlayTrack[]} */
+    getQueueHistory() {
+        // eslint-disable-next-line
+        return this.textChannel.client.guildData.get(this.textChannel.guildId).queueHistory;
+    }
+
+    /**
+     * @param {import('@discordjs/voice').VoiceConnection} connection
+     */
     passConnection(connection) {
         this.connection = connection;
         this.connection.on('stateChange', async(_, newState) => {
@@ -37,9 +52,7 @@ class MusicPlayer {
             } else if(newState.status === VoiceConnectionStatus.Destroyed) {
                 // when leaving
                 if(this.nowPlaying !== null) {
-                    this.textChannel.client.guildData
-                        .get(this.textChannel.guildId)
-                        .queueHistory.unshift(this.nowPlaying);
+                    this.getQueueHistory().unshift(this.nowPlaying);
                 }
                 this.stop();
             } else if(newState.status === VoiceConnectionStatus.Connecting || newState.status === VoiceConnectionStatus.Signalling) {
@@ -55,28 +68,30 @@ class MusicPlayer {
         this.audioPlayer.on('stateChange', (oldState, newState) => {
             if(newState.status === AudioPlayerStatus.Idle && oldState.status !== AudioPlayerStatus.Idle) {
                 if(this.loopSong) {
-                    this.process(this.queue.unshift(this.nowPlaying));
+                    this.queue.unshift(this.nowPlaying);
+                    void this.process(this.queue);
                 } else if(this.loopQueue) {
-                    this.process(this.queue.push(this.nowPlaying));
+                    this.queue.push(this.nowPlaying);
+                    void this.process(this.queue);
                 } else {
                     if(this.nowPlaying !== null) {
-                        this.textChannel.client.guildData
-                            .get(this.textChannel.guildId)
-                            .queueHistory.unshift(this.nowPlaying);
+                        this.getQueueHistory().unshift(this.nowPlaying);
                     }
                     // Finished playing audio
                     if(this.queue.length) {
-                        this.process(this.queue);
+                        void this.process(this.queue);
                     } else {
                         // leave channel close connection and subscription
+                        /* eslint-disable */
                         if(this.connection._state.status !== 'destroyed') {
                             this.connection.destroy();
-                            this.textChannel.client.playerManager.delete(this.textChannel.guildId);
+                            this.textChannel.client.triviaManager.delete(this.textChannel.guildId);
                         }
+                        /* eslint-enable */
                     }
                 }
             } else if(newState.status === AudioPlayerStatus.Playing) {
-                const queueHistory = this.textChannel.client.guildData.get(this.textChannel.guildId).queueHistory;
+                const queueHistory = this.getQueueHistory();
                 const playingEmbed = new MessageEmbed()
                     .setThumbnail(this.nowPlaying.thumbnail)
                     .setTitle(this.nowPlaying.title)
@@ -86,7 +101,7 @@ class MusicPlayer {
                 if(queueHistory.length) {
                     playingEmbed.addField('Previous Song', queueHistory[0].title, true);
                 }
-                this.textChannel.send({embeds: [playingEmbed]});
+                void this.textChannel.send({embeds: [playingEmbed]});
             }
         });
 
@@ -104,6 +119,10 @@ class MusicPlayer {
         this.audioPlayer.stop(true);
     }
 
+    /**
+     * @param {import('../..').PlayTrack[]} queue
+     * @returns {Promise<void>}
+     */
     async process(queue) {
         if(this.audioPlayer.state.status !== AudioPlayerStatus.Idle || this.queue.length === 0) { return; }
 
