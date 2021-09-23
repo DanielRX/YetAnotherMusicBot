@@ -31,70 +31,64 @@ const cleanSongName = (songName) => {
 * @param {string} query
 * @returns {Promise<string>}
 */
-const searchSong = (query) => {
-    return new Promise(async(resolve, reject) => {
-        const searchURL = `https://api.genius.com/search?q=${encodeURI(query)}`;
-        const headers = {Authorization: `Bearer ${geniusLyricsAPI}`};
-        try {
-            const body = await fetch(searchURL, {headers});
-            const result = await body.json();
-            const songPath = result.response.hits[0].result.api_path;
-            resolve(`https://api.genius.com${songPath}`);
-        } catch(e) {
-            reject(':x: No song has been found for this query');
-        }
-    });
+const searchSong = async(query) => {
+    const searchURL = `https://api.genius.com/search?q=${encodeURI(query)}`;
+    const headers = {Authorization: `Bearer ${geniusLyricsAPI}`};
+    try {
+        const body = await fetch(searchURL, {headers});
+        const result = await body.json();
+        const songPath = result.response.hits[0].result.api_path;
+        return `https://api.genius.com${songPath}`;
+    } catch(e) {
+        throw new Error(':x: No song has been found for this query');
+    }
 };
 
 /**
 * @param {string} url
 * @returns {Promise<string>}
 */
-const getSongPageURL = (url) => {
-    return new Promise(async(resolve, reject) => {
-        const headers = {Authorization: `Bearer ${geniusLyricsAPI}`};
-        try {
-            const body = await fetch(url, {headers});
-            const result = await body.json();
-            if(!result.response.song.url) {
-                reject(':x: There was a problem finding a URL for this song');
-            } else {
-                resolve(result.response.song.url);
-            }
-        } catch(e) {
-            console.log(e);
-            reject('There was a problem finding a URL for this song');
+const getSongPageURL = async(url) => {
+    const headers = {Authorization: `Bearer ${geniusLyricsAPI}`};
+    try {
+        const body = await fetch(url, {headers});
+        const result = await body.json();
+        if(!result.response.song.url) {
+            throw new Error(':x: There was a problem finding a URL for this song');
+        } else {
+            return result.response.song.url;
         }
-    });
+    } catch(e) {
+        console.log(e);
+        throw new Error('There was a problem finding a URL for this song');
+    }
 };
 
 /**
 * @param {string} url
 * @returns {Promise<string>}
 */
-const getLyrics = (url) => {
-    return new Promise(async function(resolve, reject) {
-        try {
-            const response = await fetch(url);
-            const text = await response.text();
-            const $ = cheerio.load(text);
-            let lyrics = $('.lyrics').text().trim();
+const getLyrics = async(url) => {
+    try {
+        const response = await fetch(url);
+        const text = await response.text();
+        const $ = cheerio.load(text);
+        let lyrics = $('.lyrics').text().trim();
+        if(!lyrics) {
+            $('.Lyrics__Container-sc-1ynbvzw-8').find('br').replaceWith('\n');
+            lyrics = $('.Lyrics__Container-sc-1ynbvzw-8').text();
             if(!lyrics) {
-                $('.Lyrics__Container-sc-1ynbvzw-8').find('br').replaceWith('\n');
-                lyrics = $('.Lyrics__Container-sc-1ynbvzw-8').text();
-                if(!lyrics) {
-                    reject('There was a problem fetching lyrics for this song, please try again');
-                } else {
-                    resolve(lyrics.replace(/(\[.+\])/g, ''));
-                }
+                throw new Error('There was a problem fetching lyrics for this song, please try again');
             } else {
-                resolve(lyrics.replace(/(\[.+\])/g, ''));
+                return lyrics.replace(/(\[.+\])/g, '');
             }
-        } catch(e) {
-            console.log(e);
-            reject('There was a problem fetching lyrics for this song, please try again');
+        } else {
+            return lyrics.replace(/(\[.+\])/g, '');
         }
-    });
+    } catch(e) {
+        console.log(e);
+        throw new Error('There was a problem fetching lyrics for this song, please try again');
+    }
 };
 
 /**
