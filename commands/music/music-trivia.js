@@ -69,9 +69,9 @@ const execute = async(interaction) => {
     const useYoutube = interaction.options.get('youtube') ? interaction.options.get('youtube').value : true;
 
     const songs = await fs.readJSON('./resources/music/mk2/trivia.json');
-    const albums = await fs.readJSON('./resources/music/mk2/albums.json');
-    const artists = await fs.readJSON('./resources/music/mk2/artists.json');
-    const videoDataArray = songs.map((track) => {track.artists = track.artists.map((id) => artists[id]); track.album = albums[track.album]; return track; });
+    const albumData = await fs.readJSON('./resources/music/mk2/albums.json');
+    const artistsData = await fs.readJSON('./resources/music/mk2/artists.json');
+    const videoDataArray = songs.map((track) => {track.artists = track.artists.map((id) => artistsData[id]); track.album = albumData[track.album]; return track; });
     // Get random numberOfSongs videos from the array
 
     const randomLinks = getRandom(videoDataArray, numberOfSongs);
@@ -79,8 +79,8 @@ const execute = async(interaction) => {
 
     const triviaPlayer = interaction.client.triviaManager.get(interaction.guildId);
 
-    randomLinks.forEach(({artists, name, preview_url, youtubeUrl}) => {
-        triviaPlayer.queue.push({url: youtubeUrl, singer: artists[0], artists, preview_url, title: name, voiceChannel});
+    randomLinks.forEach(({artists, name: title, preview_url, youtubeUrl}) => {
+        triviaPlayer.queue.push({url: youtubeUrl, singer: artists[0], artists, preview_url, title, voiceChannel});
     });
 
     const membersInChannel = interaction.member.voice.channel.members;

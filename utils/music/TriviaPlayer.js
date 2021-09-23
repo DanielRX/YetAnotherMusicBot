@@ -3,7 +3,7 @@ const {AudioPlayerStatus, createAudioPlayer, entersState, VoiceConnectionDisconn
 const {setTimeout} = require('timers');
 const {promisify} = require('util');
 const ytdl = require('ytdl-core');
-const {MessageEmbed, GuildChannel, BaseGuildTextChannel, Message} = require('discord.js');
+const {MessageEmbed} = require('discord.js');
 const wait = promisify(setTimeout);
 
 const capitalize_Words = (str) => {
@@ -47,7 +47,7 @@ class TriviaPlayer {
         this.score = new Map();
         this.queue = [];
         /**
-         * @type {BaseGuildTextChannel}
+         * @type {import('discord.js').BaseGuildTextChannel}
          */
         this.textChannel = null;
         this.wasTriviaEndCalled = false;
@@ -112,32 +112,31 @@ class TriviaPlayer {
                 }
             } else if(newState.status === AudioPlayerStatus.Playing) {
                 // Trivia logic
-                const start = Date.now();
                 let songNameFoundTime = -1;
                 let songNameWinners = {};
                 let songSingerWinners = {};
                 let songSingerFoundTime = -1;
                 const answerTimeout = 1500;
                 /**
-                 * @type {Message}
+                 * @type {import('discord.js').Message}
                  */
                 let lastMessage = null;
 
                 let skipCounter = 0;
                 const skippedArray = [];
                 let hints = 0;
-                let time = 60000;
-                if(!this.useYoutube) { time = 30000; }
-                const collector = this.textChannel.createMessageCollector({time});
+                let timeForSong = 60000;
+                if(!this.useYoutube) { timeForSong = 30000; }
+                const collector = this.textChannel.createMessageCollector({time: timeForSong});
 
                 const showHint = async(singer, title) => {
                     const singerHint = [...singer].map((_, i) => i < hints ? _ : _ === ' ' ? ' ' : '*').join('');
                     const titleHint = [...title].map((_, i) => i < hints ? _ : _ === ' ' ? ' ' : '*').join('');
                     const song = `${songSingerFoundTime === -1 ? singerHint : singer}: ${songNameFoundTime === -1 ? titleHint : title}`;
                     const embed = new MessageEmbed().setColor('#ff7373').setTitle(`:musical_note: The song is:  \`${song}\``);
-                    if(lastMessage !== null) { lastMessage.delete().catch(() => {}); }
+                    if(lastMessage !== null) { lastMessage.delete().catch((e) => { console.log({e}); }); }
                     lastMessage = await this.textChannel.send({embeds: [embed]});
-                    nextHintInt = setTimeout(() => { showHint(normalizeValue(this.queue[0].singer), normalizeValue(this.queue[0].title)); }, 5000);
+                    nextHintInt = setTimeout(() => { void showHint(normalizeValue(this.queue[0].singer), normalizeValue(this.queue[0].title)); }, 5000);
                     hints++;
                 };
                 // let timeoutId = setTimeout(() => collector.stop(), 30000);
@@ -153,7 +152,6 @@ class TriviaPlayer {
                     let title = normalizeValue(this.queue[0].title);
                     let singer = normalizeValue(this.queue[0].singer);
                     // let singers = this.queue[0].artists.map(normalizeValue);
-
 
                     if(guess === 'skip') {
                         if(skippedArray.includes(msg.author.username)) { return; }
@@ -184,13 +182,13 @@ class TriviaPlayer {
                     if(gotSingerInTime && !songSingerWinners[msg.author.username]) {
                         songSingerWinners[msg.author.username] = true;
                         this.score.set(msg.author.username, this.score.get(msg.author.username) + 1);
-                        msg.react('☑');
+                        void msg.react('☑');
                     }
 
                     if(gotNameInTime && !songNameWinners[msg.author.username]) {
                         songNameWinners[msg.author.username] = true;
                         this.score.set(msg.author.username, this.score.get(msg.author.username) + 1);
-                        msg.react('☑');
+                        void msg.react('☑');
                     }
 
                     if((songSingerFoundTime !== -1) && (songNameFoundTime !== -1)) { setTimeout(() => collector.stop(), 1000); }
@@ -218,7 +216,7 @@ class TriviaPlayer {
                         .setTitle(`:musical_note: The song was:  ${song} (${Math.max(this.queue.length - 1, 0)} left)`)
                         .setDescription(getLeaderBoard(Array.from(sortedScoreMap.entries())));
 
-                    this.textChannel.send({embeds: [embed]});
+                    void this.textChannel.send({embeds: [embed]});
                     return;
                 });
             }

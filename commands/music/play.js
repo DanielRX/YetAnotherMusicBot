@@ -111,7 +111,7 @@ const handleSpotifyPlaylistData = async(interaction, data) => {
     }
     void processingMessage.edit('Playlist Processed!');
     if(player.audioPlayer.state.status !== AudioPlayerStatus.Playing) { return handleSubscription(player.queue, interaction, player); }
-}
+};
 
 /**
  * @param {import('../../').CustomInteraction} interaction
