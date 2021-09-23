@@ -31,53 +31,50 @@ const constructSongObj = (video, user)=> {
 };
 
 const processURL = async(url, interaction) => {
-    return new Promise(async function(resolve, reject) {
-        if(isSpotifyURL(url)) {
-            getData(url)
-                .then(async(res) => {
-                    if(res.tracks) {
-                        const spotifyPlaylistItems = res.tracks.items;
-                        const urlsArr = [];
-                        for(const track of spotifyPlaylistItems) {
-                            try {
-                                const video = await searchOne(track.track);
-                                urlsArr.push(constructSongObj(video, interaction.member.user));
-                            } catch(error) {
-                                console.error(error);
-                            }
+    if(isSpotifyURL(url)) {
+        getData(url)
+            .then(async(res) => {
+                if(res.tracks) {
+                    const spotifyPlaylistItems = res.tracks.items;
+                    const urlsArr = [];
+                    for(const track of spotifyPlaylistItems) {
+                        try {
+                            const video = await searchOne(track.track);
+                            urlsArr.push(constructSongObj(video, interaction.member.user));
+                        } catch(error) {
+                            console.error(error);
                         }
-                        resolve(urlsArr);
-                    } else {
-                        const video = await searchOne(res);
-                        resolve(constructSongObj(video, interaction.member.user));
                     }
-                })
-                .catch((err) => console.error(err));
-        } else if(url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
-            const playlist = await YouTube.getPlaylist(url).catch(function() {
-                reject(':x: Playlist is either private or it does not exist!');
-            });
-            let videosArr = await playlist.fetch();
-            videosArr = videosArr.videos;
-            let urlsArr = [];
-            for(const video of videosArr) {
-                if(video.private) {
-                    continue;
-                } else {
-                    urlsArr.push(constructSongObj(video, interaction.member.user));
+                    return urlsArr;
                 }
+                const video = await searchOne(res);
+                return constructSongObj(video, interaction.member.user);
+            })
+            .catch((err) => console.error(err));
+    } else if(url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
+        const playlist = await YouTube.getPlaylist(url).catch(function() {
+            throw new Error(':x: Playlist is either private or it does not exist!');
+        });
+        let videosArr = await playlist.fetch();
+        videosArr = videosArr.videos;
+        let urlsArr = [];
+        for(const video of videosArr) {
+            if(video.private) {
+                continue;
+            } else {
+                urlsArr.push(constructSongObj(video, interaction.member.user));
             }
-            resolve(urlsArr);
-        } else {
-            const video = await YouTube.getVideo(url).catch(function() {
-                reject(':x: There was a problem getting the video you provided!');
-            });
-            if(video.live) {
-                reject("I don't support live streams!");
-            }
-            resolve(constructSongObj(video, interaction.member.user));
         }
-    });
+        return urlsArr;
+    } else {
+        const video = await YouTube.getVideo(url).catch(function() {
+            throw new Error(':x: There was a problem getting the video you provided!');
+        });
+        if(video.live) {
+            throw new Error("I don't support live streams!");
+        }
+        return constructSongObj(video, interaction.member.user);
+    }
 };
 
 /**

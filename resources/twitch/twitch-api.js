@@ -9,103 +9,70 @@ if(!twitchClientID || !twitchClientSecret) { return; } // TODO: Fix this, won't 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 module.exports = class TwitchAPI {
     //Access Token is valid for 24 Hours
-    static getToken(tClientID, tClientSecret, scope) {
-        return new Promise(async function fetchToken(resolve, reject) {
-            try {
-                const response = await fetch(`https://id.twitch.tv/oauth2/token?client_id=${tClientID}&client_secret=${tClientSecret}&grant_type=client_credentials&scope=${scope}`, {method: 'POST'});
-                const json = await response.json();
-                if(json.status == 400) {
-                    reject('Something went wrong when trying to fetch a twitch access token');
-                } else {
-                    resolve(json.access_token);
-                }
-            } catch(e) {
-                console.error(e);
-                reject('There was a problem fetching a token from the Twitch API');
+    static async getToken(tClientID, tClientSecret, scope) {
+        try {
+            const response = await fetch(`https://id.twitch.tv/oauth2/token?client_id=${tClientID}&client_secret=${tClientSecret}&grant_type=client_credentials&scope=${scope}`, {method: 'POST'});
+            const json = await response.json();
+            if(json.status == 400) {
+                throw new Error('Something went wrong when trying to fetch a twitch access token');
+            } else {
+                return json.access_token;
             }
-        });
+        } catch(e) {
+            console.error(e);
+            throw new Error('There was a problem fetching a token from the Twitch API');
+        }
     }
 
     //userInfo.data[0]
-    static getUserInfo(token, client_id, username) {
-        return new Promise(async function fetchUserInfo(resolve, reject) {
-            try {
-                const response = await fetch(`https://api.twitch.tv/helix/users?login=${username}`,
-                    {
-                        method: 'GET',
-                        headers: {
-                            'client-id': `${client_id}`,
-                            Authorization: `Bearer ${token}`
-                        }
-                    });
-                const json = await response.json();
-                if(json.status == `400`) {
-                    reject(`:x: ${username} was Invalid, Please try again.`);
-                    return;
-                }
-
-                if(json.status == `429`) {
-                    reject(`Rate Limit exceeded. Please try again in a few minutes.`);
-                    return;
-                }
-
-                if(json.status == `503`) {
-                    reject(`Twitch service's are currently unavailable. Please try again later.`);
-                    return;
-                }
-
-                if(json.data[0] == null) {
-                    reject(`Streamer ${username} was not found, Please try again.`);
-                    return;
-                }
-                resolve(json);
-            } catch(e) {
-                console.error(e);
-                reject('There was a problem fetching user info from the Twitch API');
+    static async getUserInfo(token, client_id, username) {
+        try {
+            const response = await fetch(`https://api.twitch.tv/helix/users?login=${username}`, {method: 'GET', headers: {'client-id': `${client_id}`, Authorization: `Bearer ${token}`}});
+            const json = await response.json();
+            if(json.status == `400`) {
+                throw new Error(`:x: ${username} was Invalid, Please try again.`);
             }
-        });
+
+            if(json.status == `429`) {
+                throw new Error(`Rate Limit exceeded. Please try again in a few minutes.`);
+            }
+
+            if(json.status == `503`) {
+                throw new Error(`Twitch service's are currently unavailable. Please try again later.`);
+            }
+
+            if(json.data[0] == null) {
+                throw new Error(`Streamer ${username} was not found, Please try again.`);
+            }
+            return json;
+        } catch(e) {
+            console.error(e);
+            throw new Error('There was a problem fetching user info from the Twitch API');
+        }
     }
 
     // streamInfo.data[0]
-    static getStream(token, client_id, userID) {
-        return new Promise(async function fetchStream(resolve, reject) {
-            try {
-                const response = await fetch(`https://api.twitch.tv/helix/streams?user_id=${userID}`,
-                    {
-                        method: 'GET',
-                        headers: {
-                            'client-id': `${client_id}`,
-                            Authorization: `Bearer ${token}`
-                        }
-                    });
-                const json = await response.json();
-                resolve(json);
-            } catch(e) {
-                console.error(e);
-                reject('There was a problem fetching stream info from the Twitch API');
-            }
-        });
+    static async getStream(token, client_id, userID) {
+        try {
+            const response = await fetch(`https://api.twitch.tv/helix/streams?user_id=${userID}`, {method: 'GET', headers: {'client-id': `${client_id}`, Authorization: `Bearer ${token}`}});
+            const json = await response.json();
+            return json;
+        } catch(e) {
+            console.error(e);
+            throw new Error('There was a problem fetching stream info from the Twitch API');
+        }
     }
 
     // gameInfo.data[0]
-    static getGames(token, client_id, game_id) {
-        return new Promise(async function fetchGames(resolve, reject) {
-            try {
-                const response = await fetch(`https://api.twitch.tv/helix/games?id=${game_id}`,
-                    {
-                        method: 'GET',
-                        headers: {
-                            'client-id': `${client_id}`,
-                            Authorization: `Bearer ${token}`
-                        }
-                    });
-                const json = await response.json();
-                resolve(json);
-            } catch(e) {
-                console.error(e);
-                reject('There was a problem fetching stream info from the Twitch API');
-            }
-        });
+    static async getGames(token, client_id, game_id) {
+        try {
+            const response = await fetch(`https://api.twitch.tv/helix/games?id=${game_id}`, {method: 'GET', headers: {'client-id': `${client_id}`, Authorization: `Bearer ${token}`}});
+            const json = await response.json();
+            return json;
+        } catch(e) {
+            console.error(e);
+            throw new Error('There was a problem fetching stream info from the Twitch API');
+        }
     }
 };
 
@@ -124,13 +91,9 @@ void (async function() {
         });
 })();
 // 24 Hour access_token refresh
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
 setInterval(async function() {
     await TwitchAPI.getToken(twitchClientID, twitchClientSecret, scope)
-        .then((result) => {
-            module.exports.access_token = result;
-        })
-        .catch((e) => {
-            console.log(e);
-            return;
-        });
+        .then((result) => { module.exports.access_token = result; })
+        .catch((e) => { console.log(e); });
 }, 86400000);

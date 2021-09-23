@@ -14,36 +14,32 @@ const options = [
 const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
 const getWorldStats = async() => {
-    return new Promise(async function(resolve, reject) {
-        const url = 'https://disease.sh/v3/covid-19/all';
-        try {
-            const body = await fetch(url);
-            if(body.status !== 200) {
-                reject(`The covid API can't be accessed at the moment, please try later`);
-            }
-            const json = await body.json();
-            resolve(json);
-        } catch(e) {
-            console.error(e);
-            reject(`The covid API can't be accessed at the moment, please try later`);
+    const url = 'https://disease.sh/v3/covid-19/all';
+    try {
+        const body = await fetch(url);
+        if(body.status !== 200) {
+            throw new Error(`The covid API can't be accessed at the moment, please try later`);
         }
-    });
+        const json = await body.json();
+        return json;
+    } catch(e) {
+        console.error(e);
+        throw new Error(`The covid API can't be accessed at the moment, please try later`);
+    }
 };
 const getCountryStats = async(country) => {
-    return new Promise(async function(resolve, reject) {
-        const url = `https://disease.sh/v3/covid-19/countries/${country}`;
-        try {
-            const body = await fetch(url);
-            if(body.status !== 200) {
-                reject(`There was a problem getting data from the API, make sure you entered a valid country name`);
-            }
-            const json = await body.json();
-            resolve(json);
-        } catch(e) {
-            console.error(e);
-            reject(`There was a problem getting data from the API, make sure you entered a valid country name`);
+    const url = `https://disease.sh/v3/covid-19/countries/${country}`;
+    try {
+        const body = await fetch(url);
+        if(body.status !== 200) {
+            throw new Error(`There was a problem getting data from the API, make sure you entered a valid country name`);
         }
-    });
+        const json = await body.json();
+        return json;
+    } catch(e) {
+        console.error(e);
+        throw new Error(`There was a problem getting data from the API, make sure you entered a valid country name`);
+    }
 };
 
 /**

@@ -15,29 +15,27 @@ const options = [
 const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
 const getShowSearch = async(showQuery) => {
-    return new Promise(async function(resolve, reject) {
-        const url = `http://api.tvmaze.com/search/shows?q=${encodeURI(showQuery)}`;
-        try {
-            const body = await fetch(url);
-            if(body.status == `429`) {
-                reject(':x: Rate Limit exceeded. Please try again in a few minutes.');
-            }
-            if(body.status == `503`) {
-                reject(':x: The service is currently unavailable. Please try again later.');
-            }
-            if(body.status !== 200) {
-                reject('There was a problem getting data from the API, make sure you entered a valid TV show name');
-            }
-            const json = await body.json();
-            if(!json.length) {
-                reject('There was a problem getting data from the API, make sure you entered a valid TV show name');
-            }
-            resolve(json);
-        } catch(e) {
-            console.error(e);
-            reject('There was a problem getting data from the API, make sure you entered a valid TV show name');
+    const url = `http://api.tvmaze.com/search/shows?q=${encodeURI(showQuery)}`;
+    try {
+        const body = await fetch(url);
+        if(body.status == `429`) {
+            throw new Error(':x: Rate Limit exceeded. Please try again in a few minutes.');
         }
-    });
+        if(body.status == `503`) {
+            throw new Error(':x: The service is currently unavailable. Please try again later.');
+        }
+        if(body.status !== 200) {
+            throw new Error('There was a problem getting data from the API, make sure you entered a valid TV show name');
+        }
+        const json = await body.json();
+        if(!json.length) {
+            throw new Error('There was a problem getting data from the API, make sure you entered a valid TV show name');
+        }
+        return json;
+    } catch(e) {
+        console.error(e);
+        throw new Error('There was a problem getting data from the API, make sure you entered a valid TV show name');
+    }
 };
 
 /**
