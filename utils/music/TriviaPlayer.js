@@ -200,9 +200,7 @@ class TriviaPlayer {
                     if(nextHintInt !== -1) {
                         clearTimeout(nextHintInt);
                     }
-                    if(lastMessage !== null) {
-                        lastMessage.delete();
-                    }
+                    if(lastMessage !== null) { void lastMessage.delete().catch((e) => { console.log({e}); }); }
                     /*The reason for this if statement is that we don't want to get an empty embed returned via chat by the bot if end-trivia command was called */
                     if(this.wasTriviaEndCalled) {
                         this.wasTriviaEndCalled = false;
