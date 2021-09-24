@@ -1,11 +1,12 @@
-// @ts-check
-
-const {SlashCommandBuilder} = require('@discordjs/builders');
-const {MessageEmbed} = require('discord.js');
-const {PagesBuilder} = require('discord.js-pages');
-const cheerio = require('cheerio');
-const {geniusLyricsAPI} = require('../../utils/config');
-const {setupOption, fetch} = require('../../utils/utils');
+import {SlashCommandBuilder} from '@discordjs/builders';
+import type {Message} from 'discord.js';
+import {MessageEmbed} from 'discord.js';
+import {PagesBuilder} from 'discord.js-pages';
+import cheerio from 'cheerio';
+import {config} from '../../utils/config';
+import {setupOption, fetch} from '../../utils/utils';
+import type {CustomInteraction} from '../../utils/types';
+import type {APIMessage} from 'discord-api-types';
 
 export const name = 'lyrics';
 export const description = 'Get the lyrics of any song or the lyrics of the currently playing song!';
@@ -14,25 +15,17 @@ export const options = [
     {name: 'songname', description: ':mag: What song lyrics would you like to get?', required: true, choices: []}
 ];
 
-export const datast datast data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
+export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
-/**
-* @param {string} songName
-* @returns {string}
-*/
-const cleanSongName = (songName) => {
+const cleanSongName = (songName: string) => {
     return songName
         .replace(/ *\([^)]*\) */g, '')
         .replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '');
 };
 
-/**
-* @param {string} query
-* @returns {Promise<string>}
-*/
-const searchSong = async(query) => {
+const searchSong = async(query: string): Promise<string> => {
     const searchURL = `https://api.genius.com/search?q=${encodeURI(query)}`;
-    const headers = {Authorization: `Bearer ${geniusLyricsAPI}`};
+    const headers = {Authorization: `Bearer ${config.geniusLyricsAPI}`};
     try {
         const body = await fetch(searchURL, {headers});
         const result = await body.json();
@@ -43,19 +36,15 @@ const searchSong = async(query) => {
     }
 };
 
-/**
-* @param {string} url
-* @returns {Promise<string>}
-*/
-const getSongPageURL = async(url) => {
-    const headers = {Authorization: `Bearer ${geniusLyricsAPI}`};
+const getSongPageURL = async(url: string) => {
+    const headers = {Authorization: `Bearer ${config.geniusLyricsAPI}`};
     try {
         const body = await fetch(url, {headers});
         const result = await body.json();
         if(!result.response.song.url) {
             throw new Error(':x: There was a problem finding a URL for this song');
         } else {
-            return result.response.song.url;
+            return result.response.song.url as string;
         }
     } catch(e) {
         console.log(e);
@@ -63,11 +52,7 @@ const getSongPageURL = async(url) => {
     }
 };
 
-/**
-* @param {string} url
-* @returns {Promise<string>}
-*/
-const getLyrics = async(url) => {
+const getLyrics = async(url: string) => {
     try {
         const response = await fetch(url);
         const text = await response.text();
@@ -90,12 +75,8 @@ const getLyrics = async(url) => {
     }
 };
 
-/**
- * @param {import('../..').CustomInteraction} interaction
- * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
- */
-export const execute = async(interaction) => {
-    if(!geniusLyricsAPI) { return interaction.reply(':x: Lyrics command is not enabled'); }
+export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message | void> => {
+    if(!config.geniusLyricsAPI) { return interaction.reply(':x: Lyrics command is not enabled'); }
     void interaction.deferReply();
     const player = interaction.client.playerManager.get(interaction.guildId);
     const guildData = interaction.client.guildData.get(interaction.guildId);
@@ -136,10 +117,9 @@ export const execute = async(interaction) => {
             .setURL(songPageURL)
             .setAuthor(interaction.member.user.username, interaction.member.user.displayAvatarURL())
             .build();
-    } catch(error) {
+    } catch(error: unknown) {
         console.error(error);
         return interaction.followUp('Something went wrong! Please try again later');
     }
 };
-
 

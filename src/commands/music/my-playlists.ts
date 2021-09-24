@@ -1,18 +1,16 @@
-// @ts-check
-const {SlashCommandBuilder} = require('@discordjs/builders');
-const Member = require('../../utils/models/Member');
-const {MessageEmbed} = require('discord.js');
+import type {APIMessage} from 'discord-api-types';
+import type {Message} from 'discord.js';
+import type {CustomInteraction} from '../../utils/types';
+import {SlashCommandBuilder} from '@discordjs/builders';
+import Member from '../../utils/models/Member';
+import {MessageEmbed} from 'discord.js';
 
-export const namest name = 'my-playlists';
-export const descriptionription = 'Lists your saved playlists';
+export const name = 'my-playlists';
+export const description = 'Lists your saved playlists';
 
 export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
-/**
-* @param {import('../../').CustomInteraction} interaction
-* @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
-*/
-export const execute = async(interaction) => {
+export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message> => {
     void interaction.deferReply();
 
     const userData = await Member.findOne({memberId: interaction.member.id}).exec();
@@ -31,5 +29,4 @@ export const execute = async(interaction) => {
 
     return interaction.followUp({embeds: [playlistsEmbed]});
 };
-
 

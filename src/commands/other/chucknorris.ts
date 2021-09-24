@@ -1,18 +1,14 @@
-// @ts-check
-const {SlashCommandBuilder} = require('@discordjs/builders');
-const {fetch} = require('../../utils/utils');
-const {MessageEmbed} = require('discord.js');
+import type {CustomInteraction} from '../../utils/types';
+import {SlashCommandBuilder} from '@discordjs/builders';
+import {fetch} from '../../utils/utils';
+import {MessageEmbed} from 'discord.js';
 
-export const namest name = 'chucknorris';
+export const name = 'chucknorris';
 export const description = 'Get a satirical fact about Chuck Norris!';
 
-export const datast data = new SlashCommandBuilder().setName(name).setDescription(description);
+export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
-/**
- * @param {import('../..').CustomInteraction} interaction
- * @returns {Promise<void>}
- */
-export const execute = async(interaction) => {
+export const execute = async(interaction: CustomInteraction): Promise<void> => {
     // thanks to https://api.chucknorris.io
     return fetch('https://api.chucknorris.io/jokes/random')
         .then((res) => res.json())
@@ -25,10 +21,9 @@ export const execute = async(interaction) => {
                 .setFooter('Powered by chucknorris.io', '');
             return interaction.reply({embeds: [embed]});
         })
-        .catch((err) => {
+        .catch((err: unknown) => {
             console.error(err);
             return interaction.reply(':x: An error occured, Chuck is investigating this!');
         });
 };
-
 

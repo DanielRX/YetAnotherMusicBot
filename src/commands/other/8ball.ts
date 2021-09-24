@@ -1,9 +1,8 @@
-// @ts-check
-const {SlashCommandBuilder} = require('@discordjs/builders');
-const {MessageEmbed} = require('discord.js');
-const fs = require('fs');
-
-const {setupOption} = require('../../utils/utils');
+import type {CustomInteraction} from '../../utils/types';
+import {SlashCommandBuilder} from '@discordjs/builders';
+import {MessageEmbed} from 'discord.js';
+import fs from 'fs';
+import {setupOption} from '../../utils/utils';
 
 export const name = '8ball';
 export const description = 'Get the answer to anything!';
@@ -14,12 +13,8 @@ export const options = [
 
 export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
-/**
- * @param {import('../../').CustomInteraction} interaction
- * @returns {Promise<void>}
- */
-export const executeexecute = async(interaction) => {
-    const question = interaction.options.get('question').value;
+export const execute = async(interaction: CustomInteraction): Promise<void> => {
+    const question = interaction.options.get('question')?.value;
 
     if(question.length > 255) {
         return interaction.reply('Please ask a shorter question!');
@@ -39,6 +34,4 @@ export const executeexecute = async(interaction) => {
 
     return interaction.reply({embeds: [answerEmbed]});
 };
-
-
 

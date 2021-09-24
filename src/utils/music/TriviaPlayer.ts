@@ -1,3 +1,7 @@
+import { AudioPlayer, VoiceConnection } from '@discordjs/voice';
+import { BaseGuildTextChannel, Message } from 'discord.js';
+import { Track } from '../types';
+
 // @ts-check
 const {AudioPlayerStatus, createAudioPlayer, entersState, VoiceConnectionDisconnectReason, VoiceConnectionStatus, createAudioResource, StreamType} = require('@discordjs/voice');
 const {setTimeout} = require('timers');
@@ -6,15 +10,13 @@ const ytdl = require('ytdl-core');
 const {MessageEmbed} = require('discord.js');
 const wait = promisify(setTimeout);
 
-/** @param {string} str */
-const capitalize_Words = (str) => {
+const capitalize_Words = (str: string) => {
     return str.replace(/\w\S*/g, function(txt) {
         return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
     });
 };
 
-/** @param {string} value */
-const normalizeValue = (value) =>
+const normalizeValue = (value: string) =>
     value
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
@@ -26,8 +28,7 @@ const normalizeValue = (value) =>
         .replace(/\s+/g, ' ')
         .toLowerCase(); // Remove duplicate spaces
 
-/** @param {string[][]} arr */
-const getLeaderBoard = (arr) => {
+const getLeaderBoard = (arr: [string, number][]) => {
     if(!arr) { return; }
     if(!arr[0]) { return; } // Issue #422
     let leaderBoard = '';
@@ -43,26 +44,18 @@ const getLeaderBoard = (arr) => {
 };
 
 export class TriviaPlayer {
-    /**
-     * @param {boolean} useYoutube
-     */
-    constructor(useYoutube) {
-        this.useYoutube = useYoutube;
-        /** @type {import('@discordjs/voice').VoiceConnection} */
-        this.connection = null;
+    public textChannel: BaseGuildTextChannel = null!;
+    public readonly score: Map<string, number> = new Map();
+    private queue: Track[] = [];
+    private wasTriviaEndCalled = false;
+    private connection: VoiceConnection = null!;
+    private readonly audioPlayer: AudioPlayer;
+    // eslint-disable-next-line @typescript-eslint/no-parameter-properties
+    constructor(public useYoutube = true) {
         this.audioPlayer = createAudioPlayer();
-        this.score = new Map();
-        /** @type {import('../..').Track[]} */
-        this.queue = [];
-        /** @type {import('discord.js').BaseGuildTextChannel} */
-        this.textChannel = null;
-        this.wasTriviaEndCalled = false;
     }
 
-    /**
-     * @param {import('@discordjs/voice').VoiceConnection} connection
-     */
-    passConnection(connection) {
+    passConnection(connection: VoiceConnection): void {
         this.connection = connection;
         this.connection.on('stateChange', async(_, newState) => {
             if(newState.status === VoiceConnectionStatus.Disconnected) {
@@ -93,10 +86,7 @@ export class TriviaPlayer {
         });
 
         this.audioPlayer.on('stateChange', (oldState, newState) => {
-            /**
-             * @type {NodeJS.Timeout}
-             */
-            let nextHintInt;
+            let nextHintInt: NodeJS.Timeout;
             if(newState.status === AudioPlayerStatus.Idle && oldState.status !== AudioPlayerStatus.Idle) {
                 this.queue.shift();
                 // Finished playing audio
@@ -127,48 +117,40 @@ export class TriviaPlayer {
             } else if(newState.status === AudioPlayerStatus.Playing) {
                 // Trivia logic
                 let songNameFoundTime = -1;
-                let songNameWinners = {};
-                let songSingerWinners = {};
+                const songNameWinners: {[key: string]: boolean} = {};
+                const songSingerWinners: {[key: string]: boolean} = {};
                 let songSingerFoundTime = -1;
                 const answerTimeout = 1500;
-                /**
-                 * @type {import('discord.js').Message}
-                 */
-                let lastMessage = null;
+                let lastMessage: Message = null!;
 
                 let skipCounter = 0;
-                const skippedArray = [];
+                const skippedArray: string[] = [];
                 let hints = 0;
                 let timeForSong = 60000;
                 if(!this.useYoutube) { timeForSong = 30000; }
                 const collector = this.textChannel.createMessageCollector({time: timeForSong});
 
-                /**
-                 * @param {string} singer
-                 * @param {string} title
-                 */
-                const showHint = async(singer, title) => {
+                const showHint = async(singer: string, title: string) => {
                     const singerHint = [...singer].map((_, i) => i < hints ? _ : _ === ' ' ? ' ' : '*').join('');
                     const titleHint = [...title].map((_, i) => i < hints ? _ : _ === ' ' ? ' ' : '*').join('');
                     const song = `${songSingerFoundTime === -1 ? singerHint : singer}: ${songNameFoundTime === -1 ? titleHint : title}`;
                     const embed = new MessageEmbed().setColor('#ff7373').setTitle(`:musical_note: The song is:  \`${song}\``);
                     if(lastMessage !== null) { lastMessage.delete().catch(() => { console.log('Failed to delete message'); }); }
                     lastMessage = await this.textChannel.send({embeds: [embed]});
-                    nextHintInt = setTimeout(() => { void showHint(normalizeValue(this.queue[0].artists[0]), normalizeValue(this.queue[0].name)); }, 5000);
                     hints++;
                 };
                 // let timeoutId = setTimeout(() => collector.stop(), 30000);
 
-                nextHintInt = setTimeout(() => {
-                    void showHint(normalizeValue(this.queue[0].artists[0]), normalizeValue(this.queue[0].name));
+                nextHintInt = setInterval(() => {
+                    void showHint(normalizeValue((this.queue[0] || {artists: ['']}).artists[0]), normalizeValue((this.queue[0] || {name: ''}).name));
                 }, 5000);
 
-                collector.on('collect', (msg) => {
+                collector.on('collect', (msg: Message) => {
                     if(!this.score.has(msg.author.username)) { return; }
                     const time = Date.now();
-                    let guess = normalizeValue(msg.content);
-                    let title = normalizeValue(this.queue[0].name);
-                    let singer = normalizeValue(this.queue[0].artists[0]);
+                    const guess = normalizeValue(msg.content);
+                    const title = normalizeValue(this.queue[0].name);
+                    const singer = normalizeValue(this.queue[0].artists[0]);
                     // let singers = this.queue[0].artists.map(normalizeValue);
 
                     if(guess === 'skip') {
@@ -199,13 +181,13 @@ export class TriviaPlayer {
 
                     if(gotSingerInTime && !songSingerWinners[msg.author.username]) {
                         songSingerWinners[msg.author.username] = true;
-                        this.score.set(msg.author.username, this.score.get(msg.author.username) + 1);
+                        this.score.set(msg.author.username, (this.score.get(msg.author.username) || 0) + 1);
                         void msg.react('☑');
                     }
 
                     if(gotNameInTime && !songNameWinners[msg.author.username]) {
                         songNameWinners[msg.author.username] = true;
-                        this.score.set(msg.author.username, this.score.get(msg.author.username) + 1);
+                        this.score.set(msg.author.username, (this.score.get(msg.author.username) || 0) + 1);
                         void msg.react('☑');
                     }
 
@@ -245,23 +227,19 @@ export class TriviaPlayer {
         this.connection.subscribe(this.audioPlayer);
     }
 
-    stop() {
+    stop(): void {
         this.queue.length = 0;
         this.audioPlayer.stop(true);
     }
 
-    reset() {
+    reset(): void {
         this.queue.length = 0;
         this.wasTriviaEndCalled = true;
         this.score.clear();
         this.connection.destroy();
     }
 
-    /**
-     * @param {import('../..').Track[]} queue
-     * @returns {Promise<void>}
-     */
-    async process(queue) {
+    async process(queue: Track[]): Promise<void> {
         const [song] = this.queue;
         try {
             if(!this.useYoutube && song.preview_url !== '') {

@@ -1,6 +1,4 @@
 import type {CustomInteraction} from '../../utils/types';
-
-// @ts-check
 import {SlashCommandBuilder} from '@discordjs/builders';
 import Member from '../../utils/models/Member';
 import {setupOption} from '../../utils/utils';

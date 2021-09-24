@@ -1,21 +1,19 @@
-// @ts-check
-const {SlashCommandBuilder} = require('@discordjs/builders');
-const {shuffleArray} = require('../../utils/utils');
+import type {APIMessage} from 'discord-api-types';
+import type {Message} from 'discord.js';
+import type {CustomInteraction} from '../../utils/types';
+import {SlashCommandBuilder} from '@discordjs/builders';
+import {shuffleArray} from '../../utils/utils';
 
-export const namest name = 'shuffle';
+export const name = 'shuffle';
 export const description = 'Shuffle the music queue!';
 
 export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
-/**
- * @param {import('../../').CustomInteraction} interaction
- * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
- */
-export const execute = async(interaction) => {
+export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message> => {
     void interaction.deferReply();
     const voiceChannel = interaction.member.voice.channel;
     if(!voiceChannel) { return interaction.followUp(`:no_entry: You must be in the same voice channel as the bot in order to use that!`); }
-    if(voiceChannel.id !== interaction.guild.me.voice.channel.id) { return interaction.followUp(`:no_entry: You must be in the same voice channel as the bot in order to use that!`); }
+    if(voiceChannel.id !== interaction.guild.me?.voice.channel?.id) { return interaction.followUp(`:no_entry: You must be in the same voice channel as the bot in order to use that!`); }
     const player = interaction.client.playerManager.get(interaction.guildId);
     if(!player) { return interaction.followUp(':x: There is nothing playing right now!'); }
     if(player.loopSong) { return interaction.followUp(':x: Turn off the **loop** command before using the **shuffle** command!'); }
@@ -26,5 +24,4 @@ export const execute = async(interaction) => {
 
     return interaction.followUp('The music queue has been shuffled!');
 };
-
 

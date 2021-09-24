@@ -1,24 +1,19 @@
-// @ts-check
-const {SlashCommandBuilder} = require('@discordjs/builders');
-const {MessageEmbed} = require('discord.js');
-const {fetch} = require('../../utils/utils');
-const {setupOption} = require('../../utils/utils');
+import {SlashCommandBuilder} from '@discordjs/builders';
+import {MessageEmbed} from 'discord.js';
+import type {CustomInteraction} from '../../utils/types';
+import {fetch, setupOption} from '../../utils/utils';
 
 export const name = 'lookup';
 export const description = 'Resolve an IP address or hostname with additional info.';
 
-export const optionsoptionsoptions = [
+export const options = [
     {name: 'query', description: 'What do you want to lookup? Please enter a hostname/domain or IP address.', required: true, choices: []}
 ];
 
 export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
-/**
- * @param {import('../..').CustomInteraction} interaction
- * @returns {Promise<void>}
- */
-export const execute = async(interaction) => {
-    const resl = interaction.options.get('query').value;
+export const execute = async(interaction: CustomInteraction): Promise<void> => {
+    const resl = interaction.options.get('query')?.value;
 
     try {
         const json = await fetch(`http://ip-api.com/json/${resl}`).then((res) => res.json()); // fetch json data from ip-api.com
@@ -37,10 +32,9 @@ export const execute = async(interaction) => {
             .setTimestamp(); //img here
 
         return interaction.reply({embeds: [embed]});
-    } catch(e) {
-        console.error(e);
+    } catch(err: unknown) {
+        console.error(err);
         return interaction.reply('Something went wrong looking for that result, is the api throttled?');
     }
 };
-
 

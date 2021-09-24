@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "checkJs": false,
-    "allowJs": true,
+    "allowJs": false,
     "target": "es2016",
     "module": "commonjs",
     "lib": ["es2015"],
@@ -15,5 +15,5 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "coverage", "__tests__"]
 }

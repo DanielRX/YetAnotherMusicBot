@@ -1,15 +1,11 @@
-// @ts-check
-const {SlashCommandBuilder} = require('@discordjs/builders');
-const {AudioPlayerStatus} = require('@discordjs/voice');
+import type {CustomInteraction} from '../../utils/types';
+import {SlashCommandBuilder} from '@discordjs/builders';
+import {AudioPlayerStatus} from '@discordjs/voice';
 
 export const name = 'pause';
 export const description = 'Pause the playing track';
 
-/**
- * @param {import('../../').CustomInteraction} interaction
- * @returns {string}
- */
-const exec = (interaction) => {
+const exec = (interaction: CustomInteraction): string => {
     const voiceChannel = interaction.member.voice.channel;
     if(!voiceChannel) {
         return 'Please join a voice channel and try again!';
@@ -22,7 +18,7 @@ const exec = (interaction) => {
     if(player.audioPlayer.state.status === AudioPlayerStatus.Paused) {
         return 'You already paused this song!';
     }
-    if(voiceChannel.id !== interaction.guild.me.voice.channel.id) {
+    if(voiceChannel.id !== interaction.guild.me?.voice.channel?.id) {
         return 'You must be in the same voice channel as the bot in order to pause!';
     }
 
@@ -36,10 +32,4 @@ const exec = (interaction) => {
 
 export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
-/**
- * @param {import('../../').CustomInteraction} interaction
- * @returns {Promise<void>}
- */
-export const execute = (interaction) => interaction.reply(exec(interaction));
-
-
+export const execute = (interaction: CustomInteraction): Promise<void> => interaction.reply(exec(interaction));

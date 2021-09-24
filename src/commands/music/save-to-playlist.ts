@@ -1,11 +1,13 @@
-// @ts-check
-const {SlashCommandBuilder} = require('@discordjs/builders');
-const Member = require('../../utils/models/Member');
-const YouTube = require('youtube-sr').default;
-const {getData} = require('spotify-url-info');
-const {searchOne} = require('../../utils/music/searchOne');
-const {isSpotifyURL, validateURL} = require('../../utils/utils');
-const {setupOption} = require('../../utils/utils');
+import type {APIMessage} from 'discord-api-types';
+import type {Message, User} from 'discord.js';
+import type {Video} from 'youtube-sr';
+import type {CustomInteraction} from '../../utils/types';
+import {SlashCommandBuilder} from '@discordjs/builders';
+import Member from '../../utils/models/Member';
+import YouTube from 'youtube-sr';
+import {getData} from 'spotify-url-info';
+import {searchOne} from '../../utils/music/searchOne';
+import {isSpotifyURL, validateURL, setupOption} from '../../utils/utils';
 
 export const name = 'save-to-playlist';
 export const description = 'Save a song or a playlist to a custom playlist';
@@ -17,20 +19,20 @@ export const options = [
 
 export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0])).addStringOption(setupOption(options[1]));
 
-const constructSongObj = (video, user)=> {
-    let {durationFormatted: duration, duration: rawDuration, title, thumbnail: {url}} = video.durationFormatted;
+const constructSongObj = (video: Video, user: User)=> {
+    const {durationFormatted: duration, duration: rawDuration, title, thumbnail} = video;
     return {
         url: `https://www.youtube.com/watch?v=${video.id}`,
         title,
         rawDuration,
         duration,
-        thumbnail: url,
+        thumbnail: thumbnail?.url,
         memberDisplayName: user.username,
         memberAvatar: user.avatarURL('webp', false, 16)
     };
 };
 
-const processURL = async(url, interaction) => {
+const processURL = async(url: string, interaction: CustomInteraction) => {
     if(isSpotifyURL(url)) {
         getData(url)
             .then(async(res) => {
@@ -41,7 +43,7 @@ const processURL = async(url, interaction) => {
                         try {
                             const video = await searchOne(track.track);
                             urlsArr.push(constructSongObj(video, interaction.member.user));
-                        } catch(error) {
+                        } catch(error: unknown) {
                             console.error(error);
                         }
                     }
@@ -50,14 +52,14 @@ const processURL = async(url, interaction) => {
                 const video = await searchOne(res);
                 return constructSongObj(video, interaction.member.user);
             })
-            .catch((err) => console.error(err));
-    } else if(url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
+            .catch((err: unknown) => console.error(err));
+    } else if(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/.exec(url)) {
         const playlist = await YouTube.getPlaylist(url).catch(function() {
             throw new Error(':x: Playlist is either private or it does not exist!');
         });
         let videosArr = await playlist.fetch();
         videosArr = videosArr.videos;
-        let urlsArr = [];
+        const urlsArr = [];
         for(const video of videosArr) {
             if(video.private) {
                 continue;
@@ -77,15 +79,11 @@ const processURL = async(url, interaction) => {
     }
 };
 
-/**
- * @param {import('../..').CustomInteraction} interaction
- * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
- */
-export const execute = async(interaction) => {
+export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message> => {
     await interaction.deferReply();
 
-    const playlistName = interaction.options.get('playlistname').value;
-    const url = interaction.options.get('url').value;
+    const playlistName = interaction.options.get('playlistname')?.value;
+    const url = interaction.options.get('url')?.value;
 
     const userData = await Member.findOne({memberId: interaction.member.id}).exec();
     if(!userData) { return interaction.followUp('You have no custom playlists!'); }
@@ -114,5 +112,3 @@ export const execute = async(interaction) => {
         return interaction.followUp(`You have no playlist named ${playlistName}`);
     }
 };
-
-

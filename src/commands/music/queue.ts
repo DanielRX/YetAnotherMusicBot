@@ -1,18 +1,16 @@
-// @ts-check
-const {SlashCommandBuilder} = require('@discordjs/builders');
-const {MessageEmbed} = require('discord.js');
-const {PagesBuilder} = require('discord.js-pages');
+import type {APIMessage} from 'discord-api-types';
+import type {Message} from 'discord.js';
+import type {CustomInteraction} from '../../utils/types';
+import {SlashCommandBuilder} from '@discordjs/builders';
+import {MessageEmbed} from 'discord.js';
+import {PagesBuilder} from 'discord.js-pages';
 
 export const name = 'queue';
-export const descriptionription = 'Display the music queue';
+export const description = 'Display the music queue';
 
 export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
-/**
- * @param {import('../../').CustomInteraction} interaction
- * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
- */
-export const execute = async(interaction) => {
+export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message | void> => {
     await interaction.deferReply();
     const guildData = interaction.client.guildData.get(interaction.guildId);
     if(guildData && guildData.triviaData.isTriviaRunning) {
@@ -38,7 +36,7 @@ export const execute = async(interaction) => {
         embeds.push(new MessageEmbed().setTitle(`Page ${i}`).setFields(fields));
     }
 
-    void new PagesBuilder(interaction)
+    return new PagesBuilder(interaction)
         .setTitle('Music Queue')
         .setPages(embeds)
         .setListenTimeout(2 * 60 * 1000)
@@ -46,6 +44,4 @@ export const execute = async(interaction) => {
         .setAuthor(interaction.member.user.username, interaction.member.user.displayAvatarURL())
         .build();
 };
-
-
 

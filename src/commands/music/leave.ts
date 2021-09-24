@@ -1,4 +1,3 @@
-// @ts-check
 import {SlashCommandBuilder} from '@discordjs/builders';
 import {AudioPlayerStatus} from '@discordjs/voice';
 import type {CustomInteraction} from '../../utils/types';

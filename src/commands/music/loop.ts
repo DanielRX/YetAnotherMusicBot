@@ -1,6 +1,4 @@
 import type {CustomInteraction} from '../../utils/types';
-
-// @ts-check
 import {SlashCommandBuilder} from '@discordjs/builders';
 import {AudioPlayerStatus} from '@discordjs/voice';
 import createGuildData from '../../utils/createGuildData';
@@ -10,7 +8,7 @@ export const description = 'Set a song to play on loop';
 
 export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
-export const executeexecute = async(interaction: CustomInteraction): Promise<void> => {
+export const execute = async(interaction: CustomInteraction): Promise<void> => {
     if(!interaction.client.guildData.get(interaction.guildId)) {
         interaction.client.guildData.set(interaction.guildId, createGuildData());
     }
@@ -23,19 +21,19 @@ export const executeexecute = async(interaction: CustomInteraction): Promise<voi
         return interaction.reply('There is no song playing now!');
     }
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if(player.audioPlayer.state.status === AudioPlayerStatus.Playing && guildData.triviaData.isTriviaRunning) {
+    if(player.audioPlayer.state.status === AudioPlayerStatus.Playing && guildData?.triviaData.isTriviaRunning) {
         return interaction.reply(`You can't use this command while a trivia is running!`);
     }
-    if(interaction.member.voice.channelId !== interaction.guild.me.voice.channelId) {
+    if(interaction.member.voice.channelId !== interaction.guild.me?.voice.channelId) {
         return interaction.reply(`You must be in the same voice channel as the bot in order to use that!`);
     }
 
     if(player.loopSong) {
         player.loopSong = false;
-        return interaction.reply(`**${player.nowPlaying.title}** is no longer playing on repeat :repeat: `);
+        return interaction.reply(`**${player.nowPlaying?.title}** is no longer playing on repeat :repeat: `);
     }
 
     player.loopSong = true;
-    return interaction.reply(`**${player.nowPlaying.title}** is now playing on repeat :repeat: `);
+    return interaction.reply(`**${player.nowPlaying?.title}** is now playing on repeat :repeat: `);
 };
 

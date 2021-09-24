@@ -1,18 +1,14 @@
-// @ts-check
-const {fetch} = require('../../utils/utils');
-const {SlashCommandBuilder} = require('@discordjs/builders');
-const {MessageEmbed} = require('discord.js');
+import type {CustomInteraction} from '../../utils/types';
+import {fetch} from '../../utils/utils';
+import {SlashCommandBuilder} from '@discordjs/builders';
+import {MessageEmbed} from 'discord.js';
 
 export const name = 'bored';
 export const description = 'Generate a random activity!';
 
 export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
-/**
- * @param {import('../..').CustomInteraction} interaction
- * @returns {Promise<void>}
- */
-export const execute = async(interaction) => {
+export const execute = async(interaction: CustomInteraction): Promise<void> => {
     return fetch('https://www.boredapi.com/api/activity?participants=1')
         .then((res) => res.json())
         .then((json) => {
@@ -24,10 +20,8 @@ export const execute = async(interaction) => {
                 .setFooter('Powered by boredapi.com', '');
             return interaction.reply({embeds: [embed]});
         })
-        .catch((err) => {
+        .catch((err: unknown) => {
             console.error(err);
             return interaction.reply('Failed to deliver activity :sob:');
         });
 };
-
-

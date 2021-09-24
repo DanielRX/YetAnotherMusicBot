@@ -1,8 +1,10 @@
-// @ts-check
-const {SlashCommandBuilder} = require('@discordjs/builders');
-const {setupOption} = require('../../utils/utils');
+import type {APIMessage} from 'discord-api-types';
+import type {Message} from 'discord.js';
+import type {CustomInteraction} from '../../utils/types';
+import {SlashCommandBuilder} from '@discordjs/builders';
+import {setupOption} from '../../utils/utils';
 
-export const namest name = 'skip-to';
+export const name = 'skip-to';
 export const description = 'Skip to a song in queue';
 
 export const options = [
@@ -11,11 +13,7 @@ export const options = [
 
 export const data = new SlashCommandBuilder().setName(name).setDescription(description).addIntegerOption(setupOption(options[0]));
 
-/**
- * @param {import('../..').CustomInteraction} interaction
- * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
- */
-export const execute = async(interaction) => {
+export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message> => {
     void interaction.deferReply();
     const voiceChannel = interaction.member.voice.channel;
     if(!voiceChannel) { return interaction.followUp(`:no_entry: You must be in the same voice channel as the bot in order to use that!`); }
@@ -24,7 +22,7 @@ export const execute = async(interaction) => {
     if(!player) { return interaction.followUp(':x: There is nothing playing right now!'); }
     if(player.queue.length < 1) { return interaction.followUp('There are no songs in queue!'); }
 
-    const position = interaction.options.get('position').value;
+    const position = Number(interaction.options.get('position')?.value);
 
     if(player.loopQueue) {
         const slicedBefore = player.queue.slice(0, position - 1);
@@ -37,5 +35,4 @@ export const execute = async(interaction) => {
     player.audioPlayer.stop();
     return interaction.followUp(`Skipped to **${player.queue[0].title}**`);
 };
-
 

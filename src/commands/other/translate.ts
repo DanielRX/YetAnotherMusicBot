@@ -1,9 +1,9 @@
-// @ts-check
-const {SlashCommandBuilder} = require('@discordjs/builders');
-const {MessageEmbed} = require('discord.js');
-const ISO6391 = require('iso-639-1');
-const translate = require('@vitalets/google-translate-api');
-const {setupOption} = require('../../utils/utils');
+import {SlashCommandBuilder} from '@discordjs/builders';
+import {MessageEmbed} from 'discord.js';
+import ISO6391 from 'iso-639-1';
+import translate from '@vitalets/google-translate-api';
+import {setupOption} from '../../utils/utils';
+import type {CustomInteraction} from '../../utils/types';
 
 export const name = 'translate';
 export const description = 'Translate to any language using Google translate.';
@@ -13,21 +13,17 @@ export const options = [
     {name: 'text', description: 'What text do you want to translate?', required: true, choices: []}
 ];
 
-export const datast data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0])).addStringOption(setupOption(options[1]));
+export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0])).addStringOption(setupOption(options[1]));
 
-/**
- * @param {import('../../').CustomInteraction} interaction
- * @returns {Promise<void>}
- */
-export const execute = async(interaction) => {
-    const targetLang = interaction.options.get('targetlang').value;
+export const execute = async(interaction: CustomInteraction): Promise<void> => {
+    const targetLang = `${interaction.options.get('targetlang')?.value}`;
     const langCode = ISO6391.getCode(targetLang);
 
     if(langCode === '') {
         return interaction.reply(':x: Please provide a valid language!');
     }
 
-    translate(interaction.options.get('text').value, {to: targetLang})
+    translate(`${interaction.options.get('text')?.value}`, {to: targetLang})
         .then((response) => {
             const embed = new MessageEmbed()
                 .setColor('#FF0000')
@@ -37,10 +33,9 @@ export const execute = async(interaction) => {
                 .setFooter('Powered by Google Translate!');
             return interaction.reply({embeds: [embed]});
         })
-        .catch((error) => {
-            console.error(error);
+        .catch((err: unknown) => {
+            console.error(err);
             return interaction.reply(':x: Something went wrong when trying to translate the text');
         });
 };
-
 

@@ -1,10 +1,10 @@
-//@ts-check
-const {SlashCommandBuilder} = require('@discordjs/builders');
-const {tenorAPI} = require('../../utils/config');
-const {setupOption, fetch} = require('../../utils/utils');
+import type {CustomInteraction} from '../../utils/types';
+import {SlashCommandBuilder} from '@discordjs/builders';
+import {config} from '../../utils/config';
+import {setupOption, fetch} from '../../utils/utils';
 
 export const name = 'gif';
-export const descriptionription = 'Replies with a gif matching your query!';
+export const description = 'Replies with a gif matching your query!';
 
 export const options = [
     {name: 'gif', description: 'What gif would you like to search for?', required: true, choices: []}
@@ -12,14 +12,10 @@ export const options = [
 
 export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
-/**
- * @param {import('../..').CustomInteraction} interaction
- * @returns {Promise<void>}
- */
-export const execute = async(interaction) => {
-    if(!tenorAPI) { return interaction.reply(':x: Tenor commands are not enabled'); }
-    const gif = interaction.options.get('gif').value;
-    fetch(`https://g.tenor.com/v1/random?key=${tenorAPI}&q=${gif}&limit=1`)
+export const execute = async(interaction: CustomInteraction): Promise<void> => {
+    if(!config.tenorAPI) { return interaction.reply(':x: Tenor commands are not enabled'); }
+    const gif = interaction.options.get('gif')?.value;
+    fetch(`https://g.tenor.com/v1/random?key=${config.tenorAPI}&q=${gif}&limit=1`)
         .then((res) => res.json())
         .then((json) => interaction.reply(json.results[0].url))
         .catch(() => {
@@ -27,5 +23,3 @@ export const execute = async(interaction) => {
             return interaction.reply(':x: Failed to find a gif that matched your query!');
         });
 };
-
-

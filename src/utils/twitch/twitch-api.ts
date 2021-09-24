@@ -1,49 +1,21 @@
-// @ts-check
-
-const fetch = require('node-fetch'); // TODO: Switch to axios
-/** @type {{twitchClientID: string, twitchClientSecret: string}} */
-const config = require('../../../config.json');
+import {fetch} from '../utils';
+import {config} from '../config';
 const {twitchClientID, twitchClientSecret} = config;
 
-// Skips loading if not found in config.json
-if(!twitchClientID || !twitchClientSecret) { return; } // TODO: Fix this, won't play nice with ts
-
-/**
- * @template T
- * @typedef Response
- * @type {{status: string, data: T[], access_token?: string}}
- */
-
-/**
- * @template T
- * @typedef Res
- * @type {{json: () => Promise<Response<T>>}}
- */
-/** */
+type Response<T> = {status: string, data: T[], access_token?: string}
+type Res<T> = {json: () => Promise<Response<T>>}
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
-module.exports = class TwitchAPI {
+class TwitchAPI {
     //Access Token is valid for 24 Hours
 
-    /**
-     *
-     *
-     * @static
-     * @template T
-     * @param {string} tClientID
-     * @param {string} tClientSecret
-     * @param {string} scope
-     * @return {Promise<string>}
-     */
-    static async getToken(tClientID, tClientSecret, scope) {
+    static async getToken<T>(tClientID: string, tClientSecret: string, scope: string): Promise<string> {
         try {
-            /** @type {Response<T>} */
-            // eslint-disable-next-line
-            const json = await fetch(`https://id.twitch.tv/oauth2/token?client_id=${tClientID}&client_secret=${tClientSecret}&grant_type=client_credentials&scope=${scope}`, {method: 'POST'}).then((res) => res.json());
+            const json: Response<T> = await fetch(`https://id.twitch.tv/oauth2/token?client_id=${tClientID}&client_secret=${tClientSecret}&grant_type=client_credentials&scope=${scope}`, {method: 'POST'}).then((res: Res<T>) => res.json());
             if(json.status == '400') {
                 throw new Error('Something went wrong when trying to fetch a twitch access token');
             } else {
-                return json.access_token;
+                return json.access_token || '';
             }
         } catch(e) {
             console.error(e);
@@ -52,21 +24,9 @@ module.exports = class TwitchAPI {
     }
 
     //userInfo.data[0]
-    /**
-     *
-     *
-     * @static
-     * @template T
-     * @param {string} token
-     * @param {string} client_id
-     * @param {string} username
-     * @return {Promise<Response<T>>}
-     */
-    static async getUserInfo(token, client_id, username) {
+    static async getUserInfo<T>(token: string, client_id: string, username: string): Promise<Response<T>> {
         try {
-            /** @type {Response<T>} */
-            // eslint-disable-next-line
-            const json = await fetch(`https://api.twitch.tv/helix/users?login=${username}`, {method: 'GET', headers: {'client-id': `${client_id}`, Authorization: `Bearer ${token}`}}).then((res) => res.json());
+            const json: Response<T> = await fetch(`https://api.twitch.tv/helix/users?login=${username}`, {method: 'GET', headers: {'client-id': `${client_id}`, Authorization: `Bearer ${token}`}}).then((res: Res<T>) => res.json());
             if(json.status == `400`) {
                 throw new Error(`:x: ${username} was Invalid, Please try again.`);
             }
@@ -90,21 +50,9 @@ module.exports = class TwitchAPI {
     }
 
     // streamInfo.data[0]
-    /**
-     *
-     *
-     * @static
-     * @template T
-     * @param {string} token
-     * @param {string} client_id
-     * @param {string} userID
-     * @return {Promise<Response<T>>}
-     */
-    static async getStream(token, client_id, userID) {
+    static async getStream<T>(token: string, client_id: string, userID: string): Promise<Response<T>> {
         try {
-            /** @type {Response<T>} */
-            // eslint-disable-next-line
-            const json = await fetch(`https://api.twitch.tv/helix/streams?user_id=${userID}`, {method: 'GET', headers: {'client-id': `${client_id}`, Authorization: `Bearer ${token}`}}).then((/** @type {{json: () => Promise<{status: string, data: any[]}>}} */ res) => res.json());
+            const json: Response<T> = await fetch(`https://api.twitch.tv/helix/streams?user_id=${userID}`, {method: 'GET', headers: {'client-id': `${client_id}`, Authorization: `Bearer ${token}`}}).then((res: Res<T>) => res.json());
             return json;
         } catch(e) {
             console.error(e);
@@ -112,22 +60,9 @@ module.exports = class TwitchAPI {
         }
     }
 
-    // gameInfo.data[0]
-    /**
-     *
-     *
-     * @static
-     * @template T
-     * @param {string} token
-     * @param {string} client_id
-     * @param {string} game_id
-     * @return {Promise<Response<T>>}
-     */
-    static async getGames(token, client_id, game_id) {
+    static async getGames<T>(token: string, client_id: string, game_id: string): Promise<Response<T>> {
         try {
-            /** @type {Response<T>} */
-            // eslint-disable-next-line
-            const json = await fetch(`https://api.twitch.tv/helix/games?id=${game_id}`, {method: 'GET', headers: {'client-id': `${client_id}`, Authorization: `Bearer ${token}`}}).then((/** @type {Res<T>} */ res) => res.json());
+            const json: Response<T> = await fetch(`https://api.twitch.tv/helix/games?id=${game_id}`, {method: 'GET', headers: {'client-id': `${client_id}`, Authorization: `Bearer ${token}`}}).then((res: Res<T>) => res.json());
             return json;
         } catch(e) {
             console.error(e);
@@ -136,24 +71,29 @@ module.exports = class TwitchAPI {
     }
 };
 
-const TwitchAPI = require('./twitch-api.js'); // TODO: Fix - having this at the Top gives a Circular Error Message - Possible fix: Remove and use TwitchAPI from this file
+export default TwitchAPI;
+
 const scope = 'user:read:email';
-// get first access_token
-void (async function() {
-    await TwitchAPI.getToken(twitchClientID, twitchClientSecret, scope)
-        .then((result) => {
-            module.exports.access_token = result;
-            return;
-        })
-        .catch((e) => {
-            console.log(e);
-            return;
-        });
-})();
-// 24 Hour access_token refresh
-// eslint-disable-next-line @typescript-eslint/no-misused-promises
-setInterval(async function() {
-    await TwitchAPI.getToken(twitchClientID, twitchClientSecret, scope)
-        .then((result) => { module.exports.access_token = result; })
-        .catch((e) => { console.log(e); });
-}, 86400000);
+
+// Skips loading if not found in config.json
+if(twitchClientID && twitchClientSecret) {
+    // get first access_token
+    void (async function() {
+        await TwitchAPI.getToken(twitchClientID, twitchClientSecret, scope)
+            .then((result: string) => {
+                module.exports.access_token = result;
+                return;
+            })
+            .catch((e: unknown) => {
+                console.log(e);
+                return;
+            });
+    })();
+    // 24 Hour access_token refresh
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    setInterval(async function() {
+        await TwitchAPI.getToken(twitchClientID, twitchClientSecret, scope)
+            .then((result: string) => { module.exports.access_token = result; })
+            .catch((e: unknown) => { console.log(e); });
+    }, 86400000);
+}

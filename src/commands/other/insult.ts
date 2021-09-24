@@ -1,18 +1,14 @@
-// @ts-check
-const {SlashCommandBuilder} = require('@discordjs/builders');
-const {fetch} = require('../../utils/utils');
-const {MessageEmbed} = require('discord.js');
+import type {CustomInteraction} from '../../utils/types';
+import {SlashCommandBuilder} from '@discordjs/builders';
+import {fetch} from '../../utils/utils';
+import {MessageEmbed} from 'discord.js';
 
 export const name = 'insult';
 export const description = 'Generate an evil insult!';
 
 export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
-/**
- * @param {import('../..').CustomInteraction} interaction
- * @returns {Promise<void>}
- */
-export const executeexecute = async(interaction) => {
+export const execute = async(interaction: CustomInteraction): Promise<void> => {
     // thanks to https://evilinsult.com :)
     return fetch('https://evilinsult.com/generate_insult.php?lang=en&type=json')
         .then((res) => res.json())
@@ -25,10 +21,9 @@ export const executeexecute = async(interaction) => {
                 .setFooter('Powered by evilinsult.com', '');
             return interaction.reply({embeds: [embed]});
         })
-        .catch((err) => {
+        .catch((err: unknown) => {
             console.error(err);
             return interaction.reply(':x: Failed to deliver insult!');
         });
 };
-
 

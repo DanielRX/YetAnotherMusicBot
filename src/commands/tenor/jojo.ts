@@ -1,36 +1,20 @@
-// @ts-check
-const {SlashCommandBuilder} = require('@discordjs/builders');
-const fs = require('fs-extra');
-const {randomEl} = require('../../utils/utils');
+import type {CustomInteraction} from '../../utils/types';
+import {SlashCommandBuilder} from '@discordjs/builders';
+import fs from 'fs-extra';
+import {randomEl} from '../../utils/utils';
 
 export const name = 'jojo';
 export const description = 'Replies with a random jojo gif!';
 
 export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
-/**
- * @param {import('../..').CustomInteraction} interaction
- * @returns {Promise<void>}
- */
-export const execute = async(interaction) => {
+export const execute = async(interaction: CustomInteraction): Promise<void> => {
     try {
         const linkArray = await fs.readFile('./resources/gifs/jojolinks.txt', 'utf8').then((links) => links.split('\n'));
         const link = randomEl(linkArray);
-        return interaction.reply(link);
+        return void interaction.reply(link);
     } catch(e) {
         console.error(e);
         return interaction.reply(':x: Failed to fetch a gif!');
     }
 };
-
-
-
-/*
-    fetch(`https://g.tenor.com/v1/random?key=${tenorAPI}&q=jojos-bizarre-adventure&limit=1`)
-        .then((res) => res.json())
-        .then((json) => message.channel.send(json.results[0].url))
-        .catch(e => {
-            console.error(e);
-            return message.reply('Failed to fetch a gif :slight_frown:');
-        })
-*/

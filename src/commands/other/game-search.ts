@@ -1,9 +1,9 @@
-//@ts-check
-const {SlashCommandBuilder} = require('@discordjs/builders');
-const {MessageEmbed} = require('discord.js');
-const {PagesBuilder} = require('discord.js-pages');
-const {rawgAPI} = require('../../utils/config');
-const {setupOption, fetch} = require('../../utils/utils');
+import type {CustomInteraction} from '../../utils/types';
+import {SlashCommandBuilder} from '@discordjs/builders';
+import {MessageEmbed} from 'discord.js';
+import {PagesBuilder} from 'discord.js-pages';
+import {config} from '../../utils/config';
+import {setupOption, fetch} from '../../utils/utils';
 
 export const name = 'game-search';
 export const description = 'Search for game information';
@@ -14,8 +14,8 @@ export const options = [
 
 export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
-const getGameDetails = async(query) => {
-    const url = `https://api.rawg.io/api/games/${query}?key=${rawgAPI}`;
+const getGameDetails = async(query: string) => {
+    const url = `https://api.rawg.io/api/games/${query}?key=${config.rawgAPI}`;
     try {
         const body = await fetch(url);
         if(body.status == `429`) {
@@ -47,17 +47,9 @@ const getGameDetails = async(query) => {
     }
 };
 
-/**
- * @param {import('../..').CustomInteraction} interaction
- * @returns {Promise<void>}
- */
-export const execute = async(interaction) => {
-    if(!rawgAPI) { return interaction.reply('This command is not enabled on this bot!'); }
-    const gameTitleFiltered = interaction.options
-        .get('game')
-        .value.replace(/ /g, '-')
-        .replace(/'/g, '')
-        .toLowerCase();
+export const execute = async(interaction: CustomInteraction): Promise<void> => {
+    if(!config.rawgAPI) { return interaction.reply('This command is not enabled on this bot!'); }
+    const gameTitleFiltered = interaction.options.get('game')?.value?.replace(/ /g, '-').replace(/'/g, '').toLowerCase();
 
     // using this link it provides all the info, instead of using search
     let response;
@@ -101,5 +93,4 @@ export const execute = async(interaction) => {
     }
     void embed.build();
 };
-
 

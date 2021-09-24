@@ -1,7 +1,7 @@
-// @ts-check
-const {SlashCommandBuilder} = require('@discordjs/builders');
-const {MessageEmbed} = require('discord.js');
-const {setupOption, fetch} = require('../../utils/utils');
+import {SlashCommandBuilder} from '@discordjs/builders';
+import {MessageEmbed} from 'discord.js';
+import type {CustomInteraction} from '../../utils/types';
+import {setupOption, fetch} from '../../utils/utils';
 
 export const name = 'covid';
 export const description = 'Displays COVID-19 stats.';
@@ -10,7 +10,7 @@ export const options = [
     {name: 'country', description: 'What country do you like to search? Type `all` to display worldwide stats.', required: true, choices: []}
 ];
 
-export const datast data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
+export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
 const getWorldStats = async() => {
     const url = 'https://disease.sh/v3/covid-19/all';
@@ -26,7 +26,7 @@ const getWorldStats = async() => {
         throw new Error(`The covid API can't be accessed at the moment, please try later`);
     }
 };
-const getCountryStats = async(country) => {
+const getCountryStats = async(country: string) => {
     const url = `https://disease.sh/v3/covid-19/countries/${country}`;
     try {
         const body = await fetch(url);
@@ -41,12 +41,8 @@ const getCountryStats = async(country) => {
     }
 };
 
-/**
-     * @param {import('../..').CustomInteraction} interaction
-     * @returns {Promise<void>}
-     */
-export const execute = async(interaction) => {
-    const country = interaction.options.get('country').value;
+export const execute = async(interaction: CustomInteraction): Promise<void> => {
+    const country = interaction.options.get('country')?.value;
     if(country === 'all' || country === 'world' || country === 'global') {
         return getWorldStats()
             .then((res) => {
@@ -95,10 +91,8 @@ export const execute = async(interaction) => {
 
             return interaction.reply({embeds: [covidcountry]});
         })
-        .catch(function onError(err) {
+        .catch((err: unknown) => {
             console.error(err);
             return interaction.reply('Something went wrong!');
         });
 };
-
-

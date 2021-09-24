@@ -1,18 +1,15 @@
-// @ts-check
-const {SlashCommandBuilder} = require('@discordjs/builders');
-const {fetch} = require('../../utils/utils');
-const {MessageEmbed} = require('discord.js');
+import type {CustomInteraction} from '../../utils/types';
+
+import {SlashCommandBuilder} from '@discordjs/builders';
+import {fetch} from '../../utils/utils';
+import {MessageEmbed} from 'discord.js';
 
 export const name = 'fortune';
 export const description = 'Replies with a fortune cookie tip!';
 
-export const datast data = new SlashCommandBuilder().setName(name).setDescription(description);
+export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
-/**
- * @param {import('../..').CustomInteraction} interaction
- * @returns {Promise<void>}
- */
-export const execute = async(interaction) => {
+export const execute = async(interaction: CustomInteraction): Promise<void> => {
     try {
         const json = await fetch('http://yerkee.com/api/fortune').then((res) => res.json());
         const embed = new MessageEmbed()
@@ -22,10 +19,8 @@ export const execute = async(interaction) => {
             .setTimestamp()
             .setFooter('Powered by yerkee.com', '');
         return interaction.reply({embeds: [embed]});
-    } catch(e) {
+    } catch(e: unknown) {
         console.error(e);
         return interaction.reply(':x: Could not obtain a fortune cookie!');
     }
 };
-
-

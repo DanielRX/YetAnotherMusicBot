@@ -1,5 +1,4 @@
 import type {CustomInteraction} from '../../utils/types';
-
 import {SlashCommandBuilder} from '@discordjs/builders';
 import Member from '../../utils/models/Member';
 import type {Message} from 'discord.js';

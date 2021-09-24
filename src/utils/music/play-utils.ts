@@ -1,19 +1,17 @@
 const {MessageSelectMenu, MessageActionRow} = require('discord.js');
 
-/** @param {string} query */
-const getFlags = (query) => {
-    let splitQuery = query.split(' ');
-    let shuffleFlag = splitQuery[splitQuery.length - 1] === '-s';
-    let reverseFlag = splitQuery[splitQuery.length - 1] === '-r';
-    let nextFlag = splitQuery[splitQuery.length - 1] === '-n';
-    let jumpFlag = splitQuery[splitQuery.length - 1] === '-j';
+const getFlags = (query: string) => {
+    const splitQuery = query.split(' ');
+    const shuffleFlag = splitQuery[splitQuery.length - 1] === '-s';
+    const reverseFlag = splitQuery[splitQuery.length - 1] === '-r';
+    const nextFlag = splitQuery[splitQuery.length - 1] === '-n';
+    const jumpFlag = splitQuery[splitQuery.length - 1] === '-j';
     if(shuffleFlag || reverseFlag || nextFlag || jumpFlag) splitQuery.pop();
     query = splitQuery.join(' ');
     return {shuffleFlag, reverseFlag, jumpFlag, nextFlag, query};
 };
 
-/** @param {string[]} namesArray */
-const createSelectMenu = (namesArray) =>
+const createSelectMenu = (namesArray: string[]) =>
     new MessageActionRow().addComponents(new MessageSelectMenu()
         .setCustomId('search-yt-menu')
         .setPlaceholder('Please select a video')
@@ -26,7 +24,7 @@ const createSelectMenu = (namesArray) =>
             {label: 'Cancel', value: 'cancel_option'}
         ]));
 
-const createHistoryRow = (query) => new MessageActionRow()
+const createHistoryRow = (query: string) => new MessageActionRow()
     .addComponents(new MessageSelectMenu()
         .setCustomId('history-select')
         .setPlaceholder('Please select an option')

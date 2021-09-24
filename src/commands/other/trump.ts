@@ -1,18 +1,14 @@
-// @ts-check
-const {SlashCommandBuilder} = require('@discordjs/builders');
-const {fetch} = require('../../utils/utils');
-const {MessageEmbed} = require('discord.js');
+import {SlashCommandBuilder} from '@discordjs/builders';
+import {fetch} from '../../utils/utils';
+import {MessageEmbed} from 'discord.js';
+import type {CustomInteraction} from '../../utils/types';
 
 export const name = 'trump';
 export const description = 'Get a random quote from Donald Trump!';
 
 export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
-/**
- * @param {import('../..').CustomInteraction} interaction
- * @returns {Promise<void>}
- */
-export const execute = async(interaction) => {
+export const execute = async(interaction: CustomInteraction): Promise<void> => {
     return fetch('https://api.tronalddump.io/random/quote')
         .then((res) => res.json())
         .then((json) => {
@@ -24,10 +20,8 @@ export const execute = async(interaction) => {
                 .setFooter('Powered by tronalddump.io! Quote was posted', ' ');
             return interaction.reply({embeds: [embed]});
         })
-        .catch((err) => {
+        .catch((err: unknown) => {
             console.error(err);
             return interaction.reply('Failed to deliver quote :sob:');
         });
 };
-
-

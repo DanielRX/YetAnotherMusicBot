@@ -1,5 +1,5 @@
 // https://stackoverflow.com/a/5306832/9421002
-import fetch from 'node-fetch';
+import f from 'node-fetch';
 import {SlashCommandStringOption, SlashCommandIntegerOption, SlashCommandBooleanOption} from '@discordjs/builders';
 
 const arrayMove = <T>(arr: T[], old_index: number, new_index: number): T[] => {
@@ -12,7 +12,7 @@ const arrayMove = <T>(arr: T[], old_index: number, new_index: number): T[] => {
     if(new_index >= arr.length) {
         let k = new_index - arr.length + 1;
         while(k--) {
-            arr.push(undefined);
+            arr.push(undefined as unknown as T);
         }
     }
     arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
@@ -34,11 +34,29 @@ const getRandom = <T>(arr: T[], n: number): T[] => {
 
 const randomEl = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
 
-const setupOption = (config: {name: string, description: string, required: boolean, choices: string[]}) => (option: SlashCommandBooleanOption | SlashCommandIntegerOption | SlashCommandStringOption) => {
+type SlashCommandOption = SlashCommandBooleanOption | SlashCommandIntegerOption | SlashCommandStringOption;
+
+const setupStringOption = (config: {name: string, description: string, required: boolean, choices: string[]}) => (option: SlashCommandStringOption): SlashCommandStringOption => {
     option = option.setName(config.name).setDescription(config.description).setRequired(config.required);
-    if(option instanceof SlashCommandBooleanOption && config.choices.length > 0) { throw new Error('Unable to add choice to boolean command option'); }
-    if(option instanceof SlashCommandIntegerOption) { for(const choice of config.choices) { option = option.addChoice(choice, choice); } }
-    if(option instanceof SlashCommandStringOption) { for(const choice of config.choices) { option = option.addChoice(choice, choice); } }
+    for(const choice of config.choices) { option = option.addChoice(choice, choice); }
+    return option;
+};
+
+const setupIntOption = (config: {name: string, description: string, required: boolean, choices: string[]}) => (option: SlashCommandIntegerOption): SlashCommandIntegerOption => {
+    option = option.setName(config.name).setDescription(config.description).setRequired(config.required);
+    for(const choice of config.choices) { option = option.addChoice(choice, parseInt(choice)); }
+    return option;
+};
+
+const setupBoolOption = (config: {name: string, description: string, required: boolean, choices: string[]}) => (option: SlashCommandBooleanOption): SlashCommandBooleanOption => {
+    option = option.setName(config.name).setDescription(config.description).setRequired(config.required);
+    return option;
+};
+
+const setupOption = (config: {name: string, description: string, required: boolean, choices: string[]}) => <T extends SlashCommandOption>(option: T): SlashCommandBooleanOption | SlashCommandIntegerOption | SlashCommandStringOption => {
+    if(option instanceof SlashCommandBooleanOption) { return setupBoolOption(config)(option); }
+    if(option instanceof SlashCommandIntegerOption) { return setupIntOption(config)(option); }
+    if(option instanceof SlashCommandStringOption) { return setupStringOption(config)(option); }
     return option;
 };
 
@@ -47,5 +65,8 @@ const isYouTubeVideoURL = (arg: string): RegExpExecArray | null => /^(http(s)?:\
 const isYouTubePlaylistURL = (arg: string): RegExpExecArray | null => /^https?:\/\/(music.)?(www.youtube.com|youtube.com)\/playlist(.*)$/.exec(arg);
 
 const validateURL = (url: string): RegExpExecArray | null => isYouTubePlaylistURL(url) || isYouTubeVideoURL(url) || isSpotifyURL(url);
+
+type FetchConfig = {method: 'GET' | 'POST', headers: {'client-id': string, Authorization: string}};
+const fetch = f as <T>(url: string, config?: FetchConfig) => Promise<{status: string, json: () => Promise<T & {length: number}>}>;
 
 export {fetch, arrayMove, getRandom, shuffleArray, isSpotifyURL, isYouTubePlaylistURL, isYouTubeVideoURL, validateURL, randomEl, setupOption};

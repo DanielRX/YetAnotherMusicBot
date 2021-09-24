@@ -1,5 +1,4 @@
 import type {CustomInteraction} from '../../utils/types';
-
 import {SlashCommandBuilder} from '@discordjs/builders';
 import {AudioPlayerStatus} from '@discordjs/voice';
 import createGuildData from '../../utils/createGuildData';
@@ -28,10 +27,10 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
         return interaction.reply('There is no song playing now!');
     }
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if(player.audioPlayer.state.status === AudioPlayerStatus.Playing && guildData.triviaData.isTriviaRunning) {
+    if(player.audioPlayer.state.status === AudioPlayerStatus.Playing && guildData?.triviaData.isTriviaRunning) {
         return interaction.reply(`You can't use this command while a trivia is running!`);
     }
-    if(interaction.member.voice.channelId !== interaction.guild.me.voice.channelId) {
+    if(interaction.member.voice.channelId !== interaction.guild.me?.voice.channelId) {
         return interaction.reply(`You must be in the same voice channel as the bot in order to use that!`);
     }
     if(player.loopSong) {

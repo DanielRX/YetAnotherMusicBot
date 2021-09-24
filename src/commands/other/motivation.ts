@@ -1,18 +1,14 @@
-// @ts-check
-const {SlashCommandBuilder} = require('@discordjs/builders');
-const fs = require('fs');
-const {MessageEmbed} = require('discord.js');
+import type {CustomInteraction} from '../../utils/types';
+import {SlashCommandBuilder} from '@discordjs/builders';
+import fs from 'fs';
+import {MessageEmbed} from 'discord.js';
 
-export const namest name = 'motivation';
+export const name = 'motivation';
 export const description = 'Get a random motivational quote!';
 
 export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
-/**
- * @param {import('../../').CustomInteraction} interaction
- * @returns {Promise<void>}
- */
-export const execute = async(interaction) => {
+export const execute = async(interaction: CustomInteraction): Promise<void> => {
     // thanks to https://type.fit/api/quotes
 
     const jsonQuotes = fs.readFileSync('././resources/quotes/motivational.json', 'utf8');
@@ -28,5 +24,4 @@ export const execute = async(interaction) => {
         .setColor('#FFD77A');
     return interaction.reply({embeds: [quoteEmbed]});
 };
-
 

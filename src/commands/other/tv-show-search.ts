@@ -1,10 +1,12 @@
-// @ts-check
-const {SlashCommandBuilder} = require('@discordjs/builders');
-const {MessageEmbed} = require('discord.js');
-const {PagesBuilder} = require('discord.js-pages');
-const {setupOption, fetch} = require('../../utils/utils');
+import type {APIMessage} from 'discord-api-types';
+import type {Message} from 'discord.js';
+import type {CustomInteraction} from '../../utils/types';
+import {SlashCommandBuilder} from '@discordjs/builders';
+import {MessageEmbed} from 'discord.js';
+import {PagesBuilder} from 'discord.js-pages';
+import {setupOption, fetch} from '../../utils/utils';
 
-export const namest name = 'tv-show-search';
+export const name = 'tv-show-search';
 export const description = 'Search for TV shows';
 
 export const options = [
@@ -13,17 +15,36 @@ export const options = [
 
 export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
-const getShowSearch = async(showQuery) => {
+type Show = {
+    show: {
+        summary: string,
+        language: string,
+        type: string,
+        premiered: string,
+        network: {
+            country: {
+                name: string,
+                code: string
+            }
+        },
+        image: {
+            original: string
+        },
+        genres: string[]
+    }
+};
+
+const getShowSearch = async(showQuery: string): Promise<Show[]> => {
     const url = `http://api.tvmaze.com/search/shows?q=${encodeURI(showQuery)}`;
     try {
-        const body = await fetch(url);
+        const body = await fetch<Show[]>(url);
         if(body.status == `429`) {
             throw new Error(':x: Rate Limit exceeded. Please try again in a few minutes.');
         }
         if(body.status == `503`) {
             throw new Error(':x: The service is currently unavailable. Please try again later.');
         }
-        if(body.status !== 200) {
+        if(body.status != '200') {
             throw new Error('There was a problem getting data from the API, make sure you entered a valid TV show name');
         }
         const json = await body.json();
@@ -31,22 +52,32 @@ const getShowSearch = async(showQuery) => {
             throw new Error('There was a problem getting data from the API, make sure you entered a valid TV show name');
         }
         return json;
-    } catch(e) {
-        console.error(e);
+    } catch(err: unknown) {
+        console.error(err);
         throw new Error('There was a problem getting data from the API, make sure you entered a valid TV show name');
     }
 };
 
-/**
- * @param {import('../..').CustomInteraction} interaction
- * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
- */
-export const execute = async(interaction) => {
-    const tvshow = interaction.options.get('tvshow').value;
-    let showResponse;
+const cleanUp = (summary: string) => summary
+    .replace(/<(\/)?b>/g, '**')
+    .replace(/<(\/)?i>/g, '*')
+    .replace(/<(\/)?p>/g, '')
+    .replace(/<br>/g, '\n')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&apos;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&amp;/g, '&')
+    .replace(/&#39;/g, "'")
+    .toLocaleString();
+
+export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message> => {
+    const tvshow = interaction.options.get('tvshow')?.value;
+
+    let showResponse: Show[];
     try {
-        showResponse = await getShowSearch(tvshow);
-    } catch(e) {
+        showResponse = await getShowSearch(`${tvshow}`);
+    } catch(e: unknown) {
         return interaction.reply(e);
     }
 
@@ -54,42 +85,21 @@ export const execute = async(interaction) => {
         const embedArray = [];
         for(let i = 1; i <= showResponse.length; ++i) {
             // Filter Thumbnail URL
-            let showThumbnail = showResponse[i - 1].show.image;
-            if(showThumbnail == null) {
-                showThumbnail = 'https://static.tvmaze.com/images/no-img/no-img-portrait-text.png';
-            } else {
-                showThumbnail = showResponse[i - 1].show.image.original;
-            }
+            const showThumbnail = showResponse[i - 1].show.image?.original || 'https://static.tvmaze.com/images/no-img/no-img-portrait-text.png';
 
             // Filter Summary Row 1
-            let showSummary = showResponse[i - 1].show.summary;
-            if(showSummary == null) {
-                showSummary = 'None listed';
-            } else {
-                showSummary = showResponse[i - 1].show.summary
-                    .replace(/<(\/)?b>/g, '**')
-                    .replace(/<(\/)?i>/g, '*')
-                    .replace(/<(\/)?p>/g, '')
-                    .replace(/<br>/g, '\n')
-                    .replace(/&lt;/g, '<')
-                    .replace(/&gt;/g, '>')
-                    .replace(/&apos;/g, "'")
-                    .replace(/&quot;/g, '"')
-                    .replace(/&amp;/g, '&')
-                    .replace(/&#39;/g, "'")
-                    .toLocaleString();
-            }
+            const showSummary = cleanUp(showResponse[i - 1].show.summary || 'None listed');
 
             // Filter Language Row 2
-            let showLanguage = showResponse[i - 1].show.language || 'None listed';
+            const showLanguage = showResponse[i - 1].show.language || 'None listed';
 
             // Filter Genere Row 2
-            let showGenre = showResponse[i - 1].show.genres;
-            if(showGenre.length == 0) showGenre = 'None listed';
-            if(typeof showGenre === 'object') showGenre = showGenre.join(' ');
+            let showGenre = '';
+            if(showResponse[i - 1].show.genres.length == 0) showGenre = 'None listed';
+            if(typeof showResponse[i - 1].show.genres === 'object') showGenre = showResponse[i - 1].show.genres.join(' ');
 
             // Filter Types Row 2
-            let showType = showResponse[i - 1].show.type || 'None listed';
+            const showType = showResponse[i - 1].show.type || 'None listed';
 
             // Filter Premiered Row 3
             const showPremiered = showResponse[i - 1].show.premiered || 'None listed';
@@ -106,7 +116,7 @@ export const execute = async(interaction) => {
             else showRuntime = showResponse[i - 1].show.runtime + ' Minutes';
 
             // Filter Ratings Row 4
-            let showRatings = showResponse[i - 1].show.rating.average || 'None listed';
+            const showRatings = showResponse[i - 1].show.rating.average || 'None listed';
 
             // Build each Tv Shows Embed
             embedArray.push(new MessageEmbed()
@@ -129,10 +139,9 @@ export const execute = async(interaction) => {
         }
 
         void new PagesBuilder(interaction).setPages(embedArray).setColor('#17a589').build();
-    } catch(error) {
-        console.log(error);
+    } catch(err: unknown) {
+        console.log(err);
         return interaction.followUp(':x: Something went wrong with your request.');
     }
 };
-
 

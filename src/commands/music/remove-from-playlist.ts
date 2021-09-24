@@ -1,7 +1,9 @@
-// @ts-check
-const {SlashCommandBuilder} = require('@discordjs/builders');
-const Member = require('../../utils/models/Member');
-const {setupOption} = require('../../utils/utils');
+import type {APIMessage} from 'discord-api-types';
+import type {Message} from 'discord.js';
+import type {CustomInteraction} from '../../utils/types';
+import {SlashCommandBuilder} from '@discordjs/builders';
+import Member from '../../utils/models/Member';
+import {setupOption} from '../../utils/utils';
 
 export const name = 'remove-from-playlist';
 export const description = 'Remove a song from a saved playlist';
@@ -13,15 +15,11 @@ export const options = [
 
 export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0])).addStringOption(setupOption(options[1]));
 
-/**
- * @param {import('../../').CustomInteraction} interaction
- * @returns {Promise<import('discord.js').Message | import('discord-api-types').APIMessage>}
- */
-export const execute = async(interaction) => {
+export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message> => {
     await interaction.deferReply();
 
-    const playlistName = interaction.options.get('playlist').value;
-    const index = interaction.options.get('index').value;
+    const playlistName = `${interaction.options.get('playlist')?.value}`;
+    const index = Number(interaction.options.get('index')?.value);
 
     const userData = await Member.findOne({
         memberId: interaction.member.id
@@ -52,5 +50,4 @@ export const execute = async(interaction) => {
     }
     return interaction.followUp(`You have no playlist named ${playlistName}`);
 };
-
 

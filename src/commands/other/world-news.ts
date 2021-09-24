@@ -1,24 +1,20 @@
-// @ts-check
-const {SlashCommandBuilder} = require('@discordjs/builders');
-const {MessageEmbed} = require('discord.js');
-const {fetch} = require('../../utils/utils');
-const {PagesBuilder} = require('discord.js-pages');
-const {newsAPI} = require('../../utils/config');
+import type {CustomInteraction} from '../../utils/types';
+import {SlashCommandBuilder} from '@discordjs/builders';
+import {MessageEmbed} from 'discord.js';
+import {fetch} from '../../utils/utils';
+import {PagesBuilder} from 'discord.js-pages';
+import {config} from '../../utils/config';
 
 export const name = 'world-news';
 export const description = 'Replies with the 10 latest world news headlines!';
 
 export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
-/**
- * @param {import('../..').CustomInteraction} interaction
- * @returns {Promise<void>}
- */
-export const executeexecute = async(interaction) => {
-    if(!newsAPI) { return interaction.reply(':x: This command is not enabled'); }
+export const execute = async(interaction: CustomInteraction): Promise<void> => {
+    if(!config.newsAPI) { return interaction.reply(':x: This command is not enabled'); }
     // powered by NewsAPI.org
     try {
-        const response = await fetch(`https://newsapi.org/v2/top-headlines?sources=reuters&pageSize=10&apiKey=${newsAPI}`);
+        const response = await fetch(`https://newsapi.org/v2/top-headlines?sources=reuters&pageSize=10&apiKey=${config.newsAPI}`);
         const json = await response.json();
         const articleArr = [];
 
@@ -35,10 +31,9 @@ export const executeexecute = async(interaction) => {
         }
 
         return new PagesBuilder(interaction).setPages(articleArr).build();
-    } catch(e) {
+    } catch(err: unknown) {
         await interaction.reply(':x: Something failed along the way!');
-        return console.error(e);
+        return console.error(err);
     }
 };
-
 

@@ -1,7 +1,7 @@
-// @ts-check
-const {SlashCommandBuilder} = require('@discordjs/builders');
-const {MessageEmbed} = require('discord.js');
-const {setupOption} = require('../../utils/utils');
+import type {CustomInteraction} from '../../utils/types';
+import {SlashCommandBuilder} from '@discordjs/builders';
+import {MessageEmbed} from 'discord.js';
+import {setupOption} from '../../utils/utils';
 
 export const name = 'rps';
 export const description = 'Rock paper scissors!';
@@ -12,11 +12,7 @@ export const options = [
 
 export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
-/**
-     * @param {import('../../').CustomInteraction} interaction
-     * @returns {Promise<void>}
-     */
-export const executeexecuteexecute = async(interaction) => {
+export const execute = async(interaction: CustomInteraction): Promise<void> => {
     const replies = ['Rock', 'Paper', 'Scissors'];
     const reply = replies[Math.floor(Math.random() * replies.length)];
 
@@ -26,5 +22,4 @@ export const executeexecuteexecute = async(interaction) => {
         .setDescription(`**${reply}**`);
     return interaction.reply({embeds: [embed]});
 };
-
 
