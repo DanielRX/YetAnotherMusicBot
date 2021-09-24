@@ -13,7 +13,7 @@ export const options = [
 export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
-    const playlistName = interaction.options.get('playlistname')?.value;
+    const playlistName = `${interaction.options.get('playlistname')?.value}`;
     const {member: {id, user: {username}, joinedAt}} = interaction;
     // Check if the user exists in the db
     const userData = await Member.findOne({memberId: id}).exec(); // A clone object
@@ -21,7 +21,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
         const userObject = {memberId: id, username, joinedAt, savedPlaylists: [{name: playlistName, urls: []}]};
         const user = new Member(userObject);
         user.save((err) => {
-            if(err) { return interaction.reply('An error has occured, please try again later'); }
+            if(err) { void interaction.reply('An error has occured, please try again later'); }
         });
         return interaction.reply(`Created a new playlist named **${playlistName}**`);
     }

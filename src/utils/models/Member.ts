@@ -3,7 +3,7 @@
 import mongoose from 'mongoose';
 import type {Track} from '../types';
 
-type MemberT = {memberId: string, username: string, joinedAt: Date, savedPlaylist: Track[]}
+type MemberT = {memberId: string, username: string, joinedAt: Date, savedPlaylists: ({name: string, urls: ({title: string})[]})[]}
 
 const schema = new mongoose.Schema<MemberT>({
     memberId: String,
@@ -12,6 +12,6 @@ const schema = new mongoose.Schema<MemberT>({
     savedPlaylists: Array
 });
 
-const Member = mongoose.model('Member', schema);
+const Member = mongoose.model<MemberT>('Member', schema);
 
 export default Member;

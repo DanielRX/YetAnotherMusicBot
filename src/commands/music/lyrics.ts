@@ -80,10 +80,8 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
     void interaction.deferReply();
     const player = interaction.client.playerManager.get(interaction.guildId);
     const guildData = interaction.client.guildData.get(interaction.guildId);
-    let songName = interaction.options.get('songname');
-    if(songName) {
-        songName = songName.value;
-    } else {
+    let songName = interaction.options.get('songname')?.value;
+    if(!songName) {
         if(!player) { return interaction.followUp('There is no song playing! Enter a song name or play a song'); }
         if(guildData) {
             if(guildData.triviaData.isTriviaRunning) {

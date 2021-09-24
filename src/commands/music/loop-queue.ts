@@ -37,7 +37,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
         return interaction.reply(':x: Turn off the **loop** command before using the **loopqueue** command');
     }
 
-    const looptimes = (interaction.options.get('looptimes') ?? {value: 1}).value;
+    const looptimes = Number((interaction.options.get('looptimes') ?? {value: 1}).value);
     player.loopTimes = looptimes;
 
     if(player.loopQueue) {

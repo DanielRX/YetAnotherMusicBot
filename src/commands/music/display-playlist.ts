@@ -17,7 +17,7 @@ export const data = new SlashCommandBuilder().setName(name).setDescription(descr
 
 export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message> => {
     void interaction.deferReply();
-    const playlistName = interaction.options.get('playlistname')?.value;
+    const playlistName = `${interaction.options.get('playlistname')?.value}`;
     // Check if user has playlists or if user is saved in the DB
     const userData = await Member.findOne({memberId: interaction.member.id}).exec();
     if(!userData) {

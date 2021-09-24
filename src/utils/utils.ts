@@ -66,7 +66,7 @@ const isYouTubePlaylistURL = (arg: string): RegExpExecArray | null => /^https?:\
 
 const validateURL = (url: string): RegExpExecArray | null => isYouTubePlaylistURL(url) || isYouTubeVideoURL(url) || isSpotifyURL(url);
 
-type FetchConfig = {method: 'GET' | 'POST', headers: {'client-id': string, Authorization: string}};
+type FetchConfig = {method?: 'GET' | 'POST', headers: {'client-id'?: string, Authorization: string}};
 const fetch = f as <T>(url: string, config?: FetchConfig) => Promise<{status: string, json: () => Promise<T & {length: number}>}>;
 
 export {fetch, arrayMove, getRandom, shuffleArray, isSpotifyURL, isYouTubePlaylistURL, isYouTubeVideoURL, validateURL, randomEl, setupOption};
