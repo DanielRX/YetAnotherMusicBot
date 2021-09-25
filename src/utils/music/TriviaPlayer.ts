@@ -130,9 +130,25 @@ export class TriviaPlayer {
                 if(!this.useYoutube) { timeForSong = 30000; }
                 const collector = this.textChannel.createMessageCollector({time: timeForSong});
 
+                const convertToHint = (str: string, hints: number) => {
+                    let out = '';
+                    let i = 0;
+                    for(const s of str) {
+                        if(s != '') {
+                            i++;
+                        }
+                        if(i < hints || s === ' ') {
+                            out += s;
+                        } else {
+                            out += '*';
+                        }
+                    }
+                    return out;
+                };
+
                 const showHint = async(singer: string, title: string) => {
-                    const singerHint = [...singer].map((_, i) => i < hints ? _ : _ === ' ' ? ' ' : '*').join('');
-                    const titleHint = [...title].map((_, i) => i < hints ? _ : _ === ' ' ? ' ' : '*').join('');
+                    const singerHint = convertToHint(singer, hints);
+                    const titleHint = convertToHint(title, hints);
                     const song = `${songSingerFoundTime === -1 ? singerHint : singer}: ${songNameFoundTime === -1 ? titleHint : title}`;
                     const embed = new MessageEmbed().setColor('#ff7373').setTitle(`:musical_note: The song is:  \`${song}\``);
                     if(lastMessage !== null) { lastMessage.delete().catch(() => { console.log('Failed to delete message'); }); }
