@@ -134,14 +134,12 @@ export class TriviaPlayer {
                     let out = '';
                     let i = 0;
                     for(const s of str) {
-                        if(s != '') {
-                            i++;
-                        }
                         if(i <= hints || s === ' ') {
                             out += s;
                         } else {
                             out += '*';
                         }
+                        if(s != '') { i++; }
                     }
                     return out;
                 };
