@@ -159,6 +159,8 @@ export class TriviaPlayer {
                     void showHint(normalizeValue((this.queue[0] || {artists: ['']}).artists[0]), normalizeValue((this.queue[0] || {name: ''}).name));
                 }, 5000);
 
+                void showHint(normalizeValue((this.queue[0] || {artists: ['']}).artists[0]), normalizeValue((this.queue[0] || {name: ''}).name));
+
                 collector.on('collect', (msg: Message) => {
                     if(!this.score.has(msg.author.username)) { return; }
                     const time = Date.now();
