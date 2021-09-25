@@ -137,7 +137,7 @@ export class TriviaPlayer {
                         if(s != '') {
                             i++;
                         }
-                        if(i < hints || s === ' ') {
+                        if(i <= hints || s === ' ') {
                             out += s;
                         } else {
                             out += '*';
