@@ -20,7 +20,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
     const userQuery = `${interaction.options.get('user')?.value}`;
 
     const userFiltered = userQuery.toLowerCase();
-    const userRes = await fetch<{runners: any[], status :number}>(`https://splits.io/api/v4/runners?search=${userFiltered}`).then((res) => res.json());
+    const userRes = await fetch<{runners: ({name: string, avatar: string})[], status :number}>(`https://splits.io/api/v4/runners?search=${userFiltered}`).then((res) => res.json());
 
     if(userRes.runners.length == 0) {
         return interaction.followUp(':x: The Runner ' + userQuery + ' was  not found.');

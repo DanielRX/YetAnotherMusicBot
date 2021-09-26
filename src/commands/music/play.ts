@@ -245,8 +245,8 @@ const searchYoutube = async(interaction: CustomInteraction, voiceChannel: VoiceC
     });
 };
 
-const handleYoutubeURL = async(interaction: CustomInteraction): Promise<APIMessage | Message> => {
-    const player = interaction.client.playerManager.get(interaction.guildId);
+const handleYoutubeURL = async(interaction: CustomInteraction): Promise<APIMessage | Message | void> => {
+    const player = interaction.client.playerManager.get(interaction.guildId) as unknown as CustomAudioPlayer;
     const rawQuery = interaction.options.get('query')?.value;
     const {nextFlag, jumpFlag, query} = getFlags(rawQuery);
     const timestampRegex = /t=([^#&\n\r]+)/g;
@@ -266,7 +266,7 @@ const handleYoutubeURL = async(interaction: CustomInteraction): Promise<APIMessa
         deletePlayerIfNeeded(interaction);
         return interaction.followUp(':x: There was a problem getting the video you provided!');
     });
-    if(!video) return;
+    if(!video) { return; }
     if(video.live === 'live' && !options.playLiveStreams) {
         player.commandLock = false;
         deletePlayerIfNeeded(interaction);
@@ -294,7 +294,7 @@ const handleYoutubeURL = async(interaction: CustomInteraction): Promise<APIMessa
     }
 };
 
-const handleYoutubePlaylistURL = async(interaction: CustomInteraction): Promise<APIMessage | Message> => {
+const handleYoutubePlaylistURL = async(interaction: CustomInteraction): Promise<APIMessage | Message | void> => {
     const player = interaction.client.playerManager.get(interaction.guildId) as unknown as CustomAudioPlayer;
     const rawQuery = `${interaction.options.get('query')?.value}`;
     const {nextFlag, jumpFlag, shuffleFlag, reverseFlag, query} = getFlags(rawQuery);
@@ -415,7 +415,7 @@ const handlePlayFromHistory = async(interaction: CustomInteraction, message: Mes
 };
 
 const handlePlayPlaylist = async(interaction: CustomInteraction, message: Message, playlistsArray, found: boolean): Promise<APIMessage | Message | void> => {
-    const player = interaction.client.playerManager.get(interaction.guildId);
+    const player = interaction.client.playerManager.get(interaction.guildId) as unknown as CustomAudioPlayer;
     const rawQuery = interaction.options.get('query')?.value;
     const {nextFlag, jumpFlag, query} = getFlags(rawQuery);
     const fields = [
@@ -446,10 +446,9 @@ const handlePlayPlaylist = async(interaction: CustomInteraction, message: Messag
         if(clarificationOptions) { clarificationOptions.delete().catch(console.error); }
     });
 
-    clarificationCollector.on('collect', async(i) => {
+    clarificationCollector.on('collect', async(i): Promise<void> => {
         if(i.user.id !== interaction.user.id) {
-            i.reply({content: `This element is not for you!`, ephemeral: true});
-            return;
+            return i.reply({content: `This element is not for you!`, ephemeral: true});
         }
         clarificationCollector.stop();
         const value = i.values[0];
@@ -457,26 +456,26 @@ const handlePlayPlaylist = async(interaction: CustomInteraction, message: Messag
         switch(value) {
             case'previous_song_option':
                 if(!hasHistoryField) break;
-                if(player?.audioPlayer.state.status !== AudioPlayerStatus.Playing) {
-                    player?.queue.unshift(player.queueHistory[index]);
+                if(player.audioPlayer.state.status !== AudioPlayerStatus.Playing) {
+                    player.queue.unshift(player.queueHistory[index]);
                     void handleSubscription(player?.queue, interaction, player);
                     break;
                 }
                 if(nextFlag || jumpFlag) {
-                    player?.queue.unshift(player.queueHistory[index]);
+                    player.queue.unshift(player.queueHistory[index]);
                     if(jumpFlag && player?.audioPlayer.state.status == AudioPlayerStatus.Playing) {
                         player.loopSong = false;
-                        player?.audioPlayer.stop();
+                        player.audioPlayer.stop();
                     }
                 } else {
-                    player?.queue.push(player?.queueHistory[index]);
+                    player.queue.push(player?.queueHistory[index]);
                 }
                 player.commandLock = false;
                 void interaction.followUp(`'${player?.queueHistory[index].title}' was added to queue!`);
                 break;
                 // 1: Play the saved playlist
             case'playlist_option':
-                playlistsArray[playlistsArray.indexOf(found)].urls.map((song) => player?.queue.push(song));
+                playlistsArray[playlistsArray.indexOf(found)].urls.map((song) => player.queue.push(song));
                 player.commandLock = false;
                 await interaction.followUp('Added playlist to queue');
                 if(player?.audioPlayer.state.status === AudioPlayerStatus.Playing) {
