@@ -14,7 +14,7 @@ export const options = [
 export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
-    const question = interaction.options.get('question')?.value;
+    const question = `${interaction.options.get('question')?.value}`;
 
     if(question.length > 255) {
         return interaction.reply('Please ask a shorter question!');

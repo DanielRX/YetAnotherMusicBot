@@ -9,7 +9,7 @@ export const description = 'Get a random quote from Donald Trump!';
 export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
-    return fetch('https://api.tronalddump.io/random/quote')
+    return fetch<{value: string, appeared_at: number}>('https://api.tronalddump.io/random/quote')
         .then((res) => res.json())
         .then((json) => {
             const embed = new MessageEmbed()

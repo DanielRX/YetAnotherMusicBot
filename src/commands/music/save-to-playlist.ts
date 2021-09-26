@@ -28,7 +28,7 @@ const constructSongObj = (video: Video, user: User)=> {
         duration,
         thumbnail: thumbnail?.url,
         memberDisplayName: user.username,
-        memberAvatar: user.avatarURL('webp', false, 16)
+        memberAvatar: user.avatarURL({format: 'webp', dynamic: false, size: 16})
     };
 };
 
@@ -57,8 +57,7 @@ const processURL = async(url: string, interaction: CustomInteraction) => {
         const playlist = await YouTube.getPlaylist(url).catch(function() {
             throw new Error(':x: Playlist is either private or it does not exist!');
         });
-        let videosArr = await playlist.fetch();
-        videosArr = videosArr.videos;
+        const videosArr = await playlist.fetch().then((v) => v.videos);
         const urlsArr = [];
         for(const video of videosArr) {
             if(video.private) {
@@ -69,7 +68,7 @@ const processURL = async(url: string, interaction: CustomInteraction) => {
         }
         return urlsArr;
     } else {
-        const video = await YouTube.getVideo(url).catch(function() {
+        const video = await YouTube.getVideo(url).catch(() => {
             throw new Error(':x: There was a problem getting the video you provided!');
         });
         if(video.live) {
@@ -83,7 +82,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
     await interaction.deferReply();
 
     const playlistName = interaction.options.get('playlistname')?.value;
-    const url = interaction.options.get('url')?.value;
+    const url = `${interaction.options.get('url')?.value}`;
 
     const userData = await Member.findOne({memberId: interaction.member.id}).exec();
     if(!userData) { return interaction.followUp('You have no custom playlists!'); }

@@ -66,7 +66,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
     const useYoutube = Boolean(interaction.options.get('youtube') ? interaction.options.get('youtube')?.value : false);
 
     const songs: ({youtubeUrl: string, preview_url: string, artists: string[], album: string, name: string})[] = await fs.readJSON('./resources/music/mk2/trivia.json'); // TODO: Move type to types
-    const albumData: {[key: string]: {}} = await fs.readJSON('./resources/music/mk2/albums.json');
+    const albumData: {[key: string]: {[key: string]: unknown}} = await fs.readJSON('./resources/music/mk2/albums.json');
     const artistsData: {[key: string]: string} = await fs.readJSON('./resources/music/mk2/artists.json');
     const videoDataArray = songs.map((track) => ({...track, album: albumData[track.album], artists: track.artists.map((id) => artistsData[id])}));
     // Get random numberOfSongs videos from the array

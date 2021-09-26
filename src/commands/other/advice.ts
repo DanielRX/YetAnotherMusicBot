@@ -9,7 +9,7 @@ export const description = 'Get some advice!';
 export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
-    return fetch('https://api.adviceslip.com/advice')
+    return fetch<{slip: {advice: string}}>('https://api.adviceslip.com/advice')
         .then((res) => res.json())
         .then((json) => {
             const embed = new MessageEmbed()

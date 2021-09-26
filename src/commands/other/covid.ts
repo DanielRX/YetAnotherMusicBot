@@ -12,11 +12,14 @@ export const options = [
 
 export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
+type WorldStats = {todayCases: number, todayDeaths: number, recovered: number, deaths: number, active: number, cases: number, tests: number, casesPerOneMillion: number, deathsPerOneMillion: number, updated: number};
+type CountryStats = WorldStats & {country: string, countryInfo: {flag: string}};
+
 const getWorldStats = async() => {
     const url = 'https://disease.sh/v3/covid-19/all';
     try {
-        const body = await fetch(url);
-        if(body.status !== 200) {
+        const body = await fetch<WorldStats>(url);
+        if(body.status != '200') {
             throw new Error(`The covid API can't be accessed at the moment, please try later`);
         }
         const json = await body.json();
@@ -29,8 +32,8 @@ const getWorldStats = async() => {
 const getCountryStats = async(country: string) => {
     const url = `https://disease.sh/v3/covid-19/countries/${country}`;
     try {
-        const body = await fetch(url);
-        if(body.status !== 200) {
+        const body = await fetch<CountryStats>(url);
+        if(body.status != '200') {
             throw new Error(`There was a problem getting data from the API, make sure you entered a valid country name`);
         }
         const json = await body.json();
@@ -42,7 +45,7 @@ const getCountryStats = async(country: string) => {
 };
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
-    const country = interaction.options.get('country')?.value;
+    const country = `${interaction.options.get('country')?.value}`;
     if(country === 'all' || country === 'world' || country === 'global') {
         return getWorldStats()
             .then((res) => {

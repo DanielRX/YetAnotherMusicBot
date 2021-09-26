@@ -16,7 +16,7 @@ const makeEmbed = (quote: string) => new MessageEmbed()
     .setFooter('Powered by kanye.rest', '');
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
-    return fetch('https://api.kanye.rest/?format=json')
+    return fetch<{quote: string}>('https://api.kanye.rest/?format=json')
         .then((res) => res.json())
         .then((json) => interaction.reply({embeds: [makeEmbed(json.quote)]}))
         .catch((err: unknown) => {

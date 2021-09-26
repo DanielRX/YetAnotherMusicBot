@@ -1,5 +1,6 @@
 import {setupOption, fetch} from '../../utils/utils';
 import {SlashCommandBuilder} from '@discordjs/builders';
+import type {CommandInteraction} from 'discord.js';
 import {MessageEmbed, MessageActionRow, MessageSelectMenu} from 'discord.js';
 import {PagesBuilder} from 'discord.js-pages';
 import {readJSONSync} from 'fs-extra';
@@ -15,7 +16,7 @@ export const options = [
 ];
 
 const fetchFromReddit = async(interaction: CustomInteraction, subreddit: string, sort: string, timeFilter = 'day') => {
-    const response = await fetch(`https://www.reddit.com/r/${subreddit}/${sort}/.json?limit=10&t=${timeFilter}`);
+    const response = await fetch<{data: {children: ({data: {title: string, over_18: boolean, score: string, author: string}})[]}}>(`https://www.reddit.com/r/${subreddit}/${sort}/.json?limit=10&t=${timeFilter}`);
     const json = await response.json();
     const dataArr = [];
 
@@ -36,7 +37,7 @@ const fetchFromReddit = async(interaction: CustomInteraction, subreddit: string,
             .setAuthor(redditPost.data.author));
     }
 
-    void new PagesBuilder(interaction).setPages(dataArr).build();
+    void new PagesBuilder(interaction as unknown as CommandInteraction).setPages(dataArr).build();
 };
 
 export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0])).addStringOption(setupOption(options[1]));

@@ -1,5 +1,5 @@
 import type {APIMessage} from 'discord-api-types';
-import type {Message} from 'discord.js';
+import type {CommandInteraction, Message} from 'discord.js';
 import type {CustomInteraction} from '../../utils/types';
 import {SlashCommandBuilder} from '@discordjs/builders';
 import {MessageEmbed} from 'discord.js';
@@ -17,10 +17,10 @@ export const data = new SlashCommandBuilder().setName(name).setDescription(descr
 
 export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message | void> => {
     void interaction.deferReply();
-    const userQuery = interaction.options.get('user')?.value;
+    const userQuery = `${interaction.options.get('user')?.value}`;
 
     const userFiltered = userQuery.toLowerCase();
-    const userRes = await fetch(`https://splits.io/api/v4/runners?search=${userFiltered}`).then((res) => res.json());
+    const userRes = await fetch<{runners: any[], status :number}>(`https://splits.io/api/v4/runners?search=${userFiltered}`).then((res) => res.json());
 
     if(userRes.runners.length == 0) {
         return interaction.followUp(':x: The Runner ' + userQuery + ' was  not found.');
@@ -30,7 +30,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
         return interaction.followUp(':x: The Runner ' + userQuery + ' was  not found.');
     }
 
-    const pbsRes = await fetch(`https://splits.io/api/v4/runners/${userRes.runners[0].name}/pbs`).then((res) => res.json());
+    const pbsRes = await fetch<{pbs: ({id: string, realtime_duration_ms: number, realtime_sum_of_best_ms: number, program: string, parsed_at: number, attempts: any[], game: {cover_url: string, name: string}, category: {name: string}, segments: any[]})[], status :number}>(`https://splits.io/api/v4/runners/${userRes.runners[0].name}/pbs`).then((res) => res.json());
 
     if(pbsRes.length == 0) {
         return interaction.followUp(':x: The Runner ' + userRes.runners[0].name + `s hasn't submitted any speedruns to Splits.io\n
@@ -61,7 +61,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
                 .setTimestamp(pbArray[i - 1].parsed_at));
         }
 
-        return new PagesBuilder(interaction).setPages(pbEmbedArray).setColor('#3E8657').build();
+        return new PagesBuilder(interaction as unknown as CommandInteraction).setPages(pbEmbedArray).setColor('#3E8657').build();
     }
     return;
 };

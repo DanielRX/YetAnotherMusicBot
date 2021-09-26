@@ -17,9 +17,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
     if(!player) {
         return interaction.reply('There is no song playing now!');
     }
-    if(player.audioPlayer.state.status !== AudioPlayerStatus.Playing) {
-        return interaction.reply('There is no song playing now!');
-    }
+    if(player.audioPlayer.state.status !== AudioPlayerStatus.Playing) { return interaction.reply('There is no song playing now!'); }
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if(player.audioPlayer.state.status === AudioPlayerStatus.Playing && guildData?.triviaData.isTriviaRunning) {
         return interaction.reply(`You can't use this command while a trivia is running!`);

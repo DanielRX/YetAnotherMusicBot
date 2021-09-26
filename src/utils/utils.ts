@@ -1,6 +1,6 @@
 // https://stackoverflow.com/a/5306832/9421002
 import f from 'node-fetch';
-import {SlashCommandStringOption, SlashCommandIntegerOption, SlashCommandBooleanOption} from '@discordjs/builders';
+import {SlashCommandStringOption, SlashCommandIntegerOption, SlashCommandBooleanOption, SlashCommandUserOption} from '@discordjs/builders';
 
 const arrayMove = <T>(arr: T[], old_index: number, new_index: number): T[] => {
     while(old_index < 0) {
@@ -34,7 +34,7 @@ const getRandom = <T>(arr: T[], n: number): T[] => {
 
 const randomEl = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
 
-type SlashCommandOption = SlashCommandBooleanOption | SlashCommandIntegerOption | SlashCommandStringOption;
+type SlashCommandOption = SlashCommandBooleanOption | SlashCommandIntegerOption | SlashCommandStringOption | SlashCommandUserOption;
 
 const setupStringOption = (config: {name: string, description: string, required: boolean, choices: string[]}) => (option: SlashCommandStringOption): SlashCommandStringOption => {
     option = option.setName(config.name).setDescription(config.description).setRequired(config.required);
@@ -53,10 +53,10 @@ const setupBoolOption = (config: {name: string, description: string, required: b
     return option;
 };
 
-const setupOption = (config: {name: string, description: string, required: boolean, choices: string[]}) => <T extends SlashCommandOption>(option: T): SlashCommandBooleanOption | SlashCommandIntegerOption | SlashCommandStringOption => {
-    if(option instanceof SlashCommandBooleanOption) { return setupBoolOption(config)(option); }
-    if(option instanceof SlashCommandIntegerOption) { return setupIntOption(config)(option); }
-    if(option instanceof SlashCommandStringOption) { return setupStringOption(config)(option); }
+const setupOption = <T extends SlashCommandOption>(config: {name: string, description: string, required: boolean, choices: string[]}) => (option: T): T => {
+    if(option instanceof SlashCommandBooleanOption) { return setupBoolOption(config)(option) as T; }
+    if(option instanceof SlashCommandIntegerOption) { return setupIntOption(config)(option) as T; }
+    if(option instanceof SlashCommandStringOption) { return setupStringOption(config)(option) as T; }
     return option;
 };
 
@@ -67,6 +67,6 @@ const isYouTubePlaylistURL = (arg: string): RegExpExecArray | null => /^https?:\
 const validateURL = (url: string): RegExpExecArray | null => isYouTubePlaylistURL(url) || isYouTubeVideoURL(url) || isSpotifyURL(url);
 
 type FetchConfig = {method?: 'GET' | 'POST', headers: {'client-id'?: string, Authorization: string}};
-const fetch = f as <T>(url: string, config?: FetchConfig) => Promise<{status: string, json: () => Promise<T & {length: number}>}>;
+const fetch = f as <T>(url: string, config?: FetchConfig) => Promise<{status: string, json: () => Promise<T & {length: number}>, text: () => Promise<string>}>;
 
 export {fetch, arrayMove, getRandom, shuffleArray, isSpotifyURL, isYouTubePlaylistURL, isYouTubeVideoURL, validateURL, randomEl, setupOption};

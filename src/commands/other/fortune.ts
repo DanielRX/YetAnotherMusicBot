@@ -11,7 +11,7 @@ export const data = new SlashCommandBuilder().setName(name).setDescription(descr
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     try {
-        const json = await fetch('http://yerkee.com/api/fortune').then((res) => res.json());
+        const json = await fetch<{fortune: string}>('http://yerkee.com/api/fortune').then((res) => res.json());
         const embed = new MessageEmbed()
             .setColor('#F4D190')
             .setAuthor('Fortune Cookie', 'https://i.imgur.com/58wIjK0.png', 'https://yerkee.com')

@@ -1,5 +1,5 @@
 import type {APIMessage} from 'discord-api-types';
-import type {Message} from 'discord.js';
+import type {CommandInteraction, Message} from 'discord.js';
 import type {CustomInteraction} from '../../utils/types';
 import {SlashCommandBuilder} from '@discordjs/builders';
 import {MessageEmbed} from 'discord.js';
@@ -17,6 +17,8 @@ export const data = new SlashCommandBuilder().setName(name).setDescription(descr
 
 type Show = {
     show: {
+        runtime: string,
+        name: string,
         summary: string,
         language: string,
         type: string,
@@ -27,6 +29,10 @@ type Show = {
                 code: string
             }
         },
+        rating: {
+            average: string,
+        },
+        url: string,
         image: {
             original: string
         },
@@ -138,7 +144,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
                 .setFooter(`(Page ${i}/${showResponse.length}) ` + 'Powered by tvmaze.com', 'https://static.tvmaze.com/images/favico/favicon-32x32.png'));
         }
 
-        void new PagesBuilder(interaction).setPages(embedArray).setColor('#17a589').build();
+        void new PagesBuilder(interaction as unknown as CommandInteraction).setPages(embedArray).setColor('#17a589').build();
     } catch(err: unknown) {
         console.log(err);
         return interaction.followUp(':x: Something went wrong with your request.');

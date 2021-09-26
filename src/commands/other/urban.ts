@@ -13,7 +13,7 @@ export const options = [
 export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
-    return fetch(`https://api.urbandictionary.com/v0/define?term=${interaction.options.get('query').value}`)
+    return fetch<{list: ({definition: string, permalink: string})[]}>(`https://api.urbandictionary.com/v0/define?term=${interaction.options.get('query')?.value}`)
         .then((res) => res.json())
         .then((json) => {
             const embed = new MessageEmbed()

@@ -10,7 +10,7 @@ export const data = new SlashCommandBuilder().setName(name).setDescription(descr
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     // thanks to https://evilinsult.com :)
-    return fetch('https://evilinsult.com/generate_insult.php?lang=en&type=json')
+    return fetch<{insult: string}>('https://evilinsult.com/generate_insult.php?lang=en&type=json')
         .then((res) => res.json())
         .then((json) => {
             const embed = new MessageEmbed()

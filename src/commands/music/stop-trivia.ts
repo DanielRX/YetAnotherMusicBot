@@ -12,7 +12,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
         return interaction.reply(':x: No trivia is currently running!');
     }
 
-    if(interaction.guild.me.voice.channel !== interaction.member.voice.channel) {
+    if(interaction.guild.me?.voice.channel !== interaction.member.voice.channel) {
         return interaction.reply(':no_entry: Please join a voice channel and try again!');
     }
 

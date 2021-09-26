@@ -15,7 +15,7 @@ export const data = new SlashCommandBuilder().setName(name).setDescription(descr
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     if(!config.tenorAPI) { return interaction.reply(':x: Tenor commands are not enabled'); }
     const gif = interaction.options.get('gif')?.value;
-    fetch(`https://g.tenor.com/v1/random?key=${config.tenorAPI}&q=${gif}&limit=1`)
+    return fetch<{results: ({url: string})[]}>(`https://g.tenor.com/v1/random?key=${config.tenorAPI}&q=${gif}&limit=1`)
         .then((res) => res.json())
         .then((json) => interaction.reply(json.results[0].url))
         .catch(() => {

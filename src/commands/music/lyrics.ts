@@ -1,5 +1,5 @@
 import {SlashCommandBuilder} from '@discordjs/builders';
-import type {Message} from 'discord.js';
+import type {CommandInteraction, Message} from 'discord.js';
 import {MessageEmbed} from 'discord.js';
 import {PagesBuilder} from 'discord.js-pages';
 import cheerio from 'cheerio';
@@ -27,7 +27,7 @@ const searchSong = async(query: string): Promise<string> => {
     const searchURL = `https://api.genius.com/search?q=${encodeURI(query)}`;
     const headers = {Authorization: `Bearer ${config.geniusLyricsAPI}`};
     try {
-        const body = await fetch(searchURL, {headers});
+        const body = await fetch<{response: {hits: ({result: {api_path: string}})[]}}>(searchURL, {headers});
         const result = await body.json();
         const songPath = result.response.hits[0].result.api_path;
         return `https://api.genius.com${songPath}`;
@@ -39,12 +39,12 @@ const searchSong = async(query: string): Promise<string> => {
 const getSongPageURL = async(url: string) => {
     const headers = {Authorization: `Bearer ${config.geniusLyricsAPI}`};
     try {
-        const body = await fetch(url, {headers});
+        const body = await fetch<{response: {song: {url: string}}}>(url, {headers});
         const result = await body.json();
         if(!result.response.song.url) {
             throw new Error(':x: There was a problem finding a URL for this song');
         } else {
-            return result.response.song.url as string;
+            return result.response.song.url;
         }
     } catch(e) {
         console.log(e);
@@ -80,7 +80,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
     void interaction.deferReply();
     const player = interaction.client.playerManager.get(interaction.guildId);
     const guildData = interaction.client.guildData.get(interaction.guildId);
-    let songName = interaction.options.get('songname')?.value;
+    let songName = `${interaction.options.get('songname')?.value}`;
     if(!songName) {
         if(!player) { return interaction.followUp('There is no song playing! Enter a song name or play a song'); }
         if(guildData) {
@@ -88,7 +88,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
                 return interaction.followUp(':x: Please try again after the trivia has ended');
             }
         }
-        songName = player.nowPlaying.title;
+        songName = player.nowPlaying?.title || '';
     }
 
     try {
@@ -108,7 +108,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
             }
         }
 
-        void new PagesBuilder(interaction)
+        void new PagesBuilder(interaction as unknown as CommandInteraction)
             .setTitle(`${songName} lyrics`)
             .setPages(lyricsArray)
             .setColor('#9096e6')

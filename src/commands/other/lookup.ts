@@ -16,7 +16,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
     const resl = interaction.options.get('query')?.value;
 
     try {
-        const json = await fetch(`http://ip-api.com/json/${resl}`).then((res) => res.json()); // fetch json data from ip-api.com
+        const json = await fetch<{query: string, city: string, zip: string, regionName: string, country: string, org: string, isp: string, as: string}>(`http://ip-api.com/json/${resl}`).then((res) => res.json()); // fetch json data from ip-api.com
 
         //embed json results
         const embed = new MessageEmbed()

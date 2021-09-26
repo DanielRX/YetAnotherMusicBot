@@ -46,7 +46,7 @@ const getLeaderBoard = (arr: [string, number][]) => {
 export class TriviaPlayer {
     public textChannel: BaseGuildTextChannel = null!;
     public readonly score: Map<string, number> = new Map();
-    private queue: Track[] = [];
+    public queue: Track[] = [];
     private wasTriviaEndCalled = false;
     private connection: VoiceConnection = null!;
     private readonly audioPlayer: AudioPlayer;
