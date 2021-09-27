@@ -38,7 +38,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
             .setColor('#ff7373')
             .setTitle(playlistName)
             .setTimestamp();
-        const fields = urlsArrayClone.slice(0, 24).map((x, i) => ({name: `${i + 1}`, value: `${x.title}`}));
+        const fields = urlsArrayClone.slice(0, 24).map((x, i) => ({name: `${i + 1}`, value: `${x.name}`}));
         savedPlaylistEmbed.setFields(fields);
 
         return interaction.followUp({embeds: [savedPlaylistEmbed]}); //TODO: Swap to reply?

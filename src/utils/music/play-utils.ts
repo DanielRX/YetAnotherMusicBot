@@ -1,6 +1,6 @@
-const {MessageSelectMenu, MessageActionRow} = require('discord.js');
+import {MessageSelectMenu, MessageActionRow} from 'discord.js';
 
-const getFlags = (query: string) => {
+export const getFlags = (query: string): {shuffleFlag: boolean, reverseFlag: boolean, jumpFlag: boolean, nextFlag: boolean, query: string} => {
     const splitQuery = query.split(' ');
     const shuffleFlag = splitQuery[splitQuery.length - 1] === '-s';
     const reverseFlag = splitQuery[splitQuery.length - 1] === '-r';
@@ -11,7 +11,7 @@ const getFlags = (query: string) => {
     return {shuffleFlag, reverseFlag, jumpFlag, nextFlag, query};
 };
 
-const createSelectMenu = (namesArray: string[]) =>
+export const createSelectMenu = (namesArray: string[]): MessageActionRow =>
     new MessageActionRow().addComponents(new MessageSelectMenu()
         .setCustomId('search-yt-menu')
         .setPlaceholder('Please select a video')
@@ -24,7 +24,7 @@ const createSelectMenu = (namesArray: string[]) =>
             {label: 'Cancel', value: 'cancel_option'}
         ]));
 
-const createHistoryRow = (query: string) => new MessageActionRow()
+export const createHistoryRow = (query: string): MessageActionRow => new MessageActionRow()
     .addComponents(new MessageSelectMenu()
         .setCustomId('history-select')
         .setPlaceholder('Please select an option')
@@ -34,4 +34,3 @@ const createHistoryRow = (query: string) => new MessageActionRow()
             {label: 'Cancel', value: 'cancel_option', emoji: '❌'}
         ]));
 
-module.exports = {createHistoryRow, createSelectMenu, getFlags};

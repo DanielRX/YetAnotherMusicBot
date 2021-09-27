@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
-import type {PlayTrack} from '../types';
+import type {Playlist} from '../types';
 
-type MemberT = {memberId: string, username: string, joinedAt: Date, savedPlaylists: ({name: string, urls: PlayTrack[]})[]}
+type MemberT = {memberId: string, username: string, joinedAt: Date, savedPlaylists: Playlist[]}
 
 const schema = new mongoose.Schema<MemberT>({
     memberId: String,

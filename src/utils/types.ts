@@ -12,3 +12,4 @@ export type Command = {data: SlashCommandBuilder, execute: (interaction: CustomI
 export type CustomClient = Client & {playerManager: Map<string, CustomAudioPlayer>; commands: Collection<string, Command>, guildData: Map<string, GuildData>, triviaManager: Map<string, TriviaPlayer>};
 export type CustomInteraction = Omit<CommandInteraction, 'deferReply'> & {guildId: string, client: CustomClient, guild: {client: CustomClient}, member: GuildMember, deferReply: (x?: {fetchReply: boolean}) => Promise<Message>};
 export type YoutubeTrack = {title: string | undefined, url: string, thumbnail: {url: string | undefined}, durationFormatted: string, duration: number};
+export type Playlist = {name: string, urls: PlayTrack[]};

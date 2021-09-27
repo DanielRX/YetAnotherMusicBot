@@ -1,24 +1,22 @@
 import type {APIMessage} from 'discord-api-types';
 import type {BaseGuildTextChannel, Message, SelectMenuInteraction, User, VoiceChannel} from 'discord.js';
-import { Video } from 'youtube-sr';
-import MusicPlayer from '../../utils/music/Player';
-import type {CustomAudioPlayer, CustomInteraction, PlayTrack} from '../../utils/types';
+import type {Video} from 'youtube-sr';
+import type MusicPlayer from '../../utils/music/Player';
+import type {CustomAudioPlayer, CustomInteraction, Playlist, PlayTrack, Track} from '../../utils/types';
+import {SlashCommandBuilder} from '@discordjs/builders';
+import {MessageSelectMenu, MessageActionRow} from 'discord.js';
+import Player from '../../utils/music/Player';
+import {getData} from 'spotify-url-info';
+import YouTube from 'youtube-sr';
+import { readJSONSync } from 'fs-extra';
+import Member from '../../utils/models/Member';
+import {joinVoiceChannel, entersState, VoiceConnectionStatus, AudioPlayerStatus} from '@discordjs/voice';
+import createGuildData from '../../utils/createGuildData';
+import {searchOne} from '../../utils/music/searchOne';
+import {shuffleArray, isSpotifyURL, isYouTubeVideoURL, isYouTubePlaylistURL, setupOption} from '../../utils/utils';
+import {getFlags, createSelectMenu, createHistoryRow} from '../../utils/music/play-utils';
 
-// @ts-check
-const {SlashCommandBuilder} = require('@discordjs/builders');
-const {MessageSelectMenu, MessageActionRow} = require('discord.js');
-const Player = require('../../utils/music/Player');
-const {getData} = require('spotify-url-info');
-const YouTube = require('youtube-sr').default;
-const options = require('../../../options.json'); //TODO: Replace with file that fills in defaults
-const Member = require('../../utils/models/Member');
-const {joinVoiceChannel, entersState, VoiceConnectionStatus, AudioPlayerStatus} = require('@discordjs/voice');
-const createGuildData = require('../../utils/createGuildData');
-const {searchOne} = require('../../utils/music/searchOne');
-const {shuffleArray, isSpotifyURL, isYouTubeVideoURL, isYouTubePlaylistURL} = require('../../utils/utils');
-const {getFlags, createSelectMenu, createHistoryRow} = require('../../utils/music/play-utils');
-const {setupOption} = require('../../utils/utils');
-
+const options = readJSONSync('../../../options.json'); //TODO: Replace with file that fills in defaults
 // Check If Options are Valid
 if(typeof options.playLiveStreams !== 'boolean') options.playLiveStreams = true;
 if(typeof options.maxQueueLength !== 'number' || options.maxQueueLength < 1) { options.maxQueueLength = 1000; }
@@ -40,12 +38,12 @@ const deletePlayerIfNeeded = (interaction: CustomInteraction) => {
     }
 };
 
-const constructSongObj = (video: Video, voiceChannel: VoiceChannel, user: User, timestamp?: string) => {
+const constructSongObj = (video: Video, voiceChannel: VoiceChannel, user: User, timestamp?: number): PlayTrack => {
     const {url, title, duration: rawDuration, durationFormatted, thumbnail} = video;
     let duration = durationFormatted;
     if(duration === '00:00') duration = 'Live Stream';
     // checks if the user searched for a song using a Spotify URL
-    return {url, title, rawDuration, duration, timestamp, thumbnail: thumbnail?.url, voiceChannel, memberDisplayName: user.username, memberAvatar: user.avatarURL('webp', false, 16)};
+    return {url, title, rawDuration, duration, timestamp, thumbnail: thumbnail?.url, voiceChannel, memberDisplayName: user.username, memberAvatar: user.avatarURL({format: 'webp', dynamic: false, size: 16})} as unknown as PlayTrack;
 };
 
 const handleSubscription = async(queue: PlayTrack[], interaction: CustomInteraction, player: MusicPlayer) => {
@@ -77,16 +75,16 @@ const handleSubscription = async(queue: PlayTrack[], interaction: CustomInteract
     await interaction.followUp(`Enqueued ${title}`);
 };
 
-const flagLogic = (interaction: CustomInteraction, video, jumpFlag: boolean) => {
+const flagLogic = (interaction: CustomInteraction, video: any, jumpFlag: boolean) => {
     const player = interaction.client.playerManager.get(interaction.guildId) as unknown as CustomAudioPlayer;
-    player.queue.splice(0, 0, constructSongObj(video, interaction.member.voice.channel, interaction.member.user));
+    player.queue.splice(0, 0, constructSongObj(video, interaction.member.voice.channel as VoiceChannel, interaction.member.user));
     if(jumpFlag && player.audioPlayer.state.status === AudioPlayerStatus.Playing) {
         player.loopSong = false;
         player.audioPlayer.stop();
     }
 };
 
-const handleSpotifyPlaylistData = async(interaction: CustomInteraction, data) => {
+const handleSpotifyPlaylistData = async(interaction: CustomInteraction, data: any) => {
     const player = interaction.client.playerManager.get(interaction.guildId) as unknown as CustomAudioPlayer;
     const rawQuery = `${interaction.options.get('query')?.value}`;
     const {nextFlag, jumpFlag} = getFlags(rawQuery);
@@ -100,7 +98,7 @@ const handleSpotifyPlaylistData = async(interaction: CustomInteraction, data) =>
             if(nextFlag || jumpFlag) {
                 flagLogic(interaction, video, jumpFlag);
             } else {
-                player.queue.push(constructSongObj(video, interaction.member.voice.channel, interaction.member.user));
+                player.queue.push(constructSongObj(video, interaction.member.voice.channel as VoiceChannel, interaction.member.user));
             }
         } catch(err) {
             void processingMessage?.delete();
@@ -108,14 +106,14 @@ const handleSpotifyPlaylistData = async(interaction: CustomInteraction, data) =>
         }
     }
     void processingMessage?.edit('Playlist Processed!');
-    if(player.audioPlayer.state.status !== AudioPlayerStatus.Playing) { return handleSubscription(player.queue, interaction, player); }
+    if(player.audioPlayer.state.status !== AudioPlayerStatus.Playing) { return handleSubscription(player.queue, interaction, player as unknown as MusicPlayer); }
 };
 
 const handleSpotifyURL = (interaction: CustomInteraction): Promise<APIMessage | Message> => {
     const player = interaction.client.playerManager.get(interaction.guildId) as unknown as CustomAudioPlayer;
-    const rawQuery = interaction.options.get('query')?.value;
+    const rawQuery = `${interaction.options.get('query')?.value}`;
     const {nextFlag, jumpFlag, query} = getFlags(rawQuery);
-    const handleSpotifyData = async(data) => {
+    const handleSpotifyData = async(data: any) => {
         // 'tracks' property only exists on a playlist data object
         if(data.tracks) {
             // handle playlist
@@ -128,15 +126,15 @@ const handleSpotifyURL = (interaction: CustomInteraction): Promise<APIMessage | 
             if(nextFlag || jumpFlag) {
                 flagLogic(interaction, video, jumpFlag);
             } else {
-                player?.queue.push(constructSongObj(video, interaction.member.voice.channel, interaction.member.user));
+                player?.queue.push(constructSongObj(video, interaction.member.voice.channel as VoiceChannel, interaction.member.user));
                 player.commandLock = false;
                 if(player?.audioPlayer.state.status !== AudioPlayerStatus.Playing) {
-                    return handleSubscription(player?.queue, interaction, player);
+                    return handleSubscription(player?.queue, interaction, player as unknown as MusicPlayer);
                 }
                 return interaction.followUp(`Added **${video.title}** to queue`);
             }
         } catch(error: unknown) {
-            return interaction.followUp(error);
+            return interaction.followUp(error as any);
         }
     };
 
@@ -147,12 +145,12 @@ const handleSpotifyURL = (interaction: CustomInteraction): Promise<APIMessage | 
     });
 };
 
-const searchYoutube = async(interaction: CustomInteraction, voiceChannel: VoiceChannel): Promise<APIMessage | Message> => {
+const searchYoutube = async(interaction: CustomInteraction, voiceChannel: VoiceChannel): Promise<APIMessage | Message | void> => {
     const player = interaction.client.playerManager.get(interaction.guildId) as unknown as CustomAudioPlayer;
-    const rawQuery = interaction.options.get('query')?.value;
+    const rawQuery = `${interaction.options.get('query')?.value}`;
     const {nextFlag, jumpFlag, query} = getFlags(rawQuery);
-    const videos = await YouTube.search(query, {limit: 5}).catch(async function() {
-        return interaction.followUp(':x: There was a problem searching the video you requested!');
+    const videos = await YouTube.search(query, {limit: 5, type: 'video'}).catch(async function() {
+        return void interaction.followUp(':x: There was a problem searching the video you requested!');
     });
     if(!videos) {
         player.commandLock = false;
@@ -162,7 +160,7 @@ const searchYoutube = async(interaction: CustomInteraction, voiceChannel: VoiceC
         player.commandLock = false;
         return interaction.followUp(`:x: I had some trouble finding what you were looking for, please try again or be more specific.`);
     }
-    const vidNameArr = [...videos.map((video) => video.title.slice(0, 99)), 'cancel'];
+    const vidNameArr = [...videos.map((video) => video.title?.slice(0, 99) ?? ''), 'cancel'];
     const row = createSelectMenu(vidNameArr);
     const playOptions = await interaction.channel?.send({content: 'Pick a video', components: [row]});
     const playOptionsCollector = playOptions?.createMessageComponentCollector({componentType: 'SELECT_MENU', time: options.MaxResponseTime * 1000});
@@ -172,7 +170,7 @@ const searchYoutube = async(interaction: CustomInteraction, voiceChannel: VoiceC
         }
     });
 
-    const handleYoutubeData = (video) => {
+    const handleYoutubeData = (video: Video) => {
         const playerManager = interaction.client.playerManager.get(interaction.guildId) as unknown as MusicPlayer;
         if(video.live && !options.playLiveStreams) {
             if(playOptions) {
@@ -183,7 +181,7 @@ const searchYoutube = async(interaction: CustomInteraction, voiceChannel: VoiceC
             return interaction.followUp('Live streams are disabled in this server! Contact the owner');
         }
 
-        if(video.duration.hours !== 0 && !options.playVideosLongerThan1Hour) {
+        if(video.duration > 60 * 60 * 1000 && !options.playVideosLongerThan1Hour) {
             if(playOptions) {
                 playOptions.delete().catch(console.error);
                 return;
@@ -249,33 +247,35 @@ const searchYoutube = async(interaction: CustomInteraction, voiceChannel: VoiceC
 
 const handleYoutubeURL = async(interaction: CustomInteraction): Promise<APIMessage | Message | void> => {
     const player = interaction.client.playerManager.get(interaction.guildId) as unknown as CustomAudioPlayer;
-    const rawQuery = interaction.options.get('query')?.value;
+    const rawQuery = `${interaction.options.get('query')?.value}`;
     const {nextFlag, jumpFlag, query} = getFlags(rawQuery);
     const timestampRegex = /t=([^#&\n\r]+)/g;
-    let timestamp = timestampRegex.exec(query);
-    if(!timestamp) {
-        timestamp = 0;
-    } else {
-        timestamp = timestamp[1];
-        if(timestamp.endsWith('s')) {
-            timestamp = timestamp.substring(0, timestamp.indexOf('s'));
+    const timestampArr = timestampRegex.exec(query);
+    let timestamp = 0;
+    if(timestampArr) {
+        let timestampLocal = timestampArr[1];
+        if(timestampLocal.endsWith('s')) {
+            timestampLocal = timestampLocal.substring(0, timestampLocal.indexOf('s'));
         }
-        if(!Number(timestamp)) timestamp = 0;
+        if(!Number(timestampLocal)) {
+            timestamp = 0;
+        } else {
+            timestamp = Number(timestampLocal);
+        }
     }
-    timestamp = Number(timestamp);
 
     const video = await YouTube.getVideo(query).catch(function() {
         deletePlayerIfNeeded(interaction);
-        return interaction.followUp(':x: There was a problem getting the video you provided!');
+        return void interaction.followUp(':x: There was a problem getting the video you provided!');
     });
     if(!video) { return; }
-    if(video.live === 'live' && !options.playLiveStreams) {
+    if(video.live && !options.playLiveStreams) {
         player.commandLock = false;
         deletePlayerIfNeeded(interaction);
         return interaction.followUp('Live streams are disabled in this server! Contact the owner');
     }
 
-    if(video.duration.hours !== 0 && !options.playVideosLongerThan1Hour) {
+    if(video.duration > 60 * 60 * 1000 && !options.playVideosLongerThan1Hour) {
         player.commandLock = false;
         deletePlayerIfNeeded(interaction);
         return interaction.followUp('Videos longer than 1 hour are disabled in this server! Contact the owner');
@@ -288,11 +288,11 @@ const handleYoutubeURL = async(interaction: CustomInteraction): Promise<APIMessa
     if(nextFlag || jumpFlag) {
         flagLogic(interaction, video, jumpFlag);
     } else {
-        player.queue.push(constructSongObj(video, interaction.member.voice.channel, interaction.member.user, timestamp));
+        player.queue.push(constructSongObj(video, interaction.member.voice.channel as VoiceChannel, interaction.member.user, timestamp));
     }
 
     if(player.audioPlayer.state.status !== AudioPlayerStatus.Playing) {
-        void handleSubscription(player.queue, interaction, player);
+        void handleSubscription(player.queue, interaction, player as unknown as MusicPlayer);
     }
 };
 
@@ -307,13 +307,13 @@ const handleYoutubePlaylistURL = async(interaction: CustomInteraction): Promise<
         return interaction.followUp(':x: Playlist is either private or it does not exist!');
     }
 
-    let videosArr = await playlist.fetch();
-    if(!videosArr) {
+    const videos = await playlist.fetch();
+    if(!videos) {
         player.commandLock = false;
         deletePlayerIfNeeded(interaction);
         return interaction.followUp(":x: I hit a problem when trying to fetch the playlist's videos");
     }
-    videosArr = videosArr.videos;
+    let videosArr = videos.videos;
 
     if(options.AutomaticallyShuffleYouTubePlaylists || shuffleFlag) {
         videosArr = shuffleArray(videosArr);
@@ -332,16 +332,16 @@ const handleYoutubePlaylistURL = async(interaction: CustomInteraction): Promise<
     //variable to know how many songs were skipped because of privacyStatus
     let skipAmount = 0;
 
-    await videosArr.reduce(async(__, video, key) => {
+    videosArr.forEach((video, key) => {
         // don't process private videos
         if(video.private) {
             skipAmount++;
             return;
         }
         if(nextFlag || jumpFlag) {
-            player.queue.splice(key - skipAmount, 0, constructSongObj(video, interaction.member.voice.channel, interaction.member.user));
+            player.queue.splice(key - skipAmount, 0, constructSongObj(video, interaction.member.voice.channel as VoiceChannel, interaction.member.user));
         } else {
-            player.queue.push(constructSongObj(video, interaction.member.voice.channel, interaction.member.user));
+            player.queue.push(constructSongObj(video, interaction.member.voice.channel as VoiceChannel, interaction.member.user));
         }
     });
     if(jumpFlag && player.audioPlayer.state.status === AudioPlayerStatus.Playing) {
@@ -349,7 +349,7 @@ const handleYoutubePlaylistURL = async(interaction: CustomInteraction): Promise<
         player.audioPlayer.stop();
     }
     if(player.audioPlayer.state.status !== AudioPlayerStatus.Playing) {
-        return void handleSubscription(player.queue, interaction, player);
+        return void handleSubscription(player.queue, interaction, player as unknown as MusicPlayer);
     }
     // interactiveEmbed(interaction)
     //   .addField('Added Playlist', `[${playlist.title}](${playlist.url})`)
@@ -360,7 +360,7 @@ const handleYoutubePlaylistURL = async(interaction: CustomInteraction): Promise<
 
 const handlePlayFromHistory = async(interaction: CustomInteraction, message: Message): Promise<APIMessage | Message | void> => {
     const player = interaction.client.playerManager.get(interaction.guildId);
-    const rawQuery = interaction.options.get('query')?.value;
+    const rawQuery = `${interaction.options.get('query')?.value}`;
     const {nextFlag, jumpFlag, query} = getFlags(rawQuery);
     const index = Number(query) - 1;
     // continue if there's no index matching the query on the history queue
@@ -388,7 +388,7 @@ const handlePlayFromHistory = async(interaction: CustomInteraction, message: Mes
             case'history_option':
                 if(player.audioPlayer.state.status !== AudioPlayerStatus.Playing) {
                     player.queue.unshift(player.queueHistory[index]);
-                    void handleSubscription(player.queue, interaction, player);
+                    void handleSubscription(player.queue, interaction, player as unknown as MusicPlayer);
                     break;
                 }
                 if(nextFlag || jumpFlag) {
@@ -401,11 +401,11 @@ const handlePlayFromHistory = async(interaction: CustomInteraction, message: Mes
                     player.queue.push(player.queueHistory[index]);
                 }
                 player.commandLock = false;
-                void interaction.followUp(`'${player.queueHistory[index].title}' was added to queue!`);
+                void interaction.followUp(`'${player.queueHistory[index].name}' was added to queue!`);
                 break;
                 // 2: Search for the query on YouTube
             case'youtube_option':
-                await searchYoutube(interaction, interaction.member.voice.channel);
+                await searchYoutube(interaction, interaction.member.voice.channel as VoiceChannel);
                 break;
                 // 3: Cancel
             case'cancel_option':
@@ -416,9 +416,9 @@ const handlePlayFromHistory = async(interaction: CustomInteraction, message: Mes
     });
 };
 
-const handlePlayPlaylist = async(interaction: CustomInteraction, message: Message, playlistsArray, found: boolean): Promise<APIMessage | Message | void> => {
+const handlePlayPlaylist = async(interaction: CustomInteraction, message: Message, playlistsArray: Playlist[], found: Playlist): Promise<APIMessage | Message | void> => {
     const player = interaction.client.playerManager.get(interaction.guildId) as unknown as MusicPlayer;
-    const rawQuery = interaction.options.get('query')?.value;
+    const rawQuery = `${interaction.options.get('query')?.value}`;
     const {nextFlag, jumpFlag, query} = getFlags(rawQuery);
     const fields = [
         {label: 'Playlist', description: 'Select playlist', value: 'playlist_option', emoji: '⏩'},
@@ -428,10 +428,10 @@ const handlePlayPlaylist = async(interaction: CustomInteraction, message: Messag
     ];
     let hasHistoryField = false;
     const index = Number(query) - 1;
-    if(Number(query) && typeof player?.queueHistory[index] !== 'undefined') {
+    if(Number(query) && typeof player.getQueueHistory()[index] !== 'undefined') {
         hasHistoryField = true;
         fields.unshift({
-            name: `play ${player.queueHistory[index].title}`,
+            label: `play ${player.getQueueHistory()[index].name}`,
             description: 'Play last song',
             value: 'previous_song_option',
             emoji: '🔙'
@@ -497,7 +497,7 @@ const handlePlayPlaylist = async(interaction: CustomInteraction, message: Messag
                 break;
                 // 2: Play the shuffled saved playlist
             case'shuffle_option':
-                shuffleArray(playlistsArray[playlistsArray.indexOf(found)].urls).map((song) => player?.queue.push(song));
+                shuffleArray(playlistsArray[playlistsArray.indexOf(found)].urls).map((song) => player.queue.push(song));
 
                 if(player.audioPlayer.state.status === AudioPlayerStatus.Playing) {
                     // Send a message indicating that the playlist was added to the queue
@@ -516,7 +516,7 @@ const handlePlayPlaylist = async(interaction: CustomInteraction, message: Messag
                 break;
                 // 3: Search for the query on YouTube
             case'youtube_option':
-                await searchYoutube(interaction, interaction.member.voice.channel);
+                await searchYoutube(interaction, interaction.member.voice.channel as VoiceChannel);
                 break;
                 // 4: Cancel
             case'cancel_option':
@@ -557,11 +557,11 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
     if(flags.includes(splitQuery[splitQuery.length - 1])) splitQuery.pop();
     const cleanQuery = splitQuery.join(' ');
 
-    let player = interaction.client.playerManager.get(interaction.guildId) as unknown as CustomAudioPlayer;
+    let player = interaction.client.playerManager.get(interaction.guildId) as unknown as MusicPlayer;
 
     if(!player) {
         player = new Player();
-        interaction.client.playerManager.set(interaction.guildId, player);
+        interaction.client.playerManager.set(interaction.guildId, player as unknown as CustomAudioPlayer);
     }
 
     if(player?.commandLock) {
@@ -576,7 +576,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
 
     if(userData !== null) {
         const playlistsArray = userData.savedPlaylists;
-        const found = playlistsArray.find((playlist: {name: string}) => playlist.name === cleanQuery);
+        const found = playlistsArray.find((playlist: Playlist) => playlist.name === cleanQuery);
         // Found a playlist with a name matching the query and it's not empty
         if(found && playlistsArray[playlistsArray.indexOf(found)].urls.length) {
             return handlePlayPlaylist(interaction, message, playlistsArray, found);
