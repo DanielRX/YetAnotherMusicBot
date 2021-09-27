@@ -1,6 +1,7 @@
 import type {CustomInteraction} from '../../utils/types';
 import {SlashCommandBuilder} from '@discordjs/builders';
 import {setupOption} from '../../utils/utils';
+import {playerManager} from '../../utils/client';
 
 export const name = 'remove';
 export const description = 'Remove a specific song from queue';
@@ -13,7 +14,7 @@ export const data = new SlashCommandBuilder().setName(name).setDescription(descr
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     const position = Number(interaction.options.get('position')?.value);
-    const player = interaction.client.playerManager.get(interaction.guildId);
+    const player = playerManager.get(interaction.guildId);
 
     if(!player) {
         return interaction.reply('There is nothing playing now!');

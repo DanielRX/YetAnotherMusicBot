@@ -4,7 +4,7 @@ import {Routes} from 'discord-api-types/v9';
 import mongoose from 'mongoose';
 import type {Command, CustomInteraction} from './utils/types';
 import {SlashCommandBuilder} from '@discordjs/builders';
-import {setupOption} from '../../utils/utils';
+import {setupOption} from './utils/utils';
 import {client, commands} from './utils/client';
 import {config} from './utils/config';
 

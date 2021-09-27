@@ -3,6 +3,7 @@ import type {APIMessage} from 'discord-api-types';
 import type {BaseGuildTextChannel, Message} from 'discord.js';
 import {MessageEmbed} from 'discord.js';
 import fs from 'fs-extra';
+import {playerManager, triviaManager} from '../../utils/client';
 import TriviaPlayer from '../../utils/music/TriviaPlayer';
 import type {CustomInteraction, PlayTrack} from '../../utils/types';
 import {getRandom} from '../../utils/utils';
@@ -20,11 +21,7 @@ const handleSubscription = async(interaction: CustomInteraction, player: TriviaP
     const {queue} = player;
     const {voiceChannel} = queue[0];
 
-    const connection = joinVoiceChannel({
-        channelId: voiceChannel?.id ?? '',
-        guildId: interaction.guild.id,
-        adapterCreator: interaction.guild.voiceAdapterCreator
-    });
+    const connection = joinVoiceChannel({channelId: voiceChannel?.id ?? '', guildId: interaction.guild.id, adapterCreator: interaction.guild.voiceAdapterCreator});
 
     player.textChannel = interaction.channel as BaseGuildTextChannel;
     player.passConnection(connection);
@@ -36,12 +33,11 @@ const handleSubscription = async(interaction: CustomInteraction, player: TriviaP
     }
     void player.process(player.queue);
 
-    const startTriviaEmbed = new MessageEmbed()
-        .setColor('#ff7373')
-        .setTitle(':notes: Starting Music Quiz!')
-        .setDescription(`:notes: Get ready! There are ${queue.length} songs, you have 30 seconds to guess either the singer/band or the name of the song. Good luck!
+    const triviaDescription = `:notes: Get ready! There are ${queue.length} songs, you have 30 seconds to guess either the singer/band or the name of the song. Good luck!
     Vote skip the song by entering the word 'skip'.
-    You can end the trivia at any point by using the end-trivia command!`);
+    You can end the trivia at any point by using the end-trivia command!`;
+
+    const startTriviaEmbed = new MessageEmbed().setColor('#ff7373').setTitle(':notes: Starting Music Quiz!').setDescription(triviaDescription);
     return interaction.followUp({embeds: [startTriviaEmbed]});
 };
 
@@ -52,15 +48,15 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
         return interaction.followUp(':no_entry: Please join a voice channel and try again!');
     }
 
-    if(interaction.client.playerManager.get(interaction.guildId)) {
+    if(playerManager.get(interaction.guildId)) {
         return interaction.followUp(`You can't use this while a track is playing!`);
     }
 
-    if(interaction.client.triviaManager.get(interaction.guildId)) {
+    if(triviaManager.get(interaction.guildId)) {
         return interaction.followUp('There is already a trivia in play!');
     }
 
-    const numberOfSongs = Number(interaction.options.get('length') ? interaction.options.get('length')?.value : 25);
+    const numberOfSongs = Number(interaction.options.get('length')?.value ?? 25);
     const songs = await fs.readJSON('./resources/music/mk2/trivia.json') as TriviaElement[]; // TODO: Move type to types
     const albumData = await fs.readJSON('./resources/music/mk2/albums.json') as {[key: string]: {[key: string]: unknown}};
     const artistsData = await fs.readJSON('./resources/music/mk2/artists.json') as {[key: string]: string};
@@ -68,9 +64,9 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
     // Get random numberOfSongs videos from the array
 
     const randomLinks = getRandom(videoDataArray, numberOfSongs);
-    interaction.client.triviaManager.set(interaction.guildId, new TriviaPlayer());
+    triviaManager.set(interaction.guildId, new TriviaPlayer());
 
-    const triviaPlayer = interaction.client.triviaManager.get(interaction.guildId) as unknown as TriviaPlayer;
+    const triviaPlayer = triviaManager.get(interaction.guildId) as unknown as TriviaPlayer;
 
     // eslint-disable-next-line @typescript-eslint/no-shadow
     randomLinks.forEach(({artists, name, previewUrl, youtubeUrl}) => {

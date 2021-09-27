@@ -3,6 +3,7 @@ import type {Message, User} from 'discord.js';
 import Discord from 'discord.js';
 import os from 'os';
 import {readJsonSync} from 'fs-extra';
+import {commands} from '../../utils/client';
 const pkg = readJsonSync('../../../package.json');
 
 export const name = 'bot-status';
@@ -14,7 +15,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
 
     const pingMsg = await interaction.channel?.send('Processing...') as unknown as Message;
 
-    const commandTotal = interaction.client.commands.size;
+    const commandTotal = commands.size;
     const platform = os
         .platform()
         .replace(/win32/, 'Windows')

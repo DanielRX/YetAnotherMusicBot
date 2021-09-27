@@ -1,10 +1,11 @@
+import {triviaManager} from '../../utils/client';
 import type {CustomInteraction} from '../../utils/types';
 
 export const name = 'stop-trivia';
 export const description = 'End a music trivia (if one is in play)';
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
-    const triviaPlayer = interaction.client.triviaManager.get(interaction.guildId);
+    const triviaPlayer = triviaManager.get(interaction.guildId);
     if(!triviaPlayer) {
         return interaction.reply(':x: No trivia is currently running!');
     }
@@ -17,8 +18,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
         return interaction.reply(':stop_sign: You need to participate in the trivia in order to end it');
     }
     triviaPlayer.reset();
-    interaction.client.triviaManager.delete(interaction.guildId);
+    triviaManager.delete(interaction.guildId);
 
     return interaction.reply('Stopped the trivia! To start a new one, use the music-trivia command');
 };
-

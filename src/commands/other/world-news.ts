@@ -9,7 +9,6 @@ import type {APIMessage} from 'discord-api-types';
 export const name = 'world-news';
 export const description = 'Replies with the 10 latest world news headlines!';
 
-
 export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message | void> => {
     if(!config.newsAPI) { return interaction.reply(':x: This command is not enabled'); }
     // powered by NewsAPI.org
@@ -36,4 +35,3 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
         return interaction.reply(':x: Something failed along the way!');
     }
 };
-

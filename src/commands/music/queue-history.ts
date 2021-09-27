@@ -3,20 +3,21 @@ import type {CommandInteraction, Message} from 'discord.js';
 import type {CustomInteraction} from '../../utils/types';
 import {MessageEmbed} from 'discord.js';
 import {PagesBuilder} from 'discord.js-pages';
+import {guildData} from '../../utils/client';
 
 export const name = 'queue-history';
 export const description = 'Display the music queue history';
 
 export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message | void> => {
-    const guildData = interaction.client.guildData.get(interaction.guildId);
-    if(!guildData) {
+    const guild = guildData.get(interaction.guildId);
+    if(!guild) {
         return interaction.followUp('There is no music queue history!');
     }
-    if(!guildData.queueHistory.length) {
+    if(!guild.queueHistory.length) {
         return interaction.followUp('There is no music queue history!');
     }
 
-    const queueClone = Array.from(guildData.queueHistory);
+    const queueClone = Array.from(guild.queueHistory);
     const embeds = [];
 
     for(let i = 0; i < Math.ceil(queueClone.length / 24); i++) {

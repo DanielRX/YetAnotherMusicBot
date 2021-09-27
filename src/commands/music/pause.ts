@@ -1,5 +1,6 @@
 import type {CustomInteraction} from '../../utils/types';
 import {AudioPlayerStatus} from '@discordjs/voice';
+import {playerManager} from '../../utils/client';
 
 export const name = 'pause';
 export const description = 'Pause the playing track';
@@ -10,7 +11,7 @@ const exec = (interaction: CustomInteraction): string => {
         return 'Please join a voice channel and try again!';
     }
 
-    const player = interaction.client.playerManager.get(interaction.guildId);
+    const player = playerManager.get(interaction.guildId);
     if(!player) {
         return 'There is no song playing right now!';
     }

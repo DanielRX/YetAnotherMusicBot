@@ -6,7 +6,8 @@ import {promisify} from 'util';
 import ytdl from 'ytdl-core';
 import type {BaseGuildTextChannel} from 'discord.js';
 import {MessageEmbed} from 'discord.js';
-import type {CustomClient, PlayTrack} from '../types';
+import type {PlayTrack} from '../types';
+import {guildData, triviaManager} from '../client';
 const wait = promisify(setTimeout);
 
 class MusicPlayer { // TODO: Merge with TriviaPlayer
@@ -28,7 +29,7 @@ class MusicPlayer { // TODO: Merge with TriviaPlayer
 
     public getQueueHistory(): PlayTrack[] {
         // eslint-disable-next-line
-        return (this.textChannel.client as unknown as CustomClient).guildData.get(this.textChannel.guildId)?.queueHistory!;
+        return guildData.get(this.textChannel.guildId)?.queueHistory!;
     }
 
     public passConnection(connection: VoiceConnection): void {
@@ -96,7 +97,7 @@ class MusicPlayer { // TODO: Merge with TriviaPlayer
                         /* eslint-disable */
                         if((this.connection as any)._state.status !== 'destroyed') {
                             this.connection.destroy();
-                            (this.textChannel.client as unknown as CustomClient).triviaManager.delete(this.textChannel.guildId);
+                            triviaManager.delete(this.textChannel.guildId);
                         }
                         /* eslint-enable */
                     }

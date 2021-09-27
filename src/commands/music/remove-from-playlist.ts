@@ -1,9 +1,7 @@
 import type {APIMessage} from 'discord-api-types';
 import type {Message} from 'discord.js';
 import type {CustomInteraction} from '../../utils/types';
-import {SlashCommandBuilder} from '@discordjs/builders';
 import member from '../../utils/models/Member';
-import {setupOption} from '../../utils/utils';
 
 export const name = 'remove-from-playlist';
 export const description = 'Remove a song from a saved playlist';
@@ -12,8 +10,6 @@ export const options = [
     {type: 'string' as const, name: 'playlist', description: 'What is the playlist you would like to delete a song from?', required: true, choices: []},
     {type: 'integer' as const, name: 'index', description: 'What is the index of the video you would like to delete from your saved playlist?', required: true, choices: []}
 ];
-
-export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0])).addIntegerOption(setupOption(options[1]));
 
 export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message> => {
     await interaction.deferReply();

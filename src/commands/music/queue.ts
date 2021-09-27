@@ -3,17 +3,18 @@ import type {CommandInteraction, Message} from 'discord.js';
 import type {CustomInteraction} from '../../utils/types';
 import {MessageEmbed} from 'discord.js';
 import {PagesBuilder} from 'discord.js-pages';
+import {guildData, playerManager} from '../../utils/client';
 
 export const name = 'queue';
 export const description = 'Display the music queue';
 
 export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message | void> => {
     await interaction.deferReply();
-    const guildData = interaction.client.guildData.get(interaction.guildId);
-    if(guildData && guildData.triviaData.isTriviaRunning) {
+    const guild = guildData.get(interaction.guildId);
+    if(guild && guild.triviaData.isTriviaRunning) {
         return interaction.followUp(':x: Try again after the trivia has ended!');
     }
-    const player = interaction.client.playerManager.get(interaction.guildId);
+    const player = playerManager.get(interaction.guildId);
     if(player && player.queue.length == 0) {
         return interaction.followUp(':x: There are no songs in queue!');
     }

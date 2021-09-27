@@ -1,5 +1,6 @@
 import type {APIMessage} from 'discord-api-types';
 import type {Message} from 'discord.js';
+import {playerManager} from '../../utils/client';
 import type {CustomInteraction} from '../../utils/types';
 
 export const name = 'skip-to';
@@ -14,7 +15,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
     const voiceChannel = interaction.member.voice.channel;
     if(!voiceChannel) { return interaction.followUp(`:no_entry: You must be in the same voice channel as the bot in order to use that!`); }
     if(voiceChannel.id !== interaction.member.voice.channelId) { return interaction.followUp(`:no_entry: You must be in the same voice channel as the bot in order to use that!`); }
-    const player = interaction.client.playerManager.get(interaction.guildId);
+    const player = playerManager.get(interaction.guildId);
     if(!player) { return interaction.followUp(':x: There is nothing playing right now!'); }
     if(player.queue.length < 1) { return interaction.followUp('There are no songs in queue!'); }
 

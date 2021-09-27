@@ -1,10 +1,11 @@
 import type {AudioPlayer, VoiceConnection} from '@discordjs/voice';
 import type {BaseGuildTextChannel, Message} from 'discord.js';
-import type {CustomClient, PlayTrack} from '../types';
+import type {PlayTrack} from '../types';
 import {AudioPlayerStatus, createAudioPlayer, entersState, VoiceConnectionDisconnectReason, VoiceConnectionStatus, createAudioResource, StreamType} from '@discordjs/voice';
 import {setTimeout} from 'timers';
 import {promisify} from 'util';
 import {MessageEmbed} from 'discord.js';
+import {triviaManager} from '../client';
 const wait = promisify(setTimeout);
 
 const capitalizeWords = (str: string) => {
@@ -112,7 +113,7 @@ export class TriviaPlayer { // TODO: Merge with MusicPlayer
                     /* eslint-disable */
                     if((this.connection as any)._state.status !== 'destroyed') {
                         this.connection.destroy();
-                        (this.textChannel.client as unknown as CustomClient).triviaManager.delete(this.textChannel.guildId);
+                        triviaManager.delete(this.textChannel.guildId);
                     }
                     /* eslint-enable */
                 }
