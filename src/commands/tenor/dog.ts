@@ -14,9 +14,9 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
     fetch<{results: ({url: string})[]}>(`https://api.tenor.com/v1/random?key=${config.tenorAPI}&q=dog&limit=1`)
         .then((res) => res.json())
         .then((json) => interaction.reply(json.results[0].url))
-        .catch(async(err) => {
-            await interaction.reply(':x: Request to find a doggo failed!');
-            return console.error(err);
+        .catch((e: unknown) => {
+            console.error(e);
+            return interaction.reply(':x: Request to find a doggo failed!');
         });
 };
 

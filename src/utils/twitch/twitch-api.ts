@@ -16,7 +16,7 @@ class TwitchAPI {
             } else {
                 return json.access_token ?? '';
             }
-        } catch(e) {
+        } catch(e: unknown) {
             console.error(e);
             throw new Error('There was a problem fetching a token from the Twitch API');
         }
@@ -42,7 +42,7 @@ class TwitchAPI {
                 throw new Error(`Streamer ${username} was not found, Please try again.`);
             }
             return json;
-        } catch(e) {
+        } catch(e: unknown) {
             console.error(e);
             throw new Error('There was a problem fetching user info from the Twitch API');
         }
@@ -53,7 +53,7 @@ class TwitchAPI {
         try {
             const json = await fetch<Response<T>>(`https://api.twitch.tv/helix/streams?user_id=${userID}`, {method: 'GET', headers: {'client-id': `${client_id}`, Authorization: `Bearer ${token}`}}).then((res) => res.json());
             return json;
-        } catch(e) {
+        } catch(e: unknown) {
             console.error(e);
             throw new Error('There was a problem fetching stream info from the Twitch API');
         }
@@ -63,7 +63,7 @@ class TwitchAPI {
         try {
             const json = await fetch<Response<T>>(`https://api.twitch.tv/helix/games?id=${game_id}`, {method: 'GET', headers: {'client-id': `${client_id}`, Authorization: `Bearer ${token}`}}).then((res) => res.json());
             return json;
-        } catch(e) {
+        } catch(e: unknown) {
             console.error(e);
             throw new Error('There was a problem fetching stream info from the Twitch API');
         }

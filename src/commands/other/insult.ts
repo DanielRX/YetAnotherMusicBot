@@ -21,8 +21,8 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
                 .setFooter('Powered by evilinsult.com', '');
             return interaction.reply({embeds: [embed]});
         })
-        .catch((err: unknown) => {
-            console.error(err);
+        .catch((e: unknown) => {
+            console.error(e);
             return interaction.reply(':x: Failed to deliver insult!');
         });
 };

@@ -35,7 +35,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
     try {
         await Member.updateOne({memberId: interaction.member.id}, userData);
         return interaction.reply(`Created a new playlist named **${playlistName}**`);
-    } catch(e) {
+    } catch(e: unknown) {
         console.error(e);
         return interaction.reply('There was a problem executing this command, please try again later');
     }

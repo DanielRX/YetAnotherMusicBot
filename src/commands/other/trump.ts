@@ -20,8 +20,8 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
                 .setFooter('Powered by tronalddump.io! Quote was posted', ' ');
             return interaction.reply({embeds: [embed]});
         })
-        .catch((err: unknown) => {
-            console.error(err);
+        .catch((e: unknown) => {
+            console.error(e);
             return interaction.reply('Failed to deliver quote :sob:');
         });
 };

@@ -26,8 +26,8 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
                 .setFooter('Powered by UrbanDictionary', '');
             return interaction.reply({embeds: [embed]});
         })
-        .catch((err: unknown) => {
-            console.error(err); // no need to spam console for each time it doesn't find a query
+        .catch((e: unknown) => {
+            console.error(e); // no need to spam console for each time it doesn't find a query
             return interaction.reply('Failed to deliver definition :sob:');
         });
 };

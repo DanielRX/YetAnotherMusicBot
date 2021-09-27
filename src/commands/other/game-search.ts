@@ -45,7 +45,7 @@ const getGameDetails = async(query: string) => {
             throw new Error(':x: There was a problem getting data from the API, make sure you entered a valid game title');
         }
         return json;
-    } catch(e) {
+    } catch(e: unknown) {
         console.error(e);
         throw new Error('There was a problem getting data from the API, make sure you entered a valid game title');
     }
@@ -92,6 +92,6 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
             }
             return embed.build();
         })
-        .catch((error: unknown) => interaction.reply(error as any));
+        .catch((e: unknown) => interaction.reply(e as any));
 };
 

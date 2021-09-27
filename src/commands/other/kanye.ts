@@ -19,8 +19,8 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
     return fetch<{quote: string}>('https://api.kanye.rest/?format=json')
         .then((res) => res.json())
         .then((json) => interaction.reply({embeds: [makeEmbed(json.quote)]}))
-        .catch((err: unknown) => {
-            console.error(err);
+        .catch((e: unknown) => {
+            console.error(e);
             return interaction.reply('Failed to deliver quote :sob:');
         });
 };

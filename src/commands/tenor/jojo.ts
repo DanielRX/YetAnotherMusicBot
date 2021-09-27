@@ -13,7 +13,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
         const linkArray = await fs.readFile('./resources/gifs/jojolinks.txt', 'utf8').then((links) => links.split('\n'));
         const link = randomEl(linkArray);
         return void interaction.reply(link);
-    } catch(e) {
+    } catch(e: unknown) {
         console.error(e);
         return interaction.reply(':x: Failed to fetch a gif!');
     }

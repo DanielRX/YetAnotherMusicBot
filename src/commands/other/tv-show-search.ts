@@ -58,8 +58,8 @@ const getShowSearch = async(showQuery: string): Promise<Show[]> => {
             throw new Error('There was a problem getting data from the API, make sure you entered a valid TV show name');
         }
         return json;
-    } catch(err: unknown) {
-        console.error(err);
+    } catch(e: unknown) {
+        console.error(e);
         throw new Error('There was a problem getting data from the API, make sure you entered a valid TV show name');
     }
 };
@@ -145,8 +145,8 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
         }
 
         void new PagesBuilder(interaction as unknown as CommandInteraction).setPages(embedArray).setColor('#17a589').build();
-    } catch(err: unknown) {
-        console.log(err);
+    } catch(e: unknown) {
+        console.log(e);
         return interaction.followUp(':x: Something went wrong with your request.');
     }
 };

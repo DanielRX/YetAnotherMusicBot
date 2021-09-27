@@ -24,7 +24,7 @@ const getWorldStats = async() => {
         }
         const json = await body.json();
         return json;
-    } catch(e) {
+    } catch(e: unknown) {
         console.error(e);
         throw new Error(`The covid API can't be accessed at the moment, please try later`);
     }
@@ -38,7 +38,7 @@ const getCountryStats = async(country: string) => {
         }
         const json = await body.json();
         return json;
-    } catch(e) {
+    } catch(e: unknown) {
         console.error(e);
         throw new Error(`There was a problem getting data from the API, make sure you entered a valid country name`);
     }
@@ -94,8 +94,8 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
 
             return interaction.reply({embeds: [covidcountry]});
         })
-        .catch((err: unknown) => {
-            console.error(err);
+        .catch((e: unknown) => {
+            console.error(e);
             return interaction.reply('Something went wrong!');
         });
 };

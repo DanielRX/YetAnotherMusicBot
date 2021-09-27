@@ -32,8 +32,8 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
             .setTimestamp(); //img here
 
         return interaction.reply({embeds: [embed]});
-    } catch(err: unknown) {
-        console.error(err);
+    } catch(e: unknown) {
+        console.error(e);
         return interaction.reply('Something went wrong looking for that result, is the api throttled?');
     }
 };

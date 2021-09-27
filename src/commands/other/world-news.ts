@@ -33,8 +33,8 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
         }
 
         return new PagesBuilder(interaction as unknown as CommandInteraction).setPages(articleArr).build();
-    } catch(err: unknown) {
-        console.error(err);
+    } catch(e: unknown) {
+        console.error(e);
         return interaction.reply(':x: Something failed along the way!');
     }
 };

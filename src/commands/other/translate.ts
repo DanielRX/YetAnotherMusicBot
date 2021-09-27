@@ -33,8 +33,8 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
                 .setFooter('Powered by Google Translate!');
             return interaction.reply({embeds: [embed]});
         })
-        .catch((err: unknown) => {
-            console.error(err);
+        .catch((e: unknown) => {
+            console.error(e);
             return interaction.reply(':x: Something went wrong when trying to translate the text');
         });
 };

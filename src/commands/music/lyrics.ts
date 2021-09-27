@@ -31,7 +31,7 @@ const searchSong = async(query: string): Promise<string> => {
         const result = await body.json();
         const songPath = result.response.hits[0].result.api_path;
         return `https://api.genius.com${songPath}`;
-    } catch(e) {
+    } catch(e: unknown) {
         throw new Error(':x: No song has been found for this query');
     }
 };
@@ -46,8 +46,8 @@ const getSongPageURL = async(url: string) => {
         } else {
             return result.response.song.url;
         }
-    } catch(e) {
-        console.log(e);
+    } catch(e: unknown) {
+        console.error(e);
         throw new Error('There was a problem finding a URL for this song');
     }
 };
@@ -69,8 +69,8 @@ const getLyrics = async(url: string) => {
         } else {
             return lyrics.replace(/(\[.+\])/g, '');
         }
-    } catch(e) {
-        console.log(e);
+    } catch(e: unknown) {
+        console.error(e);
         throw new Error('There was a problem fetching lyrics for this song, please try again');
     }
 };
@@ -115,8 +115,8 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
             .setURL(songPageURL)
             .setAuthor(interaction.member.user.username, interaction.member.user.displayAvatarURL())
             .build();
-    } catch(error: unknown) {
-        console.error(error);
+    } catch(e: unknown) {
+        console.error(e);
         return interaction.followUp('Something went wrong! Please try again later');
     }
 };

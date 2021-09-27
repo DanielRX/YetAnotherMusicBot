@@ -51,10 +51,10 @@ const handleSubscription = async(queue: PlayTrack[], interaction: CustomInteract
 
     try {
         await entersState(player.connection, VoiceConnectionStatus.Ready, 10000);
-    } catch(err) {
+    } catch(e: unknown) {
         player.commandLock = false;
         deletePlayerIfNeeded(interaction);
-        console.error(err);
+        console.error(e);
         await interaction.followUp({content: 'Failed to join your channel!'});
         return;
     }
@@ -87,7 +87,7 @@ const handleSpotifyPlaylistData = async(interaction: CustomInteraction, data: an
             } else {
                 player.queue.push(constructSongObj(video, interaction.member.voice.channel as VoiceChannel, interaction.member.user));
             }
-        } catch(err) {
+        } catch(e: unknown) {
             void processingMessage?.delete();
             return void interaction.followUp('Failed to process playlist, please try again later');
         }
@@ -120,14 +120,14 @@ const handleSpotifyURL = (interaction: CustomInteraction): Promise<APIMessage | 
                 }
                 return interaction.followUp(`Added **${video.title}** to queue`);
             }
-        } catch(error: unknown) {
-            return interaction.followUp(error as any);
+        } catch(e: unknown) {
+            return interaction.followUp(e as any);
         }
     };
 
-    return getData(query).then(handleSpotifyData).catch((error: unknown) => {
+    return getData(query).then(handleSpotifyData).catch((e: unknown) => {
         deletePlayerIfNeeded(interaction);
-        console.error(error);
+        console.error(e);
         return interaction.followUp(`I couldn't find what you were looking for :(`);
     });
 };
@@ -222,11 +222,11 @@ const searchYoutube = async(interaction: CustomInteraction, voiceChannel: VoiceC
 
         YouTube.getVideo(`https://www.youtube.com/watch?v=${videos[videoIndex - 1].id}`)
             .then(handleYoutubeData)
-            .catch((error: unknown) => {
+            .catch((e: unknown) => {
                 player.commandLock = false;
                 deletePlayerIfNeeded(interaction);
                 if(playOptions) playOptions.delete().catch(console.error);
-                console.error(error);
+                console.error(e);
                 return interaction.followUp('An error has occurred while trying to get the video ID from youtube.');
             });
     });

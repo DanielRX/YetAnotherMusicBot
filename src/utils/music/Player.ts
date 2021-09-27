@@ -40,7 +40,8 @@ class MusicPlayer {
                     if(newState.reason === VoiceConnectionDisconnectReason.WebSocketClose && newState.closeCode === 4014) {
                         try {
                             await entersState(this.connection, VoiceConnectionStatus.Connecting, 5000);
-                        } catch{
+                        } catch(e: unknown) {
+                            console.error(e);
                             this.connection.destroy();
                         }
                     } else if(this.connection.rejoinAttempts < 5) {
@@ -63,7 +64,8 @@ class MusicPlayer {
                 case VoiceConnectionStatus.Signalling: {
                     try {
                         await entersState(this.connection, VoiceConnectionStatus.Ready, 20000);
-                    } catch{
+                    } catch(e: unknown) {
+                        console.error(e);
                         if(this.connection.state.status !== VoiceConnectionStatus.Destroyed) { this.connection.destroy(); }
                     }
                 }
@@ -135,8 +137,8 @@ class MusicPlayer {
             const stream = ytdl(song?.url || '', {filter: 'audio', quality: 'highestaudio', highWaterMark: 1 << 25});
             const resource = createAudioResource(stream, {inputType: StreamType.Arbitrary});
             this.audioPlayer.play(resource);
-        } catch(err) {
-            console.error(err);
+        } catch(e: unknown) {
+            console.error(e);
             return this.process(queue);
         }
     }

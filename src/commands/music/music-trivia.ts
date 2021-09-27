@@ -32,8 +32,8 @@ const handleSubscription = async(interaction: CustomInteraction, player: TriviaP
     player.passConnection(connection);
     try {
         await entersState(player.connection, VoiceConnectionStatus.Ready, 10000);
-    } catch(err) {
-        console.error(err);
+    } catch(e: unknown) {
+        console.error(e);
         return interaction.followUp({content: 'Failed to join your channel!'});
     }
     void player.process(player.queue);

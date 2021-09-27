@@ -37,8 +37,8 @@ void (async() => {
         console.log('Started refreshing application (/) commands.');
         await rest.put(Routes.applicationCommands(config.client_id) as any, {body: commands});
         console.log('Successfully reloaded application (/) commands.');
-    } catch(error) {
-        console.error(error);
+    } catch(e: unknown) {
+        console.error(e);
     }
 })();
 

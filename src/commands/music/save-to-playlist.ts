@@ -44,8 +44,8 @@ const processURL = async(url: string, interaction: CustomInteraction) => {
                         try {
                             const video = await searchOne(track.track);
                             urlsArr.push(constructSongObj(video, interaction.member.user));
-                        } catch(error: unknown) {
-                            console.error(error);
+                        } catch(e: unknown) {
+                            console.error(e);
                         }
                     }
                     return urlsArr;
@@ -53,7 +53,7 @@ const processURL = async(url: string, interaction: CustomInteraction) => {
                 const video = await searchOne(res);
                 return constructSongObj(video, interaction.member.user);
             })
-            .catch((err: unknown) => console.error(err));
+            .catch((e: unknown) => console.error(e));
     } else if(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/.exec(url)) {
         const playlist = await YouTube.getPlaylist(url).catch(function() {
             throw new Error(':x: Playlist is either private or it does not exist!');

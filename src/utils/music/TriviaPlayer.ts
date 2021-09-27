@@ -60,7 +60,7 @@ export class TriviaPlayer {
                 if(newState.reason === VoiceConnectionDisconnectReason.WebSocketClose && newState.closeCode === 4014) {
                     try {
                         await entersState(this.connection, VoiceConnectionStatus.Connecting, 5000);
-                    } catch{
+                    } catch(e: unknown) {
                         this.connection.destroy();
                     }
                 } else if(this.connection.rejoinAttempts < 5) {
@@ -75,7 +75,8 @@ export class TriviaPlayer {
             } else if(newState.status === VoiceConnectionStatus.Connecting || newState.status === VoiceConnectionStatus.Signalling) {
                 try {
                     await entersState(this.connection, VoiceConnectionStatus.Ready, 20000);
-                } catch{
+                } catch(e: unknown) {
+                    console.error(e);
                     if(this.connection.state.status !== VoiceConnectionStatus.Destroyed) {
                         this.connection.destroy();
                     }
@@ -241,7 +242,7 @@ export class TriviaPlayer {
             }
         });
 
-        this.audioPlayer.on('error', (error) => { console.error(error); });
+        this.audioPlayer.on('error', (e) => { console.error(e); });
 
         this.connection.subscribe(this.audioPlayer);
     }
@@ -269,8 +270,8 @@ export class TriviaPlayer {
                 const resource = createAudioResource(stream, {inputType: StreamType.Arbitrary});
                 this.audioPlayer.play(resource);
             }
-        } catch(err) {
-            console.error(err);
+        } catch(e: unknown) {
+            console.error(e);
             return this.process(queue);
         }
     }
