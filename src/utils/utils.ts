@@ -61,11 +61,11 @@ const setupOption = <T extends SlashCommandOption>(config: {name: string, descri
     return option;
 };
 
-const isSpotifyURL = (arg: string): RegExpExecArray | null => /^(spotify:|https:\/\/[a-z]+\.spotify\.com\/)/.exec(arg);
-const isYouTubeVideoURL = (arg: string): RegExpExecArray | null => /^(http(s)?:\/\/)?(m.)?((w){3}.)?(music.)?youtu(be|.be)?(\.com)?\/.+/.exec(arg);
-const isYouTubePlaylistURL = (arg: string): RegExpExecArray | null => /^https?:\/\/(music.)?(www.youtube.com|youtube.com)\/playlist(.*)$/.exec(arg);
+const isSpotifyURL = (arg: string): boolean => (/^(spotify:|https:\/\/[a-z]+\.spotify\.com\/)/.test(arg));
+const isYouTubeVideoURL = (arg: string): boolean => (/^(http(s)?:\/\/)?(m.)?((w){3}.)?(music.)?youtu(be|.be)?(\.com)?\/.+/.test(arg));
+const isYouTubePlaylistURL = (arg: string): boolean => (/^https?:\/\/(music.)?(www.youtube.com|youtube.com)\/playlist(.*)$/.test(arg));
 
-const validateURL = (url: string): RegExpExecArray | null => isYouTubePlaylistURL(url) || isYouTubeVideoURL(url) || isSpotifyURL(url);
+const validateURL = (url: string): boolean => isYouTubePlaylistURL(url) || isYouTubeVideoURL(url) || isSpotifyURL(url);
 
 type FetchConfig = {method?: 'GET' | 'POST', headers?: {'client-id'?: string, Authorization: string}};
 const fetch = f as <T>(url: string, config?: FetchConfig) => Promise<{slug: string, status: string, json: () => Promise<T & {length: number}>, text: () => Promise<string>}>;

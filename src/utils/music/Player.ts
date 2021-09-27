@@ -20,7 +20,7 @@ class MusicPlayer {
     private loopQueue = false;
     private skipTimer = false;
     private isPreviousTrack = false;
-    private nowPlaying: PlayTrack = null!;
+    private nowPlaying: PlayTrack | null = null;
 
     constructor() {
         this.audioPlayer = createAudioPlayer();
@@ -75,10 +75,14 @@ class MusicPlayer {
         this.audioPlayer.on('stateChange', (oldState, newState) => {
             if(newState.status === AudioPlayerStatus.Idle && oldState.status !== AudioPlayerStatus.Idle) {
                 if(this.loopSong) {
-                    this.queue.unshift(this.nowPlaying);
+                    if(this.nowPlaying !== null) {
+                        this.queue.unshift(this.nowPlaying);
+                    }
                     void this.process(this.queue);
                 } else if(this.loopQueue) {
-                    this.queue.push(this.nowPlaying);
+                    if(this.nowPlaying !== null) {
+                        this.queue.push(this.nowPlaying);
+                    }
                     void this.process(this.queue);
                 } else {
                     if(this.nowPlaying !== null) {
@@ -98,17 +102,19 @@ class MusicPlayer {
                     }
                 }
             } else if(newState.status === AudioPlayerStatus.Playing) {
-                const queueHistory = this.getQueueHistory();
-                const playingEmbed = new MessageEmbed()
-                    .setThumbnail(this.nowPlaying.thumbnail)
-                    .setTitle(this.nowPlaying.name)
-                    .setColor('#ff0000')
-                    .addField('Duration', ':stopwatch: ' + this.nowPlaying.duration, true)
-                    .setFooter(`Requested by ${this.nowPlaying.memberDisplayName}!`, this.nowPlaying.memberAvatar);
-                if(queueHistory.length) {
-                    playingEmbed.addField('Previous Song', queueHistory[0].name, true);
+                if(this.nowPlaying !== null) {
+                    const queueHistory = this.getQueueHistory();
+                    const playingEmbed = new MessageEmbed()
+                        .setThumbnail(this.nowPlaying.thumbnail)
+                        .setTitle(this.nowPlaying.name)
+                        .setColor('#ff0000')
+                        .addField('Duration', ':stopwatch: ' + this.nowPlaying.duration, true)
+                        .setFooter(`Requested by ${this.nowPlaying.memberDisplayName}!`, this.nowPlaying.memberAvatar);
+                    if(queueHistory.length) {
+                        playingEmbed.addField('Previous Song', queueHistory[0].name, true);
+                    }
+                    void this.textChannel.send({embeds: [playingEmbed]});
                 }
-                void this.textChannel.send({embeds: [playingEmbed]});
             }
         });
 
@@ -134,7 +140,7 @@ class MusicPlayer {
         if(this.commandLock) this.commandLock = false;
         try {
             //const resource = await this.createAudioResource(song.url);
-            const stream = ytdl(song?.url || '', {filter: 'audio', quality: 'highestaudio', highWaterMark: 1 << 25});
+            const stream = ytdl(song.url || '', {filter: 'audio', quality: 'highestaudio', highWaterMark: 1 << 25});
             const resource = createAudioResource(stream, {inputType: StreamType.Arbitrary});
             this.audioPlayer.play(resource);
         } catch(e: unknown) {

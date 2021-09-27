@@ -23,7 +23,7 @@ const handleSubscription = async(interaction: CustomInteraction, player: TriviaP
     const {voiceChannel} = queue[0];
 
     const connection = joinVoiceChannel({
-        channelId: voiceChannel.id,
+        channelId: voiceChannel?.id ?? '',
         guildId: interaction.guild.id,
         adapterCreator: interaction.guild.voiceAdapterCreator
     });
@@ -85,7 +85,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
 
     membersInChannel?.each((user) => {
         if(user.user.bot) { return; }
-        triviaPlayer?.score.set(user.user.username, 0);
+        triviaPlayer.score.set(user.user.username, 0);
     });
 
     // play and display embed that says trivia started and how many songs are going to be

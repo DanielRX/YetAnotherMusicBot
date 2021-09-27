@@ -25,7 +25,7 @@ const commandFiles = fs
     .flat();
 
 for(const file of commandFiles) {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    // eslint-disable-next-line @typescript-eslint/no-var-requires,@typescript-eslint/no-require-imports
     const command: Command = require(`${file}`);
     if(Object.keys(command).length === 0) continue;
     commands.push(command.data.toJSON());

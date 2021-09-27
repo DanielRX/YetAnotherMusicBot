@@ -123,7 +123,7 @@ export class TriviaPlayer {
                 let songSingerFoundTime = -1;
                 const answerTimeout = 1500;
 
-                let lastMessage: Message = null!;
+                let lastMessage: Message | null = null;
 
                 let skipCounter = 0;
                 const skippedArray: string[] = [];

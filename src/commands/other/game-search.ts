@@ -16,7 +16,22 @@ export const options = [
 
 export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
-type GameData = {background_image: string, name: string, developers: ({name: string})[], publishers: ({name: string})[], genres: ({name: string})[],redirect: boolean, id: string, tba: string, released: string, esrb_rating: {name: string}, description_raw: string, rating: string, platforms: ({platform: {name: string}})[], stores: ({store: {name: string}, url: string})[]};
+type GameData = {
+    background_image: string,
+    name: string,
+    developers: ({name: string})[],
+    publishers: ({name: string})[],
+    genres: ({name: string})[],
+    redirect: boolean,
+    id: string,
+    tba: string,
+    released: string,
+    esrb_rating: {name: string} | null,
+    description_raw: string,
+    rating: string | null,
+    platforms: ({platform: {name: string}})[],
+    stores: ({store: {name: string}, url: string})[]
+};
 
 const getGameDetails = async(query: string) => {
     const url = `https://api.rawg.io/api/games/${query}?key=${config.rawgAPI}`;
@@ -53,7 +68,7 @@ const getGameDetails = async(query: string) => {
 
 export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message | void> => {
     if(!config.rawgAPI) { return interaction.reply('This command is not enabled on this bot!'); }
-    const gameTitleFiltered = `${interaction.options.get('game')?.value}`?.replace(/ /g, '-').replace(/'/g, '').toLowerCase();
+    const gameTitleFiltered = `${interaction.options.get('game')?.value}`.replace(/ /g, '-').replace(/'/g, '').toLowerCase();
 
     // using this link it provides all the info, instead of using search
     return getGameDetails(gameTitleFiltered)

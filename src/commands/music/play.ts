@@ -113,10 +113,10 @@ const handleSpotifyURL = (interaction: CustomInteraction): Promise<APIMessage | 
             if(nextFlag || jumpFlag) {
                 flagLogic(interaction, video, jumpFlag);
             } else {
-                player?.queue.push(constructSongObj(video, interaction.member.voice.channel as VoiceChannel, interaction.member.user));
+                player.queue.push(constructSongObj(video, interaction.member.voice.channel as VoiceChannel, interaction.member.user));
                 player.commandLock = false;
-                if(player?.audioPlayer.state.status !== AudioPlayerStatus.Playing) {
-                    return handleSubscription(player?.queue, interaction, player as unknown as MusicPlayer);
+                if(player.audioPlayer.state.status !== AudioPlayerStatus.Playing) {
+                    return handleSubscription(player.queue, interaction, player as unknown as MusicPlayer);
                 }
                 return interaction.followUp(`Added **${video.title}** to queue`);
             }
@@ -188,7 +188,7 @@ const searchYoutube = async(interaction: CustomInteraction, voiceChannel: VoiceC
         const audioPlayer = playerManager.audioPlayer;
         if(nextFlag || jumpFlag) {
             playerManager.queue.unshift(constructSongObj(video, voiceChannel, interaction.member.user));
-            if(jumpFlag && audioPlayer?.state.status === AudioPlayerStatus.Playing) {
+            if(jumpFlag && audioPlayer.state.status === AudioPlayerStatus.Playing) {
                 playerManager.loopSong = false;
                 audioPlayer.stop();
                 return interaction.followUp('Skipped song!');
@@ -199,18 +199,17 @@ const searchYoutube = async(interaction: CustomInteraction, voiceChannel: VoiceC
         if(audioPlayer.state.status !== AudioPlayerStatus.Playing) {
             const newPlayer = playerManager;
             void handleSubscription(newPlayer.queue, interaction, newPlayer);
-        } else if(audioPlayer.state.status === AudioPlayerStatus.Playing) {
-            player.commandLock = false;
-            return interaction.followUp(`Added **${video.title}** to queue`);
+            return;
         }
-        return;
+        player.commandLock = false;
+        return interaction.followUp(`Added **${video.title}** to queue`);
     };
 
     playOptionsCollector?.on('collect', async(i: SelectMenuInteraction) => {
         if(i.user.id !== interaction.user.id) {
             return i.reply({content: 'This element is not for you!', ephemeral: true});
         }
-        playOptionsCollector?.stop();
+        playOptionsCollector.stop();
         const value = i.values[0];
         if(value === 'cancel_option') {
             if(playOptions) {
@@ -380,7 +379,7 @@ const handlePlayFromHistory = async(interaction: CustomInteraction, message: Mes
                 }
                 if(nextFlag || jumpFlag) {
                     player.queue.unshift(player.queueHistory[index]);
-                    if(jumpFlag && player.audioPlayer.state.status === AudioPlayerStatus.Playing) {
+                    if(jumpFlag) { // && player.audioPlayer.state.status === AudioPlayerStatus.Playing
                         player.loopSong = false;
                         player.audioPlayer.stop();
                     }
@@ -447,12 +446,12 @@ const handlePlayPlaylist = async(interaction: CustomInteraction, message: Messag
                 if(!hasHistoryField) break;
                 if(player.audioPlayer.state.status !== AudioPlayerStatus.Playing) {
                     player.queue.unshift(player.getQueueHistory()[index]);
-                    void handleSubscription(player?.queue, interaction, player);
+                    void handleSubscription(player.queue, interaction, player);
                     break;
                 }
                 if(nextFlag || jumpFlag) {
                     player.queue.unshift(player.getQueueHistory()[index]);
-                    if(jumpFlag && player.audioPlayer.state.status == AudioPlayerStatus.Playing) {
+                    if(jumpFlag) { // && player.audioPlayer.state.status === AudioPlayerStatus.Playing
                         player.loopSong = false;
                         player.audioPlayer.stop();
                     }
@@ -479,7 +478,7 @@ const handlePlayPlaylist = async(interaction: CustomInteraction, message: Messag
                     //   )
                     //   .build();
                 } else {
-                    void handleSubscription(player?.queue, interaction, player);
+                    void handleSubscription(player.queue, interaction, player);
                 }
                 break;
                 // 2: Play the shuffled saved playlist
@@ -552,7 +551,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
         interaction.client.playerManager.set(interaction.guildId, player as unknown as CustomAudioPlayer);
     }
 
-    if(player?.commandLock) {
+    if(player.commandLock) {
         return interaction.followUp('Please wait until the last play call is processed');
     }
 

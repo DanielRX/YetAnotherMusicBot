@@ -14,9 +14,9 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
     const player = interaction.client.playerManager.get(interaction.guildId);
     const guildData = interaction.guild.client.guildData.get(interaction.guild.id) as unknown as GuildData;
     if(player?.audioPlayer.state.status !== AudioPlayerStatus.Playing) { return interaction.reply('There is no song playing right now!'); }
-    if(voiceChannel.id !== interaction.guild.me?.voice?.channel?.id) { return interaction.reply('You must be in the same voice channel as the bot in order to skip!'); }
+    if(voiceChannel.id !== interaction.guild.me?.voice.channel?.id) { return interaction.reply('You must be in the same voice channel as the bot in order to skip!'); }
     if(guildData.triviaData.isTriviaRunning) { return interaction.reply(`You can't skip a trivia! Use end-trivia command instead`); }
     void interaction.reply(`Skipped **${interaction.client.playerManager.get(interaction.guildId)?.nowPlaying?.name}**`);
-    player?.audioPlayer.stop();
+    player.audioPlayer.stop();
 };
 

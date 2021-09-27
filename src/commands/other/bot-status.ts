@@ -66,6 +66,6 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
     if(isOwner) { StatusEmbed.addField('Dependency List', `node: ${process.version.replace(/v/, '')}\n        ${libList}`); }
 
     void interaction.reply({embeds: [StatusEmbed]});
-    await pingMsg?.delete();
+    await pingMsg.delete();
 };
 

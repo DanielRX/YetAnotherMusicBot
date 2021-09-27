@@ -5,6 +5,7 @@ import {SlashCommandBuilder} from '@discordjs/builders';
 import {MessageEmbed} from 'discord.js';
 import {PagesBuilder} from 'discord.js-pages';
 import {setupOption, fetch} from '../../utils/utils';
+import type {Nullable} from 'discord-api-types/utils/internals';
 
 export const name = 'tv-show-search';
 export const description = 'Search for TV shows';
@@ -16,7 +17,7 @@ export const options = [
 export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
 type Show = {
-    show: {
+    show: Nullable<{
         runtime: string,
         name: string,
         summary: string,
@@ -37,7 +38,7 @@ type Show = {
             original: string
         },
         genres: string[]
-    }
+    }>
 };
 
 const getShowSearch = async(showQuery: string): Promise<Show[]> => {
@@ -90,44 +91,38 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
     try {
         const embedArray = [];
         for(let i = 1; i <= showResponse.length; ++i) {
-            // Filter Thumbnail URL
-            const showThumbnail = showResponse[i - 1].show.image?.original || 'https://static.tvmaze.com/images/no-img/no-img-portrait-text.png';
+            const showThumbnail = showResponse[i - 1].show.image?.original ?? 'https://static.tvmaze.com/images/no-img/no-img-portrait-text.png';
+            const showSummary = cleanUp(showResponse[i - 1].show.summary ?? 'None listed');
+            const showLanguage = showResponse[i - 1].show.language ?? 'None listed';
 
-            // Filter Summary Row 1
-            const showSummary = cleanUp(showResponse[i - 1].show.summary || 'None listed');
-
-            // Filter Language Row 2
-            const showLanguage = showResponse[i - 1].show.language || 'None listed';
-
-            // Filter Genere Row 2
             let showGenre = '';
-            if(showResponse[i - 1].show.genres.length == 0) showGenre = 'None listed';
-            if(typeof showResponse[i - 1].show.genres === 'object') showGenre = showResponse[i - 1].show.genres.join(' ');
+            const genres = showResponse[i - 1].show.genres;
+            if(genres?.length == 0) showGenre = 'None listed';
+            if(Array.isArray(genres)) showGenre = genres.join(' ');
 
-            // Filter Types Row 2
-            const showType = showResponse[i - 1].show.type || 'None listed';
-
-            // Filter Premiered Row 3
-            const showPremiered = showResponse[i - 1].show.premiered || 'None listed';
+            const showType = showResponse[i - 1].show.type ?? 'None listed';
+            const showPremiered = showResponse[i - 1].show.premiered ?? 'None listed';
 
             // Filter Network Row 3
             let showNetwork = '';
-            if(showResponse[i - 1].show.network === null) showNetwork = 'None listed';
-            else
-                showNetwork = `(**${showResponse[i - 1].show.network.country.code}**) ${showResponse[i - 1].show.network.name}`;
-
+            const network = showResponse[i - 1].show.network;
+            if(network === null) {
+                showNetwork = 'None listed';
+            } else {
+                showNetwork = `(**${network.country.code}**) ${network.name}`;
+            }
             // Filter Runtime Row 3
             let showRuntime = showResponse[i - 1].show.runtime;
             if(showRuntime === null) showRuntime = 'None listed';
             else showRuntime = showResponse[i - 1].show.runtime + ' Minutes';
 
             // Filter Ratings Row 4
-            const showRatings = showResponse[i - 1].show.rating.average || 'None listed';
+            const showRatings = showResponse[i - 1].show.rating?.average ?? 'None listed';
 
             // Build each Tv Shows Embed
             embedArray.push(new MessageEmbed()
-                .setTitle(showResponse[i - 1].show.name.toLocaleString())
-                .setURL(showResponse[i - 1].show.url)
+                .setTitle((showResponse[i - 1].show.name ?? '').toLocaleString())
+                .setURL(showResponse[i - 1].show.url ?? '')
                 .setThumbnail(showThumbnail)
                 // Row 1
                 .setDescription('**Summary**\n' + showSummary)
