@@ -1,4 +1,4 @@
-const {getData} = require('spotify-url-info');
+import {getData} from 'spotify-url-info';
 
 it('should return data from spotify', () => {
     return getData('https://open.spotify.com/track/4fzsfWzRhPawzqhX8Qt9F3?si=c7359b61c4404fdb').then((data) => {

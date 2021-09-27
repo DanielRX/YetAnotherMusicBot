@@ -1,3 +1,5 @@
+import {readJSONSync} from 'fs-extra';
+
 type Options = {
     playLiveStreams: boolean,
     playVideosLongerThan1Hour: boolean,
@@ -8,7 +10,7 @@ type Options = {
     deleteOldPlayMessage: boolean
 };
 
-const opts: Options = require('../options.json');
+const opts: Options = readJSONSync('../options.json');
 
 if(typeof opts.playLiveStreams !== 'boolean') opts.playLiveStreams = true;
 if(typeof opts.maxQueueLength !== 'number' || opts.maxQueueLength < 1) { opts.maxQueueLength = 1000; }

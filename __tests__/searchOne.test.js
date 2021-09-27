@@ -1,4 +1,4 @@
-const {searchOne} = require('../utils/music/searchOne');
+import {searchOne} from '../utils/music/searchOne';
 
 const mockData = {
     artists: [
