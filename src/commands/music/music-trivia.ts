@@ -56,7 +56,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
         return interaction.followUp('There is already a trivia in play!');
     }
 
-    const numberOfSongs = Number(interaction.options.get('length')?.value ?? 3);
+    const numberOfSongs = Number(interaction.options.get('length')?.value ?? 25);
     const songs = await fs.readJSON('./resources/music/mk2/trivia.json') as TriviaElement[]; // TODO: Move type to types
     const albumData = await fs.readJSON('./resources/music/mk2/albums.json') as {[key: string]: {[key: string]: unknown}};
     const artistsData = await fs.readJSON('./resources/music/mk2/artists.json') as {[key: string]: string};
