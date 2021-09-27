@@ -44,7 +44,7 @@ void (async() => {
 
 import * as interactionCreate from './events/interactionCreate';
 
-client.on(interactionCreate.name, (interaction) => interactionCreate.execute(interaction as CustomInteraction));
+client.on(interactionCreate.name, async(interaction) => interactionCreate.execute(interaction as CustomInteraction));
 
 client.once('ready', () => {
     (client as any).playerManager = new Map();

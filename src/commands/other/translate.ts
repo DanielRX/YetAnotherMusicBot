@@ -24,7 +24,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
     }
 
     translate(`${interaction.options.get('text')?.value}`, {to: targetLang})
-        .then((response) => {
+        .then(async(response) => {
             const embed = new MessageEmbed()
                 .setColor('#FF0000')
                 .setTitle('Google Translate: ')
@@ -33,7 +33,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
                 .setFooter('Powered by Google Translate!');
             return interaction.reply({embeds: [embed]});
         })
-        .catch((e: unknown) => {
+        .catch(async(e: unknown) => {
             console.error(e);
             return interaction.reply(':x: Something went wrong when trying to translate the text');
         });

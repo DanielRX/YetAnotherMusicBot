@@ -11,8 +11,8 @@ export const data = new SlashCommandBuilder().setName(name).setDescription(descr
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     // thanks to https://evilinsult.com :)
     return fetch<{insult: string}>('https://evilinsult.com/generate_insult.php?lang=en&type=json')
-        .then((res) => res.json())
-        .then((json) => {
+        .then(async(res) => res.json())
+        .then(async(json) => {
             const embed = new MessageEmbed()
                 .setColor('#E41032')
                 .setAuthor('Evil Insult', 'https://i.imgur.com/bOVpNAX.png', 'https://evilinsult.com')
@@ -21,7 +21,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
                 .setFooter('Powered by evilinsult.com', '');
             return interaction.reply({embeds: [embed]});
         })
-        .catch((e: unknown) => {
+        .catch(async(e: unknown) => {
             console.error(e);
             return interaction.reply(':x: Failed to deliver insult!');
         });

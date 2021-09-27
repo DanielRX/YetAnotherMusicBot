@@ -48,7 +48,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
     const country = `${interaction.options.get('country')?.value}`;
     if(country === 'all' || country === 'world' || country === 'global') {
         return getWorldStats()
-            .then((res) => {
+            .then(async(res) => {
                 const covidall = new MessageEmbed()
                     .setTitle('Worldwide Stats')
                     .setColor('RANDOM')
@@ -68,13 +68,13 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
 
                 return interaction.reply({embeds: [covidall]});
             })
-            .catch(function onError(err) {
+            .catch(async function onError(err) {
                 console.error(err);
                 return interaction.reply('Something went wrong!');
             });
     }
     await getCountryStats(country)
-        .then((res) => {
+        .then(async(res) => {
             const covidcountry = new MessageEmbed()
                 .setTitle(`Country Stats for ${res.country}`)
                 .setColor('RANDOM')
@@ -94,7 +94,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
 
             return interaction.reply({embeds: [covidcountry]});
         })
-        .catch((e: unknown) => {
+        .catch(async(e: unknown) => {
             console.error(e);
             return interaction.reply('Something went wrong!');
         });

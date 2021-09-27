@@ -11,8 +11,8 @@ export const data = new SlashCommandBuilder().setName(name).setDescription(descr
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     // thanks to https://api.chucknorris.io
     return fetch<{value: string}>('https://api.chucknorris.io/jokes/random')
-        .then((res) => res.json())
-        .then((json) => {
+        .then(async(res) => res.json())
+        .then(async(json) => {
             const embed = new MessageEmbed()
                 .setColor('#CD7232')
                 .setAuthor('Chuck Norris', 'https://i.imgur.com/wr1g92v.png', 'https://chucknorris.io')
@@ -21,7 +21,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
                 .setFooter('Powered by chucknorris.io', '');
             return interaction.reply({embeds: [embed]});
         })
-        .catch((e: unknown) => {
+        .catch(async(e: unknown) => {
             console.error(e);
             return interaction.reply(':x: An error occured, Chuck is investigating this!');
         });

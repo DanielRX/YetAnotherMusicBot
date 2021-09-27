@@ -14,8 +14,8 @@ export const data = new SlashCommandBuilder().setName(name).setDescription(descr
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     return fetch<{list: ({definition: string, permalink: string})[]}>(`https://api.urbandictionary.com/v0/define?term=${interaction.options.get('query')?.value}`)
-        .then((res) => res.json())
-        .then((json) => {
+        .then(async(res) => res.json())
+        .then(async(json) => {
             const embed = new MessageEmbed()
                 .setColor('#BB7D61')
                 .setTitle(`${interaction.options.get('query')?.value}`)
@@ -26,7 +26,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
                 .setFooter('Powered by UrbanDictionary', '');
             return interaction.reply({embeds: [embed]});
         })
-        .catch((e: unknown) => {
+        .catch(async(e: unknown) => {
             console.error(e); // no need to spam console for each time it doesn't find a query
             return interaction.reply('Failed to deliver definition :sob:');
         });

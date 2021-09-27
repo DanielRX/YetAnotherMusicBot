@@ -32,4 +32,4 @@ const exec = (interaction: CustomInteraction): string => {
 
 export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
-export const execute = (interaction: CustomInteraction): Promise<void> => interaction.reply(exec(interaction));
+export const execute = async(interaction: CustomInteraction): Promise<void> => interaction.reply(exec(interaction));

@@ -72,7 +72,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
 
     // using this link it provides all the info, instead of using search
     return getGameDetails(gameTitleFiltered)
-        .then((response) => {
+        .then(async(response) => {
             const releaseDate = (response.tba) ? 'TBA' : response.released || 'None Listed.';
             const esrbRating = (response.esrb_rating == null) ? 'None Listed.' : response.esrb_rating.name;
             const userRating = (response.rating == null) ? 'None Listed.' : response.rating + '/5';
@@ -107,6 +107,6 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
             }
             return embed.build();
         })
-        .catch((e: unknown) => interaction.reply(e as any));
+        .catch(async(e: unknown) => interaction.reply(e as any));
 };
 

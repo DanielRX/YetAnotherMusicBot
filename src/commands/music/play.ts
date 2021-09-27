@@ -96,7 +96,7 @@ const handleSpotifyPlaylistData = async(interaction: CustomInteraction, data: an
     if(player.audioPlayer.state.status !== AudioPlayerStatus.Playing) { return handleSubscription(player.queue, interaction, player as unknown as MusicPlayer); }
 };
 
-const handleSpotifyURL = (interaction: CustomInteraction): Promise<APIMessage | Message> => {
+const handleSpotifyURL = async(interaction: CustomInteraction): Promise<APIMessage | Message> => {
     const player = interaction.client.playerManager.get(interaction.guildId) as unknown as CustomAudioPlayer;
     const rawQuery = `${interaction.options.get('query')?.value}`;
     const {nextFlag, jumpFlag, query} = getFlags(rawQuery);
@@ -125,7 +125,7 @@ const handleSpotifyURL = (interaction: CustomInteraction): Promise<APIMessage | 
         }
     };
 
-    return getData(query).then(handleSpotifyData).catch((e: unknown) => {
+    return getData(query).then(handleSpotifyData).catch(async(e: unknown) => {
         deletePlayerIfNeeded(interaction);
         console.error(e);
         return interaction.followUp(`I couldn't find what you were looking for :(`);
@@ -221,7 +221,7 @@ const searchYoutube = async(interaction: CustomInteraction, voiceChannel: VoiceC
 
         YouTube.getVideo(`https://www.youtube.com/watch?v=${videos[videoIndex - 1].id}`)
             .then(handleYoutubeData)
-            .catch((e: unknown) => {
+            .catch(async(e: unknown) => {
                 player.commandLock = false;
                 deletePlayerIfNeeded(interaction);
                 if(playOptions) playOptions.delete().catch(console.error);

@@ -10,8 +10,8 @@ export const data = new SlashCommandBuilder().setName(name).setDescription(descr
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     return fetch<{activity: string}>('https://www.boredapi.com/api/activity?participants=1')
-        .then((res) => res.json())
-        .then((json) => {
+        .then(async(res) => res.json())
+        .then(async(json) => {
             const embed = new MessageEmbed()
                 .setColor('#6BA3FF')
                 .setAuthor('Bored Activites', 'https://i.imgur.com/7Y2F38n.png', 'https://www.boredapi.com/')
@@ -20,7 +20,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
                 .setFooter('Powered by boredapi.com', '');
             return interaction.reply({embeds: [embed]});
         })
-        .catch((e: unknown) => {
+        .catch(async(e: unknown) => {
             console.error(e);
             return interaction.reply('Failed to deliver activity :sob:');
         });
