@@ -21,7 +21,7 @@ const handleSubscription = async(interaction: CustomInteraction, player: TriviaP
     const {queue} = player;
     const {voiceChannel} = queue[0];
 
-    const connection = joinVoiceChannel({channelId: voiceChannel?.id ?? '', guildId: interaction.guild.id, adapterCreator: interaction.guild.voiceAdapterCreator});
+    const connection = joinVoiceChannel({channelId: voiceChannel?.id, guildId: interaction.guild.id, adapterCreator: interaction.guild.voiceAdapterCreator});
 
     player.textChannel = interaction.channel as BaseGuildTextChannel;
     player.passConnection(connection);
@@ -56,7 +56,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
         return interaction.followUp('There is already a trivia in play!');
     }
 
-    const numberOfSongs = Number(interaction.options.get('length')?.value ?? 25);
+    const numberOfSongs = Number(interaction.options.get('length')?.value ?? 3);
     const songs = await fs.readJSON('./resources/music/mk2/trivia.json') as TriviaElement[]; // TODO: Move type to types
     const albumData = await fs.readJSON('./resources/music/mk2/albums.json') as {[key: string]: {[key: string]: unknown}};
     const artistsData = await fs.readJSON('./resources/music/mk2/artists.json') as {[key: string]: string};
@@ -72,6 +72,8 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
     randomLinks.forEach(({artists, name, previewUrl, youtubeUrl}) => {
         triviaPlayer.queue.push({url: youtubeUrl, artists, previewUrl, name, voiceChannel} as PlayTrack);
     });
+
+    console.log(JSON.stringify(triviaPlayer.queue));
 
     const membersInChannel = interaction.member.voice.channel?.members;
 

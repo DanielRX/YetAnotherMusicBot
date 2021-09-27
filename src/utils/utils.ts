@@ -1,6 +1,6 @@
 // https://stackoverflow.com/a/5306832/9421002
-import f from 'node-fetch';
-import {SlashCommandStringOption, SlashCommandIntegerOption, SlashCommandBooleanOption} from '@discordjs/builders';
+const f = require('node-fetch');
+import {SlashCommandStringOption, SlashCommandIntegerOption, SlashCommandBooleanOption, SlashCommandUserOption} from '@discordjs/builders';
 import type {OptionConfig, SlashCommandOption} from './types';
 
 const arrayMove = <T>(arr: T[], oldIndex: number, newIndex: number): T[] => {
@@ -52,10 +52,16 @@ const setupBoolOption = (config: OptionConfig) => (option: SlashCommandBooleanOp
     return option;
 };
 
+const setupUserOption = (config: OptionConfig) => (option: SlashCommandUserOption): SlashCommandUserOption => {
+    option = option.setName(config.name).setDescription(config.description).setRequired(config.required);
+    return option;
+};
+
 const setupOption = <T extends SlashCommandOption>(config: OptionConfig) => (option: T): T => {
     if(option instanceof SlashCommandBooleanOption) { return setupBoolOption(config)(option) as T; }
     if(option instanceof SlashCommandIntegerOption) { return setupIntOption(config)(option) as T; }
     if(option instanceof SlashCommandStringOption) { return setupStringOption(config)(option) as T; }
+    if(option instanceof SlashCommandUserOption) { return setupUserOption(config)(option) as T; }
     return option;
 };
 

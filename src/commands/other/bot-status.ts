@@ -4,7 +4,7 @@ import Discord from 'discord.js';
 import os from 'os';
 import {readJsonSync} from 'fs-extra';
 import {commands} from '../../utils/client';
-const pkg = readJsonSync('../../../package.json');
+const pkg = readJsonSync('./package.json');
 
 export const name = 'bot-status';
 export const description = 'Shows the current system status';

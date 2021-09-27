@@ -13,9 +13,9 @@ const rest = new REST({version: '9'}).setToken(config.token);
 const commandsArr = [];
 
 const commandFiles = fs
-    .readdirSync('./commands')
+    .readdirSync('./src/commands')
     .map((folder) => fs
-        .readdirSync(`./commands/${folder}`)
+        .readdirSync(`./src/commands/${folder}`)
         .filter((file) => file.endsWith('.ts'))
         .map((file) => `./commands/${folder}/${file}`))
     .flat();
@@ -25,7 +25,7 @@ for(const file of commandFiles) {
     const command = require(`${file}`) as Command;
     if(Object.keys(command).length === 0) continue;
     let data: any = new SlashCommandBuilder().setName(command.name).setDescription(command.description);
-    for(const option of command.options) {
+    for(const option of command.options ?? []) {
         switch(option.type) {
             case 'string': data = data.addStringOption(setupOption(option)); break;
             case 'user': data = data.addUserOption(setupOption(option)); break;
@@ -33,9 +33,8 @@ for(const file of commandFiles) {
             case 'integer': data = data.addIntegerOption(setupOption(option)); break;
         }
     }
-
-    commandsArr.push(command.data.toJSON());
-    commands.set(command.data.name, command);
+    commandsArr.push(data.toJSON());
+    commands.set(command.name, command);
 }
 
 void (async() => {

@@ -10,7 +10,7 @@ type Options = {
     deleteOldPlayMessage: boolean
 };
 
-const opts = readJSONSync('../options.json') as Options;
+const opts = readJSONSync('./options.json') as Options;
 
 if(typeof opts.playLiveStreams !== 'boolean') opts.playLiveStreams = true;
 if(typeof opts.maxQueueLength !== 'number' || opts.maxQueueLength < 1) { opts.maxQueueLength = 1000; }
