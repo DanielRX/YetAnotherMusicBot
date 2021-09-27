@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import type {AudioPlayer, VoiceConnection} from '@discordjs/voice';
 import type {BaseGuildTextChannel, Message} from 'discord.js';
 import type {CustomClient, PlayTrack} from '../types';

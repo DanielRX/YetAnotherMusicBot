@@ -1,6 +1,7 @@
 // @ts-check
 
-export default function() {
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export default () => {
     return {
         queueHistory: [],
         triviaData: {

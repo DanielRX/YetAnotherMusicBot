@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import type {AudioPlayer, VoiceConnection} from '@discordjs/voice';
 
 import {AudioPlayerStatus, createAudioPlayer, entersState, VoiceConnectionDisconnectReason, VoiceConnectionStatus, createAudioResource, StreamType} from '@discordjs/voice';
@@ -35,6 +34,7 @@ class MusicPlayer {
     passConnection(connection: VoiceConnection): void {
         this.connection = connection;
         this.connection.on('stateChange', async(_, newState) => {
+            // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
             switch(newState.status) {
                 case VoiceConnectionStatus.Disconnected: {
                     if(newState.reason === VoiceConnectionDisconnectReason.WebSocketClose && newState.closeCode === 4014) {
