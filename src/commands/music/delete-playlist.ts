@@ -1,6 +1,6 @@
 import type {CustomInteraction} from '../../utils/types';
 import {SlashCommandBuilder} from '@discordjs/builders';
-import Member from '../../utils/models/Member';
+import member from '../../utils/models/Member';
 import {setupOption} from '../../utils/utils';
 
 export const name = 'delete-playlist';
@@ -15,7 +15,7 @@ export const data = new SlashCommandBuilder().setName(name).setDescription(descr
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     const playlistName = interaction.options.get('playlistname')?.value;
     // Check if user has playlists or if user is saved in the DB
-    const userData = await Member.findOne({memberId: interaction.member.id}).exec();
+    const userData = await member.findOne({memberId: interaction.member.id}).exec();
 
     if(!userData) {
         return interaction.reply('You have zero saved playlists!');
@@ -30,6 +30,6 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
         return interaction.reply(`You have no playlist named ${playlistName}`);
     }
     savedPlaylistsClone.splice(location, 1);
-    await Member.updateOne({memberId: interaction.member.id}, {savedPlaylists: savedPlaylistsClone});
+    await member.updateOne({memberId: interaction.member.id}, {savedPlaylists: savedPlaylistsClone});
     return interaction.reply(`I removed **${playlistName}** from your saved playlists!`);
 };

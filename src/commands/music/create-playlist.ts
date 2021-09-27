@@ -1,6 +1,6 @@
 import type {CustomInteraction} from '../../utils/types';
 import {SlashCommandBuilder} from '@discordjs/builders';
-import Member from '../../utils/models/Member';
+import member from '../../utils/models/Member';
 import {setupOption} from '../../utils/utils';
 
 export const name = 'create-playlist';
@@ -16,10 +16,10 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
     const playlistName = `${interaction.options.get('playlistname')?.value}`;
     const {member: {id, user: {username}, joinedAt}} = interaction;
     // Check if the user exists in the db
-    const userData = await Member.findOne({memberId: id}).exec(); // A clone object
+    const userData = await member.findOne({memberId: id}).exec(); // A clone object
     if(!userData) {
         const userObject = {memberId: id, username, joinedAt, savedPlaylists: [{name: playlistName, urls: []}]};
-        const user = new Member(userObject);
+        const user = new member(userObject);
         user.save((err) => {
             if(err) { void interaction.reply('An error has occured, please try again later'); }
         });
@@ -33,7 +33,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
     // Create and save the playlist in the DB
     userData.savedPlaylists.push({name: playlistName, urls: []});
     try {
-        await Member.updateOne({memberId: interaction.member.id}, userData);
+        await member.updateOne({memberId: interaction.member.id}, userData);
         return interaction.reply(`Created a new playlist named **${playlistName}**`);
     } catch(e: unknown) {
         console.error(e);

@@ -11,7 +11,7 @@ export default () => {
             triviaScore: new Map()
         },
         twitchData: {
-            Interval: null,
+            interval: null,
             embedStatus: null,
             isRunning: false
         },

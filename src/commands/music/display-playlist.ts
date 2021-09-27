@@ -1,6 +1,6 @@
 import type {CustomInteraction} from '../../utils/types';
 import {SlashCommandBuilder} from '@discordjs/builders';
-import Member from '../../utils/models/Member';
+import member from '../../utils/models/Member';
 import type {Message} from 'discord.js';
 import {MessageEmbed} from 'discord.js';
 import {setupOption} from '../../utils/utils';
@@ -19,7 +19,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
     void interaction.deferReply();
     const playlistName = `${interaction.options.get('playlistname')?.value}`;
     // Check if user has playlists or if user is saved in the DB
-    const userData = await Member.findOne({memberId: interaction.member.id}).exec();
+    const userData = await member.findOne({memberId: interaction.member.id}).exec();
     if(!userData) {
         return interaction.followUp('You have zero saved playlists!'); //TODO: Swap to reply?
     }

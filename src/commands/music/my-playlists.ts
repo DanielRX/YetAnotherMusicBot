@@ -2,7 +2,7 @@ import type {APIMessage} from 'discord-api-types';
 import type {Message} from 'discord.js';
 import type {CustomInteraction} from '../../utils/types';
 import {SlashCommandBuilder} from '@discordjs/builders';
-import Member from '../../utils/models/Member';
+import member from '../../utils/models/Member';
 import {MessageEmbed} from 'discord.js';
 
 export const name = 'my-playlists';
@@ -13,7 +13,7 @@ export const data = new SlashCommandBuilder().setName(name).setDescription(descr
 export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message> => {
     void interaction.deferReply();
 
-    const userData = await Member.findOne({memberId: interaction.member.id}).exec();
+    const userData = await member.findOne({memberId: interaction.member.id}).exec();
     if(!userData) {
         return interaction.followUp('You have zero saved playlists!');
     }

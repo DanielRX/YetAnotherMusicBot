@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import {fetch} from '../utils';
 import {config} from '../config';
 const {twitchClientID, twitchClientSecret} = config;
@@ -23,9 +24,9 @@ class TwitchAPI {
     }
 
     //userInfo.data[0]
-    public static async getUserInfo<T>(token: string, client_id: string, username: string): Promise<Response<T>> {
+    public static async getUserInfo<T>(token: string, clientId: string, username: string): Promise<Response<T>> {
         try {
-            const json = await fetch<Response<T>>(`https://api.twitch.tv/helix/users?login=${username}`, {method: 'GET', headers: {'client-id': `${client_id}`, Authorization: `Bearer ${token}`}}).then(async(res) => res.json());
+            const json = await fetch<Response<T>>(`https://api.twitch.tv/helix/users?login=${username}`, {method: 'GET', headers: {'client-id': `${clientId}`, Authorization: `Bearer ${token}`}}).then(async(res) => res.json());
             if(json.status == `400`) {
                 throw new Error(`:x: ${username} was Invalid, Please try again.`);
             }
@@ -49,9 +50,9 @@ class TwitchAPI {
     }
 
     // streamInfo.data[0]
-    public static async getStream<T>(token: string, client_id: string, userID: string): Promise<Response<T>> {
+    public static async getStream<T>(token: string, clientId: string, userId: string): Promise<Response<T>> {
         try {
-            const json = await fetch<Response<T>>(`https://api.twitch.tv/helix/streams?user_id=${userID}`, {method: 'GET', headers: {'client-id': `${client_id}`, Authorization: `Bearer ${token}`}}).then(async(res) => res.json());
+            const json = await fetch<Response<T>>(`https://api.twitch.tv/helix/streams?user_id=${userId}`, {method: 'GET', headers: {'client-id': `${clientId}`, Authorization: `Bearer ${token}`}}).then(async(res) => res.json());
             return json;
         } catch(e: unknown) {
             console.error(e);
@@ -59,9 +60,9 @@ class TwitchAPI {
         }
     }
 
-    public static async getGames<T>(token: string, client_id: string, game_id: string): Promise<Response<T>> {
+    public static async getGames<T>(token: string, clientId: string, gameId: string): Promise<Response<T>> {
         try {
-            const json = await fetch<Response<T>>(`https://api.twitch.tv/helix/games?id=${game_id}`, {method: 'GET', headers: {'client-id': `${client_id}`, Authorization: `Bearer ${token}`}}).then(async(res) => res.json());
+            const json = await fetch<Response<T>>(`https://api.twitch.tv/helix/games?id=${gameId}`, {method: 'GET', headers: {'client-id': `${clientId}`, Authorization: `Bearer ${token}`}}).then(async(res) => res.json());
             return json;
         } catch(e: unknown) {
             console.error(e);

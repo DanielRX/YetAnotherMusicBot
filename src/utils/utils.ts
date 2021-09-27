@@ -3,20 +3,20 @@ import f from 'node-fetch';
 import type {SlashCommandUserOption} from '@discordjs/builders';
 import {SlashCommandStringOption, SlashCommandIntegerOption, SlashCommandBooleanOption} from '@discordjs/builders';
 
-const arrayMove = <T>(arr: T[], old_index: number, new_index: number): T[] => {
-    while(old_index < 0) {
-        old_index += arr.length;
+const arrayMove = <T>(arr: T[], oldIndex: number, newIndex: number): T[] => {
+    while(oldIndex < 0) {
+        oldIndex += arr.length;
     }
-    while(new_index < 0) {
-        new_index += arr.length;
+    while(newIndex < 0) {
+        newIndex += arr.length;
     }
-    if(new_index >= arr.length) {
-        let k = new_index - arr.length + 1;
+    if(newIndex >= arr.length) {
+        let k = newIndex - arr.length + 1;
         while(k--) {
             arr.push(undefined as unknown as T);
         }
     }
-    arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
+    arr.splice(newIndex, 0, arr.splice(oldIndex, 1)[0]);
     return arr;
 };
 
@@ -67,6 +67,7 @@ const isYouTubePlaylistURL = (arg: string): boolean => (/^https?:\/\/(music.)?(w
 
 const validateURL = (url: string): boolean => isYouTubePlaylistURL(url) || isYouTubeVideoURL(url) || isSpotifyURL(url);
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 type FetchConfig = {method?: 'GET' | 'POST', headers?: {'client-id'?: string, Authorization: string}};
 const fetch = f as <T>(url: string, config?: FetchConfig) => Promise<{slug: string, status: string, json: () => Promise<T & {length: number}>, text: () => Promise<string>}>;
 

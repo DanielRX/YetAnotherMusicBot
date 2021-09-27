@@ -1,6 +1,6 @@
 {
-  "mongo_URI": "mongodb://mongo:27017/yamb",
-  "client_id": "your-discord-id",
+  "mongoURI": "mongodb://mongo:27017/yamb",
+  "clientId": "your-discord-id",
   "token": "your-discord-token",
   "invite": "true",
   "geniusLyricsAPI": "your-key",

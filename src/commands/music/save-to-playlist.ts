@@ -3,7 +3,7 @@ import type {Message, User} from 'discord.js';
 import type {Video} from 'youtube-sr';
 import type {CustomInteraction, PlayTrack, Track} from '../../utils/types';
 import {SlashCommandBuilder} from '@discordjs/builders';
-import Member from '../../utils/models/Member';
+import member from '../../utils/models/Member';
 import YouTube from 'youtube-sr';
 import {getData} from 'spotify-url-info';
 import {searchOne} from '../../utils/music/searchOne';
@@ -85,7 +85,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
     const playlistName = interaction.options.get('playlistname')?.value;
     const url = `${interaction.options.get('url')?.value}`;
 
-    const userData = await Member.findOne({memberId: interaction.member.id}).exec();
+    const userData = await member.findOne({memberId: interaction.member.id}).exec();
     if(!userData) { return interaction.followUp('You have no custom playlists!'); }
     const savedPlaylistsClone = userData.savedPlaylists;
     if(savedPlaylistsClone.length == 0) { return interaction.followUp('You have no custom playlists!'); }
@@ -106,7 +106,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
                 savedPlaylistsClone[location].urls = urlsArrayClone;
                 void interaction.followUp(`I added **${savedPlaylistsClone[location].urls[savedPlaylistsClone[location].urls.length - 1].name}** to **${playlistName}**`);
             }
-            return Member.updateOne({memberId: interaction.member.id}, {savedPlaylists: savedPlaylistsClone}).exec();
+            return member.updateOne({memberId: interaction.member.id}, {savedPlaylists: savedPlaylistsClone}).exec();
         });
     } else {
         return interaction.followUp(`You have no playlist named ${playlistName}`);

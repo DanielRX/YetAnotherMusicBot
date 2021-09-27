@@ -10,6 +10,6 @@ const schema = new mongoose.Schema<MemberT>({
     savedPlaylists: Array
 });
 
-const Member = mongoose.model<MemberT>('Member', schema);
+const member = mongoose.model<MemberT>('Member', schema);
 
-export default Member;
+export default member;

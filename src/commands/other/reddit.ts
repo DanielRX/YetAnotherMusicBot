@@ -3,19 +3,19 @@ import {SlashCommandBuilder} from '@discordjs/builders';
 import type {CommandInteraction, SelectMenuInteraction} from 'discord.js';
 import {MessageEmbed, MessageActionRow, MessageSelectMenu} from 'discord.js';
 import {PagesBuilder} from 'discord.js-pages';
-import {readJSONSync} from 'fs-extra';
 import type {CustomInteraction} from '../../utils/types';
-const {MaxResponseTime} = readJSONSync('../../../options.json');
+import {options} from '../../utils/options';
 
 export const name = 'reddit';
 export const description = 'Replies with 10 top daily posts in wanted subreddit, you can specify sorting and time!';
 
-export const options = [
+export const options2 = [
     {name: 'subreddit', description: 'What subreddit would you like to search?', required: true, choices: []},
     {name: 'sort', description: 'What posts do you want to see? Select from best/hot/top/new/controversial/rising', required: true, choices: ['best', 'hot', 'new', 'top', 'controversial', 'rising']},
 ];
 
 const fetchFromReddit = async(interaction: CustomInteraction, subreddit: string, sort: string, timeFilter = 'day') => {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     const response = await fetch<{data: {children: ({data: {title: string, over_18: boolean, score: string, author: string, permalink: string}})[]}}>(`https://www.reddit.com/r/${subreddit}/${sort}/.json?limit=10&t=${timeFilter}`);
     const json = await response.json();
     const dataArr = [];
@@ -40,7 +40,7 @@ const fetchFromReddit = async(interaction: CustomInteraction, subreddit: string,
     void new PagesBuilder(interaction as unknown as CommandInteraction).setPages(dataArr).build();
 };
 
-export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0])).addStringOption(setupOption(options[1]));
+export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options2[0])).addStringOption(setupOption(options2[1]));
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     const message = await interaction.deferReply({fetchReply: true});
@@ -65,7 +65,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
 
         const collector = menu.createMessageComponentCollector({
             componentType: 'SELECT_MENU',
-            time: MaxResponseTime * 1000
+            time: options.maxResponseTime * 1000
         });
 
         collector.on('end', () => {

@@ -8,7 +8,7 @@ import {MessageSelectMenu, MessageActionRow} from 'discord.js';
 import Player from '../../utils/music/Player';
 import {getData} from 'spotify-url-info';
 import YouTube from 'youtube-sr';
-import Member from '../../utils/models/Member';
+import member from '../../utils/models/Member';
 import {joinVoiceChannel, entersState, VoiceConnectionStatus, AudioPlayerStatus} from '@discordjs/voice';
 import createGuildData from '../../utils/createGuildData';
 import {searchOne} from '../../utils/music/searchOne';
@@ -150,7 +150,7 @@ const searchYoutube = async(interaction: CustomInteraction, voiceChannel: VoiceC
     const vidNameArr = [...videos.map((video) => video.title?.slice(0, 99) ?? ''), 'cancel'];
     const row = createSelectMenu(vidNameArr);
     const playOptions = await interaction.channel?.send({content: 'Pick a video', components: [row]});
-    const playOptionsCollector = playOptions?.createMessageComponentCollector({componentType: 'SELECT_MENU', time: options.MaxResponseTime * 1000});
+    const playOptionsCollector = playOptions?.createMessageComponentCollector({componentType: 'SELECT_MENU', time: options.maxResponseTime * 1000});
     playOptionsCollector?.on('end', async() => {
         if(playOptions) {
             await playOptions.delete().catch(console.error);
@@ -301,7 +301,7 @@ const handleYoutubePlaylistURL = async(interaction: CustomInteraction): Promise<
     }
     let videosArr = videos.videos;
 
-    if(options.AutomaticallyShuffleYouTubePlaylists || shuffleFlag) {
+    if(options.automaticallyShuffleYouTubePlaylists || shuffleFlag) {
         videosArr = shuffleArray(videosArr);
     }
 
@@ -358,7 +358,7 @@ const handlePlayFromHistory = async(interaction: CustomInteraction, message: Mes
     });
     const clarificationCollector = clarificationOptions.createMessageComponentCollector({
         componentType: 'SELECT_MENU',
-        time: options.MaxResponseTime * 1000
+        time: options.maxResponseTime * 1000
     });
 
     clarificationCollector.on('collect', async(i: SelectMenuInteraction) => {
@@ -428,7 +428,7 @@ const handlePlayPlaylist = async(interaction: CustomInteraction, message: Messag
         .setPlaceholder('Please select an option')
         .addOptions(fields));
     const clarificationOptions = await message.channel.send({content: 'Clarify Please', components: [row]});
-    const clarificationCollector = clarificationOptions.createMessageComponentCollector({componentType: 'SELECT_MENU', time: options.MaxResponseTime * 1000});
+    const clarificationCollector = clarificationOptions.createMessageComponentCollector({componentType: 'SELECT_MENU', time: options.maxResponseTime * 1000});
 
     clarificationCollector.on('end', () => {
         if(typeof clarificationOptions !== 'undefined') { clarificationOptions.delete().catch(console.error); }
@@ -559,7 +559,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
 
     // Check if the query is actually a saved playlist name
 
-    const userData = await Member.findOne({memberId: interaction.member.id}).exec(); // Object
+    const userData = await member.findOne({memberId: interaction.member.id}).exec(); // Object
 
     if(userData !== null) {
         const playlistsArray = userData.savedPlaylists;

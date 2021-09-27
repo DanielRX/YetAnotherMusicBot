@@ -30,6 +30,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
         return interaction.followUp(':x: The Runner ' + userQuery + ' was  not found.');
     }
 
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     const pbsRes = await fetch<{pbs: ({id: string, realtime_duration_ms: number, realtime_sum_of_best_ms: number, program: string, parsed_at: number, attempts: any[], game: {cover_url: string, name: string}, category: {name: string}, segments: any[]})[], status :number}>(`https://splits.io/api/v4/runners/${userRes.runners[0].name}/pbs`).then(async(res) => res.json());
 
     if(pbsRes.length == 0) {

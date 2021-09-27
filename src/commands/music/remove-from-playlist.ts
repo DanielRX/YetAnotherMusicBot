@@ -2,7 +2,7 @@ import type {APIMessage} from 'discord-api-types';
 import type {Message} from 'discord.js';
 import type {CustomInteraction} from '../../utils/types';
 import {SlashCommandBuilder} from '@discordjs/builders';
-import Member from '../../utils/models/Member';
+import member from '../../utils/models/Member';
 import {setupOption} from '../../utils/utils';
 
 export const name = 'remove-from-playlist';
@@ -21,7 +21,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
     const playlistName = `${interaction.options.get('playlist')?.value}`;
     const index = Number(interaction.options.get('index')?.value);
 
-    const userData = await Member.findOne({
+    const userData = await member.findOne({
         memberId: interaction.member.id
     }).exec();
     if(!userData) {
@@ -44,7 +44,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
         const title = urlsArrayClone[index - 1].name;
         urlsArrayClone.splice(index - 1, 1);
         savedPlaylistsClone[location].urls = urlsArrayClone;
-        void Member.updateOne({memberId: interaction.member.id}, {savedPlaylists: savedPlaylistsClone}).exec();
+        void member.updateOne({memberId: interaction.member.id}, {savedPlaylists: savedPlaylistsClone}).exec();
 
         return interaction.followUp(`I removed **${title}** from **${savedPlaylistsClone[location].name}**`);
     }

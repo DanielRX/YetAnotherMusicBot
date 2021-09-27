@@ -65,7 +65,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
     const numberOfSongs = Number(interaction.options.get('length') ? interaction.options.get('length')?.value : 5);
     const useYoutube = Boolean(interaction.options.get('youtube') ? interaction.options.get('youtube')?.value : false);
 
-    const songs: ({youtubeUrl: string, preview_url: string, artists: string[], album: string, name: string})[] = await fs.readJSON('./resources/music/mk2/trivia.json'); // TODO: Move type to types
+    const songs: ({youtubeUrl: string, previewUrl: string, artists: string[], album: string, name: string})[] = await fs.readJSON('./resources/music/mk2/trivia.json'); // TODO: Move type to types
     const albumData: {[key: string]: {[key: string]: unknown}} = await fs.readJSON('./resources/music/mk2/albums.json');
     const artistsData: {[key: string]: string} = await fs.readJSON('./resources/music/mk2/artists.json');
     const videoDataArray = songs.map((track) => ({...track, album: albumData[track.album], artists: track.artists.map((id) => artistsData[id])}));
@@ -77,8 +77,8 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
     const triviaPlayer = interaction.client.triviaManager.get(interaction.guildId) as unknown as TriviaPlayer;
 
     // eslint-disable-next-line @typescript-eslint/no-shadow
-    randomLinks.forEach(({artists, name, preview_url, youtubeUrl}) => {
-        triviaPlayer.queue.push({url: youtubeUrl, artists, preview_url, name, voiceChannel} as PlayTrack);
+    randomLinks.forEach(({artists, name, previewUrl, youtubeUrl}) => {
+        triviaPlayer.queue.push({url: youtubeUrl, artists, previewUrl, name, voiceChannel} as PlayTrack);
     });
 
     const membersInChannel = interaction.member.voice.channel?.members;

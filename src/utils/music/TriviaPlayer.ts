@@ -8,7 +8,7 @@ import ytdl from 'ytdl-core';
 import {MessageEmbed} from 'discord.js';
 const wait = promisify(setTimeout);
 
-const capitalize_Words = (str: string) => {
+const capitalizeWords = (str: string) => {
     return str.replace(/\w\S*/g, function(txt) {
         return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
     });
@@ -227,7 +227,7 @@ export class TriviaPlayer { // TODO: Merge with MusicPlayer
 
                     const sortedScoreMap = new Map([...this.score.entries()].sort((a, b) => b[1] - a[1]));
 
-                    const song = `${capitalize_Words(this.queue[0].artists[0])}: ${capitalize_Words(this.queue[0].name)}`;
+                    const song = `${capitalizeWords(this.queue[0].artists[0])}: ${capitalizeWords(this.queue[0].name)}`;
                     const board = getLeaderBoard(Array.from(sortedScoreMap.entries()));
                     if(typeof board !== 'undefined') {
                         const embed = new MessageEmbed()

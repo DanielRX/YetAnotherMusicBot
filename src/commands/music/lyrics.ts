@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import {SlashCommandBuilder} from '@discordjs/builders';
 import type {CommandInteraction, Message} from 'discord.js';
 import {MessageEmbed} from 'discord.js';

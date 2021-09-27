@@ -47,25 +47,25 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
 
     await pingMsg.edit('Complete');
     const user = interaction.client.user as User;
-    const StatusEmbed = new Discord.MessageEmbed()
+    const statusEmbed = new Discord.MessageEmbed()
         .setThumbnail(user.displayAvatarURL() || '')
         .setTitle(`Status of ${interaction.client.user?.username}`)
         .setColor('#ff0000');
 
     if(isOwner) {
-        StatusEmbed.addField(`Memory Usage`, `${Math.round(used * 100) / 100}MB`, true).addField(`Platform`, `${platform} ${archInfo}`, true);
+        statusEmbed.addField(`Memory Usage`, `${Math.round(used * 100) / 100}MB`, true).addField(`Platform`, `${platform} ${archInfo}`, true);
     }
 
-    StatusEmbed.addField('Ping', `Round-trip took ${(pingMsg.editedTimestamp ?? pingMsg.createdTimestamp) - interaction.createdTimestamp}ms. \n			${interaction.client.ws.ping ? `The heartbeat ping is ${Math.round(interaction.client.ws.ping)}ms.` : ''}`)
+    statusEmbed.addField('Ping', `Round-trip took ${(pingMsg.editedTimestamp ?? pingMsg.createdTimestamp) - interaction.createdTimestamp}ms. \n			${interaction.client.ws.ping ? `The heartbeat ping is ${Math.round(interaction.client.ws.ping)}ms.` : ''}`)
         .addField(`Uptime`, `${days} D ${hours} H : ${mins} M : ${realTotalSecs} S`)
         .addField('Available Commands', `${commandTotal} Commands Available`)
         .addField('Servers, Users', `On ${interaction.client.guilds.cache.size} servers, with a total of ${memberCount} users.`)
         .setFooter('Created', user.avatarURL() ?? '')
         .setTimestamp(user.createdAt);
 
-    if(isOwner) { StatusEmbed.addField('Dependency List', `node: ${process.version.replace(/v/, '')}\n        ${libList}`); }
+    if(isOwner) { statusEmbed.addField('Dependency List', `node: ${process.version.replace(/v/, '')}\n        ${libList}`); }
 
-    void interaction.reply({embeds: [StatusEmbed]});
+    void interaction.reply({embeds: [statusEmbed]});
     await pingMsg.delete();
 };
 

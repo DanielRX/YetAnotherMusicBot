@@ -2,8 +2,8 @@
   "playLiveStreams": true,
   "playVideosLongerThan1Hour": true,
   "maxQueueLength": 1000,
-  "AutomaticallyShuffleYouTubePlaylists": false,
-  "LeaveTimeOut": 90,
-  "MaxResponseTime": 30,
+  "automaticallyShuffleYouTubePlaylists": false,
+  "leaveTimeOut": 90,
+  "maxResponseTime": 30,
   "deleteOldPlayMessage": false
 }
