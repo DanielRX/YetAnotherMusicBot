@@ -46,9 +46,9 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
 
         for(let i = 1; i <= pbsRes.pbs.length; ++i) {
             pbEmbedArray.push(new MessageEmbed()
-                .setTitle(`Entry #` + i + ' of ' + pbsRes.pbs.length)
+                .setTitle(`Entry #${i} of ${pbsRes.pbs.length}`)
                 .setURL('https://splits.io/' + pbArray[i - 1].id)
-                .setAuthor(userRes.runners[0].name + '`s Speedrun Stats ', userRes.runners[0].avatar)
+                .setAuthor(`${userRes.runners[0].name}'s Speedrun Stats`, userRes.runners[0].avatar)
                 .setThumbnail(pbArray[i - 1].game.cover_url)
                 .addField('Game', pbArray[i - 1].game.name, true)
                 .addField(`Category`, pbArray[i - 1].category.name, true)

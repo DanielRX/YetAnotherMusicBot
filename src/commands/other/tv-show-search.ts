@@ -114,7 +114,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
             // Filter Runtime Row 3
             let showRuntime = showResponse[i - 1].show.runtime;
             if(showRuntime === null) showRuntime = 'None listed';
-            else showRuntime = showResponse[i - 1].show.runtime + ' Minutes';
+            else showRuntime = `${showResponse[i - 1].show.runtime} Minutes`;
 
             // Filter Ratings Row 4
             const showRatings = showResponse[i - 1].show.rating?.average ?? 'None listed';

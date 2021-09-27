@@ -102,7 +102,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
         for(let i = 1; i <= lyricsIndex; ++i) {
             if(lyrics.trim().slice((i - 1) * 4096, i * 4096).length !== 0) {
                 lyricsArray.push(new MessageEmbed()
-                    .setTitle(`Lyrics page #` + i)
+                    .setTitle(`Lyrics page #${i}`)
                     .setDescription(lyrics.slice((i - 1) * 4096, i * 4096))
                     .setFooter('Provided by genius.com'));
             }
