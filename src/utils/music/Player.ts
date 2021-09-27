@@ -10,17 +10,17 @@ import type {PlayTrack} from '../types';
 const wait = promisify(setTimeout);
 
 class MusicPlayer {
-    private commandLock = false;
-    private connection: VoiceConnection = null!;
+    public commandLock = false;
+    public connection: VoiceConnection = null!;
+    public queue: PlayTrack[] = [];
+    public textChannel: BaseGuildTextChannel = null!;
+    public loopSong = false;
+    public readonly audioPlayer: AudioPlayer;
     private readonly volume = 1;
     private loopQueue = false;
-    private loopSong = false;
     private skipTimer = false;
     private isPreviousTrack = false;
     private nowPlaying: PlayTrack = null!;
-    private queue: PlayTrack[] = [];
-    private readonly audioPlayer: AudioPlayer;
-    private readonly textChannel: BaseGuildTextChannel = null!;
 
     constructor() {
         this.audioPlayer = createAudioPlayer();
@@ -141,4 +141,4 @@ class MusicPlayer {
     }
 }
 
-module.exports = MusicPlayer;
+export default MusicPlayer;

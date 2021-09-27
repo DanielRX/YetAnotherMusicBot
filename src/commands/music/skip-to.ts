@@ -33,6 +33,6 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
         player.loopSong = false;
     }
     player.audioPlayer.stop();
-    return interaction.followUp(`Skipped to **${player.queue[0].title}**`);
+    return interaction.followUp(`Skipped to **${player.queue[0].name}**`);
 };
 

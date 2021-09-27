@@ -28,10 +28,10 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
 
     if(player.loopSong) {
         player.loopSong = false;
-        return interaction.reply(`**${player.nowPlaying?.title}** is no longer playing on repeat :repeat: `);
+        return interaction.reply(`**${player.nowPlaying?.name}** is no longer playing on repeat :repeat: `);
     }
 
     player.loopSong = true;
-    return interaction.reply(`**${player.nowPlaying?.title}** is now playing on repeat :repeat: `);
+    return interaction.reply(`**${player.nowPlaying?.name}** is now playing on repeat :repeat: `);
 };
 

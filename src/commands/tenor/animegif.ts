@@ -1,4 +1,3 @@
-//@ts-check
 import {SlashCommandBuilder} from '@discordjs/builders';
 import {fetch} from '../../utils/utils';
 import {config} from '../../utils/config';

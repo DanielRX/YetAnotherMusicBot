@@ -1,6 +1,6 @@
 import { AudioPlayer, VoiceConnection } from '@discordjs/voice';
 import { BaseGuildTextChannel, Message } from 'discord.js';
-import { Track } from '../types';
+import { PlayTrack, Track } from '../types';
 
 // @ts-check
 const {AudioPlayerStatus, createAudioPlayer, entersState, VoiceConnectionDisconnectReason, VoiceConnectionStatus, createAudioResource, StreamType} = require('@discordjs/voice');
@@ -46,9 +46,9 @@ const getLeaderBoard = (arr: [string, number][]) => {
 export class TriviaPlayer {
     public textChannel: BaseGuildTextChannel = null!;
     public readonly score: Map<string, number> = new Map();
-    public queue: Track[] = [];
+    public queue: PlayTrack[] = [];
     private wasTriviaEndCalled = false;
-    private connection: VoiceConnection = null!;
+    public connection: VoiceConnection = null!;
     private readonly audioPlayer: AudioPlayer;
     // eslint-disable-next-line @typescript-eslint/no-parameter-properties
     constructor(public useYoutube = true) {
@@ -255,7 +255,7 @@ export class TriviaPlayer {
         this.connection.destroy();
     }
 
-    async process(queue: Track[]): Promise<void> {
+    async process(queue: PlayTrack[]): Promise<void> {
         const [song] = this.queue;
         try {
             if(!this.useYoutube && song.preview_url !== '') {

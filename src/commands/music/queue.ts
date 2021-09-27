@@ -1,5 +1,5 @@
 import type {APIMessage} from 'discord-api-types';
-import type {Message} from 'discord.js';
+import type {CommandInteraction, Message} from 'discord.js';
 import type {CustomInteraction} from '../../utils/types';
 import {SlashCommandBuilder} from '@discordjs/builders';
 import {MessageEmbed} from 'discord.js';
@@ -31,12 +31,12 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
         const fields = queueClone
             .slice(i * 24, 24 + i * 24)
             .filter((e) => e)
-            .map((e, j) => ({name: `${j + 1 + i * 24}`, value: `${e.title}`}));
+            .map((e, j) => ({name: `${j + 1 + i * 24}`, value: `${e.name}`}));
 
         embeds.push(new MessageEmbed().setTitle(`Page ${i}`).setFields(fields));
     }
 
-    return new PagesBuilder(interaction)
+    return new PagesBuilder(interaction as unknown as CommandInteraction)
         .setTitle('Music Queue')
         .setPages(embeds)
         .setListenTimeout(2 * 60 * 1000)

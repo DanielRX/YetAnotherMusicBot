@@ -1,7 +1,7 @@
 import type {APIMessage} from 'discord-api-types';
 import type {Message, User} from 'discord.js';
 import type {Video} from 'youtube-sr';
-import type {CustomInteraction} from '../../utils/types';
+import type {CustomInteraction, PlayTrack} from '../../utils/types';
 import {SlashCommandBuilder} from '@discordjs/builders';
 import Member from '../../utils/models/Member';
 import YouTube from 'youtube-sr';
@@ -19,17 +19,19 @@ export const options = [
 
 export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0])).addStringOption(setupOption(options[1]));
 
-const constructSongObj = (video: Video, user: User)=> {
+
+// TODO: Don't use defaults, fix type
+const constructSongObj = (video: Video, user: User): PlayTrack => {
     const {durationFormatted: duration, duration: rawDuration, title, thumbnail} = video;
     return {
         url: `https://www.youtube.com/watch?v=${video.id}`,
-        title,
+        name: title ?? '',
         rawDuration,
         duration,
-        thumbnail: thumbnail?.url,
+        thumbnail: thumbnail?.url ?? '',
         memberDisplayName: user.username,
-        memberAvatar: user.avatarURL({format: 'webp', dynamic: false, size: 16})
-    };
+        memberAvatar: user.avatarURL({format: 'webp', dynamic: false, size: 16}) ?? ''
+    } as PlayTrack;
 };
 
 const processURL = async(url: string, interaction: CustomInteraction) => {
@@ -78,7 +80,7 @@ const processURL = async(url: string, interaction: CustomInteraction) => {
     }
 };
 
-export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message> => {
+export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message | void> => {
     await interaction.deferReply();
 
     const playlistName = interaction.options.get('playlistname')?.value;

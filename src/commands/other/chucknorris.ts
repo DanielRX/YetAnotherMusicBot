@@ -10,7 +10,7 @@ export const data = new SlashCommandBuilder().setName(name).setDescription(descr
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     // thanks to https://api.chucknorris.io
-    return fetch('https://api.chucknorris.io/jokes/random')
+    return fetch<{value: string}>('https://api.chucknorris.io/jokes/random')
         .then((res) => res.json())
         .then((json) => {
             const embed = new MessageEmbed()

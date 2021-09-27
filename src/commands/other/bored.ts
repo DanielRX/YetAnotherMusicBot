@@ -9,7 +9,7 @@ export const description = 'Generate a random activity!';
 export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
-    return fetch('https://www.boredapi.com/api/activity?participants=1')
+    return fetch<{activity: string}>('https://www.boredapi.com/api/activity?participants=1')
         .then((res) => res.json())
         .then((json) => {
             const embed = new MessageEmbed()

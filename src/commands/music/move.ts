@@ -40,7 +40,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
         return interaction.reply(':x: Try again and enter a valid song position number');
     }
 
-    const songName = player.queue[oldPosition - 1].title;
+    const songName = player.queue[oldPosition - 1].name;
     arrayMove(player.queue, oldPosition - 1, newPosition - 1);
 
     return interaction.reply(`**${songName}** moved to position ${newPosition}`);

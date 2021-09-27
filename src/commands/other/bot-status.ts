@@ -1,5 +1,6 @@
 import type {CustomInteraction} from '../../utils/types';
 import {SlashCommandBuilder} from '@discordjs/builders';
+import type {Message} from 'discord.js';
 import Discord from 'discord.js';
 import os from 'os';
 import {readJsonSync} from 'fs-extra';
@@ -14,7 +15,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
     const owner = await interaction.guild.fetchOwner();
     const isOwner = owner.id == interaction.member.id ? true : false;
 
-    const pingMsg = await interaction.channel?.send('Processing...');
+    const pingMsg = await interaction.channel?.send('Processing...') as unknown as Message;
 
     const commandTotal = interaction.client.commands.size;
     const platform = os
@@ -44,7 +45,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
     const guildCacheArray = Array.from(guildCacheMap, ([key, value]) => ({name: key, value}));
     const memberCount = guildCacheArray.reduce((prev, curr) => prev + curr.value.memberCount, 0);
 
-    await pingMsg?.edit('Complete');
+    await pingMsg.edit('Complete');
 
     const StatusEmbed = new Discord.MessageEmbed()
         .setThumbnail(interaction.client.user?.displayAvatarURL() || '')
@@ -55,7 +56,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
         StatusEmbed.addField(`Memory Usage`, `${Math.round(used * 100) / 100}MB`, true).addField(`Platform`, `${platform} ${archInfo}`, true);
     }
 
-    StatusEmbed.addField('Ping', `Round-trip took ${(pingMsg?.editedTimestamp || pingMsg?.createdTimestamp) - interaction.createdTimestamp}ms. \n			${interaction.client.ws.ping ? `The heartbeat ping is ${Math.round(interaction.client.ws.ping)}ms.` : ''}`)
+    StatusEmbed.addField('Ping', `Round-trip took ${(pingMsg.editedTimestamp || pingMsg.createdTimestamp) - interaction.createdTimestamp}ms. \n			${interaction.client.ws.ping ? `The heartbeat ping is ${Math.round(interaction.client.ws.ping)}ms.` : ''}`)
         .addField(`Uptime`, `${days} D ${hours} H : ${mins} M : ${realTotalSecs} S`)
         .addField('Available Commands', `${commandTotal} Commands Available`)
         .addField('Servers, Users', `On ${interaction.client.guilds.cache.size} servers, with a total of ${memberCount} users.`)

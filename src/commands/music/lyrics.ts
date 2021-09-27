@@ -88,7 +88,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
                 return interaction.followUp(':x: Please try again after the trivia has ended');
             }
         }
-        songName = player.nowPlaying?.title || '';
+        songName = player.nowPlaying?.name || '';
     }
 
     try {
@@ -108,7 +108,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
             }
         }
 
-        void new PagesBuilder(interaction as unknown as CommandInteraction)
+        return new PagesBuilder(interaction as unknown as CommandInteraction)
             .setTitle(`${songName} lyrics`)
             .setPages(lyricsArray)
             .setColor('#9096e6')

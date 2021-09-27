@@ -1,11 +1,11 @@
 import {SlashCommandBuilder} from '@discordjs/builders';
 import {joinVoiceChannel, VoiceConnectionStatus, entersState} from '@discordjs/voice';
 import type {APIMessage} from 'discord-api-types';
-import type {Message} from 'discord.js';
+import type {BaseGuildTextChannel, Message} from 'discord.js';
 import {MessageEmbed} from 'discord.js';
 import fs from 'fs-extra';
 import TriviaPlayer from '../../utils/music/TriviaPlayer';
-import type {CustomAudioPlayer, CustomInteraction} from '../../utils/types';
+import type {CustomInteraction, PlayTrack} from '../../utils/types';
 import {getRandom, setupOption} from '../../utils/utils';
 
 export const name = 'music-trivia';
@@ -18,7 +18,7 @@ export const options = [
 
 export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0])).addBooleanOption(setupOption(options[1]));
 
-const handleSubscription = async(interaction: CustomInteraction, player: CustomAudioPlayer): Promise<Message | APIMessage> => {
+const handleSubscription = async(interaction: CustomInteraction, player: TriviaPlayer): Promise<APIMessage | Message> => {
     const {queue} = player;
     const {voiceChannel} = queue[0];
 
@@ -28,7 +28,7 @@ const handleSubscription = async(interaction: CustomInteraction, player: CustomA
         adapterCreator: interaction.guild.voiceAdapterCreator
     });
 
-    player.textChannel = interaction.channel;
+    player.textChannel = interaction.channel as BaseGuildTextChannel;
     player.passConnection(connection);
     try {
         await entersState(player.connection, VoiceConnectionStatus.Ready, 10000);
@@ -36,7 +36,7 @@ const handleSubscription = async(interaction: CustomInteraction, player: CustomA
         console.error(err);
         return interaction.followUp({content: 'Failed to join your channel!'});
     }
-    player.process(player.queue);
+    void player.process(player.queue);
 
     const startTriviaEmbed = new MessageEmbed()
         .setColor('#ff7373')
@@ -74,10 +74,11 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
     const randomLinks = getRandom(videoDataArray, numberOfSongs);
     interaction.client.triviaManager.set(interaction.guildId, new TriviaPlayer(useYoutube));
 
-    const triviaPlayer = interaction.client.triviaManager.get(interaction.guildId);
+    const triviaPlayer = interaction.client.triviaManager.get(interaction.guildId) as unknown as TriviaPlayer;
 
+    // eslint-disable-next-line @typescript-eslint/no-shadow
     randomLinks.forEach(({artists, name, preview_url, youtubeUrl}) => {
-        triviaPlayer.queue.push({url: youtubeUrl, artists, preview_url, name, voiceChannel});
+        triviaPlayer.queue.push({url: youtubeUrl, artists, preview_url, name, voiceChannel} as PlayTrack);
     });
 
     const membersInChannel = interaction.member.voice.channel?.members;

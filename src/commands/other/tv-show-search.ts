@@ -25,9 +25,9 @@ type Show = {
         premiered: string,
         network: {
             country: {
-                name: string,
                 code: string
             }
+            name: string,
         },
         rating: {
             average: string,
@@ -77,14 +77,14 @@ const cleanUp = (summary: string) => summary
     .replace(/&#39;/g, "'")
     .toLocaleString();
 
-export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message> => {
+export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message | void> => {
     const tvshow = interaction.options.get('tvshow')?.value;
 
     let showResponse: Show[];
     try {
         showResponse = await getShowSearch(`${tvshow}`);
     } catch(e: unknown) {
-        return interaction.reply(e);
+        return interaction.reply(e as any);
     }
 
     try {
@@ -111,8 +111,8 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
             const showPremiered = showResponse[i - 1].show.premiered || 'None listed';
 
             // Filter Network Row 3
-            let showNetwork = showResponse[i - 1].show.network;
-            if(showNetwork === null) showNetwork = 'None listed';
+            let showNetwork = '';
+            if(showResponse[i - 1].show.network === null) showNetwork = 'None listed';
             else
                 showNetwork = `(**${showResponse[i - 1].show.network.country.code}**) ${showResponse[i - 1].show.network.name}`;
 

@@ -1,10 +1,11 @@
 import type {CustomInteraction} from '../../utils/types';
 import {SlashCommandBuilder} from '@discordjs/builders';
-import type {CommandInteraction} from 'discord.js';
+import type {CommandInteraction, Message} from 'discord.js';
 import {MessageEmbed} from 'discord.js';
 import {PagesBuilder} from 'discord.js-pages';
 import {config} from '../../utils/config';
 import {setupOption, fetch} from '../../utils/utils';
+import type {APIMessage} from 'discord-api-types';
 
 export const name = 'game-search';
 export const description = 'Search for game information';
@@ -50,7 +51,7 @@ const getGameDetails = async(query: string) => {
     }
 };
 
-export const execute = async(interaction: CustomInteraction): Promise<void> => {
+export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message | void> => {
     if(!config.rawgAPI) { return interaction.reply('This command is not enabled on this bot!'); }
     const gameTitleFiltered = `${interaction.options.get('game')?.value}`?.replace(/ /g, '-').replace(/'/g, '').toLowerCase();
 
@@ -89,8 +90,8 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
             if(response.background_image) {
                 embed.setThumbnail(response.background_image);
             }
-            void embed.build();
+            return embed.build();
         })
-        .catch((error: unknown) => interaction.reply(error));
+        .catch((error: unknown) => interaction.reply(error as any));
 };
 

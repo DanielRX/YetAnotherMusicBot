@@ -1,7 +1,4 @@
-// @ts-check
-
 import mongoose from 'mongoose';
-import type {Track} from '../types';
 
 type MemberT = {memberId: string, username: string, joinedAt: Date, savedPlaylists: ({name: string, urls: ({title: string})[]})[]}
 
