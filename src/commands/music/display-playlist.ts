@@ -1,19 +1,17 @@
 import type {CustomInteraction} from '../../utils/types';
-import {SlashCommandBuilder} from '@discordjs/builders';
 import member from '../../utils/models/Member';
 import type {Message} from 'discord.js';
 import {MessageEmbed} from 'discord.js';
-import {setupOption} from '../../utils/utils';
 import type {APIMessage} from 'discord-api-types';
 
 export const name = 'display-playlist';
 export const description = 'Display a saved playlist';
 
 export const options = [
-    {name: 'playlistname', description: 'What is the name of the playlist you would like to display?', required: true, choices: []}
+    {type: 'string' as const, name: 'playlistname', description: 'What is the name of the playlist you would like to display?', required: true, choices: []}
 ];
 
-export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
+const maxLength = 24;
 
 export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message> => {
     void interaction.deferReply();
@@ -38,7 +36,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
             .setColor('#ff7373')
             .setTitle(playlistName)
             .setTimestamp();
-        const fields = urlsArrayClone.slice(0, 24).map((x, i) => ({name: `${i + 1}`, value: `${x.name}`}));
+        const fields = urlsArrayClone.slice(0, maxLength).map((x, i) => ({name: `${i + 1}`, value: `${x.name}`}));
         savedPlaylistEmbed.setFields(fields);
 
         return interaction.followUp({embeds: [savedPlaylistEmbed]}); //TODO: Swap to reply?

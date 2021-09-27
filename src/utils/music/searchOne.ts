@@ -5,7 +5,7 @@ import YouTube from 'youtube-sr';
 
 const youtubeNoTrack = 'Something went wrong when searching for the track!';
 
-const concatSongNameAndArtists = (data: Track) => {
+const concatSongNameAndArtists = (data: Track): string => {
     let artists = '';
     data.artists.forEach((artist) => (artists = artists.concat(' ', artist)));
     const songName = data.name;

@@ -73,15 +73,17 @@ class TwitchAPI {
 
 export default TwitchAPI;
 
-const scope = 'user:read:email';
+export const twitchData = {accessToken: ''};
 
+const scope = 'user:read:email';
+const day = 86400000;
 // Skips loading if not found in config.json
 if(twitchClientID && twitchClientSecret) {
     // get first access_token
-    void (async function() {
+    void (async(): Promise<void> => {
         await TwitchAPI.getToken(twitchClientID, twitchClientSecret, scope)
             .then((result: string) => {
-                module.exports.access_token = result;
+                twitchData.accessToken = result;
                 return;
             })
             .catch((e: unknown) => {
@@ -93,7 +95,7 @@ if(twitchClientID && twitchClientSecret) {
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     setInterval(async function() {
         await TwitchAPI.getToken(twitchClientID, twitchClientSecret, scope)
-            .then((result: string) => { module.exports.access_token = result; })
+            .then((result: string) => { twitchData.accessToken = result; })
             .catch((e: unknown) => { console.log(e); });
-    }, 86400000);
+    }, day);
 }

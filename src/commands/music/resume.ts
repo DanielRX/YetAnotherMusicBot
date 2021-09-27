@@ -1,11 +1,8 @@
 import type {CustomInteraction} from '../../utils/types';
-import {SlashCommandBuilder} from '@discordjs/builders';
 import {AudioPlayerStatus} from '@discordjs/voice';
 
 export const name = 'resume';
 export const description = 'Resume a paused track';
-
-export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     const voiceChannel = interaction.member.voice.channel;

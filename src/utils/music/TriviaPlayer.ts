@@ -4,7 +4,6 @@ import type {CustomClient, PlayTrack} from '../types';
 import {AudioPlayerStatus, createAudioPlayer, entersState, VoiceConnectionDisconnectReason, VoiceConnectionStatus, createAudioResource, StreamType} from '@discordjs/voice';
 import {setTimeout} from 'timers';
 import {promisify} from 'util';
-import ytdl from 'ytdl-core';
 import {MessageEmbed} from 'discord.js';
 const wait = promisify(setTimeout);
 
@@ -41,6 +40,8 @@ const getLeaderBoard = (arr: [string, number][]) => {
     return leaderBoard;
 };
 
+const rejoinTimeout = 5000;
+
 export class TriviaPlayer { // TODO: Merge with MusicPlayer
     public textChannel: BaseGuildTextChannel = null!;
     public readonly score: Map<string, number> = new Map();
@@ -49,7 +50,7 @@ export class TriviaPlayer { // TODO: Merge with MusicPlayer
     private wasTriviaEndCalled = false;
     private readonly audioPlayer: AudioPlayer;
     // eslint-disable-next-line @typescript-eslint/no-parameter-properties
-    public constructor(public useYoutube = true) {
+    public constructor() {
         this.audioPlayer = createAudioPlayer();
     }
 
@@ -59,12 +60,12 @@ export class TriviaPlayer { // TODO: Merge with MusicPlayer
             if(newState.status === VoiceConnectionStatus.Disconnected) {
                 if(newState.reason === VoiceConnectionDisconnectReason.WebSocketClose && newState.closeCode === 4014) {
                     try {
-                        await entersState(this.connection, VoiceConnectionStatus.Connecting, 5000);
+                        await entersState(this.connection, VoiceConnectionStatus.Connecting, rejoinTimeout);
                     } catch(e: unknown) {
                         this.connection.destroy();
                     }
                 } else if(this.connection.rejoinAttempts < 5) {
-                    await wait((this.connection.rejoinAttempts + 1) * 5000);
+                    await wait((this.connection.rejoinAttempts + 1) * rejoinTimeout);
                     this.connection.rejoin();
                 } else {
                     this.connection.destroy();
@@ -128,8 +129,7 @@ export class TriviaPlayer { // TODO: Merge with MusicPlayer
                 let skipCounter = 0;
                 const skippedArray: string[] = [];
                 let hints = 0;
-                let timeForSong = 60000;
-                if(!this.useYoutube) { timeForSong = 30000; }
+                const timeForSong = 30000;
                 const collector = this.textChannel.createMessageCollector({time: timeForSong});
 
                 const convertToHint = (str: string, hintCount: number) => {
@@ -262,14 +262,8 @@ export class TriviaPlayer { // TODO: Merge with MusicPlayer
     public async process(queue: PlayTrack[]): Promise<void> {
         const [song] = this.queue;
         try {
-            if(!this.useYoutube && song.previewUrl !== '') {
-                const resource = createAudioResource(`${song.previewUrl}.mp3`, {inputType: StreamType.Arbitrary});
-                this.audioPlayer.play(resource);
-            } else {
-                const stream = ytdl(song.url, {filter: 'audio', quality: 'highestaudio', highWaterMark: 1 << 25});
-                const resource = createAudioResource(stream, {inputType: StreamType.Arbitrary});
-                this.audioPlayer.play(resource);
-            }
+            const resource = createAudioResource(`${song.previewUrl}.mp3`, {inputType: StreamType.Arbitrary});
+            this.audioPlayer.play(resource);
         } catch(e: unknown) {
             console.error(e);
             return this.process(queue);

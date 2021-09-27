@@ -1,16 +1,13 @@
-import {SlashCommandBuilder} from '@discordjs/builders';
 import {MessageEmbed} from 'discord.js';
 import type {CustomInteraction} from '../../utils/types';
-import {setupOption, fetch} from '../../utils/utils';
+import {fetch} from '../../utils/utils';
 
 export const name = 'urban';
 export const description = 'Get definitions from urban dictonary.';
 
 export const options = [
-    {name: 'query', description: 'What do you want to search for?', required: true, choices: []},
+    {type: 'string' as const, name: 'query', description: 'What do you want to search for?', required: true, choices: []},
 ];
-
-export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     return fetch<{list: ({definition: string, permalink: string})[]}>(`https://api.urbandictionary.com/v0/define?term=${interaction.options.get('query')?.value}`)

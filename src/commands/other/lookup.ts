@@ -1,16 +1,13 @@
-import {SlashCommandBuilder} from '@discordjs/builders';
 import {MessageEmbed} from 'discord.js';
 import type {CustomInteraction} from '../../utils/types';
-import {fetch, setupOption} from '../../utils/utils';
+import {fetch} from '../../utils/utils';
 
 export const name = 'lookup';
 export const description = 'Resolve an IP address or hostname with additional info.';
 
 export const options = [
-    {name: 'query', description: 'What do you want to lookup? Please enter a hostname/domain or IP address.', required: true, choices: []}
+    {type: 'string' as const, name: 'query', description: 'What do you want to lookup? Please enter a hostname/domain or IP address.', required: true, choices: []}
 ];
-
-export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     const resl = `${interaction.options.get('query')?.value}`;

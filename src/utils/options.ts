@@ -10,7 +10,7 @@ type Options = {
     deleteOldPlayMessage: boolean
 };
 
-const opts: Options = readJSONSync('../options.json');
+const opts = readJSONSync('../options.json') as Options;
 
 if(typeof opts.playLiveStreams !== 'boolean') opts.playLiveStreams = true;
 if(typeof opts.maxQueueLength !== 'number' || opts.maxQueueLength < 1) { opts.maxQueueLength = 1000; }
@@ -20,7 +20,10 @@ if(typeof opts.automaticallyShuffleYouTubePlaylists !== 'boolean') { opts.automa
 if(typeof opts.playVideosLongerThan1Hour !== 'boolean') { opts.playVideosLongerThan1Hour = true; }
 if(typeof opts.deleteOldPlayMessage !== 'boolean') { opts.deleteOldPlayMessage = false; }
 
-opts.leaveTimeOut = Math.max(Math.min(opts.leaveTimeOut, 600), 1);
+const maxTimeout = 600;
+
+opts.leaveTimeOut = Math.max(Math.min(opts.leaveTimeOut, maxTimeout), 1);
+// eslint-disable-next-line @typescript-eslint/no-magic-numbers
 opts.maxResponseTime = Math.max(Math.min(opts.maxResponseTime, 150), 5);
 
 export const options = opts;

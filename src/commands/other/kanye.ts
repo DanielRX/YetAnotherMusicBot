@@ -1,12 +1,9 @@
-import {SlashCommandBuilder} from '@discordjs/builders';
 import {fetch} from '../../utils/utils';
 import {MessageEmbed} from 'discord.js';
 import type {CustomInteraction} from '../../utils/types';
 
 export const name = 'kanye';
 export const description = 'Get a random Kanye quote.';
-
-export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 const makeEmbed = (quote: string) => new MessageEmbed()
     .setColor('#AF6234')

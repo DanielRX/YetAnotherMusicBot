@@ -6,7 +6,7 @@ export const name = 'remove';
 export const description = 'Remove a specific song from queue';
 
 export const options = [
-    {name: 'position', description: 'What song number do you want to remove from queue?', required: true, choices: []}
+    {type: 'integer' as const, name: 'position', description: 'What song number do you want to remove from queue?', required: true, choices: []}
 ];
 
 export const data = new SlashCommandBuilder().setName(name).setDescription(description).addIntegerOption(setupOption(options[0]));

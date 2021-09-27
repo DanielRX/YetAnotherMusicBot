@@ -15,7 +15,7 @@ import {searchOne} from '../../utils/music/searchOne';
 import {shuffleArray, isSpotifyURL, isYouTubeVideoURL, isYouTubePlaylistURL, setupOption} from '../../utils/utils';
 import {getFlags, createSelectMenu, createHistoryRow} from '../../utils/music/play-utils';
 
-import {options} from '../../utils/options';
+import {options as opts} from '../../utils/options';
 
 const deletePlayerIfNeeded = (interaction: CustomInteraction) => {
     const player = interaction.client.playerManager.get(interaction.guildId);
@@ -96,7 +96,7 @@ const handleSpotifyPlaylistData = async(interaction: CustomInteraction, data: an
     if(player.audioPlayer.state.status !== AudioPlayerStatus.Playing) { return handleSubscription(player.queue, interaction, player as unknown as MusicPlayer); }
 };
 
-const handleSpotifyURL = async(interaction: CustomInteraction): Promise<APIMessage | Message> => {
+const handleSpotifyURL = async(interaction: CustomInteraction): Promise<APIMessage | Message | void> => {
     const player = interaction.client.playerManager.get(interaction.guildId) as unknown as CustomAudioPlayer;
     const rawQuery = `${interaction.options.get('query')?.value}`;
     const {nextFlag, jumpFlag, query} = getFlags(rawQuery);
@@ -116,16 +116,16 @@ const handleSpotifyURL = async(interaction: CustomInteraction): Promise<APIMessa
                 player.queue.push(constructSongObj(video, interaction.member.voice.channel as VoiceChannel, interaction.member.user));
                 player.commandLock = false;
                 if(player.audioPlayer.state.status !== AudioPlayerStatus.Playing) {
-                    return handleSubscription(player.queue, interaction, player as unknown as MusicPlayer);
+                    await handleSubscription(player.queue, interaction, player as unknown as MusicPlayer); return;
                 }
-                return interaction.followUp(`Added **${video.title}** to queue`);
+                return await interaction.followUp(`Added **${video.title}** to queue`);
             }
         } catch(e: unknown) {
             return interaction.followUp(e as any);
         }
     };
 
-    return getData(query).then(handleSpotifyData).catch(async(e: unknown) => {
+    return void getData(query).then(handleSpotifyData).catch(async(e: unknown) => {
         deletePlayerIfNeeded(interaction);
         console.error(e);
         return interaction.followUp(`I couldn't find what you were looking for :(`);
@@ -150,7 +150,7 @@ const searchYoutube = async(interaction: CustomInteraction, voiceChannel: VoiceC
     const vidNameArr = [...videos.map((video) => video.title?.slice(0, 99) ?? ''), 'cancel'];
     const row = createSelectMenu(vidNameArr);
     const playOptions = await interaction.channel?.send({content: 'Pick a video', components: [row]});
-    const playOptionsCollector = playOptions?.createMessageComponentCollector({componentType: 'SELECT_MENU', time: options.maxResponseTime * 1000});
+    const playOptionsCollector = playOptions?.createMessageComponentCollector({componentType: 'SELECT_MENU', time: opts.maxResponseTime * 1000});
     playOptionsCollector?.on('end', async() => {
         if(playOptions) {
             await playOptions.delete().catch(console.error);
@@ -159,7 +159,7 @@ const searchYoutube = async(interaction: CustomInteraction, voiceChannel: VoiceC
 
     const handleYoutubeData = (video: Video) => {
         const playerManager = interaction.client.playerManager.get(interaction.guildId) as unknown as MusicPlayer;
-        if(video.live && !options.playLiveStreams) {
+        if(video.live && !opts.playLiveStreams) {
             if(playOptions) {
                 playOptions.delete().catch(console.error);
                 return;
@@ -168,7 +168,7 @@ const searchYoutube = async(interaction: CustomInteraction, voiceChannel: VoiceC
             return interaction.followUp('Live streams are disabled in this server! Contact the owner');
         }
 
-        if(video.duration > 60 * 60 * 1000 && !options.playVideosLongerThan1Hour) {
+        if(video.duration > 60 * 60 * 1000 && !opts.playVideosLongerThan1Hour) {
             if(playOptions) {
                 playOptions.delete().catch(console.error);
                 return;
@@ -177,13 +177,13 @@ const searchYoutube = async(interaction: CustomInteraction, voiceChannel: VoiceC
             return interaction.followUp('Videos longer than 1 hour are disabled in this server! Contact the owner');
         }
 
-        if(playerManager.queue.length > options.maxQueueLength) {
+        if(playerManager.queue.length > opts.maxQueueLength) {
             if(playOptions) {
                 playOptions.delete().catch(console.error);
                 return;
             }
             player.commandLock = false;
-            return interaction.followUp(`The queue hit its limit of ${options.maxQueueLength}, please wait a bit before attempting to add more songs`);
+            return interaction.followUp(`The queue hit its limit of ${opts.maxQueueLength}, please wait a bit before attempting to add more songs`);
         }
         const audioPlayer = playerManager.audioPlayer;
         if(nextFlag || jumpFlag) {
@@ -255,21 +255,21 @@ const handleYoutubeURL = async(interaction: CustomInteraction): Promise<APIMessa
         return void interaction.followUp(':x: There was a problem getting the video you provided!');
     });
     if(!video) { return; }
-    if(video.live && !options.playLiveStreams) {
+    if(video.live && !opts.playLiveStreams) {
         player.commandLock = false;
         deletePlayerIfNeeded(interaction);
         return interaction.followUp('Live streams are disabled in this server! Contact the owner');
     }
 
-    if(video.duration > 60 * 60 * 1000 && !options.playVideosLongerThan1Hour) {
+    if(video.duration > 60 * 60 * 1000 && !opts.playVideosLongerThan1Hour) {
         player.commandLock = false;
         deletePlayerIfNeeded(interaction);
         return interaction.followUp('Videos longer than 1 hour are disabled in this server! Contact the owner');
     }
 
-    if(player.length > options.maxQueueLength) {
+    if(player.length > opts.maxQueueLength) {
         player.commandLock = false;
-        return interaction.followUp(`The queue hit its limit of ${options.maxQueueLength}, please wait a bit before attempting to play more songs`);
+        return interaction.followUp(`The queue hit its limit of ${opts.maxQueueLength}, please wait a bit before attempting to play more songs`);
     }
     if(nextFlag || jumpFlag) {
         flagLogic(interaction, video, jumpFlag);
@@ -301,7 +301,7 @@ const handleYoutubePlaylistURL = async(interaction: CustomInteraction): Promise<
     }
     let videosArr = videos.videos;
 
-    if(options.automaticallyShuffleYouTubePlaylists || shuffleFlag) {
+    if(opts.automaticallyShuffleYouTubePlaylists || shuffleFlag) {
         videosArr = shuffleArray(videosArr);
     }
 
@@ -309,11 +309,11 @@ const handleYoutubePlaylistURL = async(interaction: CustomInteraction): Promise<
         videosArr = videosArr.reverse();
     }
 
-    if(player.queue.length >= options.maxQueueLength) {
+    if(player.queue.length >= opts.maxQueueLength) {
         player.commandLock = false;
         return interaction.followUp('The queue is full, please try adding more songs later');
     }
-    videosArr = videosArr.splice(0, options.maxQueueLength - player.queue.length);
+    videosArr = videosArr.splice(0, opts.maxQueueLength - player.queue.length);
 
     //variable to know how many songs were skipped because of privacyStatus
     let skipAmount = 0;
@@ -358,7 +358,7 @@ const handlePlayFromHistory = async(interaction: CustomInteraction, message: Mes
     });
     const clarificationCollector = clarificationOptions.createMessageComponentCollector({
         componentType: 'SELECT_MENU',
-        time: options.maxResponseTime * 1000
+        time: opts.maxResponseTime * 1000
     });
 
     clarificationCollector.on('collect', async(i: SelectMenuInteraction) => {
@@ -371,7 +371,7 @@ const handlePlayFromHistory = async(interaction: CustomInteraction, message: Mes
 
         switch(value) {
             // 1: Play a song from the history queue
-            case'history_option':
+            case 'history_option':
                 if(player.audioPlayer.state.status !== AudioPlayerStatus.Playing) {
                     player.queue.unshift(player.queueHistory[index]);
                     void handleSubscription(player.queue, interaction, player as unknown as MusicPlayer);
@@ -390,11 +390,11 @@ const handlePlayFromHistory = async(interaction: CustomInteraction, message: Mes
                 void interaction.followUp(`'${player.queueHistory[index].name}' was added to queue!`);
                 break;
                 // 2: Search for the query on YouTube
-            case'youtube_option':
+            case 'youtube_option':
                 await searchYoutube(interaction, interaction.member.voice.channel as VoiceChannel);
                 break;
                 // 3: Cancel
-            case'cancel_option':
+            case 'cancel_option':
                 deletePlayerIfNeeded(interaction);
                 void interaction.followUp('Canceled search');
                 break;
@@ -428,7 +428,7 @@ const handlePlayPlaylist = async(interaction: CustomInteraction, message: Messag
         .setPlaceholder('Please select an option')
         .addOptions(fields));
     const clarificationOptions = await message.channel.send({content: 'Clarify Please', components: [row]});
-    const clarificationCollector = clarificationOptions.createMessageComponentCollector({componentType: 'SELECT_MENU', time: options.maxResponseTime * 1000});
+    const clarificationCollector = clarificationOptions.createMessageComponentCollector({componentType: 'SELECT_MENU', time: opts.maxResponseTime * 1000});
 
     clarificationCollector.on('end', () => {
         if(typeof clarificationOptions !== 'undefined') { clarificationOptions.delete().catch(console.error); }
@@ -442,7 +442,7 @@ const handlePlayPlaylist = async(interaction: CustomInteraction, message: Messag
         const value = i.values[0];
 
         switch(value) {
-            case'previous_song_option':
+            case 'previous_song_option':
                 if(!hasHistoryField) break;
                 if(player.audioPlayer.state.status !== AudioPlayerStatus.Playing) {
                     player.queue.unshift(player.getQueueHistory()[index]);
@@ -462,7 +462,7 @@ const handlePlayPlaylist = async(interaction: CustomInteraction, message: Messag
                 void interaction.followUp(`'${player.getQueueHistory()[index].name}' was added to queue!`);
                 break;
                 // 1: Play the saved playlist
-            case'playlist_option':
+            case 'playlist_option':
                 playlistsArray[playlistsArray.indexOf(found)].urls.map((song) => player.queue.push(song));
                 player.commandLock = false;
                 await interaction.followUp('Added playlist to queue');
@@ -482,7 +482,7 @@ const handlePlayPlaylist = async(interaction: CustomInteraction, message: Messag
                 }
                 break;
                 // 2: Play the shuffled saved playlist
-            case'shuffle_option':
+            case 'shuffle_option':
                 shuffleArray(playlistsArray[playlistsArray.indexOf(found)].urls).map((song) => player.queue.push(song));
 
                 if(player.audioPlayer.state.status === AudioPlayerStatus.Playing) {
@@ -501,11 +501,11 @@ const handlePlayPlaylist = async(interaction: CustomInteraction, message: Messag
                 }
                 break;
                 // 3: Search for the query on YouTube
-            case'youtube_option':
+            case 'youtube_option':
                 await searchYoutube(interaction, interaction.member.voice.channel as VoiceChannel);
                 break;
                 // 4: Cancel
-            case'cancel_option':
+            case 'cancel_option':
                 player.commandLock = false;
                 void interaction.followUp('Canceled search');
                 deletePlayerIfNeeded(interaction);
@@ -517,11 +517,9 @@ const handlePlayPlaylist = async(interaction: CustomInteraction, message: Messag
 export const name = 'play';
 export const description = 'Play any song or playlist from YouTube or Spotify!';
 
-export const options2 = [
-    {name: 'query', description: ':notes: What song or playlist would you like to listen to? Add -s to shuffle a playlist', required: true, choices: []}
+export const options = [
+    {type: 'string' as const, name: 'query', description: ':notes: What song or playlist would you like to listen to? Add -s to shuffle a playlist', required: true, choices: []}
 ];
-
-export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options2[0]));
 
 export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message | void> => {
     if(!interaction.client.guildData.get(interaction.guildId)) {

@@ -1,10 +1,7 @@
 import type {CustomInteraction} from '../../utils/types';
-import {SlashCommandBuilder} from '@discordjs/builders';
 
 export const name = 'stop-trivia';
 export const description = 'End a music trivia (if one is in play)';
-
-export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     const triviaPlayer = interaction.client.triviaManager.get(interaction.guildId);

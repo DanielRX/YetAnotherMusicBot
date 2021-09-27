@@ -1,17 +1,13 @@
 import type {CustomInteraction} from '../../utils/types';
-import {SlashCommandBuilder} from '@discordjs/builders';
 import {MessageEmbed} from 'discord.js';
-import fs from 'fs';
-import {setupOption} from '../../utils/utils';
+import fs from 'fs-extra';
 
 export const name = '8ball';
 export const description = 'Get the answer to anything!';
 
 export const options = [
-    {name: 'question', description: 'What do you want to ask?', required: true, choices: []}
+    {type: 'string' as const, name: 'question', description: 'What do you want to ask?', required: true, choices: []}
 ];
-
-export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     const question = `${interaction.options.get('question')?.value}`;
@@ -20,10 +16,9 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
         return interaction.reply('Please ask a shorter question!');
     }
 
-    const ballAnswers = fs.readFileSync('././resources/other/8ball.json', 'utf8');
-    const ballArray = JSON.parse(ballAnswers).answers;
+    const {answers} = fs.readJSONSync('././resources/other/8ball.json', 'utf8') as {answers: ({text: string})[]};
 
-    const randomAnswer = ballArray[Math.floor(Math.random() * ballArray.length)];
+    const randomAnswer = answers[Math.floor(Math.random() * answers.length)];
 
     const answerEmbed = new MessageEmbed()
         .setTitle(question)

@@ -1,21 +1,18 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import type {CustomInteraction} from '../../utils/types';
-import {SlashCommandBuilder} from '@discordjs/builders';
 import type {CommandInteraction, Message} from 'discord.js';
 import {MessageEmbed} from 'discord.js';
 import {PagesBuilder} from 'discord.js-pages';
 import {config} from '../../utils/config';
-import {setupOption, fetch} from '../../utils/utils';
+import {fetch} from '../../utils/utils';
 import type {APIMessage} from 'discord-api-types';
 
 export const name = 'game-search';
 export const description = 'Search for game information';
 
 export const options = [
-    {name: 'game', description: 'What game are you looking for?', required: true, choices: []}
+    {type: 'string' as const, name: 'game', description: 'What game are you looking for?', required: true, choices: []}
 ];
-
-export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
 type GameData = {
     background_image: string,
@@ -108,6 +105,6 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
             }
             return embed.build();
         })
-        .catch(async(e: unknown) => interaction.reply(e as any));
+        .catch(async(e: unknown) => interaction.reply((e as Error).message));
 };
 

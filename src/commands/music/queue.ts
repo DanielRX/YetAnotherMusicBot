@@ -1,14 +1,11 @@
 import type {APIMessage} from 'discord-api-types';
 import type {CommandInteraction, Message} from 'discord.js';
 import type {CustomInteraction} from '../../utils/types';
-import {SlashCommandBuilder} from '@discordjs/builders';
 import {MessageEmbed} from 'discord.js';
 import {PagesBuilder} from 'discord.js-pages';
 
 export const name = 'queue';
 export const description = 'Display the music queue';
-
-export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message | void> => {
     await interaction.deferReply();
@@ -44,4 +41,3 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
         .setAuthor(interaction.member.user.username, interaction.member.user.displayAvatarURL())
         .build();
 };
-

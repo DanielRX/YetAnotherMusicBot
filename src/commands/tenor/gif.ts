@@ -1,16 +1,13 @@
 import type {CustomInteraction} from '../../utils/types';
-import {SlashCommandBuilder} from '@discordjs/builders';
 import {config} from '../../utils/config';
-import {setupOption, fetch} from '../../utils/utils';
+import {fetch} from '../../utils/utils';
 
 export const name = 'gif';
 export const description = 'Replies with a gif matching your query!';
 
 export const options = [
-    {name: 'gif', description: 'What gif would you like to search for?', required: true, choices: []}
+    {type: 'string' as const, name: 'gif', description: 'What gif would you like to search for?', required: true, choices: []}
 ];
-
-export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     if(!config.tenorAPI) { return interaction.reply(':x: Tenor commands are not enabled'); }

@@ -1,17 +1,16 @@
-import {setupOption, fetch} from '../../utils/utils';
-import {SlashCommandBuilder} from '@discordjs/builders';
+import {fetch} from '../../utils/utils';
 import type {CommandInteraction, SelectMenuInteraction} from 'discord.js';
 import {MessageEmbed, MessageActionRow, MessageSelectMenu} from 'discord.js';
 import {PagesBuilder} from 'discord.js-pages';
 import type {CustomInteraction} from '../../utils/types';
-import {options} from '../../utils/options';
+import {options as opts} from '../../utils/options';
 
 export const name = 'reddit';
 export const description = 'Replies with 10 top daily posts in wanted subreddit, you can specify sorting and time!';
 
-export const options2 = [
-    {name: 'subreddit', description: 'What subreddit would you like to search?', required: true, choices: []},
-    {name: 'sort', description: 'What posts do you want to see? Select from best/hot/top/new/controversial/rising', required: true, choices: ['best', 'hot', 'new', 'top', 'controversial', 'rising']},
+export const options = [
+    {type: 'string' as const, name: 'subreddit', description: 'What subreddit would you like to search?', required: true, choices: []},
+    {type: 'string' as const, name: 'sort', description: 'What posts do you want to see? Select from best/hot/top/new/controversial/rising', required: true, choices: ['best', 'hot', 'new', 'top', 'controversial', 'rising']},
 ];
 
 const fetchFromReddit = async(interaction: CustomInteraction, subreddit: string, sort: string, timeFilter = 'day') => {
@@ -40,8 +39,6 @@ const fetchFromReddit = async(interaction: CustomInteraction, subreddit: string,
     void new PagesBuilder(interaction as unknown as CommandInteraction).setPages(dataArr).build();
 };
 
-export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options2[0])).addStringOption(setupOption(options2[1]));
-
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     const message = await interaction.deferReply({fetchReply: true});
     const subreddit = interaction.options.get('subreddit')?.value as string;
@@ -65,7 +62,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
 
         const collector = menu.createMessageComponentCollector({
             componentType: 'SELECT_MENU',
-            time: options.maxResponseTime * 1000
+            time: opts.maxResponseTime * 1000
         });
 
         collector.on('end', () => {

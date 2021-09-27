@@ -1,11 +1,8 @@
 import type {CustomInteraction, GuildData} from '../../utils/types';
-import {SlashCommandBuilder} from '@discordjs/builders';
 import {AudioPlayerStatus} from '@discordjs/voice';
 
 export const name = 'skip';
 export const description = 'Skip the currently playing song!';
-
-export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     const voiceChannel = interaction.member.voice.channel;

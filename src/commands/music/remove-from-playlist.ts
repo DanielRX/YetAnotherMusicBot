@@ -9,11 +9,11 @@ export const name = 'remove-from-playlist';
 export const description = 'Remove a song from a saved playlist';
 
 export const options = [
-    {name: 'playlist', description: 'What is the playlist you would like to delete a song from?', required: true, choices: []},
-    {name: 'index', description: 'What is the index of the video you would like to delete from your saved playlist?', required: true, choices: []}
+    {type: 'string' as const, name: 'playlist', description: 'What is the playlist you would like to delete a song from?', required: true, choices: []},
+    {type: 'integer' as const, name: 'index', description: 'What is the index of the video you would like to delete from your saved playlist?', required: true, choices: []}
 ];
 
-export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0])).addStringOption(setupOption(options[1]));
+export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0])).addIntegerOption(setupOption(options[1]));
 
 export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message> => {
     await interaction.deferReply();

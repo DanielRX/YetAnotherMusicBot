@@ -1,19 +1,16 @@
 import type {APIMessage} from 'discord-api-types';
 import type {CommandInteraction, Message} from 'discord.js';
 import type {CustomInteraction} from '../../utils/types';
-import {SlashCommandBuilder} from '@discordjs/builders';
 import {MessageEmbed} from 'discord.js';
 import {PagesBuilder} from 'discord.js-pages';
-import {setupOption, fetch} from '../../utils/utils';
+import {fetch} from '../../utils/utils';
 import prettyMilliseconds from 'pretty-ms';
 export const name = 'speedrunner-stats';
 export const description = 'Show off your splits from Splits.io';
 
 export const options = [
-    {name: 'user', description: 'Who do you want to look up?', required: true, choices: []},
+    {type: 'string' as const, name: 'user', description: 'Who do you want to look up?', required: true, choices: []},
 ];
-
-export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
 export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message | void> => {
     void interaction.deferReply();

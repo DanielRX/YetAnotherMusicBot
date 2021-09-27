@@ -1,7 +1,7 @@
 // https://stackoverflow.com/a/5306832/9421002
 import f from 'node-fetch';
-import type {SlashCommandUserOption} from '@discordjs/builders';
 import {SlashCommandStringOption, SlashCommandIntegerOption, SlashCommandBooleanOption} from '@discordjs/builders';
+import type {OptionConfig, SlashCommandOption} from './types';
 
 const arrayMove = <T>(arr: T[], oldIndex: number, newIndex: number): T[] => {
     while(oldIndex < 0) {
@@ -35,26 +35,24 @@ const getRandom = <T>(arr: T[], n: number): T[] => {
 
 const randomEl = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
 
-type SlashCommandOption = SlashCommandBooleanOption | SlashCommandIntegerOption | SlashCommandStringOption | SlashCommandUserOption;
-
-const setupStringOption = (config: {name: string, description: string, required: boolean, choices: string[]}) => (option: SlashCommandStringOption): SlashCommandStringOption => {
+const setupStringOption = (config: OptionConfig) => (option: SlashCommandStringOption): SlashCommandStringOption => {
     option = option.setName(config.name).setDescription(config.description).setRequired(config.required);
     for(const choice of config.choices) { option = option.addChoice(choice, choice); }
     return option;
 };
 
-const setupIntOption = (config: {name: string, description: string, required: boolean, choices: string[]}) => (option: SlashCommandIntegerOption): SlashCommandIntegerOption => {
+const setupIntOption = (config: OptionConfig) => (option: SlashCommandIntegerOption): SlashCommandIntegerOption => {
     option = option.setName(config.name).setDescription(config.description).setRequired(config.required);
     for(const choice of config.choices) { option = option.addChoice(choice, parseInt(choice)); }
     return option;
 };
 
-const setupBoolOption = (config: {name: string, description: string, required: boolean, choices: string[]}) => (option: SlashCommandBooleanOption): SlashCommandBooleanOption => {
+const setupBoolOption = (config: OptionConfig) => (option: SlashCommandBooleanOption): SlashCommandBooleanOption => {
     option = option.setName(config.name).setDescription(config.description).setRequired(config.required);
     return option;
 };
 
-const setupOption = <T extends SlashCommandOption>(config: {name: string, description: string, required: boolean, choices: string[]}) => (option: T): T => {
+const setupOption = <T extends SlashCommandOption>(config: OptionConfig) => (option: T): T => {
     if(option instanceof SlashCommandBooleanOption) { return setupBoolOption(config)(option) as T; }
     if(option instanceof SlashCommandIntegerOption) { return setupIntOption(config)(option) as T; }
     if(option instanceof SlashCommandStringOption) { return setupStringOption(config)(option) as T; }

@@ -1,20 +1,17 @@
 import type {APIMessage} from 'discord-api-types';
 import type {CommandInteraction, Message} from 'discord.js';
 import type {CustomInteraction} from '../../utils/types';
-import {SlashCommandBuilder} from '@discordjs/builders';
 import {MessageEmbed} from 'discord.js';
 import {PagesBuilder} from 'discord.js-pages';
-import {setupOption, fetch} from '../../utils/utils';
+import {fetch} from '../../utils/utils';
 import type {Nullable} from 'discord-api-types/utils/internals';
 
 export const name = 'tv-show-search';
 export const description = 'Search for TV shows';
 
 export const options = [
-    {name: 'tvshow', description: 'What TV show are you looking for?', required: true, choices: []},
+    {type: 'string' as const, name: 'tvshow', description: 'What TV show are you looking for?', required: true, choices: []},
 ];
-
-export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
 type Show = {
     show: Nullable<{
@@ -85,7 +82,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
     try {
         showResponse = await getShowSearch(`${tvshow}`);
     } catch(e: unknown) {
-        return interaction.reply(e as any);
+        return interaction.reply((e as Error).message);
     }
 
     try {

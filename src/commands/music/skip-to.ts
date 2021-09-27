@@ -1,17 +1,13 @@
 import type {APIMessage} from 'discord-api-types';
 import type {Message} from 'discord.js';
 import type {CustomInteraction} from '../../utils/types';
-import {SlashCommandBuilder} from '@discordjs/builders';
-import {setupOption} from '../../utils/utils';
 
 export const name = 'skip-to';
 export const description = 'Skip to a song in queue';
 
 export const options = [
-    {name: 'position', description: 'What is the position in queue you want to skip to?', required: true, choices: []},
+    {type: 'integer' as const, name: 'position', description: 'What is the position in queue you want to skip to?', required: true, choices: []},
 ];
-
-export const data = new SlashCommandBuilder().setName(name).setDescription(description).addIntegerOption(setupOption(options[0]));
 
 export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message> => {
     void interaction.deferReply();

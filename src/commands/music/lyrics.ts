@@ -1,22 +1,20 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import {SlashCommandBuilder} from '@discordjs/builders';
 import type {CommandInteraction, Message} from 'discord.js';
 import {MessageEmbed} from 'discord.js';
 import {PagesBuilder} from 'discord.js-pages';
 import cheerio from 'cheerio';
 import {config} from '../../utils/config';
-import {setupOption, fetch} from '../../utils/utils';
+import {fetch} from '../../utils/utils';
 import type {CustomInteraction} from '../../utils/types';
 import type {APIMessage} from 'discord-api-types';
+import {playerManager, guildData} from '../../utils/client';
 
 export const name = 'lyrics';
 export const description = 'Get the lyrics of any song or the lyrics of the currently playing song!';
 
 export const options = [
-    {name: 'songname', description: ':mag: What song lyrics would you like to get?', required: true, choices: []}
+    {type: 'string' as const, name: 'songname', description: ':mag: What song lyrics would you like to get?', required: true, choices: []}
 ];
-
-export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
 const cleanSongName = (songName: string) => {
     return songName
@@ -79,13 +77,13 @@ const getLyrics = async(url: string) => {
 export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message | void> => {
     if(!config.geniusLyricsAPI) { return interaction.reply(':x: Lyrics command is not enabled'); }
     void interaction.deferReply();
-    const player = interaction.client.playerManager.get(interaction.guildId);
-    const guildData = interaction.client.guildData.get(interaction.guildId);
+    const player = playerManager.get(interaction.guildId);
+    const guild = guildData.get(interaction.guildId);
     let songName = `${interaction.options.get('songname')?.value}`;
     if(!songName) {
         if(!player) { return interaction.followUp('There is no song playing! Enter a song name or play a song'); }
-        if(guildData) {
-            if(guildData.triviaData.isTriviaRunning) {
+        if(guild) {
+            if(guild.triviaData.isTriviaRunning) {
                 return interaction.followUp(':x: Please try again after the trivia has ended');
             }
         }

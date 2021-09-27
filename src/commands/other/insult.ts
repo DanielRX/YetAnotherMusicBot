@@ -1,12 +1,9 @@
 import type {CustomInteraction} from '../../utils/types';
-import {SlashCommandBuilder} from '@discordjs/builders';
 import {fetch} from '../../utils/utils';
 import {MessageEmbed} from 'discord.js';
 
 export const name = 'insult';
 export const description = 'Generate an evil insult!';
-
-export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     // thanks to https://evilinsult.com :)

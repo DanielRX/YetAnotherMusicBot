@@ -1,5 +1,4 @@
 import type {CustomInteraction} from '../../utils/types';
-import {SlashCommandBuilder} from '@discordjs/builders';
 import type {Message, User} from 'discord.js';
 import Discord from 'discord.js';
 import os from 'os';
@@ -8,8 +7,6 @@ const pkg = readJsonSync('../../../package.json');
 
 export const name = 'bot-status';
 export const description = 'Shows the current system status';
-
-export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     const owner = await interaction.guild.fetchOwner();

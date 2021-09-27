@@ -1,20 +1,16 @@
 import fs from 'fs';
 import {REST} from '@discordjs/rest';
 import {Routes} from 'discord-api-types/v9';
-import {Client, Collection, Intents} from 'discord.js';
 import mongoose from 'mongoose';
-import type {Command, CustomClient, CustomInteraction} from './utils/types';
-
+import type {Command, CustomInteraction} from './utils/types';
+import {SlashCommandBuilder} from '@discordjs/builders';
+import {setupOption} from '../../utils/utils';
+import {client, commands} from './utils/client';
 import {config} from './utils/config';
 
 const rest = new REST({version: '9'}).setToken(config.token);
 
-const intents = [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_VOICE_STATES];
-
-const client: CustomClient = new Client({intents}) as any;
-
-client.commands = new Collection();
-const commands = [];
+const commandsArr = [];
 
 const commandFiles = fs
     .readdirSync('./commands')
@@ -26,16 +22,26 @@ const commandFiles = fs
 
 for(const file of commandFiles) {
     // eslint-disable-next-line @typescript-eslint/no-var-requires,@typescript-eslint/no-require-imports
-    const command: Command = require(`${file}`);
+    const command = require(`${file}`) as Command;
     if(Object.keys(command).length === 0) continue;
-    commands.push(command.data.toJSON());
-    (client as any).commands.set(command.data.name, command);
+    let data: any = new SlashCommandBuilder().setName(command.name).setDescription(command.description);
+    for(const option of command.options) {
+        switch(option.type) {
+            case 'string': data = data.addStringOption(setupOption(option)); break;
+            case 'user': data = data.addUserOption(setupOption(option)); break;
+            case 'boolean': data = data.addBooleanOption(setupOption(option)); break;
+            case 'integer': data = data.addIntegerOption(setupOption(option)); break;
+        }
+    }
+
+    commandsArr.push(command.data.toJSON());
+    commands.set(command.data.name, command);
 }
 
 void (async() => {
     try {
         console.log('Started refreshing application (/) commands.');
-        await rest.put(Routes.applicationCommands(config.clientId) as any, {body: commands});
+        await rest.put(Routes.applicationCommands(config.clientId) as any, {body: commandsArr});
         console.log('Successfully reloaded application (/) commands.');
     } catch(e: unknown) {
         console.error(e);
@@ -47,9 +53,6 @@ import * as interactionCreate from './events/interactionCreate';
 client.on(interactionCreate.name, async(interaction) => interactionCreate.execute(interaction as CustomInteraction));
 
 client.once('ready', () => {
-    (client as any).playerManager = new Map();
-    (client as any).triviaManager = new Map();
-    (client as any).guildData = new Collection();
     client.user?.setActivity('/', {type: 'WATCHING'});
     mongoose
         .connect(encodeURI(config.mongoURI), {useNewUrlParser: true, useUnifiedTopology: true})

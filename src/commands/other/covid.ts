@@ -1,16 +1,13 @@
-import {SlashCommandBuilder} from '@discordjs/builders';
 import {MessageEmbed} from 'discord.js';
 import type {CustomInteraction} from '../../utils/types';
-import {setupOption, fetch} from '../../utils/utils';
+import {fetch} from '../../utils/utils';
 
 export const name = 'covid';
 export const description = 'Displays COVID-19 stats.';
 
 export const options = [
-    {name: 'country', description: 'What country do you like to search? Type `all` to display worldwide stats.', required: true, choices: []}
+    {type: 'string' as const, name: 'country', description: 'What country do you like to search? Type `all` to display worldwide stats.', required: false, choices: []}
 ];
-
-export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
 type WorldStats = {todayCases: number, todayDeaths: number, recovered: number, deaths: number, active: number, cases: number, tests: number, casesPerOneMillion: number, deathsPerOneMillion: number, updated: number};
 type CountryStats = WorldStats & {country: string, countryInfo: {flag: string}};

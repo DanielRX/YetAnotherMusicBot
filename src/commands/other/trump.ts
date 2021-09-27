@@ -1,12 +1,9 @@
-import {SlashCommandBuilder} from '@discordjs/builders';
 import {fetch} from '../../utils/utils';
 import {MessageEmbed} from 'discord.js';
 import type {CustomInteraction} from '../../utils/types';
 
 export const name = 'trump';
 export const description = 'Get a random quote from Donald Trump!';
-
-export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     // eslint-disable-next-line @typescript-eslint/naming-convention

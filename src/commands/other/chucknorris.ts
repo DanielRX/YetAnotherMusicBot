@@ -1,12 +1,9 @@
 import type {CustomInteraction} from '../../utils/types';
-import {SlashCommandBuilder} from '@discordjs/builders';
 import {fetch} from '../../utils/utils';
 import {MessageEmbed} from 'discord.js';
 
 export const name = 'chucknorris';
 export const description = 'Get a satirical fact about Chuck Norris!';
-
-export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     // thanks to https://api.chucknorris.io

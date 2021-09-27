@@ -1,18 +1,15 @@
 import type {CustomInteraction} from '../../utils/types';
-import {SlashCommandBuilder} from '@discordjs/builders';
-import fs from 'fs';
+import fs from 'fs-extra';
 import {MessageEmbed} from 'discord.js';
 
 export const name = 'motivation';
 export const description = 'Get a random motivational quote!';
 
-export const data = new SlashCommandBuilder().setName(name).setDescription(description);
-
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     // thanks to https://type.fit/api/quotes
 
-    const jsonQuotes = fs.readFileSync('././resources/quotes/motivational.json', 'utf8');
-    const quoteArray = JSON.parse(jsonQuotes).quotes;
+    const jsonQuotes = fs.readJSONSync('././resources/quotes/motivational.json', 'utf8') as {quotes: ({text: string, author: string})[]};
+    const quoteArray = jsonQuotes.quotes;
 
     const randomQuote = quoteArray[Math.floor(Math.random() * quoteArray.length)];
 

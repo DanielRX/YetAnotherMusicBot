@@ -1,16 +1,12 @@
 import type {CustomInteraction} from '../../utils/types';
-import {SlashCommandBuilder} from '@discordjs/builders';
 import member from '../../utils/models/Member';
-import {setupOption} from '../../utils/utils';
 
 export const name = 'create-playlist';
 export const description = 'Create a custom playlist that you can play anytime';
 
 export const options = [
-    {name: 'playlistname', description: 'What is the name of the playlist you would like to create?', required: true, choices: []}
+    {type: 'string' as const, name: 'playlistname', description: 'What is the name of the playlist you would like to create?', required: true, choices: []}
 ];
-
-export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     const playlistName = `${interaction.options.get('playlistname')?.value}`;
@@ -34,7 +30,8 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
     userData.savedPlaylists.push({name: playlistName, urls: []});
     try {
         await member.updateOne({memberId: interaction.member.id}, userData);
-        return interaction.reply(`Created a new playlist named **${playlistName}**`);
+        await interaction.reply(`Created a new playlist named **${playlistName}**`);
+        return;
     } catch(e: unknown) {
         console.error(e);
         return interaction.reply('There was a problem executing this command, please try again later');

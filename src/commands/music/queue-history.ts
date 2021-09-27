@@ -1,14 +1,11 @@
 import type {APIMessage} from 'discord-api-types';
 import type {CommandInteraction, Message} from 'discord.js';
 import type {CustomInteraction} from '../../utils/types';
-import {SlashCommandBuilder} from '@discordjs/builders';
 import {MessageEmbed} from 'discord.js';
 import {PagesBuilder} from 'discord.js-pages';
 
 export const name = 'queue-history';
 export const description = 'Display the music queue history';
-
-export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message | void> => {
     const guildData = interaction.client.guildData.get(interaction.guildId);

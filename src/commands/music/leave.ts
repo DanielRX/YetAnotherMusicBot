@@ -1,11 +1,9 @@
-import {SlashCommandBuilder} from '@discordjs/builders';
 import {AudioPlayerStatus} from '@discordjs/voice';
 import type {CustomInteraction} from '../../utils/types';
+import {playerManager} from '../../utils/client';
 
 export const name = 'leave';
 export const description = 'Leaves a voice channel if in one!';
-
-export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     const voiceChannel = interaction.member.voice.channel;
@@ -13,7 +11,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
         return interaction.reply('Please join a voice channel and try again!');
     }
 
-    const player = interaction.client.playerManager.get(interaction.guildId);
+    const player = playerManager.get(interaction.guildId);
     if(typeof player === 'undefined' || player.audioPlayer.state.status !== AudioPlayerStatus.Playing) {
         return interaction.reply('There is no song playing right now!');
     }
@@ -22,7 +20,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
     }
 
     player.connection.destroy();
-    interaction.client.playerManager.delete(interaction.guildId);
+    playerManager.delete(interaction.guildId);
     return interaction.reply('Left your voice channel!');
 };
 

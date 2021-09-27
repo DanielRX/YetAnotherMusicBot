@@ -1,13 +1,9 @@
 import type {CustomInteraction} from '../../utils/types';
-
-import {SlashCommandBuilder} from '@discordjs/builders';
 import {fetch} from '../../utils/utils';
 import {MessageEmbed} from 'discord.js';
 
 export const name = 'fortune';
 export const description = 'Replies with a fortune cookie tip!';
-
-export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     try {

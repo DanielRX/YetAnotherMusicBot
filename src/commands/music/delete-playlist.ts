@@ -1,16 +1,12 @@
 import type {CustomInteraction} from '../../utils/types';
-import {SlashCommandBuilder} from '@discordjs/builders';
 import member from '../../utils/models/Member';
-import {setupOption} from '../../utils/utils';
 
 export const name = 'delete-playlist';
 export const description = 'Delete a playlist from your saved playlists';
 
 export const options = [
-    {name: 'playlistname', description: 'Which playlist would you like to delete?', required: true, choices: []}
+    {type: 'string' as const, name: 'playlistname', description: 'Which playlist would you like to delete?', required: true, choices: []}
 ];
-
-export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     const playlistName = interaction.options.get('playlistname')?.value;

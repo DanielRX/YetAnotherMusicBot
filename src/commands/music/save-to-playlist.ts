@@ -2,22 +2,19 @@ import type {APIMessage} from 'discord-api-types';
 import type {Message, User} from 'discord.js';
 import type {Video} from 'youtube-sr';
 import type {CustomInteraction, PlayTrack, Track} from '../../utils/types';
-import {SlashCommandBuilder} from '@discordjs/builders';
 import member from '../../utils/models/Member';
 import YouTube from 'youtube-sr';
 import {getData} from 'spotify-url-info';
 import {searchOne} from '../../utils/music/searchOne';
-import {isSpotifyURL, validateURL, setupOption} from '../../utils/utils';
+import {isSpotifyURL, validateURL} from '../../utils/utils';
 
 export const name = 'save-to-playlist';
 export const description = 'Save a song or a playlist to a custom playlist';
 
 export const options = [
-    {name: 'playlistname', description: 'What is the playlist you would like to save to?', required: true, choices: []},
-    {name: 'url', description: 'What url would you like to save to playlist? It can also be a playlist url?', required: true, choices: []}
+    {type: 'string' as const, name: 'playlistname', description: 'What is the playlist you would like to save to?', required: true, choices: []},
+    {type: 'string' as const, name: 'url', description: 'What url would you like to save to playlist? It can also be a playlist url?', required: true, choices: []}
 ];
-
-export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0])).addStringOption(setupOption(options[1]));
 
 // TODO: Don't use defaults, fix type
 const constructSongObj = (video: Video, user: User): PlayTrack => {
@@ -35,7 +32,7 @@ const constructSongObj = (video: Video, user: User): PlayTrack => {
 
 const processURL = async(url: string, interaction: CustomInteraction) => {
     if(isSpotifyURL(url)) {
-        getData(url)
+        return void getData(url)
             .then(async(res: Track | {tracks: {items: ({track: Track})[]}}) => {
                 if('tracks' in res) {
                     const spotifyPlaylistItems = res.tracks.items;
@@ -54,7 +51,8 @@ const processURL = async(url: string, interaction: CustomInteraction) => {
                 return constructSongObj(video, interaction.member.user);
             })
             .catch((e: unknown) => console.error(e));
-    } else if(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/.exec(url)) {
+    }
+    if(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/.exec(url)) {
         const playlist = await YouTube.getPlaylist(url).catch(function() {
             throw new Error(':x: Playlist is either private or it does not exist!');
         });
@@ -68,15 +66,14 @@ const processURL = async(url: string, interaction: CustomInteraction) => {
             }
         }
         return urlsArr;
-    } else {
-        const video = await YouTube.getVideo(url).catch(() => {
-            throw new Error(':x: There was a problem getting the video you provided!');
-        });
-        if(video.live) {
-            throw new Error("I don't support live streams!");
-        }
-        return constructSongObj(video, interaction.member.user);
     }
+    const video = await YouTube.getVideo(url).catch(() => {
+        throw new Error(':x: There was a problem getting the video you provided!');
+    });
+    if(video.live) {
+        throw new Error("I don't support live streams!");
+    }
+    return constructSongObj(video, interaction.member.user);
 };
 
 export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message | void> => {

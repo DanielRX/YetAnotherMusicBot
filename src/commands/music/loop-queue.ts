@@ -1,25 +1,21 @@
 import type {CustomInteraction, GuildData} from '../../utils/types';
-import {SlashCommandBuilder} from '@discordjs/builders';
 import {AudioPlayerStatus} from '@discordjs/voice';
 import createGuildData from '../../utils/createGuildData';
-
-import {setupOption} from '../../utils/utils';
+import {guildData, playerManager} from '../../utils/client';
 
 export const name = 'loop-queue';
 export const description = 'Loop the queue x times! - (the default is 1 time)';
 
 export const options = [
-    {name: 'looptimes', description: 'How many times do you want to loop the queue?', required: true, choices: []}
+    {type: 'integer' as const, name: 'looptimes', description: 'How many times do you want to loop the queue?', required: true, choices: []}
 ];
 
-export const data = new SlashCommandBuilder().setName(name).setDescription(description).addIntegerOption(setupOption(options[0]));
-
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
-    if(!interaction.client.guildData.get(interaction.guildId)) {
-        interaction.client.guildData.set(interaction.guildId, createGuildData());
+    if(!guildData.get(interaction.guildId)) {
+        guildData.set(interaction.guildId, createGuildData());
     }
-    const guildData = interaction.client.guildData.get(interaction.guildId) as unknown as GuildData;
-    const player = interaction.client.playerManager.get(interaction.guildId);
+    const guild = guildData.get(interaction.guildId) as unknown as GuildData;
+    const player = playerManager.get(interaction.guildId);
     if(!player) {
         return interaction.reply('There is no song playing now!');
     }
@@ -27,7 +23,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
         return interaction.reply('There is no song playing now!');
     }
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if(player.audioPlayer.state.status === AudioPlayerStatus.Playing && guildData.triviaData.isTriviaRunning) {
+    if(player.audioPlayer.state.status === AudioPlayerStatus.Playing && guild.triviaData.isTriviaRunning) {
         return interaction.reply(`You can't use this command while a trivia is running!`);
     }
     if(interaction.member.voice.channelId !== interaction.guild.me?.voice.channelId) {

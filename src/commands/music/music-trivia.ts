@@ -1,4 +1,3 @@
-import {SlashCommandBuilder} from '@discordjs/builders';
 import {joinVoiceChannel, VoiceConnectionStatus, entersState} from '@discordjs/voice';
 import type {APIMessage} from 'discord-api-types';
 import type {BaseGuildTextChannel, Message} from 'discord.js';
@@ -6,17 +5,16 @@ import {MessageEmbed} from 'discord.js';
 import fs from 'fs-extra';
 import TriviaPlayer from '../../utils/music/TriviaPlayer';
 import type {CustomInteraction, PlayTrack} from '../../utils/types';
-import {getRandom, setupOption} from '../../utils/utils';
+import {getRandom} from '../../utils/utils';
 
 export const name = 'music-trivia';
 export const description = 'Engage in a music quiz with your friends!';
 
 export const options = [
-    {name: 'length', description: 'How many songs would you like the trivia to have?', required: false, choices: []},
-    {name: 'youtube', description: 'Use youtube for songs?', required: false, choices: []},
+    {type: 'string' as const, name: 'length', description: 'How many songs would you like the trivia to have?', required: false, choices: []}
 ];
 
-export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0])).addBooleanOption(setupOption(options[1]));
+type TriviaElement = {youtubeUrl: string, previewUrl: string, artists: string[], album: string, name: string};
 
 const handleSubscription = async(interaction: CustomInteraction, player: TriviaPlayer): Promise<APIMessage | Message> => {
     const {queue} = player;
@@ -62,17 +60,15 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
         return interaction.followUp('There is already a trivia in play!');
     }
 
-    const numberOfSongs = Number(interaction.options.get('length') ? interaction.options.get('length')?.value : 5);
-    const useYoutube = Boolean(interaction.options.get('youtube') ? interaction.options.get('youtube')?.value : false);
-
-    const songs: ({youtubeUrl: string, previewUrl: string, artists: string[], album: string, name: string})[] = await fs.readJSON('./resources/music/mk2/trivia.json'); // TODO: Move type to types
-    const albumData: {[key: string]: {[key: string]: unknown}} = await fs.readJSON('./resources/music/mk2/albums.json');
-    const artistsData: {[key: string]: string} = await fs.readJSON('./resources/music/mk2/artists.json');
+    const numberOfSongs = Number(interaction.options.get('length') ? interaction.options.get('length')?.value : 25);
+    const songs = await fs.readJSON('./resources/music/mk2/trivia.json') as TriviaElement[]; // TODO: Move type to types
+    const albumData = await fs.readJSON('./resources/music/mk2/albums.json') as {[key: string]: {[key: string]: unknown}};
+    const artistsData = await fs.readJSON('./resources/music/mk2/artists.json') as {[key: string]: string};
     const videoDataArray = songs.map((track) => ({...track, album: albumData[track.album], artists: track.artists.map((id) => artistsData[id])}));
     // Get random numberOfSongs videos from the array
 
     const randomLinks = getRandom(videoDataArray, numberOfSongs);
-    interaction.client.triviaManager.set(interaction.guildId, new TriviaPlayer(useYoutube));
+    interaction.client.triviaManager.set(interaction.guildId, new TriviaPlayer());
 
     const triviaPlayer = interaction.client.triviaManager.get(interaction.guildId) as unknown as TriviaPlayer;
 

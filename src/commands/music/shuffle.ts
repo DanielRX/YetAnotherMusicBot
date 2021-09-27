@@ -1,13 +1,10 @@
 import type {APIMessage} from 'discord-api-types';
 import type {Message} from 'discord.js';
 import type {CustomInteraction} from '../../utils/types';
-import {SlashCommandBuilder} from '@discordjs/builders';
 import {shuffleArray} from '../../utils/utils';
 
 export const name = 'shuffle';
 export const description = 'Shuffle the music queue!';
-
-export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message> => {
     void interaction.deferReply();

@@ -1,5 +1,4 @@
 import type {CustomInteraction} from '../../utils/types';
-import {SlashCommandBuilder} from '@discordjs/builders';
 import {AudioPlayerStatus} from '@discordjs/voice';
 
 export const name = 'pause';
@@ -29,7 +28,5 @@ const exec = (interaction: CustomInteraction): string => {
     }
     return 'I was unable to pause this song, please try again soon';
 };
-
-export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => interaction.reply(exec(interaction));
