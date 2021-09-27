@@ -41,7 +41,7 @@ const getLeaderBoard = (arr: [string, number][]) => {
     return leaderBoard;
 };
 
-export class TriviaPlayer {
+export class TriviaPlayer { // TODO: Merge with MusicPlayer
     public textChannel: BaseGuildTextChannel = null!;
     public readonly score: Map<string, number> = new Map();
     public queue: PlayTrack[] = [];
@@ -49,11 +49,11 @@ export class TriviaPlayer {
     private wasTriviaEndCalled = false;
     private readonly audioPlayer: AudioPlayer;
     // eslint-disable-next-line @typescript-eslint/no-parameter-properties
-    constructor(public useYoutube = true) {
+    public constructor(public useYoutube = true) {
         this.audioPlayer = createAudioPlayer();
     }
 
-    passConnection(connection: VoiceConnection): void {
+    public passConnection(connection: VoiceConnection): void {
         this.connection = connection;
         this.connection.on('stateChange', async(_, newState) => {
             if(newState.status === VoiceConnectionStatus.Disconnected) {
@@ -247,19 +247,19 @@ export class TriviaPlayer {
         this.connection.subscribe(this.audioPlayer);
     }
 
-    stop(): void {
+    public stop(): void {
         this.queue.length = 0;
         this.audioPlayer.stop(true);
     }
 
-    reset(): void {
+    public reset(): void {
         this.queue.length = 0;
         this.wasTriviaEndCalled = true;
         this.score.clear();
         this.connection.destroy();
     }
 
-    async process(queue: PlayTrack[]): Promise<void> {
+    public async process(queue: PlayTrack[]): Promise<void> {
         const [song] = this.queue;
         try {
             if(!this.useYoutube && song.preview_url !== '') {

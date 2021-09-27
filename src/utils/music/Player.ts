@@ -9,7 +9,7 @@ import {MessageEmbed} from 'discord.js';
 import type {CustomClient, PlayTrack} from '../types';
 const wait = promisify(setTimeout);
 
-class MusicPlayer {
+class MusicPlayer { // TODO: Merge with TriviaPlayer
     public commandLock = false;
     public connection: VoiceConnection = null!;
     public queue: PlayTrack[] = [];
@@ -22,16 +22,16 @@ class MusicPlayer {
     private isPreviousTrack = false;
     private nowPlaying: PlayTrack | null = null;
 
-    constructor() {
+    public constructor() {
         this.audioPlayer = createAudioPlayer();
     }
 
-    getQueueHistory(): PlayTrack[] {
+    public getQueueHistory(): PlayTrack[] {
         // eslint-disable-next-line
         return (this.textChannel.client as unknown as CustomClient).guildData.get(this.textChannel.guildId)?.queueHistory!;
     }
 
-    passConnection(connection: VoiceConnection): void {
+    public passConnection(connection: VoiceConnection): void {
         this.connection = connection;
         this.connection.on('stateChange', async(_, newState) => {
             // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
@@ -122,7 +122,7 @@ class MusicPlayer {
         this.connection.subscribe(this.audioPlayer);
     }
 
-    stop(): void {
+    public stop(): void {
         this.queue.length = 0;
         this.nowPlaying = null!;
         this.skipTimer = false;
@@ -132,7 +132,7 @@ class MusicPlayer {
         this.audioPlayer.stop(true);
     }
 
-    async process(queue: PlayTrack[]): Promise<void> {
+    public async process(queue: PlayTrack[]): Promise<void> {
         if(this.audioPlayer.state.status !== AudioPlayerStatus.Idle || this.queue.length === 0) { return; }
 
         const song = this.queue.shift() as unknown as PlayTrack;

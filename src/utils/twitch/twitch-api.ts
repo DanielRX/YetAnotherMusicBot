@@ -8,7 +8,7 @@ type Response<T> = {status: string, data: T[], access_token?: string}
 class TwitchAPI {
     //Access Token is valid for 24 Hours
 
-    static async getToken<T>(tClientID: string, tClientSecret: string, scope: string): Promise<string> {
+    public static async getToken<T>(tClientID: string, tClientSecret: string, scope: string): Promise<string> {
         try {
             const json = await fetch<Response<T>>(`https://id.twitch.tv/oauth2/token?client_id=${tClientID}&client_secret=${tClientSecret}&grant_type=client_credentials&scope=${scope}`, {method: 'POST'}).then((res) => res.json());
             if(json.status == '400') {
@@ -23,7 +23,7 @@ class TwitchAPI {
     }
 
     //userInfo.data[0]
-    static async getUserInfo<T>(token: string, client_id: string, username: string): Promise<Response<T>> {
+    public static async getUserInfo<T>(token: string, client_id: string, username: string): Promise<Response<T>> {
         try {
             const json = await fetch<Response<T>>(`https://api.twitch.tv/helix/users?login=${username}`, {method: 'GET', headers: {'client-id': `${client_id}`, Authorization: `Bearer ${token}`}}).then((res) => res.json());
             if(json.status == `400`) {
@@ -49,7 +49,7 @@ class TwitchAPI {
     }
 
     // streamInfo.data[0]
-    static async getStream<T>(token: string, client_id: string, userID: string): Promise<Response<T>> {
+    public static async getStream<T>(token: string, client_id: string, userID: string): Promise<Response<T>> {
         try {
             const json = await fetch<Response<T>>(`https://api.twitch.tv/helix/streams?user_id=${userID}`, {method: 'GET', headers: {'client-id': `${client_id}`, Authorization: `Bearer ${token}`}}).then((res) => res.json());
             return json;
@@ -59,7 +59,7 @@ class TwitchAPI {
         }
     }
 
-    static async getGames<T>(token: string, client_id: string, game_id: string): Promise<Response<T>> {
+    public static async getGames<T>(token: string, client_id: string, game_id: string): Promise<Response<T>> {
         try {
             const json = await fetch<Response<T>>(`https://api.twitch.tv/helix/games?id=${game_id}`, {method: 'GET', headers: {'client-id': `${client_id}`, Authorization: `Bearer ${token}`}}).then((res) => res.json());
             return json;
