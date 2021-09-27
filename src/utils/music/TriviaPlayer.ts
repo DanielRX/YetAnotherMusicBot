@@ -27,8 +27,8 @@ const normalizeValue = (value: string) =>
         .toLowerCase(); // Remove duplicate spaces
 
 const getLeaderBoard = (arr: [string, number][]) => {
-    if(!arr) { return; }
-    if(!arr[0]) { return; } // Issue #422
+    if(typeof arr === 'undefined') { return; }
+    if(typeof arr[0] === 'undefined') { return; } // Issue #422
     let leaderBoard = '';
 
     leaderBoard = `👑   **${arr[0][0]}:** ${arr[0][1]}  points`;
@@ -98,7 +98,7 @@ export class TriviaPlayer {
 
                     if(this.wasTriviaEndCalled) { return; }
                     const board = getLeaderBoard(Array.from(sortedScoreMap.entries()));
-                    if(board) {
+                    if(typeof board !== 'undefined') {
                         const embed = new MessageEmbed()
                             .setColor('#ff7373')
                             .setTitle(`Music Quiz Results:`)
@@ -157,10 +157,10 @@ export class TriviaPlayer {
                 // let timeoutId = setTimeout(() => collector.stop(), 30000);
 
                 nextHintInt = setInterval(() => {
-                    void showHint(normalizeValue((this.queue[0] || {artists: ['']}).artists[0]), normalizeValue((this.queue[0] || {name: ''}).name));
+                    void showHint(normalizeValue((this.queue[0] ?? {artists: ['']}).artists[0]), normalizeValue((this.queue[0] ?? {name: ''}).name));
                 }, 5000);
 
-                void showHint(normalizeValue((this.queue[0] || {artists: ['']}).artists[0]), normalizeValue((this.queue[0] || {name: ''}).name));
+                void showHint(normalizeValue((this.queue[0] ?? {artists: ['']}).artists[0]), normalizeValue((this.queue[0] ?? {name: ''}).name));
 
                 collector.on('collect', (msg: Message) => {
                     if(!this.score.has(msg.author.username)) { return; }
@@ -198,13 +198,13 @@ export class TriviaPlayer {
 
                     if(gotSingerInTime && !songSingerWinners[msg.author.username]) {
                         songSingerWinners[msg.author.username] = true;
-                        this.score.set(msg.author.username, (this.score.get(msg.author.username) || 0) + 1);
+                        this.score.set(msg.author.username, (this.score.get(msg.author.username) ?? 0) + 1);
                         void msg.react('☑');
                     }
 
                     if(gotNameInTime && !songNameWinners[msg.author.username]) {
                         songNameWinners[msg.author.username] = true;
-                        this.score.set(msg.author.username, (this.score.get(msg.author.username) || 0) + 1);
+                        this.score.set(msg.author.username, (this.score.get(msg.author.username) ?? 0) + 1);
                         void msg.react('☑');
                     }
 
@@ -228,7 +228,7 @@ export class TriviaPlayer {
 
                     const song = `${capitalize_Words(this.queue[0].artists[0])}: ${capitalize_Words(this.queue[0].name)}`;
                     const board = getLeaderBoard(Array.from(sortedScoreMap.entries()));
-                    if(board) {
+                    if(typeof board !== 'undefined') {
                         const embed = new MessageEmbed()
                             .setColor('#ff7373')
                             .setTitle(`:musical_note: The song was:  ${song} (${Math.max(this.queue.length - 1, 0)} left)`)

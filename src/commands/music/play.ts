@@ -2,13 +2,12 @@ import type {APIMessage} from 'discord-api-types';
 import type {BaseGuildTextChannel, Message, SelectMenuInteraction, User, VoiceChannel} from 'discord.js';
 import type {Video} from 'youtube-sr';
 import type MusicPlayer from '../../utils/music/Player';
-import type {CustomAudioPlayer, CustomInteraction, Playlist, PlayTrack} from '../../utils/types';
+import type {CustomAudioPlayer, CustomInteraction, GuildData, Playlist, PlayTrack, Track} from '../../utils/types';
 import {SlashCommandBuilder} from '@discordjs/builders';
 import {MessageSelectMenu, MessageActionRow} from 'discord.js';
 import Player from '../../utils/music/Player';
 import {getData} from 'spotify-url-info';
 import YouTube from 'youtube-sr';
-import {readJSONSync} from 'fs-extra';
 import Member from '../../utils/models/Member';
 import {joinVoiceChannel, entersState, VoiceConnectionStatus, AudioPlayerStatus} from '@discordjs/voice';
 import createGuildData from '../../utils/createGuildData';
@@ -16,19 +15,7 @@ import {searchOne} from '../../utils/music/searchOne';
 import {shuffleArray, isSpotifyURL, isYouTubeVideoURL, isYouTubePlaylistURL, setupOption} from '../../utils/utils';
 import {getFlags, createSelectMenu, createHistoryRow} from '../../utils/music/play-utils';
 
-const options = readJSONSync('../../../options.json'); //TODO: Replace with file that fills in defaults
-// Check If Options are Valid
-if(typeof options.playLiveStreams !== 'boolean') options.playLiveStreams = true;
-if(typeof options.maxQueueLength !== 'number' || options.maxQueueLength < 1) { options.maxQueueLength = 1000; }
-if(typeof options.LeaveTimeOut !== 'number') { options.LeaveTimeOut = 90; }
-if(typeof options.MaxResponseTime !== 'number') { options.MaxResponseTime = 30; }
-if(typeof options.AutomaticallyShuffleYouTubePlaylists !== 'boolean') { options.AutomaticallyShuffleYouTubePlaylists = false; }
-if(typeof options.playVideosLongerThan1Hour !== 'boolean') { options.playVideosLongerThan1Hour = true; }
-if(typeof options.deleteOldPlayMessage !== 'boolean') { options.deleteOldPlayMessage = false; }
-
-// If the Options are outside of min or max then use the closest number
-options.LeaveTimeOut = Math.max(Math.min(options.LeaveTimeOut, 600), 1);
-options.MaxResponseTime = Math.max(Math.min(options.MaxResponseTime, 150), 5);
+import {options} from '../../utils/options';
 
 const deletePlayerIfNeeded = (interaction: CustomInteraction) => {
     const player = interaction.client.playerManager.get(interaction.guildId);
@@ -48,14 +35,14 @@ const constructSongObj = (video: Video, voiceChannel: VoiceChannel, user: User, 
 
 const handleSubscription = async(queue: PlayTrack[], interaction: CustomInteraction, player: MusicPlayer) => {
     let voiceChannel = queue[0].voiceChannel;
-    if(!voiceChannel) {
+    if(typeof voiceChannel === 'undefined') {
         // happens when loading a saved playlist
-        voiceChannel = interaction.member.voice.channel;
+        voiceChannel = interaction.member.voice.channel as VoiceChannel;
     }
 
     const title = player.queue[0].name;
     let connection = player.connection;
-    if(!connection) {
+    if(typeof connection === 'undefined') {
         connection = joinVoiceChannel({channelId: voiceChannel.id, guildId: interaction.guild.id, adapterCreator: interaction.guild.voiceAdapterCreator});
         connection.on('error', console.error);
     }
@@ -113,9 +100,9 @@ const handleSpotifyURL = (interaction: CustomInteraction): Promise<APIMessage | 
     const player = interaction.client.playerManager.get(interaction.guildId) as unknown as CustomAudioPlayer;
     const rawQuery = `${interaction.options.get('query')?.value}`;
     const {nextFlag, jumpFlag, query} = getFlags(rawQuery);
-    const handleSpotifyData = async(data: any) => {
+    const handleSpotifyData = async(data: Track | {tracks: Track[]}) => {
         // 'tracks' property only exists on a playlist data object
-        if(data.tracks) {
+        if('tracks' in data) {
             // handle playlist
             return handleSpotifyPlaylistData(interaction, data);
         }
@@ -302,13 +289,13 @@ const handleYoutubePlaylistURL = async(interaction: CustomInteraction): Promise<
     const {nextFlag, jumpFlag, shuffleFlag, reverseFlag, query} = getFlags(rawQuery);
 
     const playlist = await YouTube.getPlaylist(query);
-    if(!playlist) {
+    if(typeof playlist === 'undefined') {
         deletePlayerIfNeeded(interaction);
         return interaction.followUp(':x: Playlist is either private or it does not exist!');
     }
 
     const videos = await playlist.fetch();
-    if(!videos) {
+    if(typeof videos === 'undefined') {
         player.commandLock = false;
         deletePlayerIfNeeded(interaction);
         return interaction.followUp(":x: I hit a problem when trying to fetch the playlist's videos");
@@ -445,7 +432,7 @@ const handlePlayPlaylist = async(interaction: CustomInteraction, message: Messag
     const clarificationCollector = clarificationOptions.createMessageComponentCollector({componentType: 'SELECT_MENU', time: options.MaxResponseTime * 1000});
 
     clarificationCollector.on('end', () => {
-        if(clarificationOptions) { clarificationOptions.delete().catch(console.error); }
+        if(typeof clarificationOptions !== 'undefined') { clarificationOptions.delete().catch(console.error); }
     });
 
     clarificationCollector.on('collect', async(i: SelectMenuInteraction): Promise<void> => {
@@ -547,7 +534,8 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
         return interaction.followUp(':no_entry: Please join a voice channel and try again!');
     }
     // Make sure there isn't a 'music-trivia' running
-    if(interaction.client.guildData.get(interaction.guild.id)?.triviaData.isTriviaRunning) {
+    const guildData = interaction.client.guildData.get(interaction.guild.id) as unknown as GuildData;
+    if(guildData.triviaData.isTriviaRunning) {
         return interaction.followUp(':x: Please try after the trivia has ended!');
     }
     const query = `${interaction.options.get('query')?.value}`;
@@ -557,7 +545,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
     if(flags.includes(splitQuery[splitQuery.length - 1])) splitQuery.pop();
     const cleanQuery = splitQuery.join(' ');
 
-    let player = interaction.client.playerManager.get(interaction.guildId) as unknown as MusicPlayer;
+    let player = interaction.client.playerManager.get(interaction.guildId) as unknown as MusicPlayer | undefined;
 
     if(!player) {
         player = new Player();

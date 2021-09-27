@@ -1,10 +1,10 @@
-import type {Client, Collection, GuildMember, CommandInteraction, Message, TextBasedChannels} from 'discord.js';
+import type {Client, Collection, GuildMember, CommandInteraction, Message, TextBasedChannels, VoiceChannel} from 'discord.js';
 import type {VoiceConnection, AudioPlayer} from '@discordjs/voice';
 import type {SlashCommandBuilder} from '@discordjs/builders';
 import type {TriviaPlayer} from './music/TriviaPlayer';
 
 export type GuildData = {triviaData: {isTriviaRunning: boolean}, queueHistory: PlayTrack[]};
-export type PlayTrack = {preview_url?: string, url: string, name: string, rawDuration: number, duration: string, timestamp: string, thumbnail: string, voiceChannel: any, memberDisplayName: string, memberAvatar: string, artists: string[]};
+export type PlayTrack = {preview_url?: string, url: string, name: string, rawDuration: number, duration: string, timestamp: string, thumbnail: string, voiceChannel?: VoiceChannel, memberDisplayName: string, memberAvatar: string, artists: string[]};
 export type Track = {name: string, url: string, artists: string[], preview_url: string};
 export type CustomAudioPlayer = {textChannel: TextBasedChannels | null, audioPlayer: AudioPlayer, loopTimes: number, nowPlaying?: PlayTrack, connection: VoiceConnection, loopSong: boolean, loopQueue: boolean, queue: PlayTrack[], commandLock: boolean, length: number, queueHistory: PlayTrack[]}
 

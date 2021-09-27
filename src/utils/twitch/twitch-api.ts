@@ -14,7 +14,7 @@ class TwitchAPI {
             if(json.status == '400') {
                 throw new Error('Something went wrong when trying to fetch a twitch access token');
             } else {
-                return json.access_token || '';
+                return json.access_token ?? '';
             }
         } catch(e) {
             console.error(e);

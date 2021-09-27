@@ -69,7 +69,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
         });
 
         collector.on('end', () => {
-            if(menu) menu.delete().catch(console.error); //! Alt: menu?.delete().catch(console.error);
+            if(typeof menu !== 'undefined') menu.delete().catch(console.error); //! Alt: menu?.delete().catch(console.error);
         });
 
         collector.on('collect', async(i: SelectMenuInteraction) => {

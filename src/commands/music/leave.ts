@@ -14,7 +14,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
     }
 
     const player = interaction.client.playerManager.get(interaction.guildId);
-    if(player?.audioPlayer.state.status !== AudioPlayerStatus.Playing || !player) {
+    if(typeof player === 'undefined' || player.audioPlayer.state.status !== AudioPlayerStatus.Playing) {
         return interaction.reply('There is no song playing right now!');
     }
     if(voiceChannel.id !== interaction.guild.me?.voice.channel?.id) {

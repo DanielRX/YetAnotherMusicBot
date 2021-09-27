@@ -88,7 +88,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
                 return interaction.followUp(':x: Please try again after the trivia has ended');
             }
         }
-        songName = player.nowPlaying?.name || '';
+        songName = player.nowPlaying?.name ?? '';
     }
 
     try {
