@@ -85,7 +85,7 @@ export class TriviaPlayer { // TODO: Merge with MusicPlayer
         });
 
         this.audioPlayer.on('stateChange', (oldState, newState) => {
-            let nextHintInt: NodeJS.Timeout;
+            let nextHintInt: NodeJS.Timeout | undefined = undefined;
             if(newState.status === AudioPlayerStatus.Idle && oldState.status !== AudioPlayerStatus.Idle) {
                 this.queue.shift();
                 // Finished playing audio
@@ -262,8 +262,8 @@ export class TriviaPlayer { // TODO: Merge with MusicPlayer
     public async process(queue: PlayTrack[]): Promise<void> {
         const [song] = this.queue;
         try {
-            if(!this.useYoutube && song.preview_url !== '') {
-                const resource = createAudioResource(`${song.preview_url}.mp3`, {inputType: StreamType.Arbitrary});
+            if(!this.useYoutube && song.previewUrl !== '') {
+                const resource = createAudioResource(`${song.previewUrl}.mp3`, {inputType: StreamType.Arbitrary});
                 this.audioPlayer.play(resource);
             } else {
                 const stream = ytdl(song.url, {filter: 'audio', quality: 'highestaudio', highWaterMark: 1 << 25});

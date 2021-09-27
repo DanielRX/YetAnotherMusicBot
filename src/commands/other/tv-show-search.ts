@@ -81,7 +81,7 @@ const cleanUp = (summary: string) => summary
 export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message | void> => {
     const tvshow = interaction.options.get('tvshow')?.value;
 
-    let showResponse: Show[];
+    let showResponse: Show[] = [];
     try {
         showResponse = await getShowSearch(`${tvshow}`);
     } catch(e: unknown) {

@@ -35,7 +35,7 @@ for(const file of commandFiles) {
 void (async() => {
     try {
         console.log('Started refreshing application (/) commands.');
-        await rest.put(Routes.applicationCommands(config.client_id) as any, {body: commands});
+        await rest.put(Routes.applicationCommands(config.clientId) as any, {body: commands});
         console.log('Successfully reloaded application (/) commands.');
     } catch(e: unknown) {
         console.error(e);
@@ -52,7 +52,7 @@ client.once('ready', () => {
     (client as any).guildData = new Collection();
     client.user?.setActivity('/', {type: 'WATCHING'});
     mongoose
-        .connect(encodeURI(config.mongo_URI), {useNewUrlParser: true, useUnifiedTopology: true})
+        .connect(encodeURI(config.mongoURI), {useNewUrlParser: true, useUnifiedTopology: true})
         .then(() => { console.log('Mongo is ready'); })
         .catch(console.error);
 
