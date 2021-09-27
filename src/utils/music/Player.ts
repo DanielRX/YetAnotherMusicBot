@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import type {AudioPlayer, VoiceConnection} from '@discordjs/voice';
 
 import {AudioPlayerStatus, createAudioPlayer, entersState, VoiceConnectionDisconnectReason, VoiceConnectionStatus, createAudioResource, StreamType} from '@discordjs/voice';
@@ -6,7 +7,7 @@ import {promisify} from 'util';
 import ytdl from 'ytdl-core';
 import type {BaseGuildTextChannel} from 'discord.js';
 import {MessageEmbed} from 'discord.js';
-import type {PlayTrack} from '../types';
+import type {CustomClient, PlayTrack} from '../types';
 const wait = promisify(setTimeout);
 
 class MusicPlayer {
@@ -28,10 +29,10 @@ class MusicPlayer {
 
     getQueueHistory(): PlayTrack[] {
         // eslint-disable-next-line
-        return this.textChannel.client.guildData.get(this.textChannel.guildId).queueHistory;
+        return (this.textChannel.client as unknown as CustomClient).guildData.get(this.textChannel.guildId)?.queueHistory!;
     }
 
-    passConnection(connection: VoiceConnection) {
+    passConnection(connection: VoiceConnection): void {
         this.connection = connection;
         this.connection.on('stateChange', async(_, newState) => {
             switch(newState.status) {
@@ -87,9 +88,9 @@ class MusicPlayer {
                     } else {
                         // leave channel close connection and subscription
                         /* eslint-disable */
-                        if(this.connection._state.status !== 'destroyed') {
+                        if((this.connection as any)._state.status !== 'destroyed') {
                             this.connection.destroy();
-                            this.textChannel.client.triviaManager.delete(this.textChannel.guildId);
+                            (this.textChannel.client as unknown as CustomClient).triviaManager.delete(this.textChannel.guildId);
                         }
                         /* eslint-enable */
                     }
@@ -98,12 +99,12 @@ class MusicPlayer {
                 const queueHistory = this.getQueueHistory();
                 const playingEmbed = new MessageEmbed()
                     .setThumbnail(this.nowPlaying.thumbnail)
-                    .setTitle(this.nowPlaying.title)
+                    .setTitle(this.nowPlaying.name)
                     .setColor('#ff0000')
                     .addField('Duration', ':stopwatch: ' + this.nowPlaying.duration, true)
                     .setFooter(`Requested by ${this.nowPlaying.memberDisplayName}!`, this.nowPlaying.memberAvatar);
                 if(queueHistory.length) {
-                    playingEmbed.addField('Previous Song', queueHistory[0].title, true);
+                    playingEmbed.addField('Previous Song', queueHistory[0].name, true);
                 }
                 void this.textChannel.send({embeds: [playingEmbed]});
             }
@@ -113,7 +114,7 @@ class MusicPlayer {
         this.connection.subscribe(this.audioPlayer);
     }
 
-    stop() {
+    stop(): void {
         this.queue.length = 0;
         this.nowPlaying = null!;
         this.skipTimer = false;
@@ -126,8 +127,8 @@ class MusicPlayer {
     async process(queue: PlayTrack[]): Promise<void> {
         if(this.audioPlayer.state.status !== AudioPlayerStatus.Idle || this.queue.length === 0) { return; }
 
-        const song = this.queue.shift();
-        this.nowPlaying = song!;
+        const song = this.queue.shift() as unknown as PlayTrack;
+        this.nowPlaying = song;
         if(this.commandLock) this.commandLock = false;
         try {
             //const resource = await this.createAudioResource(song.url);

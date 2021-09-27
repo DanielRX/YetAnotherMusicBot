@@ -13,7 +13,7 @@ export const options = [
 export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0]));
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
-    const resl = interaction.options.get('query')?.value;
+    const resl = `${interaction.options.get('query')?.value}`;
 
     try {
         const json = await fetch<{query: string, city: string, zip: string, regionName: string, country: string, org: string, isp: string, as: string}>(`http://ip-api.com/json/${resl}`).then((res) => res.json()); // fetch json data from ip-api.com
@@ -22,13 +22,13 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
         const embed = new MessageEmbed()
             .setColor('#42aaf5')
             .setAuthor('IP/Hostname Resolver', 'https://i.imgur.com/3lIiIv9.png', 'https://ip-api.com')
-            .addFields({name: 'Query', value: resl, inline: true},
-                {name: 'Resolves', value: json.query, inline: true},
+            .addFields([{name: 'Query', value: resl, inline: true},
+                {name: 'Resolves', value: `${json.query}`, inline: true},
                 {name: '‎', value: '‎', inline: true},
                 {name: 'Location', value: `${json.city}, ${json.zip}, ${json.regionName}, ${json.country}`, inline: false},
                 {name: 'ORG', value: `${json.org}‎`, inline: true}, // organisation who own the ip
-                {name: 'ISP', value: json.isp, inline: true}, // internet service provider
-                {name: 'OBO', value: json.as, inline: false})
+                {name: 'ISP', value: `${json.isp}`, inline: true}, // internet service provider
+                {name: 'OBO', value: json.as, inline: false}])
             .setTimestamp(); //img here
 
         return interaction.reply({embeds: [embed]});

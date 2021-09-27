@@ -1,6 +1,6 @@
 import {setupOption, fetch} from '../../utils/utils';
 import {SlashCommandBuilder} from '@discordjs/builders';
-import type {CommandInteraction} from 'discord.js';
+import type {CommandInteraction, SelectMenuInteraction} from 'discord.js';
 import {MessageEmbed, MessageActionRow, MessageSelectMenu} from 'discord.js';
 import {PagesBuilder} from 'discord.js-pages';
 import {readJSONSync} from 'fs-extra';
@@ -16,7 +16,7 @@ export const options = [
 ];
 
 const fetchFromReddit = async(interaction: CustomInteraction, subreddit: string, sort: string, timeFilter = 'day') => {
-    const response = await fetch<{data: {children: ({data: {title: string, over_18: boolean, score: string, author: string}})[]}}>(`https://www.reddit.com/r/${subreddit}/${sort}/.json?limit=10&t=${timeFilter}`);
+    const response = await fetch<{data: {children: ({data: {title: string, over_18: boolean, score: string, author: string, permalink: string}})[]}}>(`https://www.reddit.com/r/${subreddit}/${sort}/.json?limit=10&t=${timeFilter}`);
     const json = await response.json();
     const dataArr = [];
 
@@ -72,7 +72,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
             if(menu) menu.delete().catch(console.error); //! Alt: menu?.delete().catch(console.error);
         });
 
-        collector.on('collect', async(i) => {
+        collector.on('collect', async(i: SelectMenuInteraction) => {
             if(i.user.id !== interaction.user.id) {
                 return i.reply({content: `This element is not for you!`, ephemeral: true});
             }

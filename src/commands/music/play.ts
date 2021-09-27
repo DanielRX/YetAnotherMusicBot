@@ -1,5 +1,5 @@
 import type {APIMessage} from 'discord-api-types';
-import type {BaseGuildTextChannel, Message, User, VoiceChannel} from 'discord.js';
+import type {BaseGuildTextChannel, Message, SelectMenuInteraction, User, VoiceChannel} from 'discord.js';
 import { Video } from 'youtube-sr';
 import MusicPlayer from '../../utils/music/Player';
 import type {CustomAudioPlayer, CustomInteraction, PlayTrack} from '../../utils/types';
@@ -221,7 +221,7 @@ const searchYoutube = async(interaction: CustomInteraction, voiceChannel: VoiceC
         return;
     };
 
-    playOptionsCollector?.on('collect', async(i) => {
+    playOptionsCollector?.on('collect', async(i: SelectMenuInteraction) => {
         if(i.user.id !== interaction.user.id) {
             return i.reply({content: 'This element is not for you!', ephemeral: true});
         }
@@ -375,7 +375,7 @@ const handlePlayFromHistory = async(interaction: CustomInteraction, message: Mes
         time: options.MaxResponseTime * 1000
     });
 
-    clarificationCollector.on('collect', async(i) => {
+    clarificationCollector.on('collect', async(i: SelectMenuInteraction) => {
         if(i.user.id !== interaction.user.id) {
             void i.reply({content: `This element is not for you!`, ephemeral: true});
             return;
@@ -448,7 +448,7 @@ const handlePlayPlaylist = async(interaction: CustomInteraction, message: Messag
         if(clarificationOptions) { clarificationOptions.delete().catch(console.error); }
     });
 
-    clarificationCollector.on('collect', async(i): Promise<void> => {
+    clarificationCollector.on('collect', async(i: SelectMenuInteraction): Promise<void> => {
         if(i.user.id !== interaction.user.id) {
             return i.reply({content: `This element is not for you!`, ephemeral: true});
         }
@@ -557,7 +557,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
     if(flags.includes(splitQuery[splitQuery.length - 1])) splitQuery.pop();
     const cleanQuery = splitQuery.join(' ');
 
-    let player = interaction.client.playerManager.get(interaction.guildId);
+    let player = interaction.client.playerManager.get(interaction.guildId) as unknown as CustomAudioPlayer;
 
     if(!player) {
         player = new Player();
@@ -576,7 +576,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
 
     if(userData !== null) {
         const playlistsArray = userData.savedPlaylists;
-        const found = playlistsArray.find((playlist) => playlist.name === cleanQuery);
+        const found = playlistsArray.find((playlist: {name: string}) => playlist.name === cleanQuery);
         // Found a playlist with a name matching the query and it's not empty
         if(found && playlistsArray[playlistsArray.indexOf(found)].urls.length) {
             return handlePlayPlaylist(interaction, message, playlistsArray, found);
@@ -590,6 +590,6 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
     if(isYouTubeVideoURL(cleanQuery)) { return handleYoutubeURL(interaction); }
 
     // If user provided a song/video name
-    await searchYoutube(interaction, interaction.member.voice.channel);
+    await searchYoutube(interaction, interaction.member.voice.channel as VoiceChannel);
 };
 

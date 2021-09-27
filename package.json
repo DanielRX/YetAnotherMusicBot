@@ -26,6 +26,7 @@
     "iso-639-1": "^2.1.9",
     "libsodium-wrappers": "^0.7.9",
     "mongoose": "^5.13.5",
+    "node-fetch": "^2.6.1",
     "pretty-ms": "^7.0.1",
     "spotify-url-info": "^2.2.3",
     "youtube-dl-exec": "^1.2.4",

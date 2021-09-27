@@ -1,7 +1,7 @@
 import type {APIMessage} from 'discord-api-types';
 import type {Message, User} from 'discord.js';
 import type {Video} from 'youtube-sr';
-import type {CustomInteraction, PlayTrack} from '../../utils/types';
+import type {CustomInteraction, PlayTrack, Track} from '../../utils/types';
 import {SlashCommandBuilder} from '@discordjs/builders';
 import Member from '../../utils/models/Member';
 import YouTube from 'youtube-sr';
@@ -18,7 +18,6 @@ export const options = [
 ];
 
 export const data = new SlashCommandBuilder().setName(name).setDescription(description).addStringOption(setupOption(options[0])).addStringOption(setupOption(options[1]));
-
 
 // TODO: Don't use defaults, fix type
 const constructSongObj = (video: Video, user: User): PlayTrack => {
@@ -37,8 +36,8 @@ const constructSongObj = (video: Video, user: User): PlayTrack => {
 const processURL = async(url: string, interaction: CustomInteraction) => {
     if(isSpotifyURL(url)) {
         getData(url)
-            .then(async(res) => {
-                if(res.tracks) {
+            .then(async(res: Track | {tracks: {items: ({track: Track})[]}}) => {
+                if('tracks' in res) {
                     const spotifyPlaylistItems = res.tracks.items;
                     const urlsArr = [];
                     for(const track of spotifyPlaylistItems) {
@@ -105,7 +104,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
             } else {
                 urlsArrayClone.push(processedURL);
                 savedPlaylistsClone[location].urls = urlsArrayClone;
-                void interaction.followUp(`I added **${savedPlaylistsClone[location].urls[savedPlaylistsClone[location].urls.length - 1].title}** to **${playlistName}**`);
+                void interaction.followUp(`I added **${savedPlaylistsClone[location].urls[savedPlaylistsClone[location].urls.length - 1].name}** to **${playlistName}**`);
             }
             return Member.updateOne({memberId: interaction.member.id}, {savedPlaylists: savedPlaylistsClone}).exec();
         });

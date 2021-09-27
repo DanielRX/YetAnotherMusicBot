@@ -37,7 +37,7 @@ const getGameDetails = async(query: string) => {
 
         let json = await body.json();
         if(json.redirect) {
-            const redirect = await fetch<GameData>(`https://api.rawg.io/api/games/${body.slug}?key=${rawgAPI}`);
+            const redirect = await fetch<GameData>(`https://api.rawg.io/api/games/${body.slug}?key=${config.rawgAPI}`);
             json = await redirect.json();
         }
         // 'id' is the only value that must be present to all valid queries

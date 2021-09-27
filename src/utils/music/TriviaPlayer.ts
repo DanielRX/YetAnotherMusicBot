@@ -1,13 +1,12 @@
-import { AudioPlayer, VoiceConnection } from '@discordjs/voice';
-import { BaseGuildTextChannel, Message } from 'discord.js';
-import { PlayTrack, Track } from '../types';
-
-// @ts-check
-const {AudioPlayerStatus, createAudioPlayer, entersState, VoiceConnectionDisconnectReason, VoiceConnectionStatus, createAudioResource, StreamType} = require('@discordjs/voice');
-const {setTimeout} = require('timers');
-const {promisify} = require('util');
-const ytdl = require('ytdl-core');
-const {MessageEmbed} = require('discord.js');
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import type {AudioPlayer, VoiceConnection} from '@discordjs/voice';
+import type {BaseGuildTextChannel, Message} from 'discord.js';
+import type {CustomClient, PlayTrack} from '../types';
+import {AudioPlayerStatus, createAudioPlayer, entersState, VoiceConnectionDisconnectReason, VoiceConnectionStatus, createAudioResource, StreamType} from '@discordjs/voice';
+import {setTimeout} from 'timers';
+import {promisify} from 'util';
+import ytdl from 'ytdl-core';
+import {MessageEmbed} from 'discord.js';
 const wait = promisify(setTimeout);
 
 const capitalize_Words = (str: string) => {
@@ -47,8 +46,8 @@ export class TriviaPlayer {
     public textChannel: BaseGuildTextChannel = null!;
     public readonly score: Map<string, number> = new Map();
     public queue: PlayTrack[] = [];
-    private wasTriviaEndCalled = false;
     public connection: VoiceConnection = null!;
+    private wasTriviaEndCalled = false;
     private readonly audioPlayer: AudioPlayer;
     // eslint-disable-next-line @typescript-eslint/no-parameter-properties
     constructor(public useYoutube = true) {
@@ -99,18 +98,20 @@ export class TriviaPlayer {
                     }));
 
                     if(this.wasTriviaEndCalled) { return; }
-
-                    const embed = new MessageEmbed()
-                        .setColor('#ff7373')
-                        .setTitle(`Music Quiz Results:`)
-                        .setDescription(getLeaderBoard(Array.from(sortedScoreMap.entries())));
-                    void this.textChannel.send({embeds: [embed]});
+                    const board = getLeaderBoard(Array.from(sortedScoreMap.entries()));
+                    if(board) {
+                        const embed = new MessageEmbed()
+                            .setColor('#ff7373')
+                            .setTitle(`Music Quiz Results:`)
+                            .setDescription(board);
+                        void this.textChannel.send({embeds: [embed]});
+                    }
 
                     // Leave channel close connection and subscription
                     /* eslint-disable */
-                    if(this.connection._state.status !== 'destroyed') {
+                    if((this.connection as any)._state.status !== 'destroyed') {
                         this.connection.destroy();
-                        this.textChannel.client.triviaManager.delete(this.textChannel.guildId);
+                        (this.textChannel.client as unknown as CustomClient).triviaManager.delete(this.textChannel.guildId);
                     }
                     /* eslint-enable */
                 }
@@ -121,6 +122,7 @@ export class TriviaPlayer {
                 const songSingerWinners: {[key: string]: boolean} = {};
                 let songSingerFoundTime = -1;
                 const answerTimeout = 1500;
+
                 let lastMessage: Message = null!;
 
                 let skipCounter = 0;
@@ -130,12 +132,12 @@ export class TriviaPlayer {
                 if(!this.useYoutube) { timeForSong = 30000; }
                 const collector = this.textChannel.createMessageCollector({time: timeForSong});
 
-                const convertToHint = (str: string, hints: number) => {
+                const convertToHint = (str: string, hintCount: number) => {
                     let out = '';
                     let i = 0;
                     for(const s of str) {
                         if(s != ' ') { i++; }
-                        if(i <= hints || s === ' ') {
+                        if(i <= hintCount || s === ' ') {
                             out += s;
                         } else {
                             out += '*';
@@ -226,13 +228,15 @@ export class TriviaPlayer {
                     const sortedScoreMap = new Map([...this.score.entries()].sort((a, b) => b[1] - a[1]));
 
                     const song = `${capitalize_Words(this.queue[0].artists[0])}: ${capitalize_Words(this.queue[0].name)}`;
+                    const board = getLeaderBoard(Array.from(sortedScoreMap.entries()));
+                    if(board) {
+                        const embed = new MessageEmbed()
+                            .setColor('#ff7373')
+                            .setTitle(`:musical_note: The song was:  ${song} (${Math.max(this.queue.length - 1, 0)} left)`)
+                            .setDescription(board);
 
-                    const embed = new MessageEmbed()
-                        .setColor('#ff7373')
-                        .setTitle(`:musical_note: The song was:  ${song} (${Math.max(this.queue.length - 1, 0)} left)`)
-                        .setDescription(getLeaderBoard(Array.from(sortedScoreMap.entries())));
-
-                    void this.textChannel.send({embeds: [embed]});
+                        void this.textChannel.send({embeds: [embed]});
+                    }
                     return;
                 });
             }

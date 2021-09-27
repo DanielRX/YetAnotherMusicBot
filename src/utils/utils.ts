@@ -1,6 +1,7 @@
 // https://stackoverflow.com/a/5306832/9421002
 import f from 'node-fetch';
-import {SlashCommandStringOption, SlashCommandIntegerOption, SlashCommandBooleanOption, SlashCommandUserOption} from '@discordjs/builders';
+import type {SlashCommandUserOption} from '@discordjs/builders';
+import {SlashCommandStringOption, SlashCommandIntegerOption, SlashCommandBooleanOption} from '@discordjs/builders';
 
 const arrayMove = <T>(arr: T[], old_index: number, new_index: number): T[] => {
     while(old_index < 0) {
@@ -66,7 +67,7 @@ const isYouTubePlaylistURL = (arg: string): RegExpExecArray | null => /^https?:\
 
 const validateURL = (url: string): RegExpExecArray | null => isYouTubePlaylistURL(url) || isYouTubeVideoURL(url) || isSpotifyURL(url);
 
-type FetchConfig = {method?: 'GET' | 'POST', headers: {'client-id'?: string, Authorization: string}};
-const fetch = f as <T>(url: string, config?: FetchConfig) => Promise<{status: string, json: () => Promise<T & {length: number}>, text: () => Promise<string>}>;
+type FetchConfig = {method?: 'GET' | 'POST', headers?: {'client-id'?: string, Authorization: string}};
+const fetch = f as <T>(url: string, config?: FetchConfig) => Promise<{slug: string, status: string, json: () => Promise<T & {length: number}>, text: () => Promise<string>}>;
 
 export {fetch, arrayMove, getRandom, shuffleArray, isSpotifyURL, isYouTubePlaylistURL, isYouTubeVideoURL, validateURL, randomEl, setupOption};

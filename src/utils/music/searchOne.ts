@@ -12,13 +12,12 @@ const concatSongNameAndArtists = (data: Track) => {
     return `${songName} ${artists}`;
 };
 
-type YoutubeTrack = {title: string | undefined, url: string, thumbnail: {url: string | undefined}, durationFormatted: string, duration: number};
-const structureData = (youtubeData: Video): YoutubeTrack => {
+const structureData = (youtubeData: Video): Video => {
     const {title, id, thumbnail, duration, durationFormatted} = youtubeData;
-    return {title, url: `https://www.youtube.com/watch?v=${id}`, thumbnail: {url: thumbnail?.url}, durationFormatted, duration};
+    return {title, url: `https://www.youtube.com/watch?v=${id}`, thumbnail: {url: thumbnail?.url}, durationFormatted, duration} as Video;
 };
 
-export const searchOne = async(track: Track): Promise<YoutubeTrack> => {
+export const searchOne = async(track: Track): Promise<Video> => {
     const artistsAndName = concatSongNameAndArtists(track);
     return YouTube.searchOne(artistsAndName).then(structureData).catch(() => { throw new Error(youtubeNoTrack); });
 };

@@ -41,7 +41,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
         if(index > urlsArrayClone.length) {
             return interaction.followUp(`The index you provided is larger than the playlist's length`);
         }
-        const title = urlsArrayClone[index - 1].title;
+        const title = urlsArrayClone[index - 1].name;
         urlsArrayClone.splice(index - 1, 1);
         savedPlaylistsClone[location].urls = urlsArrayClone;
         void Member.updateOne({memberId: interaction.member.id}, {savedPlaylists: savedPlaylistsClone}).exec();
