@@ -5,6 +5,7 @@ import {logger} from '../../utils/logging';
 
 export const name = 'bored';
 export const description = 'Generate a random activity!';
+export const deferred = false;
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     return fetch<{activity: string}>('https://www.boredapi.com/api/activity?participants=1')

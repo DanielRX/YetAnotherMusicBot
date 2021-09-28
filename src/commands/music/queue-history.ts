@@ -7,6 +7,7 @@ import {guildData} from '../../utils/client';
 
 export const name = 'queue-history';
 export const description = 'Display the music queue history';
+export const deferred = false;
 
 export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message | void> => {
     const guild = guildData.get(interaction.guildId);

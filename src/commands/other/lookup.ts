@@ -5,6 +5,7 @@ import {logger} from '../../utils/logging';
 
 export const name = 'lookup';
 export const description = 'Resolve an IP address or hostname with additional info.';
+export const deferred = false;
 
 export const options = [
     {type: 'string' as const, name: 'query', description: 'What do you want to lookup? Please enter a hostname/domain or IP address.', required: true, choices: []}

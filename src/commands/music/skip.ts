@@ -4,6 +4,7 @@ import {playerManager, guildData} from '../../utils/client';
 
 export const name = 'skip';
 export const description = 'Skip the currently playing song!';
+export const deferred = false;
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     const voiceChannel = interaction.member.voice.channel;

@@ -7,7 +7,7 @@ export type PlayTrack = {previewUrl?: string, url: string, name: string, rawDura
 export type Track = {name: string, url: string, artists: string[], previewUrl: string};
 export type CustomAudioPlayer = {textChannel: TextBasedChannels | null, audioPlayer: AudioPlayer, loopTimes: number, nowPlaying?: PlayTrack, connection: VoiceConnection, loopSong: boolean, loopQueue: boolean, queue: PlayTrack[], commandLock: boolean, length: number, queueHistory: PlayTrack[]}
 
-export type Command = {execute: (interaction: CustomInteraction, params?: any) => Promise<void>, name: string, description: string, options?: OptionConfig[]};
+export type Command = {deferred: boolean, execute: (interaction: CustomInteraction, params?: any) => Promise<void>, name: string, description: string, options?: OptionConfig[]};
 export type CustomClient = Client;
 export type CustomInteraction = Omit<CommandInteraction, 'deferReply'> & {guildId: string, client: CustomClient, guild: {client: CustomClient}, member: GuildMember, deferReply: (x?: {fetchReply: boolean}) => Promise<Message>};
 export type YoutubeTrack = {title: string | undefined, url: string, thumbnail: {url: string | undefined}, durationFormatted: string, duration: number};

@@ -4,6 +4,7 @@ import {MessageEmbed} from 'discord.js';
 
 export const name = 'motivation';
 export const description = 'Get a random motivational quote!';
+export const deferred = false;
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     // thanks to https://type.fit/api/quotes

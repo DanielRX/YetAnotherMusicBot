@@ -5,6 +5,7 @@ import {logger} from '../../utils/logging';
 
 export const name = 'urban';
 export const description = 'Get definitions from urban dictonary.';
+export const deferred = false;
 
 export const options = [
     {type: 'string' as const, name: 'query', description: 'What do you want to search for?', required: true, choices: []},

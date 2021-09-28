@@ -5,6 +5,7 @@ import {logger} from '../../utils/logging';
 
 export const name = 'covid';
 export const description = 'Displays COVID-19 stats.';
+export const deferred = false;
 
 export const options = [
     {type: 'string' as const, name: 'country', description: 'What country do you like to search? Type `all` to display worldwide stats.', required: false, choices: [], default: 'all'}

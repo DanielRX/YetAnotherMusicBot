@@ -4,6 +4,7 @@ import {MessageEmbed} from 'discord.js';
 
 export const name = 'avatar';
 export const description = `Responds with a user's avatar`;
+export const deferred = false;
 
 export const options = [
     {type: 'user' as const, name: 'user', description: 'The user which avatar you want to display', required: true, choices: []}

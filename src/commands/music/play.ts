@@ -510,6 +510,7 @@ const handlePlayPlaylist = async(interaction: CustomInteraction, rawQuery: strin
 
 export const name = 'play';
 export const description = 'Play any song or playlist from YouTube or Spotify!';
+export const deferred = false; // TODO: Fix this
 
 export const options = [
     {type: 'string' as const, name: 'query', description: ':notes: What song or playlist would you like to listen to? Add -s to shuffle a playlist', required: true, choices: []}

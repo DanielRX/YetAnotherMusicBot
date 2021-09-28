@@ -5,6 +5,7 @@ import {logger} from '../../utils/logging';
 
 export const name = 'gintama';
 export const description = 'Replies with a gintama gif!';
+export const deferred = false;
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     try {

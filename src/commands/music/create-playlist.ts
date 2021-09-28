@@ -4,6 +4,7 @@ import {logger} from '../../utils/logging';
 
 export const name = 'create-playlist';
 export const description = 'Create a custom playlist that you can play anytime';
+export const deferred = false;
 
 export const options = [
     {type: 'string' as const, name: 'playlistname', description: 'What is the name of the playlist you would like to create?', required: true, choices: []}

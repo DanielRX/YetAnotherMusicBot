@@ -6,6 +6,7 @@ import {logger} from '../../utils/logging';
 
 export const name = 'translate';
 export const description = 'Translate to any language using Google translate.';
+export const deferred = false;
 
 export const options = [
     {type: 'string' as const, name: 'targetlang', description: 'What is the target language? (language you want to translate to)', required: true, choices: []},

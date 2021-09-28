@@ -5,6 +5,7 @@ import member from '../../utils/models/Member';
 
 export const name = 'remove-from-playlist';
 export const description = 'Remove a song from a saved playlist';
+export const deferred = true;
 
 export const options = [
     {type: 'string' as const, name: 'playlist', description: 'What is the playlist you would like to delete a song from?', required: true, choices: []},
@@ -12,14 +13,8 @@ export const options = [
 ];
 
 export const execute = async(interaction: CustomInteraction, playlistName: string, index: number): Promise<APIMessage | Message> => {
-    await interaction.deferReply();
-
-    const userData = await member.findOne({
-        memberId: interaction.member.id
-    }).exec();
-    if(!userData) {
-        return interaction.followUp('You have no custom playlists!');
-    }
+    const userData = await member.findOne({memberId: interaction.member.id}).exec();
+    if(!userData) { return interaction.followUp('You have no custom playlists!'); }
     const savedPlaylistsClone = userData.savedPlaylists;
     if(savedPlaylistsClone.length == 0) {
         return interaction.followUp('You have no custom playlists!');

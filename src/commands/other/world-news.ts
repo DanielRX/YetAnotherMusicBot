@@ -9,6 +9,7 @@ import {logger} from '../../utils/logging';
 
 export const name = 'world-news';
 export const description = 'Replies with the 10 latest world news headlines!';
+export const deferred = false;
 
 export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message | void> => {
     if(!config.newsAPI) { return interaction.reply(':x: This command is not enabled'); }

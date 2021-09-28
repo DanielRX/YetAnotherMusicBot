@@ -5,6 +5,7 @@ import {logger} from '../../utils/logging';
 
 export const name = 'fortune';
 export const description = 'Replies with a fortune cookie tip!';
+export const deferred = false;
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     try {

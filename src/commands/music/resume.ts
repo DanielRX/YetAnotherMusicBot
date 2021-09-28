@@ -4,6 +4,7 @@ import {playerManager} from '../../utils/client';
 
 export const name = 'resume';
 export const description = 'Resume a paused track';
+export const deferred = false;
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     const voiceChannel = interaction.member.voice.channel;

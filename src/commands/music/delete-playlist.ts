@@ -3,6 +3,7 @@ import member from '../../utils/models/Member';
 
 export const name = 'delete-playlist';
 export const description = 'Delete a playlist from your saved playlists';
+export const deferred = false;
 
 export const options = [
     {type: 'string' as const, name: 'playlistname', description: 'Which playlist would you like to delete?', required: true, choices: []}

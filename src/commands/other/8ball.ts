@@ -4,6 +4,7 @@ import fs from 'fs-extra';
 
 export const name = '8ball';
 export const description = 'Get the answer to anything!';
+export const deferred = false;
 
 export const options = [
     {type: 'string' as const, name: 'question', description: 'What do you want to ask?', required: true, choices: []}

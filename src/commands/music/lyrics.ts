@@ -12,6 +12,7 @@ import {logger} from '../../utils/logging';
 
 export const name = 'lyrics';
 export const description = 'Get the lyrics of any song or the lyrics of the currently playing song!';
+export const deferred = true;
 
 export const options = [
     {type: 'string' as const, name: 'songname', description: ':mag: What song lyrics would you like to get?', required: false, choices: [], default: ''}
@@ -78,7 +79,6 @@ const getLyrics = async(url: string) => {
 
 export const execute = async(interaction: CustomInteraction, songName: string): Promise<APIMessage | Message | void> => {
     if(!config.geniusLyricsAPI) { return interaction.reply(':x: Lyrics command is not enabled'); }
-    void interaction.deferReply();
     const player = playerManager.get(interaction.guildId);
     const guild = guildData.get(interaction.guildId);
     if(songName === '') {

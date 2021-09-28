@@ -6,6 +6,7 @@ import type {APIMessage} from 'discord-api-types';
 
 export const name = 'display-playlist';
 export const description = 'Display a saved playlist';
+export const deferred = true;
 
 export const options = [
     {type: 'string' as const, name: 'playlistname', description: 'What is the name of the playlist you would like to display?', required: true, choices: []}
@@ -14,7 +15,6 @@ export const options = [
 const maxLength = 24;
 
 export const execute = async(interaction: CustomInteraction, playlistName: string): Promise<APIMessage | Message> => {
-    void interaction.deferReply();
     // Check if user has playlists or if user is saved in the DB
     const userData = await member.findOne({memberId: interaction.member.id}).exec();
     if(!userData) {

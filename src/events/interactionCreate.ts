@@ -11,9 +11,9 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
 
     try {
         logger.verbose({user: interaction.user, command: interaction.commandName});
-        const comamand = commands.get(interaction.commandName)!;
+        const command = commands.get(interaction.commandName)!;
         const params: any = [];
-        for(const option of comamand.options ?? []) {
+        for(const option of command.options ?? []) {
             const opt = interaction.options.get(option.name, option.required);
             switch(option.type) {
                 case 'boolean': { params.push(Boolean(opt?.value ?? option.default)); break; }
@@ -23,7 +23,17 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
             }
         }
         logger.verbose(params);
-        await commands.get(interaction.commandName)?.execute(interaction, ...params);
+        if(command.deferred) {
+            void interaction.deferReply();
+        }
+        const output = await command.execute(interaction, ...params);
+        if(typeof output === 'string') {
+            if(command.deferred) {
+                await interaction.followUp(output);
+            } else {
+                await interaction.reply(output);
+            }
+        }
     } catch(e: unknown) {
         logger.error(e);
         return interaction.reply({content: 'There was an error while executing this command!', ephemeral: true});

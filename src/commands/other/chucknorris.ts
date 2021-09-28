@@ -5,6 +5,7 @@ import {logger} from '../../utils/logging';
 
 export const name = 'chucknorris';
 export const description = 'Get a satirical fact about Chuck Norris!';
+export const deferred = false;
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     // thanks to https://api.chucknorris.io

@@ -5,6 +5,7 @@ import {logger} from '../../utils/logging';
 
 export const name = 'kanye';
 export const description = 'Get a random Kanye quote.';
+export const deferred = false;
 
 const makeEmbed = (quote: string) => new MessageEmbed()
     .setColor('#AF6234')

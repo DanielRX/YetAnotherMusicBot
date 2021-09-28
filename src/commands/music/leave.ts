@@ -4,6 +4,7 @@ import {playerManager} from '../../utils/client';
 
 export const name = 'leave';
 export const description = 'Leaves a voice channel if in one!';
+export const deferred = false;
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     const voiceChannel = interaction.member.voice.channel;

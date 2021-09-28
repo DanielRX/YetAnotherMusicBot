@@ -5,6 +5,7 @@ import {logger} from '../../utils/logging';
 
 export const name = 'insult';
 export const description = 'Generate an evil insult!';
+export const deferred = false;
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     // thanks to https://evilinsult.com :)

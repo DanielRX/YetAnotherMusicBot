@@ -5,6 +5,7 @@ import {guildData, playerManager} from '../../utils/client';
 
 export const name = 'loop-queue';
 export const description = 'Loop the queue x times! - (the default is 1 time)';
+export const deferred = false;
 
 export const options = [
     {type: 'integer' as const, name: 'looptimes', description: 'How many times do you want to loop the queue?', required: true, choices: []}

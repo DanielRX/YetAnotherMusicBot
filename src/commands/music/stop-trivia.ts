@@ -3,6 +3,7 @@ import type {CustomInteraction} from '../../utils/types';
 
 export const name = 'stop-trivia';
 export const description = 'End a music trivia (if one is in play)';
+export const deferred = false;
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     const triviaPlayer = triviaManager.get(interaction.guildId);

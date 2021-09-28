@@ -5,6 +5,7 @@ import {logger} from '../../utils/logging';
 
 export const name = 'cat';
 export const description = 'Replies with a cute cat picture!';
+export const deferred = false;
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     if(!config.tenorAPI) { return interaction.reply(':x: Tenor commands are not enabled'); }

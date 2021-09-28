@@ -7,9 +7,9 @@ import {guildData, playerManager} from '../../utils/client';
 
 export const name = 'queue';
 export const description = 'Display the music queue';
+export const deferred = true;
 
 export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message | void> => {
-    await interaction.deferReply();
     const guild = guildData.get(interaction.guildId);
     if(guild && guild.triviaData.isTriviaRunning) {
         return interaction.followUp(':x: Try again after the trivia has ended!');

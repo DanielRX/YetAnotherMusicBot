@@ -3,6 +3,7 @@ import {MessageEmbed} from 'discord.js';
 
 export const name = 'rps';
 export const description = 'Rock paper scissors!';
+export const deferred = false;
 
 const choices = ['Rock', 'Paper', 'Scissors'];
 export const options = [

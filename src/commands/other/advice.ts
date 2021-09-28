@@ -6,6 +6,7 @@ import {logger} from '../../utils/logging';
 
 export const name = 'advice';
 export const description = 'Get some advice!';
+export const deferred = false;
 
 export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 

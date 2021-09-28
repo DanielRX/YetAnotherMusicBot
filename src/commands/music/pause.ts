@@ -4,6 +4,7 @@ import {playerManager} from '../../utils/client';
 
 export const name = 'pause';
 export const description = 'Pause the playing track';
+export const deferred = false;
 
 const exec = (interaction: CustomInteraction): string => {
     const voiceChannel = interaction.member.voice.channel;

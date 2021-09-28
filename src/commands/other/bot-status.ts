@@ -8,6 +8,7 @@ const pkg = readJsonSync('./package.json');
 
 export const name = 'bot-status';
 export const description = 'Shows the current system status';
+export const deferred = false;
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     const owner = await interaction.guild.fetchOwner();

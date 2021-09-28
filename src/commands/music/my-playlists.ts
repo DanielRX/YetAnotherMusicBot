@@ -6,10 +6,9 @@ import {MessageEmbed} from 'discord.js';
 
 export const name = 'my-playlists';
 export const description = 'Lists your saved playlists';
+export const deferred = true;
 
 export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message> => {
-    void interaction.deferReply();
-
     const userData = await member.findOne({memberId: interaction.member.id}).exec();
     if(!userData) { return interaction.followUp('You have zero saved playlists!'); }
 

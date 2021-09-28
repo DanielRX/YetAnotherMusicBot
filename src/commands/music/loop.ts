@@ -5,6 +5,7 @@ import {guildData, playerManager} from '../../utils/client';
 
 export const name = 'loop';
 export const description = 'Set a song to play on loop';
+export const deferred = false;
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     if(!guildData.get(interaction.guildId)) {

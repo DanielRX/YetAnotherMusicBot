@@ -11,6 +11,7 @@ import {logger} from '../../utils/logging';
 
 export const name = 'save-to-playlist';
 export const description = 'Save a song or a playlist to a custom playlist';
+export const deferred = true;
 
 export const options = [
     {type: 'string' as const, name: 'playlistname', description: 'What is the playlist you would like to save to?', required: true, choices: []},
@@ -78,8 +79,6 @@ const processURL = async(url: string, interaction: CustomInteraction) => {
 };
 
 export const execute = async(interaction: CustomInteraction, playlistName: string, url: string): Promise<APIMessage | Message | void> => {
-    await interaction.deferReply();
-
     const userData = await member.findOne({memberId: interaction.member.id}).exec();
     if(!userData) { return interaction.followUp('You have no custom playlists!'); }
     const savedPlaylistsClone = userData.savedPlaylists;

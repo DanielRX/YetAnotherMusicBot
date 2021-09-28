@@ -3,6 +3,7 @@ import type {CustomInteraction} from '../../utils/types';
 
 export const name = 'random';
 export const description = 'Generate a random number between two provided numbers!';
+export const deferred = false;
 
 export const options = [
     {type: 'integer' as const, name: 'min', description: 'What is the minimum number?', required: true, choices: []},

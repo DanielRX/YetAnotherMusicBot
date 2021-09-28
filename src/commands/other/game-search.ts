@@ -10,6 +10,7 @@ import {logger} from '../../utils/logging';
 
 export const name = 'game-search';
 export const description = 'Search for game information';
+export const deferred = false;
 
 export const options = [
     {type: 'string' as const, name: 'game', description: 'What game are you looking for?', required: true, choices: []}

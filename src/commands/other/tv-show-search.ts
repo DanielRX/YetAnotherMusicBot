@@ -9,6 +9,7 @@ import {logger} from '../../utils/logging';
 
 export const name = 'tv-show-search';
 export const description = 'Search for TV shows';
+export const deferred = false;
 
 export const options = [
     {type: 'string' as const, name: 'tvshow', description: 'What TV show are you looking for?', required: true, choices: []},

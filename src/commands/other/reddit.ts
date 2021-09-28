@@ -8,6 +8,7 @@ import {logger} from '../../utils/logging';
 
 export const name = 'reddit';
 export const description = 'Replies with 10 top daily posts in wanted subreddit, you can specify sorting and time!';
+export const deferred = false; // TODO: Fix
 
 export const options = [
     {type: 'string' as const, name: 'subreddit', description: 'What subreddit would you like to search?', required: true, choices: []},

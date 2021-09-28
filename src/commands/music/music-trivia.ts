@@ -12,6 +12,7 @@ import {getRandom} from '../../utils/utils';
 
 export const name = 'music-trivia';
 export const description = 'Engage in a music quiz with your friends!';
+export const deferred = true;
 
 export const options = [
     {type: 'string' as const, name: 'length', description: 'How many songs would you like the trivia to have?', required: false, choices: [], default: 25}
@@ -44,7 +45,6 @@ const handleSubscription = async(interaction: CustomInteraction, player: TriviaP
 };
 
 export const execute = async(interaction: CustomInteraction, length: number): Promise<APIMessage | Message> => {
-    await interaction.deferReply();
     const voiceChannel = interaction.member.voice.channel;
     if(!voiceChannel) {
         return interaction.followUp(':no_entry: Please join a voice channel and try again!');

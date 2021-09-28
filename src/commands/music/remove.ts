@@ -3,6 +3,7 @@ import {playerManager} from '../../utils/client';
 
 export const name = 'remove';
 export const description = 'Remove a specific song from queue';
+export const deferred = false;
 
 export const options = [
     {type: 'integer' as const, name: 'position', description: 'What song number do you want to remove from queue?', required: true, choices: []}

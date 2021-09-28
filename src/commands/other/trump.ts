@@ -5,6 +5,7 @@ import {logger} from '../../utils/logging';
 
 export const name = 'trump';
 export const description = 'Get a random quote from Donald Trump!';
+export const deferred = false;
 
 export const execute = async(interaction: CustomInteraction): Promise<void> => {
     // eslint-disable-next-line @typescript-eslint/naming-convention

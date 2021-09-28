@@ -5,16 +5,16 @@ import {MessageEmbed} from 'discord.js';
 import {PagesBuilder} from 'discord.js-pages';
 import {fetch} from '../../utils/utils';
 import prettyMilliseconds from 'pretty-ms';
+
 export const name = 'speedrunner-stats';
 export const description = 'Show off your splits from Splits.io';
+export const deferred = true;
 
 export const options = [
     {type: 'string' as const, name: 'user', description: 'Who do you want to look up?', required: true, choices: []},
 ];
 
 export const execute = async(interaction: CustomInteraction, userQuery: string): Promise<APIMessage | Message | void> => {
-    void interaction.deferReply();
-
     const userFiltered = userQuery.toLowerCase();
     const userRes = await fetch<{runners: ({name: string, avatar: string})[], status :number}>(`https://splits.io/api/v4/runners?search=${userFiltered}`).then(async(res) => res.json());
 

@@ -6,6 +6,7 @@ import {guildData, playerManager} from '../../utils/client';
 
 export const name = 'move';
 export const description = 'Move a song to a desired position in queue!';
+export const deferred = false;
 
 export const options = [
     {type: 'integer' as const, name: 'oldposition', description: 'What is the position of the song you want to move?', required: true, choices: []},
