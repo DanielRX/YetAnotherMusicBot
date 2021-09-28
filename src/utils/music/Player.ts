@@ -103,7 +103,7 @@ class MusicPlayer { // TODO: Merge with TriviaPlayer
                     }
                 }
             } else if(newState.status === AudioPlayerStatus.Playing) {
-                if(this.nowPlaying !== null) {
+                if(!this.nowPlaying) {
                     const queueHistory = this.getQueueHistory();
                     const playingEmbed = new MessageEmbed()
                         .setThumbnail(this.nowPlaying.thumbnail)

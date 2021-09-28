@@ -26,18 +26,17 @@ const normalizeValue = (value: string) =>
         .replace(/\s+/g, ' ')
         .toLowerCase(); // Remove duplicate spaces
 
-const getLeaderBoard = (arr: [string, number][]) => {
+const getLeaderBoard = (arr: [string, number][]) => { // TODO: Shared medals
     if(typeof arr === 'undefined') { return; }
     if(typeof arr[0] === 'undefined') { return; } // Issue #422
+    const players = arr.filter(([_, points]) => points > 0);
     let leaderBoard = '';
 
-    leaderBoard = `👑   **${arr[0][0]}:** ${arr[0][1]}  points`;
+    leaderBoard = `:first_place:  **${players[0][0]}:** ${players[0][1]}`;
 
-    if(arr.length > 1) {
-        for(let i = 1; i < arr.length; i++) {
-            leaderBoard += `\n\n   ${i + 1}: ${arr[i][0]}: ${arr[i][1]}  points`;
-        }
-    }
+    players.forEach(([player, score], i) => {
+        leaderBoard += `\n\n   ${i + 1 === 2 ? ':second_place:' : i + 1 === 3 ? ':third_place:' : i + 1}: ${player}: ${score}`;
+    });
     return leaderBoard;
 };
 
@@ -147,11 +146,12 @@ export class TriviaPlayer { // TODO: Merge with MusicPlayer
                     return out;
                 };
 
-                const showHint = async(singer: string, title: string) => {
+                const showHint = async(singer: string, title: string, artists: string[]) => { // TODO: Skip the
                     const singerHint = convertToHint(singer, hints);
                     const titleHint = convertToHint(title, hints);
-                    const song = `${songSingerFoundTime === -1 ? singerHint : singer}: ${songNameFoundTime === -1 ? titleHint : title}`;
-                    const embed = new MessageEmbed().setColor('#ff7373').setTitle(`:musical_note: The song is:  \`${song}\``);
+                    const artistHints = artists.map((artist) => convertToHint(artist, hints));
+                    const song = `\`${songNameFoundTime === -1 ? titleHint : title}\`\nBy:\n ${songSingerFoundTime === -1 ? artistHints.map((artist) => `\`${artist}\``).join('\n') : artists.map((artist) => `\`${artist}\``).join('\n')}`;
+                    const embed = new MessageEmbed().setColor('#ff7373').setTitle(`The song is:`).setDescription(song);
                     if(lastMessage !== null) { lastMessage.delete().catch(() => { console.log('Failed to delete message'); }); }
                     lastMessage = await this.textChannel.send({embeds: [embed]});
                     hints++;
@@ -159,10 +159,10 @@ export class TriviaPlayer { // TODO: Merge with MusicPlayer
                 // let timeoutId = setTimeout(() => collector.stop(), 30000);
 
                 nextHintInt = setInterval(() => {
-                    void showHint(normalizeValue((this.queue[0] ?? {artists: ['']}).artists[0]), normalizeValue((this.queue[0] ?? {name: ''}).name));
+                    void showHint(normalizeValue((this.queue[0] ?? {artists: ['']}).artists[0]), normalizeValue((this.queue[0] ?? {name: ''}).name), (this.queue[0] ?? {artists: ['']}).artists.map(normalizeValue));
                 }, 5000);
 
-                void showHint(normalizeValue((this.queue[0] ?? {artists: ['']}).artists[0]), normalizeValue((this.queue[0] ?? {name: ''}).name));
+                void showHint(normalizeValue((this.queue[0] ?? {artists: ['']}).artists[0]), normalizeValue((this.queue[0] ?? {name: ''}).name), (this.queue[0] ?? {artists: ['']}).artists.map(normalizeValue));
 
                 collector.on('collect', (msg: Message) => {
                     if(!this.score.has(msg.author.username)) { return; }
@@ -170,7 +170,7 @@ export class TriviaPlayer { // TODO: Merge with MusicPlayer
                     const guess = normalizeValue(msg.content);
                     const title = normalizeValue(this.queue[0].name);
                     const singer = normalizeValue(this.queue[0].artists[0]);
-                    // let singers = this.queue[0].artists.map(normalizeValue);
+                    const singers = this.queue[0].artists.map(normalizeValue);
 
                     if(guess === 'skip') {
                         if(skippedArray.includes(msg.author.username)) { return; }
@@ -181,16 +181,16 @@ export class TriviaPlayer { // TODO: Merge with MusicPlayer
                     }
 
                     if(msg.content.includes(':')) { return; }
-                    // const gotAnArtist = singers.map((singer) => guess.includes(singer));
+                    const gotAnArtist = singers.some((singer) => guess.includes(singer));
                     const gotSinger = guess.includes(singer);
                     const gotName = guess.includes(title);
 
-                    if(!gotSinger && !gotName) { return void msg.react('❌'); }
+                    if(!gotSinger && !gotName && !gotAnArtist) { return void msg.react('❌'); }
 
                     let gotSingerInTime = false;
                     let gotNameInTime = false;
 
-                    const firstSingerGuess = songSingerFoundTime === -1 && (gotSinger);
+                    const firstSingerGuess = songSingerFoundTime === -1 && ((gotSinger) || (gotAnArtist));
                     const firstNameGuess = songNameFoundTime === -1 && (gotName);
 
                     if(firstSingerGuess) { songSingerFoundTime = time; }
@@ -233,8 +233,8 @@ export class TriviaPlayer { // TODO: Merge with MusicPlayer
                     if(typeof board !== 'undefined') {
                         const embed = new MessageEmbed()
                             .setColor('#ff7373')
-                            .setTitle(`:musical_note: The song was:  ${song} (${Math.max(this.queue.length - 1, 0)} left)`)
-                            .setDescription(board);
+                            .setTitle(`:musical_note: The song was: (${Math.max(this.queue.length - 1, 0)} left)`)
+                            .setDescription(`**[${song}](https://open.spotify.com/track/${this.queue[0].id})**\n\n${board}`);
 
                         void this.textChannel.send({embeds: [embed]});
                     }

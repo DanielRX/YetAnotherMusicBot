@@ -32,10 +32,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
         if(urlsArrayClone.length === 0) {
             return interaction.followUp(`**${playlistName}** is empty!`); //TODO: Swap to reply?
         }
-        const savedPlaylistEmbed = new MessageEmbed()
-            .setColor('#ff7373')
-            .setTitle(playlistName)
-            .setTimestamp();
+        const savedPlaylistEmbed = new MessageEmbed().setColor('#ff7373').setTitle(playlistName).setTimestamp();
         const fields = urlsArrayClone.slice(0, maxLength).map((x, i) => ({name: `${i + 1}`, value: `${x.name}`}));
         savedPlaylistEmbed.setFields(fields);
 

@@ -69,11 +69,9 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
     const triviaPlayer = triviaManager.get(interaction.guildId) as unknown as TriviaPlayer;
 
     // eslint-disable-next-line @typescript-eslint/no-shadow
-    randomLinks.forEach(({artists, name, previewUrl, youtubeUrl}) => {
-        triviaPlayer.queue.push({url: youtubeUrl, artists, previewUrl, name, voiceChannel} as PlayTrack);
+    randomLinks.forEach(({artists, name, previewUrl, youtubeUrl, id}) => {
+        triviaPlayer.queue.push({url: youtubeUrl, artists, previewUrl, name, voiceChannel, id} as any);
     });
-
-    console.log(JSON.stringify(triviaPlayer.queue));
 
     const membersInChannel = interaction.member.voice.channel?.members;
 

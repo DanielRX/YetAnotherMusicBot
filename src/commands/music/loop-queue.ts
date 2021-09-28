@@ -43,4 +43,3 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
     player.loopQueue = true;
     return interaction.reply(':repeat: The queue is now playing on **loop**');
 };
-

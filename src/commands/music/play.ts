@@ -39,10 +39,11 @@ const handleSubscription = async(queue: PlayTrack[], interaction: CustomInteract
         // happens when loading a saved playlist
         voiceChannel = interaction.member.voice.channel as VoiceChannel;
     }
-
-    const title = player.queue[0].name;
+    console.log(player.queue[0]);
+    console.log(Object.keys(player.queue[0]));
+    const title = player.queue[0].title;
     let connection = player.connection;
-    if(typeof connection === 'undefined') {
+    if(!connection) {
         connection = joinVoiceChannel({channelId: voiceChannel.id, guildId: interaction.guild.id, adapterCreator: interaction.guild.voiceAdapterCreator});
         connection.on('error', console.error);
     }
