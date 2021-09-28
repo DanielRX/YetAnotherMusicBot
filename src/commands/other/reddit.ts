@@ -40,10 +40,8 @@ const fetchFromReddit = async(interaction: CustomInteraction, subreddit: string,
     void new PagesBuilder(interaction as unknown as CommandInteraction).setPages(dataArr).build();
 };
 
-export const execute = async(interaction: CustomInteraction): Promise<void> => {
+export const execute = async(interaction: CustomInteraction, subReddit: string, sort: 'best' | 'controversial' | 'hot' | 'new' | 'rising' | 'top'): Promise<void> => {
     const message = await interaction.deferReply({fetchReply: true});
-    const subreddit = interaction.options.get('subreddit')?.value as string;
-    const sort = interaction.options.get('sort')?.value as string;
 
     if(sort === 'top' || sort === 'controversial') {
         const row = new MessageActionRow().addComponents(new MessageSelectMenu()
@@ -76,10 +74,10 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
             }
             collector.stop();
             const timeFilter = i.values[0];
-            return fetchFromReddit(interaction, subreddit, sort, timeFilter);
+            return fetchFromReddit(interaction, subReddit, sort, timeFilter);
         });
     } else {
-        return fetchFromReddit(interaction, subreddit, sort);
+        return fetchFromReddit(interaction, subReddit, sort);
     }
 };
 

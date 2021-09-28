@@ -9,8 +9,7 @@ export const options = [
     {type: 'user' as const, name: 'user', description: 'The user which avatar you want to display', required: true, choices: []}
 ];
 
-export const execute = async(interaction: CustomInteraction): Promise<void> => {
-    const user = interaction.options.get('user')?.user as unknown as User;
+export const execute = async(interaction: CustomInteraction, user: User): Promise<void> => {
     const embed = new MessageEmbed()
         .setTitle(user.username)
         .setImage(user.displayAvatarURL({dynamic: true}))

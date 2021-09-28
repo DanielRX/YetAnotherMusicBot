@@ -7,7 +7,7 @@ export const name = 'covid';
 export const description = 'Displays COVID-19 stats.';
 
 export const options = [
-    {type: 'string' as const, name: 'country', description: 'What country do you like to search? Type `all` to display worldwide stats.', required: false, choices: []}
+    {type: 'string' as const, name: 'country', description: 'What country do you like to search? Type `all` to display worldwide stats.', required: false, choices: [], default: 'all'}
 ];
 
 type WorldStats = {todayCases: number, todayDeaths: number, recovered: number, deaths: number, active: number, cases: number, tests: number, casesPerOneMillion: number, deathsPerOneMillion: number, updated: number};
@@ -42,8 +42,7 @@ const getCountryStats = async(country: string) => {
     }
 };
 
-export const execute = async(interaction: CustomInteraction): Promise<void> => {
-    const country = `${interaction.options.get('country')?.value}`;
+export const execute = async(interaction: CustomInteraction, country: string): Promise<void> => {
     if(country === 'all' || country === 'world' || country === 'global') {
         return getWorldStats()
             .then(async(res) => {

@@ -77,11 +77,8 @@ const processURL = async(url: string, interaction: CustomInteraction) => {
     return constructSongObj(video, interaction.member.user);
 };
 
-export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message | void> => {
+export const execute = async(interaction: CustomInteraction, playlistName: string, url: string): Promise<APIMessage | Message | void> => {
     await interaction.deferReply();
-
-    const playlistName = interaction.options.get('playlistname')?.value;
-    const url = `${interaction.options.get('url')?.value}`;
 
     const userData = await member.findOne({memberId: interaction.member.id}).exec();
     if(!userData) { return interaction.followUp('You have no custom playlists!'); }

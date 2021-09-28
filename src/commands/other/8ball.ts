@@ -9,9 +9,7 @@ export const options = [
     {type: 'string' as const, name: 'question', description: 'What do you want to ask?', required: true, choices: []}
 ];
 
-export const execute = async(interaction: CustomInteraction): Promise<void> => {
-    const question = `${interaction.options.get('question')?.value}`;
-
+export const execute = async(interaction: CustomInteraction, question: string): Promise<void> => {
     if(question.length > 255) {
         return interaction.reply('Please ask a shorter question!');
     }

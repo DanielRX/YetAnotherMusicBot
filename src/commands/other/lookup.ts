@@ -10,9 +10,7 @@ export const options = [
     {type: 'string' as const, name: 'query', description: 'What do you want to lookup? Please enter a hostname/domain or IP address.', required: true, choices: []}
 ];
 
-export const execute = async(interaction: CustomInteraction): Promise<void> => {
-    const resl = `${interaction.options.get('query')?.value}`;
-
+export const execute = async(interaction: CustomInteraction, resl: string): Promise<void> => {
     try {
         const json = await fetch<{query: string, city: string, zip: string, regionName: string, country: string, org: string, isp: string, as: string}>(`http://ip-api.com/json/${resl}`).then(async(res) => res.json()); // fetch json data from ip-api.com
 

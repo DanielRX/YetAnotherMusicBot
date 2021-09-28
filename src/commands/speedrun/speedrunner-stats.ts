@@ -12,9 +12,8 @@ export const options = [
     {type: 'string' as const, name: 'user', description: 'Who do you want to look up?', required: true, choices: []},
 ];
 
-export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message | void> => {
+export const execute = async(interaction: CustomInteraction, userQuery: string): Promise<APIMessage | Message | void> => {
     void interaction.deferReply();
-    const userQuery = `${interaction.options.get('user')?.value}`;
 
     const userFiltered = userQuery.toLowerCase();
     const userRes = await fetch<{runners: ({name: string, avatar: string})[], status :number}>(`https://splits.io/api/v4/runners?search=${userFiltered}`).then(async(res) => res.json());

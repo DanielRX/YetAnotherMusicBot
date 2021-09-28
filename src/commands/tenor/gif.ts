@@ -10,9 +10,8 @@ export const options = [
     {type: 'string' as const, name: 'gif', description: 'What gif would you like to search for?', required: true, choices: []}
 ];
 
-export const execute = async(interaction: CustomInteraction): Promise<void> => {
+export const execute = async(interaction: CustomInteraction, gif: string): Promise<void> => {
     if(!config.tenorAPI) { return interaction.reply(':x: Tenor commands are not enabled'); }
-    const gif = interaction.options.get('gif')?.value;
     return fetch<{results: ({url: string})[]}>(`https://g.tenor.com/v1/random?key=${config.tenorAPI}&q=${gif}&limit=1`)
         .then(async(res) => res.json())
         .then(async(json) => interaction.reply(json.results[0].url))

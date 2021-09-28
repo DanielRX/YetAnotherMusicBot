@@ -11,11 +11,8 @@ export const options = [
     {type: 'integer' as const, name: 'index', description: 'What is the index of the video you would like to delete from your saved playlist?', required: true, choices: []}
 ];
 
-export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message> => {
+export const execute = async(interaction: CustomInteraction, playlistName: string, index: number): Promise<APIMessage | Message> => {
     await interaction.deferReply();
-
-    const playlistName = `${interaction.options.get('playlist')?.value}`;
-    const index = Number(interaction.options.get('index')?.value);
 
     const userData = await member.findOne({
         memberId: interaction.member.id

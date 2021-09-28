@@ -14,7 +14,7 @@ export const name = 'music-trivia';
 export const description = 'Engage in a music quiz with your friends!';
 
 export const options = [
-    {type: 'string' as const, name: 'length', description: 'How many songs would you like the trivia to have?', required: false, choices: []}
+    {type: 'string' as const, name: 'length', description: 'How many songs would you like the trivia to have?', required: false, choices: [], default: 25}
 ];
 
 type TriviaElement = {youtubeUrl: string, previewUrl: string, artists: string[], album: string, name: string, id: string};
@@ -43,7 +43,7 @@ const handleSubscription = async(interaction: CustomInteraction, player: TriviaP
     return interaction.followUp({embeds: [startTriviaEmbed]});
 };
 
-export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message> => {
+export const execute = async(interaction: CustomInteraction, length: number): Promise<APIMessage | Message> => {
     await interaction.deferReply();
     const voiceChannel = interaction.member.voice.channel;
     if(!voiceChannel) {
@@ -58,14 +58,13 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
         return interaction.followUp('There is already a trivia in play!');
     }
 
-    const numberOfSongs = Number(interaction.options.get('length')?.value ?? 25);
     const songs = await fs.readJSON('./resources/music/mk2/trivia.json') as TriviaElement[]; // TODO: Move type to types
     const albumData = await fs.readJSON('./resources/music/mk2/albums.json') as {[key: string]: {[key: string]: unknown}};
     const artistsData = await fs.readJSON('./resources/music/mk2/artists.json') as {[key: string]: string};
     const videoDataArray = songs.map((track) => ({...track, album: albumData[track.album], artists: track.artists.map((id) => artistsData[id])}));
     // Get random numberOfSongs videos from the array
 
-    const randomLinks = getRandom(videoDataArray, numberOfSongs);
+    const randomLinks = getRandom(videoDataArray, length);
     triviaManager.set(interaction.guildId, new TriviaPlayer());
 
     const triviaPlayer = triviaManager.get(interaction.guildId) as unknown as TriviaPlayer;

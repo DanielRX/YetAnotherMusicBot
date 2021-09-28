@@ -12,7 +12,7 @@ export const options = [
     {type: 'integer' as const, name: 'newposition', description: 'What position do you want to move the song to?', required: true, choices: []}
 ];
 
-export const execute = async(interaction: CustomInteraction): Promise<void> => {
+export const execute = async(interaction: CustomInteraction, oldPosition: number, newPosition: number): Promise<void> => {
     if(!guildData.get(interaction.guildId)) {
         guildData.set(interaction.guildId, createGuildData());
     }
@@ -30,8 +30,6 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
     if(interaction.member.voice.channelId !== interaction.guild.me?.voice.channelId) {
         return interaction.reply(`You must be in the same voice channel as the bot in order to use that!`);
     }
-    const oldPosition = Number(interaction.options.get('oldposition')?.value);
-    const newPosition = Number(interaction.options.get('newposition')?.value);
 
     if(oldPosition < 1 || oldPosition > player.queue.length || newPosition < 1 || newPosition > player.queue.length || oldPosition == newPosition) {
         return interaction.reply(':x: Try again and enter a valid song position number');

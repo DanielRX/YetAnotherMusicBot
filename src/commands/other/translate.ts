@@ -12,15 +12,14 @@ export const options = [
     {type: 'string' as const, name: 'text', description: 'What text do you want to translate?', required: true, choices: []}
 ];
 
-export const execute = async(interaction: CustomInteraction): Promise<void> => {
-    const targetLang = `${interaction.options.get('targetlang')?.value}`;
+export const execute = async(interaction: CustomInteraction, targetLang: string, text: string): Promise<void> => {
     const langCode = ISO6391.getCode(targetLang);
 
     if(langCode === '') {
         return interaction.reply(':x: Please provide a valid language!');
     }
 
-    translate(`${interaction.options.get('text')?.value}`, {to: targetLang})
+    translate(text, {to: targetLang})
         .then(async(response) => {
             const embed = new MessageEmbed()
                 .setColor('#FF0000')

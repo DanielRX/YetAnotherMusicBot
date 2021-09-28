@@ -9,8 +9,7 @@ export const options = [
     {type: 'string' as const, name: 'playlistname', description: 'What is the name of the playlist you would like to create?', required: true, choices: []}
 ];
 
-export const execute = async(interaction: CustomInteraction): Promise<void> => {
-    const playlistName = `${interaction.options.get('playlistname')?.value}`;
+export const execute = async(interaction: CustomInteraction, playlistName: string): Promise<void> => {
     const {member: {id, user: {username}, joinedAt}} = interaction;
     // Check if the user exists in the db
     const userData = await member.findOne({memberId: id}).exec(); // A clone object

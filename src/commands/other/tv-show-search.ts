@@ -76,12 +76,10 @@ const cleanUp = (summary: string) => summary
     .replace(/&#39;/g, "'")
     .toLocaleString();
 
-export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message | void> => {
-    const tvshow = interaction.options.get('tvshow')?.value;
-
+export const execute = async(interaction: CustomInteraction, tvShow: string): Promise<APIMessage | Message | void> => {
     let showResponse: Show[] = [];
     try {
-        showResponse = await getShowSearch(`${tvshow}`);
+        showResponse = await getShowSearch(`${tvShow}`);
     } catch(e: unknown) {
         return interaction.reply((e as Error).message);
     }

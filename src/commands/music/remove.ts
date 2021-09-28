@@ -1,6 +1,4 @@
 import type {CustomInteraction} from '../../utils/types';
-import {SlashCommandBuilder} from '@discordjs/builders';
-import {setupOption} from '../../utils/utils';
 import {playerManager} from '../../utils/client';
 
 export const name = 'remove';
@@ -10,10 +8,7 @@ export const options = [
     {type: 'integer' as const, name: 'position', description: 'What song number do you want to remove from queue?', required: true, choices: []}
 ];
 
-export const data = new SlashCommandBuilder().setName(name).setDescription(description).addIntegerOption(setupOption(options[0]));
-
-export const execute = async(interaction: CustomInteraction): Promise<void> => {
-    const position = Number(interaction.options.get('position')?.value);
+export const execute = async(interaction: CustomInteraction, position: number): Promise<void> => {
     const player = playerManager.get(interaction.guildId);
 
     if(!player) {

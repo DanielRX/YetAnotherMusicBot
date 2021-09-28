@@ -65,9 +65,9 @@ const getGameDetails = async(query: string) => {
     }
 };
 
-export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message | void> => {
+export const execute = async(interaction: CustomInteraction, game: string): Promise<APIMessage | Message | void> => {
     if(!config.rawgAPI) { return interaction.reply('This command is not enabled on this bot!'); }
-    const gameTitleFiltered = `${interaction.options.get('game')?.value}`.replace(/ /g, '-').replace(/'/g, '').toLowerCase();
+    const gameTitleFiltered = game.replace(/ /g, '-').replace(/'/g, '').toLowerCase();
 
     // using this link it provides all the info, instead of using search
     return getGameDetails(gameTitleFiltered)

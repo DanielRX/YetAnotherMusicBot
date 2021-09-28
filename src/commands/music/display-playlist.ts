@@ -13,9 +13,8 @@ export const options = [
 
 const maxLength = 24;
 
-export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message> => {
+export const execute = async(interaction: CustomInteraction, playlistName: string): Promise<APIMessage | Message> => {
     void interaction.deferReply();
-    const playlistName = `${interaction.options.get('playlistname')?.value}`;
     // Check if user has playlists or if user is saved in the DB
     const userData = await member.findOne({memberId: interaction.member.id}).exec();
     if(!userData) {

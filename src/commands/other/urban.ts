@@ -10,13 +10,13 @@ export const options = [
     {type: 'string' as const, name: 'query', description: 'What do you want to search for?', required: true, choices: []},
 ];
 
-export const execute = async(interaction: CustomInteraction): Promise<void> => {
+export const execute = async(interaction: CustomInteraction, query: string): Promise<void> => {
     return fetch<{list: ({definition: string, permalink: string})[]}>(`https://api.urbandictionary.com/v0/define?term=${interaction.options.get('query')?.value}`)
         .then(async(res) => res.json())
         .then(async(json) => {
             const embed = new MessageEmbed()
                 .setColor('#BB7D61')
-                .setTitle(`${interaction.options.get('query')?.value}`)
+                .setTitle(query)
                 .setAuthor('Urban Dictionary', 'https://i.imgur.com/vdoosDm.png', 'https://urbandictionary.com')
                 .setDescription(`*${json.list[Math.floor(Math.random() * 1)].definition}*`)
                 .setURL(json.list[0].permalink)

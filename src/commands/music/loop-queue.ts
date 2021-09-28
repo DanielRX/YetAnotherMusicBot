@@ -10,7 +10,7 @@ export const options = [
     {type: 'integer' as const, name: 'looptimes', description: 'How many times do you want to loop the queue?', required: true, choices: []}
 ];
 
-export const execute = async(interaction: CustomInteraction): Promise<void> => {
+export const execute = async(interaction: CustomInteraction, loopTimes: number): Promise<void> => {
     if(!guildData.get(interaction.guildId)) {
         guildData.set(interaction.guildId, createGuildData());
     }
@@ -33,8 +33,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
         return interaction.reply(':x: Turn off the **loop** command before using the **loopqueue** command');
     }
 
-    const looptimes = Number((interaction.options.get('looptimes') ?? {value: 1}).value);
-    player.loopTimes = looptimes;
+    player.loopTimes = loopTimes;
 
     if(player.loopQueue) {
         player.loopQueue = false;

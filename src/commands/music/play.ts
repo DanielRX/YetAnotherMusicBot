@@ -72,9 +72,8 @@ const flagLogic = (interaction: CustomInteraction, video: any, jumpFlag: boolean
     }
 };
 
-const handleSpotifyPlaylistData = async(interaction: CustomInteraction, data: any) => {
+const handleSpotifyPlaylistData = async(interaction: CustomInteraction, rawQuery: string, data: any) => {
     const player = playerManager.get(interaction.guildId) as unknown as CustomAudioPlayer;
-    const rawQuery = `${interaction.options.get('query')?.value}`;
     const {nextFlag, jumpFlag} = getFlags(rawQuery);
     const spotifyPlaylistItems = data.tracks.items;
     const processingMessage = await interaction.channel?.send({content: 'Processing Playlist...'});
@@ -97,15 +96,14 @@ const handleSpotifyPlaylistData = async(interaction: CustomInteraction, data: an
     if(player.audioPlayer.state.status !== AudioPlayerStatus.Playing) { return handleSubscription(player.queue, interaction, player as unknown as MusicPlayer); }
 };
 
-const handleSpotifyURL = async(interaction: CustomInteraction): Promise<APIMessage | Message | void> => {
+const handleSpotifyURL = async(interaction: CustomInteraction, rawQuery: string): Promise<APIMessage | Message | void> => {
     const player = playerManager.get(interaction.guildId) as unknown as CustomAudioPlayer;
-    const rawQuery = `${interaction.options.get('query')?.value}`;
     const {nextFlag, jumpFlag, query} = getFlags(rawQuery);
     const handleSpotifyData = async(data: Track | {tracks: Track[]}) => {
         // 'tracks' property only exists on a playlist data object
         if('tracks' in data) {
             // handle playlist
-            return handleSpotifyPlaylistData(interaction, data);
+            return handleSpotifyPlaylistData(interaction, rawQuery, data);
         }
         // single track
 
@@ -133,9 +131,8 @@ const handleSpotifyURL = async(interaction: CustomInteraction): Promise<APIMessa
     });
 };
 
-const searchYoutube = async(interaction: CustomInteraction, voiceChannel: VoiceChannel): Promise<APIMessage | Message | void> => {
+const searchYoutube = async(interaction: CustomInteraction, rawQuery: string, voiceChannel: VoiceChannel): Promise<APIMessage | Message | void> => {
     const player = playerManager.get(interaction.guildId) as unknown as CustomAudioPlayer;
-    const rawQuery = `${interaction.options.get('query')?.value}`;
     const {nextFlag, jumpFlag, query} = getFlags(rawQuery);
     const videos = await YouTube.search(query, {limit: 5, type: 'video'}).catch(async function() {
         return void interaction.followUp(':x: There was a problem searching the video you requested!');
@@ -232,9 +229,8 @@ const searchYoutube = async(interaction: CustomInteraction, voiceChannel: VoiceC
     });
 };
 
-const handleYoutubeURL = async(interaction: CustomInteraction): Promise<APIMessage | Message | void> => {
+const handleYoutubeURL = async(interaction: CustomInteraction, rawQuery: string): Promise<APIMessage | Message | void> => {
     const player = playerManager.get(interaction.guildId) as unknown as CustomAudioPlayer;
-    const rawQuery = `${interaction.options.get('query')?.value}`;
     const {nextFlag, jumpFlag, query} = getFlags(rawQuery);
     const timestampRegex = /t=([^#&\n\r]+)/g;
     const timestampArr = timestampRegex.exec(query);
@@ -283,9 +279,8 @@ const handleYoutubeURL = async(interaction: CustomInteraction): Promise<APIMessa
     }
 };
 
-const handleYoutubePlaylistURL = async(interaction: CustomInteraction): Promise<APIMessage | Message | void> => {
+const handleYoutubePlaylistURL = async(interaction: CustomInteraction, rawQuery: string): Promise<APIMessage | Message | void> => {
     const player = playerManager.get(interaction.guildId) as unknown as CustomAudioPlayer;
-    const rawQuery = `${interaction.options.get('query')?.value}`;
     const {nextFlag, jumpFlag, shuffleFlag, reverseFlag, query} = getFlags(rawQuery);
 
     const playlist = await YouTube.getPlaylist(query);
@@ -345,9 +340,8 @@ const handleYoutubePlaylistURL = async(interaction: CustomInteraction): Promise<
     return interaction.followUp('Added playlist to queue!');
 };
 
-const handlePlayFromHistory = async(interaction: CustomInteraction, message: Message): Promise<APIMessage | Message | void> => {
+const handlePlayFromHistory = async(interaction: CustomInteraction, rawQuery: string, message: Message): Promise<APIMessage | Message | void> => {
     const player = playerManager.get(interaction.guildId);
-    const rawQuery = `${interaction.options.get('query')?.value}`;
     const {nextFlag, jumpFlag, query} = getFlags(rawQuery);
     const index = Number(query) - 1;
     // continue if there's no index matching the query on the history queue
@@ -392,7 +386,7 @@ const handlePlayFromHistory = async(interaction: CustomInteraction, message: Mes
                 break;
                 // 2: Search for the query on YouTube
             case 'youtube_option':
-                await searchYoutube(interaction, interaction.member.voice.channel as VoiceChannel);
+                await searchYoutube(interaction, rawQuery, interaction.member.voice.channel as VoiceChannel);
                 break;
                 // 3: Cancel
             case 'cancel_option':
@@ -403,9 +397,8 @@ const handlePlayFromHistory = async(interaction: CustomInteraction, message: Mes
     });
 };
 
-const handlePlayPlaylist = async(interaction: CustomInteraction, message: Message, playlistsArray: Playlist[], found: Playlist): Promise<APIMessage | Message | void> => {
+const handlePlayPlaylist = async(interaction: CustomInteraction, rawQuery: string, message: Message, playlistsArray: Playlist[], found: Playlist): Promise<APIMessage | Message | void> => {
     const player = playerManager.get(interaction.guildId) as unknown as MusicPlayer;
-    const rawQuery = `${interaction.options.get('query')?.value}`;
     const {nextFlag, jumpFlag, query} = getFlags(rawQuery);
     const fields = [
         {label: 'Playlist', description: 'Select playlist', value: 'playlist_option', emoji: '⏩'},
@@ -503,7 +496,7 @@ const handlePlayPlaylist = async(interaction: CustomInteraction, message: Messag
                 break;
                 // 3: Search for the query on YouTube
             case 'youtube_option':
-                await searchYoutube(interaction, interaction.member.voice.channel as VoiceChannel);
+                await searchYoutube(interaction, rawQuery, interaction.member.voice.channel as VoiceChannel);
                 break;
                 // 4: Cancel
             case 'cancel_option':
@@ -522,7 +515,7 @@ export const options = [
     {type: 'string' as const, name: 'query', description: ':notes: What song or playlist would you like to listen to? Add -s to shuffle a playlist', required: true, choices: []}
 ];
 
-export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message | void> => {
+export const execute = async(interaction: CustomInteraction, rawQuery: string): Promise<APIMessage | Message | void> => {
     if(!guildData.get(interaction.guildId)) {
         guildData.set(interaction.guildId, createGuildData());
     }
@@ -536,9 +529,8 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
     if(guild.triviaData.isTriviaRunning) {
         return interaction.followUp(':x: Please try after the trivia has ended!');
     }
-    const query = `${interaction.options.get('query')?.value}`;
     //Parse query to check for flags
-    const splitQuery = query.split(' ');
+    const splitQuery = rawQuery.split(' ');
     const flags = ['s', 'r', 'n', 'j'].map((f) => `-${f}`);
     if(flags.includes(splitQuery[splitQuery.length - 1])) splitQuery.pop();
     const cleanQuery = splitQuery.join(' ');
@@ -565,15 +557,15 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
         const found = playlistsArray.find((playlist: Playlist) => playlist.name === cleanQuery);
         // Found a playlist with a name matching the query and it's not empty
         if(found && playlistsArray[playlistsArray.indexOf(found)].urls.length) {
-            return handlePlayPlaylist(interaction, message, playlistsArray, found);
+            return handlePlayPlaylist(interaction, rawQuery, message, playlistsArray, found);
         }
     }
 
     // check if the user wants to play a song from the history queue
-    if(Number(cleanQuery)) { return handlePlayFromHistory(interaction, message); }
-    if(isSpotifyURL(cleanQuery)) { return handleSpotifyURL(interaction); }
-    if(isYouTubePlaylistURL(cleanQuery)) { return handleYoutubePlaylistURL(interaction); }
-    if(isYouTubeVideoURL(cleanQuery)) { return handleYoutubeURL(interaction); }
+    if(Number(cleanQuery)) { return handlePlayFromHistory(interaction, rawQuery, message); }
+    if(isSpotifyURL(cleanQuery)) { return handleSpotifyURL(interaction, rawQuery); }
+    if(isYouTubePlaylistURL(cleanQuery)) { return handleYoutubePlaylistURL(interaction, rawQuery); }
+    if(isYouTubeVideoURL(cleanQuery)) { return handleYoutubeURL(interaction, rawQuery); }
 
     // If user provided a song/video name
     await searchYoutube(interaction, interaction.member.voice.channel as VoiceChannel);

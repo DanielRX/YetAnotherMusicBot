@@ -14,7 +14,7 @@ export const name = 'lyrics';
 export const description = 'Get the lyrics of any song or the lyrics of the currently playing song!';
 
 export const options = [
-    {type: 'string' as const, name: 'songname', description: ':mag: What song lyrics would you like to get?', required: true, choices: []}
+    {type: 'string' as const, name: 'songname', description: ':mag: What song lyrics would you like to get?', required: false, choices: [], default: ''}
 ];
 
 const cleanSongName = (songName: string) => {
@@ -76,13 +76,12 @@ const getLyrics = async(url: string) => {
     }
 };
 
-export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message | void> => {
+export const execute = async(interaction: CustomInteraction, songName: string): Promise<APIMessage | Message | void> => {
     if(!config.geniusLyricsAPI) { return interaction.reply(':x: Lyrics command is not enabled'); }
     void interaction.deferReply();
     const player = playerManager.get(interaction.guildId);
     const guild = guildData.get(interaction.guildId);
-    let songName = `${interaction.options.get('songname')?.value}`;
-    if(!songName) {
+    if(songName === '') {
         if(!player) { return interaction.followUp('There is no song playing! Enter a song name or play a song'); }
         if(guild) {
             if(guild.triviaData.isTriviaRunning) {

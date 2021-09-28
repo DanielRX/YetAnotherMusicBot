@@ -8,8 +8,7 @@ export const options = [
     {type: 'string' as const, name: 'playlistname', description: 'Which playlist would you like to delete?', required: true, choices: []}
 ];
 
-export const execute = async(interaction: CustomInteraction): Promise<void> => {
-    const playlistName = interaction.options.get('playlistname')?.value;
+export const execute = async(interaction: CustomInteraction, playlistName: string): Promise<void> => {
     // Check if user has playlists or if user is saved in the DB
     const userData = await member.findOne({memberId: interaction.member.id}).exec();
 
