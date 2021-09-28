@@ -1,6 +1,5 @@
-import type {APIMessage} from 'discord-api-types';
-import type {CommandInteraction, Message} from 'discord.js';
-import type {CustomInteraction} from '../../utils/types';
+import type {CommandInteraction} from 'discord.js';
+import type {CommandReturn, CustomInteraction} from '../../utils/types';
 import {MessageEmbed} from 'discord.js';
 import {PagesBuilder} from 'discord.js-pages';
 import {fetch} from '../../utils/utils';
@@ -14,16 +13,16 @@ export const options = [
     {type: 'string' as const, name: 'user', description: 'Who do you want to look up?', required: true, choices: []},
 ];
 
-export const execute = async(interaction: CustomInteraction, userQuery: string): Promise<APIMessage | Message | void> => {
+export const execute = async(interaction: CustomInteraction, userQuery: string): Promise<CommandReturn> => {
     const userFiltered = userQuery.toLowerCase();
     const userRes = await fetch<{runners: ({name: string, avatar: string})[], status :number}>(`https://splits.io/api/v4/runners?search=${userFiltered}`).then(async(res) => res.json());
 
     if(userRes.runners.length == 0) {
-        return interaction.followUp(':x: The Runner ' + userQuery + ' was  not found.');
+        return ':x: The Runner ' + userQuery + ' was  not found.';
     }
 
     if(userRes.status == 404) {
-        return interaction.followUp(':x: The Runner ' + userQuery + ' was  not found.');
+        return ':x: The Runner ' + userQuery + ' was  not found.';
     }
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -34,7 +33,7 @@ export const execute = async(interaction: CustomInteraction, userQuery: string):
         Please try again later.`);
     }
     if(pbsRes.status == 404) {
-        return interaction.followUp(':x: The User ' + userQuery + 's stats were not found.');
+        return ':x: The User ' + userQuery + 's stats were not found.';
     }
 
     if(userRes.runners.length != 0) {
@@ -60,6 +59,5 @@ export const execute = async(interaction: CustomInteraction, userQuery: string):
 
         return new PagesBuilder(interaction as unknown as CommandInteraction).setPages(pbEmbedArray).setColor('#3E8657').build();
     }
-    return;
 };
 

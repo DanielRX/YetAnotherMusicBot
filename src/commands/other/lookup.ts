@@ -1,5 +1,5 @@
 import {MessageEmbed} from 'discord.js';
-import type {CustomInteraction} from '../../utils/types';
+import type {CommandReturn, CustomInteraction} from '../../utils/types';
 import {fetch} from '../../utils/utils';
 import {logger} from '../../utils/logging';
 
@@ -11,7 +11,7 @@ export const options = [
     {type: 'string' as const, name: 'query', description: 'What do you want to lookup? Please enter a hostname/domain or IP address.', required: true, choices: []}
 ];
 
-export const execute = async(interaction: CustomInteraction, resl: string): Promise<void> => {
+export const execute = async(interaction: CustomInteraction, resl: string): Promise<CommandReturn> => {
     try {
         const json = await fetch<{query: string, city: string, zip: string, regionName: string, country: string, org: string, isp: string, as: string}>(`http://ip-api.com/json/${resl}`).then(async(res) => res.json()); // fetch json data from ip-api.com
 
@@ -28,10 +28,10 @@ export const execute = async(interaction: CustomInteraction, resl: string): Prom
                 {name: 'OBO', value: json.as, inline: false}])
             .setTimestamp(); //img here
 
-        return interaction.reply({embeds: [embed]});
+        return {embeds: [embed]};
     } catch(e: unknown) {
         logger.error(e);
-        return interaction.reply('Something went wrong looking for that result, is the api throttled?');
+        return 'Something went wrong looking for that result, is the api throttled?';
     }
 };
 

@@ -1,4 +1,4 @@
-import type {CustomInteraction} from '../../utils/types';
+import type {CommandReturn, CustomInteraction} from '../../utils/types';
 import {fetch} from '../../utils/utils';
 import {SlashCommandBuilder} from '@discordjs/builders';
 import {MessageEmbed} from 'discord.js';
@@ -10,7 +10,7 @@ export const deferred = false;
 
 export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
-export const execute = async(interaction: CustomInteraction): Promise<void> => {
+export const execute = async(interaction: CustomInteraction): Promise<CommandReturn> => {
     return fetch<{slip: {advice: string}}>('https://api.adviceslip.com/advice')
         .then(async(res) => res.json())
         .then(async(json) => {
@@ -20,11 +20,11 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
                 .setDescription(json.slip.advice)
                 .setTimestamp()
                 .setFooter('Powered by adviceslip.com', '');
-            return interaction.reply({embeds: [embed]});
+            return {embeds: [embed]};
         })
         .catch(async(e: unknown) => {
             logger.error(e);
-            return interaction.reply('Failed to deliver advice :sob:');
+            return 'Failed to deliver advice :sob:';
         });
 };
 

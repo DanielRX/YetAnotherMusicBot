@@ -1,7 +1,7 @@
 import {MessageEmbed} from 'discord.js';
 import ISO6391 from 'iso-639-1';
 import translate from '@vitalets/google-translate-api';
-import type {CustomInteraction} from '../../utils/types';
+import type {CommandReturn, CustomInteraction} from '../../utils/types';
 import {logger} from '../../utils/logging';
 
 export const name = 'translate';
@@ -13,12 +13,10 @@ export const options = [
     {type: 'string' as const, name: 'text', description: 'What text do you want to translate?', required: true, choices: []}
 ];
 
-export const execute = async(interaction: CustomInteraction, targetLang: string, text: string): Promise<void> => {
+export const execute = async(interaction: CustomInteraction, targetLang: string, text: string): Promise<CommandReturn> => {
     const langCode = ISO6391.getCode(targetLang);
 
-    if(langCode === '') {
-        return interaction.reply(':x: Please provide a valid language!');
-    }
+    if(langCode === '') { return ':x: Please provide a valid language!'; }
 
     translate(text, {to: targetLang})
         .then(async(response) => {
@@ -28,11 +26,11 @@ export const execute = async(interaction: CustomInteraction, targetLang: string,
                 .setURL('https://translate.google.com/')
                 .setDescription(response.text)
                 .setFooter('Powered by Google Translate!');
-            return interaction.reply({embeds: [embed]});
+            return {embeds: [embed]};
         })
         .catch(async(e: unknown) => {
             logger.error(e);
-            return interaction.reply(':x: Something went wrong when trying to translate the text');
+            return ':x: Something went wrong when trying to translate the text';
         });
 };
 

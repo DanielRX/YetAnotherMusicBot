@@ -1,18 +1,17 @@
-import type {CustomInteraction} from '../../utils/types';
-import type {CommandInteraction, Message} from 'discord.js';
+import type {CommandReturn, CustomInteraction} from '../../utils/types';
+import type {CommandInteraction} from 'discord.js';
 import {MessageEmbed} from 'discord.js';
 import {fetch} from '../../utils/utils';
 import {PagesBuilder} from 'discord.js-pages';
 import {config} from '../../utils/config';
-import type {APIMessage} from 'discord-api-types';
 import {logger} from '../../utils/logging';
 
 export const name = 'world-news';
 export const description = 'Replies with the 10 latest world news headlines!';
 export const deferred = false;
 
-export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message | void> => {
-    if(!config.newsAPI) { return interaction.reply(':x: This command is not enabled'); }
+export const execute = async(interaction: CustomInteraction): Promise<CommandReturn> => {
+    if(!config.newsAPI) { return ':x: This command is not enabled'; }
     // powered by NewsAPI.org
     try {
         const response = await fetch<{articles: ({title: string, url: string, author: string, description: string, urlToImage: string, publishedAt: number})[]}>(`https://newsapi.org/v2/top-headlines?sources=reuters&pageSize=10&apiKey=${config.newsAPI}`);
@@ -34,6 +33,6 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
         return new PagesBuilder(interaction as unknown as CommandInteraction).setPages(articleArr).build();
     } catch(e: unknown) {
         logger.error(e);
-        return interaction.reply(':x: Something failed along the way!');
+        return ':x: Something failed along the way!';
     }
 };

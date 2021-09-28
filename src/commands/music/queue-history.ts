@@ -1,6 +1,5 @@
-import type {APIMessage} from 'discord-api-types';
-import type {CommandInteraction, Message} from 'discord.js';
-import type {CustomInteraction} from '../../utils/types';
+import type {CommandInteraction} from 'discord.js';
+import type {CommandReturn, CustomInteraction} from '../../utils/types';
 import {MessageEmbed} from 'discord.js';
 import {PagesBuilder} from 'discord.js-pages';
 import {guildData} from '../../utils/client';
@@ -9,14 +8,10 @@ export const name = 'queue-history';
 export const description = 'Display the music queue history';
 export const deferred = false;
 
-export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message | void> => {
+export const execute = async(interaction: CustomInteraction): Promise<CommandReturn> => {
     const guild = guildData.get(interaction.guildId);
-    if(!guild) {
-        return interaction.followUp('There is no music queue history!');
-    }
-    if(!guild.queueHistory.length) {
-        return interaction.followUp('There is no music queue history!');
-    }
+    if(!guild) { return 'There is no music queue history!'; }
+    if(!guild.queueHistory.length) { return 'There is no music queue history!'; }
 
     const queueClone = Array.from(guild.queueHistory);
     const embeds = [];
@@ -30,7 +25,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
         embeds.push(new MessageEmbed().setTitle(`Page ${i}`).setFields(fields));
     }
 
-    return new PagesBuilder(interaction as unknown as CommandInteraction)
+    await new PagesBuilder(interaction as unknown as CommandInteraction)
         .setTitle('Music Queue')
         .setPages(embeds)
         .setListenTimeout(2 * 60 * 1000)

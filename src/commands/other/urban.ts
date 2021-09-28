@@ -1,5 +1,5 @@
 import {MessageEmbed} from 'discord.js';
-import type {CustomInteraction} from '../../utils/types';
+import type {CommandReturn, CustomInteraction} from '../../utils/types';
 import {fetch} from '../../utils/utils';
 import {logger} from '../../utils/logging';
 
@@ -11,7 +11,7 @@ export const options = [
     {type: 'string' as const, name: 'query', description: 'What do you want to search for?', required: true, choices: []},
 ];
 
-export const execute = async(interaction: CustomInteraction, query: string): Promise<void> => {
+export const execute = async(interaction: CustomInteraction, query: string): Promise<CommandReturn> => {
     return fetch<{list: ({definition: string, permalink: string})[]}>(`https://api.urbandictionary.com/v0/define?term=${interaction.options.get('query')?.value}`)
         .then(async(res) => res.json())
         .then(async(json) => {
@@ -23,10 +23,10 @@ export const execute = async(interaction: CustomInteraction, query: string): Pro
                 .setURL(json.list[0].permalink)
                 .setTimestamp()
                 .setFooter('Powered by UrbanDictionary', '');
-            return interaction.reply({embeds: [embed]});
+            return {embeds: [embed]};
         })
         .catch(async(e: unknown) => {
             logger.error(e); // no need to spam console for each time it doesn't find a query
-            return interaction.reply('Failed to deliver definition :sob:');
+            return 'Failed to deliver definition :sob:';
         });
 };

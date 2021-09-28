@@ -1,4 +1,4 @@
-import type {CustomInteraction} from '../../utils/types';
+import type {CommandReturn, CustomInteraction} from '../../utils/types';
 import member from '../../utils/models/Member';
 import {logger} from '../../utils/logging';
 
@@ -10,32 +10,29 @@ export const options = [
     {type: 'string' as const, name: 'playlistname', description: 'What is the name of the playlist you would like to create?', required: true, choices: []}
 ];
 
-export const execute = async(interaction: CustomInteraction, playlistName: string): Promise<void> => {
+export const execute = async(interaction: CustomInteraction, playlistName: string): Promise<CommandReturn> => {
     const {member: {id, user: {username}, joinedAt}} = interaction;
     // Check if the user exists in the db
     const userData = await member.findOne({memberId: id}).exec(); // A clone object
     if(!userData) {
         const userObject = {memberId: id, username, joinedAt, savedPlaylists: [{name: playlistName, urls: []}]};
         const user = new member(userObject);
-        user.save((err) => {
-            if(err) { void interaction.reply('An error has occured, please try again later'); }
-        });
-        return interaction.reply(`Created a new playlist named **${playlistName}**`);
+        await user.save();
+        return `Created a new playlist named **${playlistName}**`;
     }
     // Make sure the playlist name isn't a duplicate
     if(userData.savedPlaylists.filter((playlist) => playlist.name == playlistName).length > 0) {
-        return interaction.reply(`There is already a playlist named **${playlistName}** in your saved playlists!`);
+        return `There is already a playlist named **${playlistName}** in your saved playlists!`;
     }
 
     // Create and save the playlist in the DB
     userData.savedPlaylists.push({name: playlistName, urls: []});
     try {
         await member.updateOne({memberId: interaction.member.id}, userData);
-        await interaction.reply(`Created a new playlist named **${playlistName}**`);
-        return;
+        return `Created a new playlist named **${playlistName}**`;
     } catch(e: unknown) {
         logger.error(e);
-        return interaction.reply('There was a problem executing this command, please try again later');
+        return 'There was a problem executing this command, please try again later';
     }
 };
 

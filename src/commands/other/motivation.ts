@@ -1,4 +1,4 @@
-import type {CustomInteraction} from '../../utils/types';
+import type {CommandReturn, CustomInteraction} from '../../utils/types';
 import fs from 'fs-extra';
 import {MessageEmbed} from 'discord.js';
 
@@ -6,7 +6,7 @@ export const name = 'motivation';
 export const description = 'Get a random motivational quote!';
 export const deferred = false;
 
-export const execute = async(interaction: CustomInteraction): Promise<void> => {
+export const execute = async(interaction: CustomInteraction): Promise<CommandReturn> => {
     // thanks to https://type.fit/api/quotes
 
     const jsonQuotes = fs.readJSONSync('././resources/quotes/motivational.json', 'utf8') as {quotes: ({text: string, author: string})[]};
@@ -20,6 +20,6 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
         .setTimestamp()
         .setFooter('Powered by type.fit')
         .setColor('#FFD77A');
-    return interaction.reply({embeds: [quoteEmbed]});
+    return {embeds: [quoteEmbed]};
 };
 

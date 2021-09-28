@@ -1,4 +1,4 @@
-import type {CustomInteraction} from '../../utils/types';
+import type {CommandReturn, CustomInteraction} from '../../utils/types';
 import {MessageEmbed} from 'discord.js';
 import fs from 'fs-extra';
 
@@ -10,10 +10,8 @@ export const options = [
     {type: 'string' as const, name: 'question', description: 'What do you want to ask?', required: true, choices: []}
 ];
 
-export const execute = async(interaction: CustomInteraction, question: string): Promise<void> => {
-    if(question.length > 255) {
-        return interaction.reply('Please ask a shorter question!');
-    }
+export const execute = async(interaction: CustomInteraction, question: string): Promise<CommandReturn> => {
+    if(question.length > 255) { return 'Please ask a shorter question!'; }
 
     const {answers} = fs.readJSONSync('././resources/other/8ball.json', 'utf8') as {answers: ({text: string})[]};
 
@@ -26,6 +24,6 @@ export const execute = async(interaction: CustomInteraction, question: string): 
         .setColor('#000000')
         .setTimestamp();
 
-    return interaction.reply({embeds: [answerEmbed]});
+    return {embeds: [answerEmbed]};
 };
 

@@ -1,6 +1,5 @@
-import type {APIMessage} from 'discord-api-types';
-import type {CommandInteraction, Message} from 'discord.js';
-import type {CustomInteraction} from '../../utils/types';
+import type {CommandInteraction} from 'discord.js';
+import type {CommandReturn, CustomInteraction} from '../../utils/types';
 import {MessageEmbed} from 'discord.js';
 import {PagesBuilder} from 'discord.js-pages';
 import {fetch} from '../../utils/utils';
@@ -77,12 +76,12 @@ const cleanUp = (summary: string) => summary
     .replace(/&#39;/g, "'")
     .toLocaleString();
 
-export const execute = async(interaction: CustomInteraction, tvShow: string): Promise<APIMessage | Message | void> => {
+export const execute = async(interaction: CustomInteraction, tvShow: string): Promise<CommandReturn> => {
     let showResponse: Show[] = [];
     try {
         showResponse = await getShowSearch(`${tvShow}`);
     } catch(e: unknown) {
-        return interaction.reply((e as Error).message);
+        return (e as Error).message;
     }
 
     try {
@@ -139,7 +138,7 @@ export const execute = async(interaction: CustomInteraction, tvShow: string): Pr
         void new PagesBuilder(interaction as unknown as CommandInteraction).setPages(embedArray).setColor('#17a589').build();
     } catch(e: unknown) {
         logger.error(e);
-        return interaction.followUp(':x: Something went wrong with your request.');
+        return ':x: Something went wrong with your request.';
     }
 };
 

@@ -27,7 +27,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
             void interaction.deferReply();
         }
         const output = await command.execute(interaction, ...params);
-        if(typeof output === 'string') {
+        if(typeof output !== 'undefined') {
             if(command.deferred) {
                 await interaction.followUp(output);
             } else {

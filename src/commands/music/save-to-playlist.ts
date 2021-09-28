@@ -1,7 +1,6 @@
-import type {APIMessage} from 'discord-api-types';
-import type {Message, User} from 'discord.js';
+import type {User} from 'discord.js';
 import type {Video} from 'youtube-sr';
-import type {CustomInteraction, PlayTrack, Track} from '../../utils/types';
+import type {CommandReturn, CustomInteraction, PlayTrack, Track} from '../../utils/types';
 import member from '../../utils/models/Member';
 import YouTube from 'youtube-sr';
 import {getData} from 'spotify-url-info';
@@ -78,31 +77,28 @@ const processURL = async(url: string, interaction: CustomInteraction) => {
     return constructSongObj(video, interaction.member.user);
 };
 
-export const execute = async(interaction: CustomInteraction, playlistName: string, url: string): Promise<APIMessage | Message | void> => {
+export const execute = async(interaction: CustomInteraction, playlistName: string, url: string): Promise<CommandReturn> => {
     const userData = await member.findOne({memberId: interaction.member.id}).exec();
-    if(!userData) { return interaction.followUp('You have no custom playlists!'); }
+    if(!userData) { return 'You have no custom playlists!'; }
     const savedPlaylistsClone = userData.savedPlaylists;
-    if(savedPlaylistsClone.length == 0) { return interaction.followUp('You have no custom playlists!'); }
+    if(savedPlaylistsClone.length == 0) { return 'You have no custom playlists!'; }
 
-    if(!validateURL(url)) { return interaction.followUp('Please enter a valid YouTube or Spotify URL!'); }
+    if(!validateURL(url)) { return 'Please enter a valid YouTube or Spotify URL!'; }
 
     const location = savedPlaylistsClone.findIndex((value) => value.name == playlistName);
-    if(location !== -1) {
-        let urlsArrayClone = savedPlaylistsClone[location].urls;
-        void processURL(url, interaction).then((processedURL) => {
-            if(!processedURL) return;
-            if(Array.isArray(processedURL)) {
-                urlsArrayClone = urlsArrayClone.concat(processedURL);
-                savedPlaylistsClone[location].urls = urlsArrayClone;
-                void interaction.followUp('The playlist you provided was successfully saved!');
-            } else {
-                urlsArrayClone.push(processedURL);
-                savedPlaylistsClone[location].urls = urlsArrayClone;
-                void interaction.followUp(`I added **${savedPlaylistsClone[location].urls[savedPlaylistsClone[location].urls.length - 1].name}** to **${playlistName}**`);
-            }
-            return member.updateOne({memberId: interaction.member.id}, {savedPlaylists: savedPlaylistsClone}).exec();
-        });
-    } else {
-        return interaction.followUp(`You have no playlist named ${playlistName}`);
+    if(location === -1) { return `You have no playlist named ${playlistName}`; }
+    let urlsArrayClone = savedPlaylistsClone[location].urls;
+    const processedURL = await processURL(url, interaction);
+    if(!processedURL) return;
+    if(Array.isArray(processedURL)) {
+        urlsArrayClone = urlsArrayClone.concat(processedURL);
+        savedPlaylistsClone[location].urls = urlsArrayClone;
+        await member.updateOne({memberId: interaction.member.id}, {savedPlaylists: savedPlaylistsClone}).exec();
+        return 'The playlist you provided was successfully saved!';
     }
+
+    urlsArrayClone.push(processedURL);
+    savedPlaylistsClone[location].urls = urlsArrayClone;
+    await member.updateOne({memberId: interaction.member.id}, {savedPlaylists: savedPlaylistsClone}).exec();
+    return `I added **${savedPlaylistsClone[location].urls[savedPlaylistsClone[location].urls.length - 1].name}** to **${playlistName}**`;
 };

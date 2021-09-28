@@ -1,4 +1,4 @@
-import type {CustomInteraction} from '../../utils/types';
+import type {CommandReturn, CustomInteraction} from '../../utils/types';
 import {fetch} from '../../utils/utils';
 import {MessageEmbed} from 'discord.js';
 import {logger} from '../../utils/logging';
@@ -7,7 +7,7 @@ export const name = 'bored';
 export const description = 'Generate a random activity!';
 export const deferred = false;
 
-export const execute = async(interaction: CustomInteraction): Promise<void> => {
+export const execute = async(interaction: CustomInteraction): Promise<CommandReturn> => {
     return fetch<{activity: string}>('https://www.boredapi.com/api/activity?participants=1')
         .then(async(res) => res.json())
         .then(async(json) => {
@@ -17,10 +17,10 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
                 .setDescription(json.activity)
                 .setTimestamp()
                 .setFooter('Powered by boredapi.com', '');
-            return interaction.reply({embeds: [embed]});
+            return {embeds: [embed]};
         })
         .catch(async(e: unknown) => {
             logger.error(e);
-            return interaction.reply('Failed to deliver activity :sob:');
+            return 'Failed to deliver activity :sob:';
         });
 };

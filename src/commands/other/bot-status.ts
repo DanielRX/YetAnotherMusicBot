@@ -1,4 +1,4 @@
-import type {CustomInteraction} from '../../utils/types';
+import type {CommandReturn, CustomInteraction} from '../../utils/types';
 import type {Message, User} from 'discord.js';
 import Discord from 'discord.js';
 import os from 'os';
@@ -10,7 +10,7 @@ export const name = 'bot-status';
 export const description = 'Shows the current system status';
 export const deferred = false;
 
-export const execute = async(interaction: CustomInteraction): Promise<void> => {
+export const execute = async(interaction: CustomInteraction): Promise<CommandReturn> => {
     const owner = await interaction.guild.fetchOwner();
     const isOwner = owner.id == interaction.member.id ? true : false;
 
@@ -64,7 +64,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
 
     if(isOwner) { statusEmbed.addField('Dependency List', `node: ${process.version.replace(/v/, '')}\n        ${libList}`); }
 
-    void interaction.reply({embeds: [statusEmbed]});
     await pingMsg.delete();
+    return {embeds: [statusEmbed]};
 };
 

@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import type {CommandInteraction, Message} from 'discord.js';
+import type {CommandInteraction} from 'discord.js';
 import {MessageEmbed} from 'discord.js';
 import {PagesBuilder} from 'discord.js-pages';
 import cheerio from 'cheerio';
 import {config} from '../../utils/config';
 import {fetch} from '../../utils/utils';
 import type {CustomInteraction} from '../../utils/types';
-import type {APIMessage} from 'discord-api-types';
 import {playerManager, guildData} from '../../utils/client';
 import {logger} from '../../utils/logging';
 
@@ -77,15 +76,15 @@ const getLyrics = async(url: string) => {
     }
 };
 
-export const execute = async(interaction: CustomInteraction, songName: string): Promise<APIMessage | Message | void> => {
-    if(!config.geniusLyricsAPI) { return interaction.reply(':x: Lyrics command is not enabled'); }
+export const execute = async(interaction: CustomInteraction, songName: string): Promise<string | undefined> => {
+    if(!config.geniusLyricsAPI) { return ':x: Lyrics command is not enabled'; }
     const player = playerManager.get(interaction.guildId);
     const guild = guildData.get(interaction.guildId);
     if(songName === '') {
-        if(!player) { return interaction.followUp('There is no song playing! Enter a song name or play a song'); }
+        if(!player) { return 'There is no song playing! Enter a song name or play a song'; }
         if(guild) {
             if(guild.triviaData.isTriviaRunning) {
-                return interaction.followUp(':x: Please try again after the trivia has ended');
+                return ':x: Please try again after the trivia has ended';
             }
         }
         songName = player.nowPlaying?.name ?? '';
@@ -108,7 +107,7 @@ export const execute = async(interaction: CustomInteraction, songName: string): 
             }
         }
 
-        return new PagesBuilder(interaction as unknown as CommandInteraction)
+        await new PagesBuilder(interaction as unknown as CommandInteraction)
             .setTitle(`${songName} lyrics`)
             .setPages(lyricsArray)
             .setColor('#9096e6')
@@ -117,7 +116,7 @@ export const execute = async(interaction: CustomInteraction, songName: string): 
             .build();
     } catch(e: unknown) {
         logger.error(e);
-        return interaction.followUp('Something went wrong! Please try again later');
+        return 'Something went wrong! Please try again later';
     }
 };
 

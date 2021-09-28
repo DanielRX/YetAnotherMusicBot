@@ -1,6 +1,5 @@
 import {joinVoiceChannel, VoiceConnectionStatus, entersState} from '@discordjs/voice';
-import type {APIMessage} from 'discord-api-types';
-import type {BaseGuildTextChannel, Message} from 'discord.js';
+import type {BaseGuildTextChannel} from 'discord.js';
 import {MessageEmbed} from 'discord.js';
 import fs from 'fs-extra';
 import {playerManager, triviaManager} from '../../utils/client';
@@ -20,7 +19,7 @@ export const options = [
 
 type TriviaElement = {youtubeUrl: string, previewUrl: string, artists: string[], album: string, name: string, id: string};
 
-const handleSubscription = async(interaction: CustomInteraction, player: TriviaPlayer): Promise<APIMessage | Message> => {
+const handleSubscription = async(interaction: CustomInteraction, player: TriviaPlayer): Promise<string | {content: string} | {embeds: MessageEmbed[]}> => {
     const {queue} = player;
     const {voiceChannel} = queue[0];
 
@@ -32,7 +31,7 @@ const handleSubscription = async(interaction: CustomInteraction, player: TriviaP
         await entersState(player.connection, VoiceConnectionStatus.Ready, 10000);
     } catch(e: unknown) {
         logger.error(e);
-        return interaction.followUp({content: 'Failed to join your channel!'});
+        return {content: 'Failed to join your channel!'};
     }
     void player.process(player.queue);
 
@@ -41,22 +40,14 @@ const handleSubscription = async(interaction: CustomInteraction, player: TriviaP
     You can end the trivia at any point by using the end-trivia command!`;
 
     const startTriviaEmbed = new MessageEmbed().setColor('#ff7373').setTitle(':notes: Starting Music Quiz!').setDescription(triviaDescription);
-    return interaction.followUp({embeds: [startTriviaEmbed]});
+    return {embeds: [startTriviaEmbed]};
 };
 
-export const execute = async(interaction: CustomInteraction, length: number): Promise<APIMessage | Message> => {
+export const execute = async(interaction: CustomInteraction, length: number): Promise<string | {content: string} | {embeds: MessageEmbed[]}> => {
     const voiceChannel = interaction.member.voice.channel;
-    if(!voiceChannel) {
-        return interaction.followUp(':no_entry: Please join a voice channel and try again!');
-    }
-
-    if(playerManager.get(interaction.guildId)) {
-        return interaction.followUp(`You can't use this while a track is playing!`);
-    }
-
-    if(triviaManager.get(interaction.guildId)) {
-        return interaction.followUp('There is already a trivia in play!');
-    }
+    if(!voiceChannel) { return ':no_entry: Please join a voice channel and try again!'; }
+    if(playerManager.has(interaction.guildId)) { return `You can't use this while a track is playing!`; }
+    if(triviaManager.has(interaction.guildId)) { return 'There is already a trivia in play!'; }
 
     const songs = await fs.readJSON('./resources/music/mk2/trivia.json') as TriviaElement[]; // TODO: Move type to types
     const albumData = await fs.readJSON('./resources/music/mk2/albums.json') as {[key: string]: {[key: string]: unknown}};

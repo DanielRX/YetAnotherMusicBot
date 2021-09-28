@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import type {CustomInteraction} from '../../utils/types';
-import type {CommandInteraction, Message} from 'discord.js';
+import type {CommandReturn, CustomInteraction} from '../../utils/types';
+import type {CommandInteraction} from 'discord.js';
 import {MessageEmbed} from 'discord.js';
 import {PagesBuilder} from 'discord.js-pages';
 import {config} from '../../utils/config';
 import {fetch} from '../../utils/utils';
-import type {APIMessage} from 'discord-api-types';
 import {logger} from '../../utils/logging';
 
 export const name = 'game-search';
@@ -66,8 +65,8 @@ const getGameDetails = async(query: string) => {
     }
 };
 
-export const execute = async(interaction: CustomInteraction, game: string): Promise<APIMessage | Message | void> => {
-    if(!config.rawgAPI) { return interaction.reply('This command is not enabled on this bot!'); }
+export const execute = async(interaction: CustomInteraction, game: string): Promise<CommandReturn> => {
+    if(!config.rawgAPI) { return 'This command is not enabled on this bot!'; }
     const gameTitleFiltered = game.replace(/ /g, '-').replace(/'/g, '').toLowerCase();
 
     // using this link it provides all the info, instead of using search
@@ -107,6 +106,6 @@ export const execute = async(interaction: CustomInteraction, game: string): Prom
             }
             return embed.build();
         })
-        .catch(async(e: unknown) => interaction.reply((e as Error).message));
+        .catch((e: unknown) => (e as Error).message);
 };
 

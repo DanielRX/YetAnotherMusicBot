@@ -1,5 +1,5 @@
 import {MessageEmbed} from 'discord.js';
-import type {CustomInteraction} from '../../utils/types';
+import type {CommandReturn, CustomInteraction} from '../../utils/types';
 import {fetch} from '../../utils/utils';
 import {logger} from '../../utils/logging';
 
@@ -43,7 +43,7 @@ const getCountryStats = async(country: string) => {
     }
 };
 
-export const execute = async(interaction: CustomInteraction, country: string): Promise<void> => {
+export const execute = async(interaction: CustomInteraction, country: string): Promise<CommandReturn> => {
     if(country === 'all' || country === 'world' || country === 'global') {
         return getWorldStats()
             .then(async(res) => {
@@ -64,11 +64,11 @@ export const execute = async(interaction: CustomInteraction, country: string): P
                     .setFooter('Last updated')
                     .setTimestamp(res.updated);
 
-                return interaction.reply({embeds: [covidall]});
+                return {embeds: [covidall]};
             })
             .catch(async function onError(err) {
                 logger.error(err);
-                return interaction.reply('Something went wrong!');
+                return 'Something went wrong!';
             });
     }
     await getCountryStats(country)
@@ -90,10 +90,10 @@ export const execute = async(interaction: CustomInteraction, country: string): P
                 .setFooter('Last updated')
                 .setTimestamp(res.updated);
 
-            return interaction.reply({embeds: [covidcountry]});
+            return {embeds: [covidcountry]};
         })
         .catch(async(e: unknown) => {
             logger.error(e);
-            return interaction.reply('Something went wrong!');
+            return 'Something went wrong!';
         });
 };

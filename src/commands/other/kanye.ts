@@ -1,6 +1,6 @@
 import {fetch} from '../../utils/utils';
 import {MessageEmbed} from 'discord.js';
-import type {CustomInteraction} from '../../utils/types';
+import type {CommandReturn, CustomInteraction} from '../../utils/types';
 import {logger} from '../../utils/logging';
 
 export const name = 'kanye';
@@ -14,13 +14,13 @@ const makeEmbed = (quote: string) => new MessageEmbed()
     .setTimestamp()
     .setFooter('Powered by kanye.rest', '');
 
-export const execute = async(interaction: CustomInteraction): Promise<void> => {
+export const execute = async(interaction: CustomInteraction): Promise<CommandReturn> => {
     return fetch<{quote: string}>('https://api.kanye.rest/?format=json')
         .then(async(res) => res.json())
-        .then(async(json) => interaction.reply({embeds: [makeEmbed(json.quote)]}))
+        .then(async(json) => ({embeds: [makeEmbed(json.quote)]}))
         .catch(async(e: unknown) => {
             logger.error(e);
-            return interaction.reply('Failed to deliver quote :sob:');
+            return 'Failed to deliver quote :sob:';
         });
 };
 

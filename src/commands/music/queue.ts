@@ -1,6 +1,5 @@
-import type {APIMessage} from 'discord-api-types';
-import type {CommandInteraction, Message} from 'discord.js';
-import type {CustomInteraction} from '../../utils/types';
+import type {CommandInteraction} from 'discord.js';
+import type {CommandReturn, CustomInteraction} from '../../utils/types';
 import {MessageEmbed} from 'discord.js';
 import {PagesBuilder} from 'discord.js-pages';
 import {guildData, playerManager} from '../../utils/client';
@@ -9,18 +8,12 @@ export const name = 'queue';
 export const description = 'Display the music queue';
 export const deferred = true;
 
-export const execute = async(interaction: CustomInteraction): Promise<APIMessage | Message | void> => {
+export const execute = async(interaction: CustomInteraction): Promise<CommandReturn> => {
     const guild = guildData.get(interaction.guildId);
-    if(guild && guild.triviaData.isTriviaRunning) {
-        return interaction.followUp(':x: Try again after the trivia has ended!');
-    }
+    if(guild && guild.triviaData.isTriviaRunning) { return ':x: Try again after the trivia has ended!'; }
     const player = playerManager.get(interaction.guildId);
-    if(player && player.queue.length == 0) {
-        return interaction.followUp(':x: There are no songs in queue!');
-    }
-    if(!player) {
-        return interaction.followUp(':x: There is nothing playing right now!');
-    }
+    if(player && player.queue.length == 0) { return ':x: There are no songs in queue!'; }
+    if(!player) { return ':x: There is nothing playing right now!'; }
 
     const queueClone = Array.from(player.queue);
     const embeds = [];

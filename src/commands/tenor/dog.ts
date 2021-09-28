@@ -1,4 +1,4 @@
-import type {CustomInteraction} from '../../utils/types';
+import type {CommandReturn, CustomInteraction} from '../../utils/types';
 import {fetch} from '../../utils/utils';
 import {config} from '../../utils/config';
 import {logger} from '../../utils/logging';
@@ -7,15 +7,15 @@ export const name = 'dog';
 export const description = 'Replies with a cute dog picture!';
 export const deferred = false;
 
-export const execute = async(interaction: CustomInteraction): Promise<void> => {
-    if(!config.tenorAPI) { return interaction.reply(':x: Tenor commands are not enabled'); }
+export const execute = async(interaction: CustomInteraction): Promise<CommandReturn> => {
+    if(!config.tenorAPI) { return ':x: Tenor commands are not enabled'; }
 
     fetch<{results: ({url: string})[]}>(`https://api.tenor.com/v1/random?key=${config.tenorAPI}&q=dog&limit=1`)
         .then(async(res) => res.json())
-        .then(async(json) => interaction.reply(json.results[0].url))
+        .then(async(json) => json.results[0].url)
         .catch(async(e: unknown) => {
             logger.error(e);
-            return interaction.reply(':x: Request to find a doggo failed!');
+            return ':x: Request to find a doggo failed!';
         });
 };
 

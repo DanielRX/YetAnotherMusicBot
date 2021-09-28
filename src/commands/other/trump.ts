@@ -1,13 +1,13 @@
 import {fetch} from '../../utils/utils';
 import {MessageEmbed} from 'discord.js';
-import type {CustomInteraction} from '../../utils/types';
+import type {CommandReturn, CustomInteraction} from '../../utils/types';
 import {logger} from '../../utils/logging';
 
 export const name = 'trump';
 export const description = 'Get a random quote from Donald Trump!';
 export const deferred = false;
 
-export const execute = async(interaction: CustomInteraction): Promise<void> => {
+export const execute = async(interaction: CustomInteraction): Promise<CommandReturn> => {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     return fetch<{value: string, appeared_at: number}>('https://api.tronalddump.io/random/quote')
         .then(async(res) => res.json())
@@ -18,10 +18,10 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
                 .setDescription(json.value)
                 .setTimestamp(json.appeared_at)
                 .setFooter('Powered by tronalddump.io! Quote was posted', ' ');
-            return interaction.reply({embeds: [embed]});
+            return {embeds: [embed]};
         })
         .catch(async(e: unknown) => {
             logger.error(e);
-            return interaction.reply('Failed to deliver quote :sob:');
+            return 'Failed to deliver quote :sob:';
         });
 };
