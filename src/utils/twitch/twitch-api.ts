@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import {fetch} from '../utils';
 import {config} from '../config';
+import {logger} from '../../utils/logging';
+
 const {twitchClientID, twitchClientSecret} = config;
 
 type Response<T> = {status: string, data: T[], access_token?: string}
@@ -18,7 +20,7 @@ class TwitchAPI {
                 return json.access_token ?? '';
             }
         } catch(e: unknown) {
-            console.error(e);
+            logger.error(e);
             throw new Error('There was a problem fetching a token from the Twitch API');
         }
     }
@@ -44,7 +46,7 @@ class TwitchAPI {
             }
             return json;
         } catch(e: unknown) {
-            console.error(e);
+            logger.error(e);
             throw new Error('There was a problem fetching user info from the Twitch API');
         }
     }
@@ -55,7 +57,7 @@ class TwitchAPI {
             const json = await fetch<Response<T>>(`https://api.twitch.tv/helix/streams?user_id=${userId}`, {method: 'GET', headers: {'client-id': `${clientId}`, Authorization: `Bearer ${token}`}}).then(async(res) => res.json());
             return json;
         } catch(e: unknown) {
-            console.error(e);
+            logger.error(e);
             throw new Error('There was a problem fetching stream info from the Twitch API');
         }
     }
@@ -65,7 +67,7 @@ class TwitchAPI {
             const json = await fetch<Response<T>>(`https://api.twitch.tv/helix/games?id=${gameId}`, {method: 'GET', headers: {'client-id': `${clientId}`, Authorization: `Bearer ${token}`}}).then(async(res) => res.json());
             return json;
         } catch(e: unknown) {
-            console.error(e);
+            logger.error(e);
             throw new Error('There was a problem fetching stream info from the Twitch API');
         }
     }
@@ -86,16 +88,13 @@ if(twitchClientID && twitchClientSecret) {
                 twitchData.accessToken = result;
                 return;
             })
-            .catch((e: unknown) => {
-                console.log(e);
-                return;
-            });
+            .catch(logger.error);
     })();
     // 24 Hour access_token refresh
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     setInterval(async function() {
         await TwitchAPI.getToken(twitchClientID, twitchClientSecret, scope)
             .then((result: string) => { twitchData.accessToken = result; })
-            .catch((e: unknown) => { console.log(e); });
+            .catch(logger.error);
     }, day);
 }

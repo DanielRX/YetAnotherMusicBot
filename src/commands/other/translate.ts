@@ -2,6 +2,7 @@ import {MessageEmbed} from 'discord.js';
 import ISO6391 from 'iso-639-1';
 import translate from '@vitalets/google-translate-api';
 import type {CustomInteraction} from '../../utils/types';
+import {logger} from '../../utils/logging';
 
 export const name = 'translate';
 export const description = 'Translate to any language using Google translate.';
@@ -30,7 +31,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
             return interaction.reply({embeds: [embed]});
         })
         .catch(async(e: unknown) => {
-            console.error(e);
+            logger.error(e);
             return interaction.reply(':x: Something went wrong when trying to translate the text');
         });
 };

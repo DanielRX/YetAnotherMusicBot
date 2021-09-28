@@ -8,6 +8,7 @@ import {fetch} from '../../utils/utils';
 import type {CustomInteraction} from '../../utils/types';
 import type {APIMessage} from 'discord-api-types';
 import {playerManager, guildData} from '../../utils/client';
+import {logger} from '../../utils/logging';
 
 export const name = 'lyrics';
 export const description = 'Get the lyrics of any song or the lyrics of the currently playing song!';
@@ -31,6 +32,7 @@ const searchSong = async(query: string): Promise<string> => {
         const songPath = result.response.hits[0].result.api_path;
         return `https://api.genius.com${songPath}`;
     } catch(e: unknown) {
+        logger.error(e);
         throw new Error(':x: No song has been found for this query');
     }
 };
@@ -46,7 +48,7 @@ const getSongPageURL = async(url: string) => {
             return result.response.song.url;
         }
     } catch(e: unknown) {
-        console.error(e);
+        logger.error(e);
         throw new Error('There was a problem finding a URL for this song');
     }
 };
@@ -69,7 +71,7 @@ const getLyrics = async(url: string) => {
             return lyrics.replace(/(\[.+\])/g, '');
         }
     } catch(e: unknown) {
-        console.error(e);
+        logger.error(e);
         throw new Error('There was a problem fetching lyrics for this song, please try again');
     }
 };
@@ -115,7 +117,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
             .setAuthor(interaction.member.user.username, interaction.member.user.displayAvatarURL())
             .build();
     } catch(e: unknown) {
-        console.error(e);
+        logger.error(e);
         return interaction.followUp('Something went wrong! Please try again later');
     }
 };

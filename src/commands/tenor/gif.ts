@@ -1,6 +1,7 @@
 import type {CustomInteraction} from '../../utils/types';
 import {config} from '../../utils/config';
 import {fetch} from '../../utils/utils';
+import {logger} from '../../utils/logging';
 
 export const name = 'gif';
 export const description = 'Replies with a gif matching your query!';
@@ -16,7 +17,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
         .then(async(res) => res.json())
         .then(async(json) => interaction.reply(json.results[0].url))
         .catch(async(e: unknown) => {
-            console.error(e);
+            logger.error(e);
             return interaction.reply(':x: Failed to find a gif that matched your query!');
         });
 };

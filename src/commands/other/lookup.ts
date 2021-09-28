@@ -1,6 +1,7 @@
 import {MessageEmbed} from 'discord.js';
 import type {CustomInteraction} from '../../utils/types';
 import {fetch} from '../../utils/utils';
+import {logger} from '../../utils/logging';
 
 export const name = 'lookup';
 export const description = 'Resolve an IP address or hostname with additional info.';
@@ -30,7 +31,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
 
         return interaction.reply({embeds: [embed]});
     } catch(e: unknown) {
-        console.error(e);
+        logger.error(e);
         return interaction.reply('Something went wrong looking for that result, is the api throttled?');
     }
 };

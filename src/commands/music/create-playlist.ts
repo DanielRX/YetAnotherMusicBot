@@ -1,5 +1,6 @@
 import type {CustomInteraction} from '../../utils/types';
 import member from '../../utils/models/Member';
+import {logger} from '../../utils/logging';
 
 export const name = 'create-playlist';
 export const description = 'Create a custom playlist that you can play anytime';
@@ -33,7 +34,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
         await interaction.reply(`Created a new playlist named **${playlistName}**`);
         return;
     } catch(e: unknown) {
-        console.error(e);
+        logger.error(e);
         return interaction.reply('There was a problem executing this command, please try again later');
     }
 };

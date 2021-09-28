@@ -17,7 +17,7 @@
   },
   "plugins": ["jest"],
   "rules": {
-    "no-console": "off",
+    "no-console": "error",
     "no-useless-escape": "off",
     "no-inner-declarations": "off",
     "operator-linebreak": ["error", "none"],

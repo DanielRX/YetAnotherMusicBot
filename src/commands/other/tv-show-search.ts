@@ -5,6 +5,7 @@ import {MessageEmbed} from 'discord.js';
 import {PagesBuilder} from 'discord.js-pages';
 import {fetch} from '../../utils/utils';
 import type {Nullable} from 'discord-api-types/utils/internals';
+import {logger} from '../../utils/logging';
 
 export const name = 'tv-show-search';
 export const description = 'Search for TV shows';
@@ -57,7 +58,7 @@ const getShowSearch = async(showQuery: string): Promise<Show[]> => {
         }
         return json;
     } catch(e: unknown) {
-        console.error(e);
+        logger.error(e);
         throw new Error('There was a problem getting data from the API, make sure you entered a valid TV show name');
     }
 };
@@ -138,7 +139,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
 
         void new PagesBuilder(interaction as unknown as CommandInteraction).setPages(embedArray).setColor('#17a589').build();
     } catch(e: unknown) {
-        console.log(e);
+        logger.error(e);
         return interaction.followUp(':x: Something went wrong with your request.');
     }
 };

@@ -5,6 +5,7 @@ import {fetch} from '../../utils/utils';
 import {PagesBuilder} from 'discord.js-pages';
 import {config} from '../../utils/config';
 import type {APIMessage} from 'discord-api-types';
+import {logger} from '../../utils/logging';
 
 export const name = 'world-news';
 export const description = 'Replies with the 10 latest world news headlines!';
@@ -31,7 +32,7 @@ export const execute = async(interaction: CustomInteraction): Promise<APIMessage
 
         return new PagesBuilder(interaction as unknown as CommandInteraction).setPages(articleArr).build();
     } catch(e: unknown) {
-        console.error(e);
+        logger.error(e);
         return interaction.reply(':x: Something failed along the way!');
     }
 };

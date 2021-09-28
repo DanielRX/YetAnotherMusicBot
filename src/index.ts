@@ -7,6 +7,7 @@ import {SlashCommandBuilder} from '@discordjs/builders';
 import {setupOption} from './utils/utils';
 import {client, commands} from './utils/client';
 import {config} from './utils/config';
+import {logger} from './utils/logging';
 
 const rest = new REST({version: '9'}).setToken(config.token);
 
@@ -39,11 +40,11 @@ for(const file of commandFiles) {
 
 void (async() => {
     try {
-        console.log('Started refreshing application (/) commands.');
+        logger.info('Started refreshing application (/) commands.');
         await rest.put(Routes.applicationCommands(config.clientId) as any, {body: commandsArr});
-        console.log('Successfully reloaded application (/) commands.');
+        logger.info('Successfully reloaded application (/) commands.');
     } catch(e: unknown) {
-        console.error(e);
+        logger.error(e);
     }
 })();
 
@@ -55,10 +56,10 @@ client.once('ready', () => {
     client.user?.setActivity('/', {type: 'WATCHING'});
     mongoose
         .connect(encodeURI(config.mongoURI), {useNewUrlParser: true, useUnifiedTopology: true})
-        .then(() => { console.log('Mongo is ready'); })
-        .catch(console.error);
+        .then(() => { logger.info('Mongo is ready'); })
+        .catch(logger.error);
 
-    console.log('Ready!');
+    logger.info('Ready!');
 });
 
 void client.login(config.token);

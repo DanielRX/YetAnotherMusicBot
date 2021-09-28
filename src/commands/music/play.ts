@@ -13,7 +13,7 @@ import createGuildData from '../../utils/createGuildData';
 import {searchOne} from '../../utils/music/searchOne';
 import {shuffleArray, isSpotifyURL, isYouTubeVideoURL, isYouTubePlaylistURL} from '../../utils/utils';
 import {getFlags, createSelectMenu, createHistoryRow} from '../../utils/music/play-utils';
-
+import {logger} from '../../utils/logging';
 import {options as opts} from '../../utils/options';
 import {playerManager, guildData} from '../../utils/client';
 
@@ -30,7 +30,7 @@ const constructSongObj = (video: Video, voiceChannel: VoiceChannel, user: User, 
     let duration = durationFormatted;
     if(duration === '00:00') duration = 'Live Stream';
     // checks if the user searched for a song using a Spotify URL
-    return {url, title, rawDuration, duration, timestamp, thumbnail: thumbnail?.url, voiceChannel, memberDisplayName: user.username, memberAvatar: user.avatarURL({format: 'webp', dynamic: false, size: 16})} as unknown as PlayTrack;
+    return {url, name: `${title}`, rawDuration, duration, timestamp: `${timestamp}`, thumbnail: thumbnail?.url ?? '', voiceChannel, memberDisplayName: user.username, memberAvatar: user.avatarURL({format: 'webp', dynamic: false, size: 16}) ?? '', artists: []};
 };
 
 const handleSubscription = async(queue: PlayTrack[], interaction: CustomInteraction, player: MusicPlayer) => {
@@ -39,13 +39,13 @@ const handleSubscription = async(queue: PlayTrack[], interaction: CustomInteract
         // happens when loading a saved playlist
         voiceChannel = interaction.member.voice.channel as VoiceChannel;
     }
-    console.log(player.queue[0]);
-    console.log(Object.keys(player.queue[0]));
-    const title = player.queue[0].title;
+
+    const title = player.queue[0].name;
     let connection = player.connection;
-    if(!connection) {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if(connection != undefined) {
         connection = joinVoiceChannel({channelId: voiceChannel.id, guildId: interaction.guild.id, adapterCreator: interaction.guild.voiceAdapterCreator});
-        connection.on('error', console.error);
+        connection.on('error', (e) => { logger.error(e); });
     }
     player.textChannel = interaction.channel as BaseGuildTextChannel;
     player.passConnection(connection);
@@ -55,7 +55,7 @@ const handleSubscription = async(queue: PlayTrack[], interaction: CustomInteract
     } catch(e: unknown) {
         player.commandLock = false;
         deletePlayerIfNeeded(interaction);
-        console.error(e);
+        logger.error(e);
         await interaction.followUp({content: 'Failed to join your channel!'});
         return;
     }
@@ -128,7 +128,7 @@ const handleSpotifyURL = async(interaction: CustomInteraction): Promise<APIMessa
 
     return void getData(query).then(handleSpotifyData).catch(async(e: unknown) => {
         deletePlayerIfNeeded(interaction);
-        console.error(e);
+        logger.error(e);
         return interaction.followUp(`I couldn't find what you were looking for :(`);
     });
 };
@@ -154,7 +154,7 @@ const searchYoutube = async(interaction: CustomInteraction, voiceChannel: VoiceC
     const playOptionsCollector = playOptions?.createMessageComponentCollector({componentType: 'SELECT_MENU', time: opts.maxResponseTime * 1000});
     playOptionsCollector?.on('end', async() => {
         if(playOptions) {
-            await playOptions.delete().catch(console.error);
+            await playOptions.delete().catch(logger.error);
         }
     });
 
@@ -162,7 +162,7 @@ const searchYoutube = async(interaction: CustomInteraction, voiceChannel: VoiceC
         const player2 = playerManager.get(interaction.guildId) as unknown as MusicPlayer;
         if(video.live && !opts.playLiveStreams) {
             if(playOptions) {
-                playOptions.delete().catch(console.error);
+                playOptions.delete().catch(logger.error);
                 return;
             }
             player.commandLock = false;
@@ -171,7 +171,7 @@ const searchYoutube = async(interaction: CustomInteraction, voiceChannel: VoiceC
 
         if(video.duration > 60 * 60 * 1000 && !opts.playVideosLongerThan1Hour) {
             if(playOptions) {
-                playOptions.delete().catch(console.error);
+                playOptions.delete().catch(logger.error);
                 return;
             }
             player.commandLock = false;
@@ -180,7 +180,7 @@ const searchYoutube = async(interaction: CustomInteraction, voiceChannel: VoiceC
 
         if(player2.queue.length > opts.maxQueueLength) {
             if(playOptions) {
-                playOptions.delete().catch(console.error);
+                playOptions.delete().catch(logger.error);
                 return;
             }
             player.commandLock = false;
@@ -225,8 +225,8 @@ const searchYoutube = async(interaction: CustomInteraction, voiceChannel: VoiceC
             .catch(async(e: unknown) => {
                 player.commandLock = false;
                 deletePlayerIfNeeded(interaction);
-                if(playOptions) playOptions.delete().catch(console.error);
-                console.error(e);
+                if(playOptions) playOptions.delete().catch(logger.error);
+                logger.error(e);
                 return interaction.followUp('An error has occurred while trying to get the video ID from youtube.');
             });
     });
@@ -432,7 +432,7 @@ const handlePlayPlaylist = async(interaction: CustomInteraction, message: Messag
     const clarificationCollector = clarificationOptions.createMessageComponentCollector({componentType: 'SELECT_MENU', time: opts.maxResponseTime * 1000});
 
     clarificationCollector.on('end', () => {
-        if(typeof clarificationOptions !== 'undefined') { clarificationOptions.delete().catch(console.error); }
+        if(typeof clarificationOptions !== 'undefined') { clarificationOptions.delete().catch(logger.error); }
     });
 
     clarificationCollector.on('collect', async(i: SelectMenuInteraction): Promise<void> => {

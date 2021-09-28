@@ -14,7 +14,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
     if(player?.audioPlayer.state.status !== AudioPlayerStatus.Playing) { return interaction.reply('There is no song playing right now!'); }
     if(voiceChannel.id !== interaction.guild.me?.voice.channel?.id) { return interaction.reply('You must be in the same voice channel as the bot in order to skip!'); }
     if(guild.triviaData.isTriviaRunning) { return interaction.reply(`You can't skip a trivia! Use end-trivia command instead`); }
-    void interaction.reply(`Skipped **${playerManager.get(interaction.guildId)?.nowPlaying?.title}**`);
+    void interaction.reply(`Skipped **${playerManager.get(interaction.guildId)?.nowPlaying?.name}**`);
     player.audioPlayer.stop();
 };
 

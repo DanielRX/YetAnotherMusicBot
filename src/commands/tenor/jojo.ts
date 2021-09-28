@@ -1,6 +1,7 @@
 import type {CustomInteraction} from '../../utils/types';
 import fs from 'fs-extra';
 import {randomEl} from '../../utils/utils';
+import {logger} from '../../utils/logging';
 
 export const name = 'jojo';
 export const description = 'Replies with a random jojo gif!';
@@ -11,7 +12,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
         const link = randomEl(linkArray);
         return void interaction.reply(link);
     } catch(e: unknown) {
-        console.error(e);
+        logger.error(e);
         return interaction.reply(':x: Failed to fetch a gif!');
     }
 };

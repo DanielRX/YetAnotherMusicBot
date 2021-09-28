@@ -1,6 +1,7 @@
 import type {CustomInteraction} from '../../utils/types';
 import {fetch} from '../../utils/utils';
 import {MessageEmbed} from 'discord.js';
+import {logger} from '../../utils/logging';
 
 export const name = 'fortune';
 export const description = 'Replies with a fortune cookie tip!';
@@ -16,7 +17,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
             .setFooter('Powered by yerkee.com', '');
         return interaction.reply({embeds: [embed]});
     } catch(e: unknown) {
-        console.error(e);
+        logger.error(e);
         return interaction.reply(':x: Could not obtain a fortune cookie!');
     }
 };

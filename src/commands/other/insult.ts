@@ -1,6 +1,7 @@
 import type {CustomInteraction} from '../../utils/types';
 import {fetch} from '../../utils/utils';
 import {MessageEmbed} from 'discord.js';
+import {logger} from '../../utils/logging';
 
 export const name = 'insult';
 export const description = 'Generate an evil insult!';
@@ -19,7 +20,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
             return interaction.reply({embeds: [embed]});
         })
         .catch(async(e: unknown) => {
-            console.error(e);
+            logger.error(e);
             return interaction.reply(':x: Failed to deliver insult!');
         });
 };

@@ -6,6 +6,7 @@ import {PagesBuilder} from 'discord.js-pages';
 import {config} from '../../utils/config';
 import {fetch} from '../../utils/utils';
 import type {APIMessage} from 'discord-api-types';
+import {logger} from '../../utils/logging';
 
 export const name = 'game-search';
 export const description = 'Search for game information';
@@ -59,7 +60,7 @@ const getGameDetails = async(query: string) => {
         }
         return json;
     } catch(e: unknown) {
-        console.error(e);
+        logger.error(e);
         throw new Error('There was a problem getting data from the API, make sure you entered a valid game title');
     }
 };

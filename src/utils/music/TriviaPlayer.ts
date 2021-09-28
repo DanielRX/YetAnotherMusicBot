@@ -6,6 +6,8 @@ import {setTimeout} from 'timers';
 import {promisify} from 'util';
 import {MessageEmbed} from 'discord.js';
 import {triviaManager} from '../client';
+import {logger} from '../../utils/logging';
+
 const wait = promisify(setTimeout);
 
 const capitalizeWords = (str: string) => {
@@ -29,7 +31,7 @@ const normalizeValue = (value: string) =>
 const getLeaderBoard = (arr: [string, number][]) => { // TODO: Shared medals
     if(typeof arr === 'undefined') { return; }
     if(typeof arr[0] === 'undefined') { return; } // Issue #422
-    const players = arr.filter(([_, points]) => points > 0);
+    const players = arr.filter(([, points]) => points > 0);
     let leaderBoard = '';
 
     leaderBoard = `:first_place:  **${players[0][0]}:** ${players[0][1]}`;
@@ -77,7 +79,7 @@ export class TriviaPlayer { // TODO: Merge with MusicPlayer
                 try {
                     await entersState(this.connection, VoiceConnectionStatus.Ready, 20000);
                 } catch(e: unknown) {
-                    console.error(e);
+                    logger.error(e);
                     if(this.connection.state.status !== VoiceConnectionStatus.Destroyed) {
                         this.connection.destroy();
                     }
@@ -146,13 +148,13 @@ export class TriviaPlayer { // TODO: Merge with MusicPlayer
                     return out;
                 };
 
-                const showHint = async(singer: string, title: string, artists: string[]) => { // TODO: Skip the
-                    const singerHint = convertToHint(singer, hints);
+                const showHint = async(_singer: string, title: string, artists: string[]) => { // TODO: Skip the
+                    // const singerHint = convertToHint(singer, hints);
                     const titleHint = convertToHint(title, hints);
                     const artistHints = artists.map((artist) => convertToHint(artist, hints));
                     const song = `\`${songNameFoundTime === -1 ? titleHint : title}\`\nBy:\n ${songSingerFoundTime === -1 ? artistHints.map((artist) => `\`${artist}\``).join('\n') : artists.map((artist) => `\`${artist}\``).join('\n')}`;
                     const embed = new MessageEmbed().setColor('#ff7373').setTitle(`The song is:`).setDescription(song);
-                    if(lastMessage !== null) { lastMessage.delete().catch(() => { console.log('Failed to delete message'); }); }
+                    if(lastMessage !== null) { lastMessage.delete().catch(() => { logger.error('Failed to delete message'); }); }
                     lastMessage = await this.textChannel.send({embeds: [embed]});
                     hints++;
                 };
@@ -169,7 +171,6 @@ export class TriviaPlayer { // TODO: Merge with MusicPlayer
                     const time = Date.now();
                     const guess = normalizeValue(msg.content);
                     const title = normalizeValue(this.queue[0].name);
-                    const singer = normalizeValue(this.queue[0].artists[0]);
                     const singers = this.queue[0].artists.map(normalizeValue);
 
                     if(guess === 'skip') {
@@ -181,16 +182,15 @@ export class TriviaPlayer { // TODO: Merge with MusicPlayer
                     }
 
                     if(msg.content.includes(':')) { return; }
-                    const gotAnArtist = singers.some((singer) => guess.includes(singer));
-                    const gotSinger = guess.includes(singer);
+                    const gotAnArtist = singers.some((artist) => guess.includes(artist));
                     const gotName = guess.includes(title);
 
-                    if(!gotSinger && !gotName && !gotAnArtist) { return void msg.react('❌'); }
+                    if(!gotName && !gotAnArtist) { return void msg.react('❌'); }
 
                     let gotSingerInTime = false;
                     let gotNameInTime = false;
 
-                    const firstSingerGuess = songSingerFoundTime === -1 && ((gotSinger) || (gotAnArtist));
+                    const firstSingerGuess = songSingerFoundTime === -1 && (gotAnArtist);
                     const firstNameGuess = songNameFoundTime === -1 && (gotName);
 
                     if(firstSingerGuess) { songSingerFoundTime = time; }
@@ -217,7 +217,7 @@ export class TriviaPlayer { // TODO: Merge with MusicPlayer
                     if(typeof nextHintInt !== 'undefined') {
                         clearTimeout(nextHintInt);
                     }
-                    if(lastMessage !== null) { void lastMessage.delete().catch(() => { console.log('Failed to delete message'); }); }
+                    if(lastMessage !== null) { void lastMessage.delete().catch(() => { logger.error('Failed to delete message'); }); }
                     /*The reason for this if statement is that we don't want to get an empty embed returned via chat by the bot if end-trivia command was called */
                     if(this.wasTriviaEndCalled) {
                         this.wasTriviaEndCalled = false;
@@ -234,7 +234,7 @@ export class TriviaPlayer { // TODO: Merge with MusicPlayer
                         const embed = new MessageEmbed()
                             .setColor('#ff7373')
                             .setTitle(`:musical_note: The song was: (${Math.max(this.queue.length - 1, 0)} left)`)
-                            .setDescription(`**[${song}](https://open.spotify.com/track/${this.queue[0].id})**\n\n${board}`);
+                            .setDescription(`**[${song}](https://open.spotify.com/track/${(this.queue[0] as any).id})**\n\n${board}`);
 
                         void this.textChannel.send({embeds: [embed]});
                     }
@@ -243,7 +243,7 @@ export class TriviaPlayer { // TODO: Merge with MusicPlayer
             }
         });
 
-        this.audioPlayer.on('error', (e) => { console.error(e); });
+        this.audioPlayer.on('error', (e) => { logger.error(e); });
 
         this.connection.subscribe(this.audioPlayer);
     }
@@ -266,7 +266,7 @@ export class TriviaPlayer { // TODO: Merge with MusicPlayer
             const resource = createAudioResource(`${song.previewUrl}.mp3`, {inputType: StreamType.Arbitrary});
             this.audioPlayer.play(resource);
         } catch(e: unknown) {
-            console.error(e);
+            logger.error(e);
             return this.process(queue);
         }
     }

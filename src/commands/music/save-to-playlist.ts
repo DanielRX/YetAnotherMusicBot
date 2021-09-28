@@ -7,6 +7,7 @@ import YouTube from 'youtube-sr';
 import {getData} from 'spotify-url-info';
 import {searchOne} from '../../utils/music/searchOne';
 import {isSpotifyURL, validateURL} from '../../utils/utils';
+import {logger} from '../../utils/logging';
 
 export const name = 'save-to-playlist';
 export const description = 'Save a song or a playlist to a custom playlist';
@@ -42,7 +43,7 @@ const processURL = async(url: string, interaction: CustomInteraction) => {
                             const video = await searchOne(track.track);
                             urlsArr.push(constructSongObj(video, interaction.member.user));
                         } catch(e: unknown) {
-                            console.error(e);
+                            logger.error(e);
                         }
                     }
                     return urlsArr;
@@ -50,7 +51,7 @@ const processURL = async(url: string, interaction: CustomInteraction) => {
                 const video = await searchOne(res);
                 return constructSongObj(video, interaction.member.user);
             })
-            .catch((e: unknown) => console.error(e));
+            .catch(logger.error);
     }
     if(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/.exec(url)) {
         const playlist = await YouTube.getPlaylist(url).catch(function() {

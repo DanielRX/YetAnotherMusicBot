@@ -5,7 +5,9 @@ import {MessageEmbed} from 'discord.js';
 import fs from 'fs-extra';
 import {playerManager, triviaManager} from '../../utils/client';
 import TriviaPlayer from '../../utils/music/TriviaPlayer';
-import type {CustomInteraction, PlayTrack} from '../../utils/types';
+import type {CustomInteraction} from '../../utils/types';
+import {logger} from '../../utils/logging';
+
 import {getRandom} from '../../utils/utils';
 
 export const name = 'music-trivia';
@@ -15,20 +17,20 @@ export const options = [
     {type: 'string' as const, name: 'length', description: 'How many songs would you like the trivia to have?', required: false, choices: []}
 ];
 
-type TriviaElement = {youtubeUrl: string, previewUrl: string, artists: string[], album: string, name: string};
+type TriviaElement = {youtubeUrl: string, previewUrl: string, artists: string[], album: string, name: string, id: string};
 
 const handleSubscription = async(interaction: CustomInteraction, player: TriviaPlayer): Promise<APIMessage | Message> => {
     const {queue} = player;
     const {voiceChannel} = queue[0];
 
-    const connection = joinVoiceChannel({channelId: voiceChannel?.id, guildId: interaction.guild.id, adapterCreator: interaction.guild.voiceAdapterCreator});
+    const connection = joinVoiceChannel({channelId: voiceChannel?.id ?? '', guildId: interaction.guild.id, adapterCreator: interaction.guild.voiceAdapterCreator});
 
     player.textChannel = interaction.channel as BaseGuildTextChannel;
     player.passConnection(connection);
     try {
         await entersState(player.connection, VoiceConnectionStatus.Ready, 10000);
     } catch(e: unknown) {
-        console.error(e);
+        logger.error(e);
         return interaction.followUp({content: 'Failed to join your channel!'});
     }
     void player.process(player.queue);

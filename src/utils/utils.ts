@@ -1,4 +1,5 @@
 // https://stackoverflow.com/a/5306832/9421002
+// eslint-disable-next-line
 const f = require('node-fetch');
 import {SlashCommandStringOption, SlashCommandIntegerOption, SlashCommandBooleanOption, SlashCommandUserOption} from '@discordjs/builders';
 import type {OptionConfig, SlashCommandOption} from './types';

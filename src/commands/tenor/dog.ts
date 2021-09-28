@@ -1,6 +1,7 @@
 import type {CustomInteraction} from '../../utils/types';
 import {fetch} from '../../utils/utils';
 import {config} from '../../utils/config';
+import {logger} from '../../utils/logging';
 
 export const name = 'dog';
 export const description = 'Replies with a cute dog picture!';
@@ -12,7 +13,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
         .then(async(res) => res.json())
         .then(async(json) => interaction.reply(json.results[0].url))
         .catch(async(e: unknown) => {
-            console.error(e);
+            logger.error(e);
             return interaction.reply(':x: Request to find a doggo failed!');
         });
 };

@@ -4,6 +4,7 @@ import {MessageEmbed, MessageActionRow, MessageSelectMenu} from 'discord.js';
 import {PagesBuilder} from 'discord.js-pages';
 import type {CustomInteraction} from '../../utils/types';
 import {options as opts} from '../../utils/options';
+import {logger} from '../../utils/logging';
 
 export const name = 'reddit';
 export const description = 'Replies with 10 top daily posts in wanted subreddit, you can specify sorting and time!';
@@ -66,7 +67,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
         });
 
         collector.on('end', () => {
-            if(typeof menu !== 'undefined') menu.delete().catch(console.error); //! Alt: menu?.delete().catch(console.error);
+            if(typeof menu !== 'undefined') menu.delete().catch(logger.error); //! Alt: menu?.delete().catch(console.error);
         });
 
         collector.on('collect', async(i: SelectMenuInteraction) => {

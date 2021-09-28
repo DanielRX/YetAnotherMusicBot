@@ -1,6 +1,7 @@
 import {MessageEmbed} from 'discord.js';
 import type {CustomInteraction} from '../../utils/types';
 import {fetch} from '../../utils/utils';
+import {logger} from '../../utils/logging';
 
 export const name = 'covid';
 export const description = 'Displays COVID-19 stats.';
@@ -22,7 +23,7 @@ const getWorldStats = async() => {
         const json = await body.json();
         return json;
     } catch(e: unknown) {
-        console.error(e);
+        logger.error(e);
         throw new Error(`The covid API can't be accessed at the moment, please try later`);
     }
 };
@@ -36,7 +37,7 @@ const getCountryStats = async(country: string) => {
         const json = await body.json();
         return json;
     } catch(e: unknown) {
-        console.error(e);
+        logger.error(e);
         throw new Error(`There was a problem getting data from the API, make sure you entered a valid country name`);
     }
 };
@@ -66,7 +67,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
                 return interaction.reply({embeds: [covidall]});
             })
             .catch(async function onError(err) {
-                console.error(err);
+                logger.error(err);
                 return interaction.reply('Something went wrong!');
             });
     }
@@ -92,7 +93,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
             return interaction.reply({embeds: [covidcountry]});
         })
         .catch(async(e: unknown) => {
-            console.error(e);
+            logger.error(e);
             return interaction.reply('Something went wrong!');
         });
 };

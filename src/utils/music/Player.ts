@@ -8,6 +8,8 @@ import type {BaseGuildTextChannel} from 'discord.js';
 import {MessageEmbed} from 'discord.js';
 import type {PlayTrack} from '../types';
 import {guildData, triviaManager} from '../client';
+import {logger} from '../../utils/logging';
+
 const wait = promisify(setTimeout);
 
 class MusicPlayer { // TODO: Merge with TriviaPlayer
@@ -42,7 +44,7 @@ class MusicPlayer { // TODO: Merge with TriviaPlayer
                         try {
                             await entersState(this.connection, VoiceConnectionStatus.Connecting, 5000);
                         } catch(e: unknown) {
-                            console.error(e);
+                            logger.error(e);
                             this.connection.destroy();
                         }
                     } else if(this.connection.rejoinAttempts < 5) {
@@ -66,7 +68,7 @@ class MusicPlayer { // TODO: Merge with TriviaPlayer
                     try {
                         await entersState(this.connection, VoiceConnectionStatus.Ready, 20000);
                     } catch(e: unknown) {
-                        console.error(e);
+                        logger.error(e);
                         if(this.connection.state.status !== VoiceConnectionStatus.Destroyed) { this.connection.destroy(); }
                     }
                 }
@@ -103,13 +105,13 @@ class MusicPlayer { // TODO: Merge with TriviaPlayer
                     }
                 }
             } else if(newState.status === AudioPlayerStatus.Playing) {
-                if(!this.nowPlaying) {
+                if(this.nowPlaying) {
                     const queueHistory = this.getQueueHistory();
                     const playingEmbed = new MessageEmbed()
                         .setThumbnail(this.nowPlaying.thumbnail)
                         .setTitle(this.nowPlaying.name)
                         .setColor('#ff0000')
-                        .addField('Duration', ':stopwatch: ' + this.nowPlaying.duration, true)
+                        .addField('Duration', `:stopwatch: ${this.nowPlaying.duration}`, true)
                         .setFooter(`Requested by ${this.nowPlaying.memberDisplayName}!`, this.nowPlaying.memberAvatar);
                     if(queueHistory.length) {
                         playingEmbed.addField('Previous Song', queueHistory[0].name, true);
@@ -119,7 +121,7 @@ class MusicPlayer { // TODO: Merge with TriviaPlayer
             }
         });
 
-        this.audioPlayer.on('error', (error) => { console.error(error); });
+        this.audioPlayer.on('error', (error) => { logger.error(error); });
         this.connection.subscribe(this.audioPlayer);
     }
 
@@ -145,7 +147,7 @@ class MusicPlayer { // TODO: Merge with TriviaPlayer
             const resource = createAudioResource(stream, {inputType: StreamType.Arbitrary});
             this.audioPlayer.play(resource);
         } catch(e: unknown) {
-            console.error(e);
+            logger.error(e);
             return this.process(queue);
         }
     }

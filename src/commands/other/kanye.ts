@@ -1,6 +1,7 @@
 import {fetch} from '../../utils/utils';
 import {MessageEmbed} from 'discord.js';
 import type {CustomInteraction} from '../../utils/types';
+import {logger} from '../../utils/logging';
 
 export const name = 'kanye';
 export const description = 'Get a random Kanye quote.';
@@ -17,7 +18,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
         .then(async(res) => res.json())
         .then(async(json) => interaction.reply({embeds: [makeEmbed(json.quote)]}))
         .catch(async(e: unknown) => {
-            console.error(e);
+            logger.error(e);
             return interaction.reply('Failed to deliver quote :sob:');
         });
 };

@@ -1,6 +1,7 @@
 import {MessageEmbed} from 'discord.js';
 import type {CustomInteraction} from '../../utils/types';
 import {fetch} from '../../utils/utils';
+import {logger} from '../../utils/logging';
 
 export const name = 'urban';
 export const description = 'Get definitions from urban dictonary.';
@@ -24,7 +25,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
             return interaction.reply({embeds: [embed]});
         })
         .catch(async(e: unknown) => {
-            console.error(e); // no need to spam console for each time it doesn't find a query
+            logger.error(e); // no need to spam console for each time it doesn't find a query
             return interaction.reply('Failed to deliver definition :sob:');
         });
 };
