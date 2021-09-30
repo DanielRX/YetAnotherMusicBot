@@ -17,4 +17,4 @@ export type Playlist = {name: string, urls: PlayTrack[]};
 export type SlashCommandOption = SlashCommandBooleanOption | SlashCommandIntegerOption | SlashCommandStringOption | SlashCommandUserOption;
 export type BaseOptionConfig = {type: 'boolean' | 'integer' | 'string' | 'user', name: string, description: string, choices: string[]};
 export type OptionConfig = BaseOptionConfig & ({required: false, default: any} | {required: true, default: never});
-export type CommandReturn = string | {content: string} | {embeds: MessageEmbed[]} | {pages: {thumbnail?: string, listenTimeout?: number, pages: Page[], title?: string, color?: string, url?: string, author?: {username: string, avatar: string}}} | void;
+export type CommandReturn = string | {content: string} | {embeds: MessageEmbed[]} | {pages: {thumbnail?: string, listenTimeout?: number, pages: Page[], title?: string, color?: string, url?: string, author?: {username: string, avatar: string}}};

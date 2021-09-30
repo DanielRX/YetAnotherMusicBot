@@ -89,7 +89,7 @@ export const execute = async(interaction: CustomInteraction, playlistName: strin
     if(location === -1) { return `You have no playlist named ${playlistName}`; }
     let urlsArrayClone = savedPlaylistsClone[location].urls;
     return processURL(url, interaction).then(async(processedURL) => {
-        if(!processedURL) return;
+        if(!processedURL) return 'MISSING_ERR_MESSAGE';
         if(Array.isArray(processedURL)) {
             urlsArrayClone = urlsArrayClone.concat(processedURL);
             savedPlaylistsClone[location].urls = urlsArrayClone;

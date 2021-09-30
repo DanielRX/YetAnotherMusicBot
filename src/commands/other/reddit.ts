@@ -1,7 +1,6 @@
 import {fetch} from '../../utils/utils';
-import type {CommandInteraction, SelectMenuInteraction} from 'discord.js';
+import type {SelectMenuInteraction} from 'discord.js';
 import {MessageEmbed, MessageActionRow, MessageSelectMenu} from 'discord.js';
-import {PagesBuilder} from 'discord.js-pages';
 import type {CommandReturn, CustomInteraction} from '../../utils/types';
 import {options as opts} from '../../utils/options';
 import {logger} from '../../utils/logging';
@@ -38,11 +37,8 @@ const fetchFromReddit = async(interaction: CustomInteraction, subreddit: string,
             .setAuthor(redditPost.data.author));
     }
 
-    /*
     const pageData = {pages: dataArr};
     return {pages: pageData};
-    */
-    void new PagesBuilder(interaction as unknown as CommandInteraction).setPages(dataArr).build();
 };
 
 export const execute = async(interaction: CustomInteraction, subReddit: string, sort: 'best' | 'controversial' | 'hot' | 'new' | 'rising' | 'top'): Promise<CommandReturn> => {
@@ -72,17 +68,17 @@ export const execute = async(interaction: CustomInteraction, subReddit: string, 
         collector.on('end', () => {
             if(typeof menu !== 'undefined') menu.delete().catch(logger.error); //! Alt: menu?.delete().catch(console.error);
         });
-
-        collector.on('collect', async(i: SelectMenuInteraction) => {
-            if(i.user.id !== interaction.user.id) {
-                return i.reply({content: `This element is not for you!`, ephemeral: true});
-            }
-            collector.stop();
-            const timeFilter = i.values[0];
-            return fetchFromReddit(interaction, subReddit, sort, timeFilter);
+        return new Promise((resolve) => {
+            collector.on('collect', async(i: SelectMenuInteraction) => {
+                if(i.user.id !== interaction.user.id) {
+                    return i.reply({content: `This element is not for you!`, ephemeral: true});
+                }
+                collector.stop();
+                const timeFilter = i.values[0];
+                return resolve(fetchFromReddit(interaction, subReddit, sort, timeFilter));
+            });
         });
-    } else {
-        return fetchFromReddit(interaction, subReddit, sort);
     }
+    return fetchFromReddit(interaction, subReddit, sort);
 };
 

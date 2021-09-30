@@ -25,7 +25,7 @@ export const execute = async(interaction: CustomInteraction, playlistName: strin
     const urlsArrayClone = savedPlaylistsClone[location].urls;
     if(urlsArrayClone.length === 0) { return `**${playlistName}** is empty!`; }
 
-    const savedPlaylistEmbed = new MessageEmbed().setColor('#ff7373').setTitle(playlistName).setTimestamp();
+    const savedPlaylistEmbed = new MessageEmbed().setColor('#FF7373').setTitle(playlistName).setTimestamp();
     const fields = urlsArrayClone.slice(0, maxLength).map((x, i) => ({name: `${i + 1}`, value: `${x.name}`}));
     savedPlaylistEmbed.setFields(fields);
 
