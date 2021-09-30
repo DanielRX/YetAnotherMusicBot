@@ -1,6 +1,7 @@
 import type {CommandReturn, CustomInteraction} from '../../utils/types';
 import member from '../../utils/models/Member';
 import {logger} from '../../utils/logging';
+import {getAndFillMessage} from '../../utils/messages';
 
 export const name = 'create-playlist';
 export const description = 'Create a custom playlist that you can play anytime';
@@ -11,6 +12,7 @@ export const options = [
 ];
 
 export const execute = async(interaction: CustomInteraction, playlistName: string): Promise<CommandReturn> => {
+    const message = getAndFillMessage('createPlaylist', 'en_gb'); // TODO: User/server locale?
     const {member: {id, user: {username}, joinedAt}} = interaction;
     // Check if the user exists in the db
     const userData = await member.findOne({memberId: id}).exec(); // A clone object
@@ -18,21 +20,21 @@ export const execute = async(interaction: CustomInteraction, playlistName: strin
         const userObject = {memberId: id, username, joinedAt, savedPlaylists: [{name: playlistName, urls: []}]};
         const user = new member(userObject);
         await user.save();
-        return `Created a new playlist named **${playlistName}**`;
+        return message('PLAYLIST_CREATED', {playlistName});
     }
     // Make sure the playlist name isn't a duplicate
     if(userData.savedPlaylists.filter((playlist) => playlist.name == playlistName).length > 0) {
-        return `There is already a playlist named **${playlistName}** in your saved playlists!`;
+        return message('PLAYLIST_NAME_EXISTS', {playlistName});
     }
 
     // Create and save the playlist in the DB
     userData.savedPlaylists.push({name: playlistName, urls: []});
     try {
         await member.updateOne({memberId: interaction.member.id}, userData);
-        return `Created a new playlist named **${playlistName}**`;
+        return message('PLAYLIST_CREATED', {playlistName});
     } catch(e: unknown) {
         logger.error(e);
-        return 'There was a problem executing this command, please try again later';
+        return message('GENERIC_ERROR');
     }
 };
 

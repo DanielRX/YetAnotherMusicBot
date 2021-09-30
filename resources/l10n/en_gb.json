@@ -1,0 +1,21 @@
+{
+    "createPlaylist": {
+        "PLAYLIST_NAME_EXISTS": "There is already a playlist named **{{playlistName}}** in your saved playlists!",
+        "PLAYLIST_CREATED": "Created a new playlist named **{{playlistName}}**",
+        "GENERIC_ERROR": "There was a problem executing this command, please try again later"
+    },
+    "deletePlaylist": {
+        "NO_SAVED_PLAYLISTS": "You have zero saved playlists!",
+        "PLAYLIST_NOT_FOUND": "You have no playlist named {{playlistName}}",
+        "PLAYLIST_REMOVED": "I removed **{{playlistName}}** from your saved playlists!"
+    },
+    "displayPlaylist": {
+        "NO_SAVED_PLAYLISTS": "You have zero saved playlists!",
+        "PLAYLIST_NOT_FOUND": "You have no playlist named {{playlistName}}",
+        "EMPTY_PLAYLIST": "**{{playlistName}}** is empty!"
+    },
+
+    "about": {
+        "ABOUT": "Made by <@530808977794007051> with :heart: code is available on GitHub (coming soon)"
+    }
+}
