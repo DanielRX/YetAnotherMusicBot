@@ -569,6 +569,6 @@ export const execute = async(interaction: CustomInteraction, rawQuery: string): 
     if(isYouTubeVideoURL(cleanQuery)) { return handleYoutubeURL(interaction, rawQuery); }
 
     // If user provided a song/video name
-    await searchYoutube(interaction, interaction.member.voice.channel as VoiceChannel);
+    await searchYoutube(interaction, rawQuery, interaction.member.voice.channel as VoiceChannel);
 };
 

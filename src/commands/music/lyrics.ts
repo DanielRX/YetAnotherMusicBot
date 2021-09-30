@@ -1,11 +1,9 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import type {CommandInteraction} from 'discord.js';
 import {MessageEmbed} from 'discord.js';
-import {PagesBuilder} from 'discord.js-pages';
 import cheerio from 'cheerio';
 import {config} from '../../utils/config';
 import {fetch} from '../../utils/utils';
-import type {CustomInteraction} from '../../utils/types';
+import type {CommandReturn, CustomInteraction} from '../../utils/types';
 import {playerManager, guildData} from '../../utils/client';
 import {logger} from '../../utils/logging';
 
@@ -76,7 +74,7 @@ const getLyrics = async(url: string) => {
     }
 };
 
-export const execute = async(interaction: CustomInteraction, songName: string): Promise<string | undefined> => {
+export const execute = async(interaction: CustomInteraction, songName: string): Promise<CommandReturn> => {
     if(!config.geniusLyricsAPI) { return ':x: Lyrics command is not enabled'; }
     const player = playerManager.get(interaction.guildId);
     const guild = guildData.get(interaction.guildId);
@@ -107,13 +105,8 @@ export const execute = async(interaction: CustomInteraction, songName: string): 
             }
         }
 
-        await new PagesBuilder(interaction as unknown as CommandInteraction)
-            .setTitle(`${songName} lyrics`)
-            .setPages(lyricsArray)
-            .setColor('#9096e6')
-            .setURL(songPageURL)
-            .setAuthor(interaction.member.user.username, interaction.member.user.displayAvatarURL())
-            .build();
+        const pageData = {title: `${songName} lyrics`, pages: lyricsArray, color: '#9096E6' as const, url: songPageURL, author: {username: interaction.member.user.username, avatar: interaction.member.user.displayAvatarURL()}};
+        return {pages: pageData};
     } catch(e: unknown) {
         logger.error(e);
         return 'Something went wrong! Please try again later';

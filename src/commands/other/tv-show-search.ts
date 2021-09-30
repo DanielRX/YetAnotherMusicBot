@@ -1,7 +1,5 @@
-import type {CommandInteraction} from 'discord.js';
 import type {CommandReturn, CustomInteraction} from '../../utils/types';
 import {MessageEmbed} from 'discord.js';
-import {PagesBuilder} from 'discord.js-pages';
 import {fetch} from '../../utils/utils';
 import type {Nullable} from 'discord-api-types/utils/internals';
 import {logger} from '../../utils/logging';
@@ -134,8 +132,8 @@ export const execute = async(interaction: CustomInteraction, tvShow: string): Pr
                 .addField('Average Rating', showRatings.toString())
                 .setFooter(`(Page ${i}/${showResponse.length}) ` + 'Powered by tvmaze.com', 'https://static.tvmaze.com/images/favico/favicon-32x32.png'));
         }
-
-        void new PagesBuilder(interaction as unknown as CommandInteraction).setPages(embedArray).setColor('#17a589').build();
+        const pageData = {pages: embedArray, color: '#17A589' as const};
+        return {pages: pageData};
     } catch(e: unknown) {
         logger.error(e);
         return ':x: Something went wrong with your request.';

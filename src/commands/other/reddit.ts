@@ -38,6 +38,10 @@ const fetchFromReddit = async(interaction: CustomInteraction, subreddit: string,
             .setAuthor(redditPost.data.author));
     }
 
+    /*
+    const pageData = {pages: dataArr};
+    return {pages: pageData};
+    */
     void new PagesBuilder(interaction as unknown as CommandInteraction).setPages(dataArr).build();
 };
 

@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import type {CommandReturn, CustomInteraction} from '../../utils/types';
-import type {CommandInteraction} from 'discord.js';
 import {MessageEmbed} from 'discord.js';
-import {PagesBuilder} from 'discord.js-pages';
 import {config} from '../../utils/config';
 import {fetch} from '../../utils/utils';
 import {logger} from '../../utils/logging';
@@ -96,15 +94,9 @@ export const execute = async(interaction: CustomInteraction, game: string): Prom
             // Row 2
                 .addField('Genre(s)', genreArray.join(', '), true)
                 .addField('Retailer(s)', retailerArray.join(', ').replace(/`/g, ''));
+            const pageData = {title: response.name, pages: [page1, page2], color: '#B5B5B5' as const, thumbnail: response.background_image};
 
-            const embed = new PagesBuilder(interaction as unknown as CommandInteraction)
-                .setPages([page1, page2])
-                .setTitle(response.name)
-                .setColor(`#b5b5b5`);
-            if(response.background_image) {
-                embed.setThumbnail(response.background_image);
-            }
-            return embed.build();
+            return {pages: pageData};
         })
         .catch((e: unknown) => (e as Error).message);
 };

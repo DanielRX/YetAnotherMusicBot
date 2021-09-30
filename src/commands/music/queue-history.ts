@@ -1,7 +1,5 @@
-import type {CommandInteraction} from 'discord.js';
 import type {CommandReturn, CustomInteraction} from '../../utils/types';
 import {MessageEmbed} from 'discord.js';
-import {PagesBuilder} from 'discord.js-pages';
 import {guildData} from '../../utils/client';
 
 export const name = 'queue-history';
@@ -25,11 +23,6 @@ export const execute = async(interaction: CustomInteraction): Promise<CommandRet
         embeds.push(new MessageEmbed().setTitle(`Page ${i}`).setFields(fields));
     }
 
-    await new PagesBuilder(interaction as unknown as CommandInteraction)
-        .setTitle('Music Queue')
-        .setPages(embeds)
-        .setListenTimeout(2 * 60 * 1000)
-        .setColor('#9096e6')
-        .setAuthor(interaction.member.user.username, interaction.member.user.displayAvatarURL())
-        .build();
+    const pageData = {title: 'Music Queue', pages: embeds, color: '#9096E6' as const, author: {username: interaction.member.user.username, avatar: interaction.member.user.displayAvatarURL()}, listenTimeout: 2 * 60 * 1000};
+    return {pages: pageData};
 };

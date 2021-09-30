@@ -1,7 +1,5 @@
-import type {CommandInteraction} from 'discord.js';
 import type {CommandReturn, CustomInteraction} from '../../utils/types';
 import {MessageEmbed} from 'discord.js';
-import {PagesBuilder} from 'discord.js-pages';
 import {fetch} from '../../utils/utils';
 import prettyMilliseconds from 'pretty-ms';
 
@@ -57,7 +55,8 @@ export const execute = async(interaction: CustomInteraction, userQuery: string):
                 .setTimestamp(pbArray[i - 1].parsed_at));
         }
 
-        return new PagesBuilder(interaction as unknown as CommandInteraction).setPages(pbEmbedArray).setColor('#3E8657').build();
+        const pageData = {pages: pbEmbedArray, color: '#3E8657' as const};
+        return {pages: pageData};
     }
 };
 

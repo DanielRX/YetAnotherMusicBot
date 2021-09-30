@@ -1,6 +1,7 @@
 import {commands} from '../utils/client';
 import type {CustomInteraction} from '../utils/types';
 import {logger} from '../utils/logging';
+import { PagesBuilder } from 'discord.js-pages';
 
 export const name = 'interactionCreate';
 
@@ -28,7 +29,16 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
         }
         const output = await command.execute(interaction, ...params);
         if(typeof output !== 'undefined') {
-            if(command.deferred) {
+            if(typeof output !== 'string' && 'pages' in output) {
+                const pagesData = output.pages;
+                const pages = new PagesBuilder(interaction).setPages(pagesData.pages);
+                if(typeof pagesData.title !== 'undefined') { pages.setTitle(pagesData.title); }
+                if(typeof pagesData.color !== 'undefined') { pages.setColor(pagesData.color); }
+                if(typeof pagesData.url !== 'undefined') { pages.setURL(pagesData.url); }
+                if(typeof pagesData.thumbnail !== 'undefined') { pages.setThumbnail(pagesData.thumbnail); }
+                if(typeof pagesData.author !== 'undefined') { pages.setAuthor(pagesData.author.username, pagesData.author.avatar); }
+                await pages.build();
+            } else if(command.deferred) {
                 await interaction.followUp(output);
             } else {
                 await interaction.reply(output);

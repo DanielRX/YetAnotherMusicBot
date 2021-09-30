@@ -1,8 +1,6 @@
 import type {CommandReturn, CustomInteraction} from '../../utils/types';
-import type {CommandInteraction} from 'discord.js';
 import {MessageEmbed} from 'discord.js';
 import {fetch} from '../../utils/utils';
-import {PagesBuilder} from 'discord.js-pages';
 import {config} from '../../utils/config';
 import {logger} from '../../utils/logging';
 
@@ -29,8 +27,8 @@ export const execute = async(interaction: CustomInteraction): Promise<CommandRet
                 .setTimestamp(json.articles[i - 1].publishedAt)
                 .setFooter('powered by NewsAPI.org'));
         }
-
-        return new PagesBuilder(interaction as unknown as CommandInteraction).setPages(articleArr).build();
+        const pageData = {pages: articleArr};
+        return {pages: pageData};
     } catch(e: unknown) {
         logger.error(e);
         return ':x: Something failed along the way!';

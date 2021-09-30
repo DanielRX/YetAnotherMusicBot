@@ -33,7 +33,7 @@ const constructSongObj = (video: Video, user: User): PlayTrack => {
 
 const processURL = async(url: string, interaction: CustomInteraction) => {
     if(isSpotifyURL(url)) {
-        return void getData(url)
+        return getData(url)
             .then(async(res: Track | {tracks: {items: ({track: Track})[]}}) => {
                 if('tracks' in res) {
                     const spotifyPlaylistItems = res.tracks.items;
@@ -51,7 +51,7 @@ const processURL = async(url: string, interaction: CustomInteraction) => {
                 const video = await searchOne(res);
                 return constructSongObj(video, interaction.member.user);
             })
-            .catch(logger.error);
+            .catch((e: unknown) => { logger.error(e); });
     }
     if(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/.exec(url)) {
         const playlist = await YouTube.getPlaylist(url).catch(function() {
@@ -88,17 +88,18 @@ export const execute = async(interaction: CustomInteraction, playlistName: strin
     const location = savedPlaylistsClone.findIndex((value) => value.name == playlistName);
     if(location === -1) { return `You have no playlist named ${playlistName}`; }
     let urlsArrayClone = savedPlaylistsClone[location].urls;
-    const processedURL = await processURL(url, interaction);
-    if(!processedURL) return;
-    if(Array.isArray(processedURL)) {
-        urlsArrayClone = urlsArrayClone.concat(processedURL);
+    return processURL(url, interaction).then(async(processedURL) => {
+        if(!processedURL) return;
+        if(Array.isArray(processedURL)) {
+            urlsArrayClone = urlsArrayClone.concat(processedURL);
+            savedPlaylistsClone[location].urls = urlsArrayClone;
+            await member.updateOne({memberId: interaction.member.id}, {savedPlaylists: savedPlaylistsClone}).exec();
+            return 'The playlist you provided was successfully saved!';
+        }
+
+        urlsArrayClone.push(processedURL);
         savedPlaylistsClone[location].urls = urlsArrayClone;
         await member.updateOne({memberId: interaction.member.id}, {savedPlaylists: savedPlaylistsClone}).exec();
-        return 'The playlist you provided was successfully saved!';
-    }
-
-    urlsArrayClone.push(processedURL);
-    savedPlaylistsClone[location].urls = urlsArrayClone;
-    await member.updateOne({memberId: interaction.member.id}, {savedPlaylists: savedPlaylistsClone}).exec();
-    return `I added **${savedPlaylistsClone[location].urls[savedPlaylistsClone[location].urls.length - 1].name}** to **${playlistName}**`;
+        return `I added **${savedPlaylistsClone[location].urls[savedPlaylistsClone[location].urls.length - 1].name}** to **${playlistName}**`;
+    });
 };
