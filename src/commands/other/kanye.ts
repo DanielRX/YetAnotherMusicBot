@@ -1,6 +1,6 @@
 import {fetch} from '../../utils/utils';
 import {MessageEmbed} from 'discord.js';
-import type {CommandReturn, CustomInteraction} from '../../utils/types';
+import type {CommandReturn} from '../../utils/types';
 import {logger} from '../../utils/logging';
 
 export const name = 'kanye';

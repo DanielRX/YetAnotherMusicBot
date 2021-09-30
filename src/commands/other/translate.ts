@@ -18,7 +18,7 @@ export const execute = async(_: CustomInteraction, targetLang: string, text: str
 
     if(langCode === '') { return ':x: Please provide a valid language!'; }
 
-    translate(text, {to: targetLang})
+    return translate(text, {to: targetLang})
         .then(async(response) => {
             const embed = new MessageEmbed()
                 .setColor('#FF0000')

@@ -33,7 +33,7 @@ const constructSongObj = (video: Video, user: User): PlayTrack => {
 
 const processURL = async(url: string, interaction: CustomInteraction) => {
     if(isSpotifyURL(url)) {
-        return getData(url)
+        return (getData as (url: string) => Promise<Track | {tracks: {items: ({track: Track})[]}}>)(url)
             .then(async(res: Track | {tracks: {items: ({track: Track})[]}}) => {
                 if('tracks' in res) {
                     const spotifyPlaylistItems = res.tracks.items;

@@ -71,7 +71,7 @@ export const execute = async(_: CustomInteraction, country: string): Promise<Com
                 return 'Something went wrong!';
             });
     }
-    await getCountryStats(country)
+    return getCountryStats(country)
         .then(async(res) => {
             const covidcountry = new MessageEmbed()
                 .setTitle(`Country Stats for ${res.country}`)

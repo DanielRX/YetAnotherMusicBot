@@ -1,4 +1,3 @@
-import type {APIMessage} from 'discord-api-types';
 import type {BaseGuildTextChannel, Message, SelectMenuInteraction, User, VoiceChannel} from 'discord.js';
 import type {Video} from 'youtube-sr';
 import type MusicPlayer from '../../utils/music/Player';
@@ -93,6 +92,7 @@ const handleSpotifyPlaylistData = async(interaction: CustomInteraction, rawQuery
     }
     void processingMessage?.edit('Playlist Processed!');
     if(player.audioPlayer.state.status !== AudioPlayerStatus.Playing) { return handleSubscription(player.queue, interaction, player as unknown as MusicPlayer); }
+    return 'UNREACHABLE';
 };
 
 const handleSpotifyURL = async(interaction: CustomInteraction, rawQuery: string): Promise<CommandReturn> => {
@@ -136,7 +136,7 @@ const searchYoutube = async(interaction: CustomInteraction, rawQuery: string, vo
     const {nextFlag, jumpFlag, query} = getFlags(rawQuery);
     const videos = await YouTube.search(query, {limit: 5, type: 'video'}).catch(() => ':x: There was a problem searching the video you requested!');
     if(typeof videos === 'string') { return videos; }
-    if(!videos) {
+    if(typeof videos === 'undefined') {
         player.commandLock = false;
         return `:x: I had some trouble finding what you were looking for, please try again or be more specific.`;
     }
@@ -274,6 +274,7 @@ const handleYoutubeURL = async(interaction: CustomInteraction, rawQuery: string)
     if(player.audioPlayer.state.status !== AudioPlayerStatus.Playing) {
         return handleSubscription(player.queue, interaction, player as unknown as MusicPlayer);
     }
+    return 'UNREACHABLE';
 };
 
 const handleYoutubePlaylistURL = async(interaction: CustomInteraction, rawQuery: string): Promise<CommandReturn> => {

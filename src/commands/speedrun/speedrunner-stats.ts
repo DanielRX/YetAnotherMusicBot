@@ -14,8 +14,8 @@ export const options = [
 export const execute = async(interaction: CustomInteraction, userQuery: string): Promise<CommandReturn> => {
     const userFiltered = userQuery.toLowerCase();
     const userRes = await fetch<{runners: ({name: string, avatar: string})[], status :number}>(`https://splits.io/api/v4/runners?search=${userFiltered}`).then(async(res) => res.json());
-
-    if(userRes.runners.length == 0) {
+    const runnerCount = userRes.runners.length;
+    if(runnerCount == 0) {
         return ':x: The Runner ' + userQuery + ' was  not found.';
     }
 
@@ -34,7 +34,7 @@ export const execute = async(interaction: CustomInteraction, userQuery: string):
         return ':x: The User ' + userQuery + 's stats were not found.';
     }
 
-    if(userRes.runners.length != 0) {
+    if(runnerCount != 0) {
         const pbArray = pbsRes.pbs;
         const pbEmbedArray = [];
 
@@ -58,5 +58,6 @@ export const execute = async(interaction: CustomInteraction, userQuery: string):
         const pageData = {pages: pbEmbedArray, color: '#3E8657' as const};
         return {pages: pageData};
     }
+    return 'There we no runners found';
 };
 
