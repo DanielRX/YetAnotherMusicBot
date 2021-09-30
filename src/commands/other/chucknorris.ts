@@ -1,4 +1,4 @@
-import type {CommandReturn, CustomInteraction} from '../../utils/types';
+import type {CommandReturn} from '../../utils/types';
 import {fetch} from '../../utils/utils';
 import {MessageEmbed} from 'discord.js';
 import {logger} from '../../utils/logging';
@@ -7,7 +7,7 @@ export const name = 'chucknorris';
 export const description = 'Get a satirical fact about Chuck Norris!';
 export const deferred = false;
 
-export const execute = async(interaction: CustomInteraction): Promise<CommandReturn> => {
+export const execute = async(): Promise<CommandReturn> => {
     // thanks to https://api.chucknorris.io
     return fetch<{value: string}>('https://api.chucknorris.io/jokes/random')
         .then(async(res) => res.json())

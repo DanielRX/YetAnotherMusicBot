@@ -13,7 +13,7 @@ export const options = [
     {type: 'string' as const, name: 'text', description: 'What text do you want to translate?', required: true, choices: []}
 ];
 
-export const execute = async(interaction: CustomInteraction, targetLang: string, text: string): Promise<CommandReturn> => {
+export const execute = async(_: CustomInteraction, targetLang: string, text: string): Promise<CommandReturn> => {
     const langCode = ISO6391.getCode(targetLang);
 
     if(langCode === '') { return ':x: Please provide a valid language!'; }

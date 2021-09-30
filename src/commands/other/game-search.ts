@@ -63,7 +63,7 @@ const getGameDetails = async(query: string) => {
     }
 };
 
-export const execute = async(interaction: CustomInteraction, game: string): Promise<CommandReturn> => {
+export const execute = async(_: CustomInteraction, game: string): Promise<CommandReturn> => {
     if(!config.rawgAPI) { return 'This command is not enabled on this bot!'; }
     const gameTitleFiltered = game.replace(/ /g, '-').replace(/'/g, '').toLowerCase();
 

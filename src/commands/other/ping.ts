@@ -1,9 +1,9 @@
-import type {CommandReturn, CustomInteraction} from '../../utils/types';
+import type {CommandReturn} from '../../utils/types';
 
 export const name = 'ping';
 export const description = 'Replies with Pong!';
 export const deferred = false;
 
-export const execute = async(interaction: CustomInteraction): Promise<CommandReturn> => {
+export const execute = async(): Promise<CommandReturn> => {
     return 'Pong!';
 };

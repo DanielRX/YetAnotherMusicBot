@@ -74,7 +74,7 @@ const cleanUp = (summary: string) => summary
     .replace(/&#39;/g, "'")
     .toLocaleString();
 
-export const execute = async(interaction: CustomInteraction, tvShow: string): Promise<CommandReturn> => {
+export const execute = async(_: CustomInteraction, tvShow: string): Promise<CommandReturn> => {
     let showResponse: Show[] = [];
     try {
         showResponse = await getShowSearch(`${tvShow}`);

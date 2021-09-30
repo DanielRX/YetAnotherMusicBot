@@ -1,4 +1,4 @@
-import type {CommandReturn, CustomInteraction} from '../../utils/types';
+import type {CommandReturn} from '../../utils/types';
 import {MessageEmbed} from 'discord.js';
 import {fetch} from '../../utils/utils';
 import {config} from '../../utils/config';
@@ -8,7 +8,7 @@ export const name = 'world-news';
 export const description = 'Replies with the 10 latest world news headlines!';
 export const deferred = false;
 
-export const execute = async(interaction: CustomInteraction): Promise<CommandReturn> => {
+export const execute = async(): Promise<CommandReturn> => {
     if(!config.newsAPI) { return ':x: This command is not enabled'; }
     // powered by NewsAPI.org
     try {

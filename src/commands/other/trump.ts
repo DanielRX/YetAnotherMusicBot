@@ -1,13 +1,13 @@
 import {fetch} from '../../utils/utils';
 import {MessageEmbed} from 'discord.js';
-import type {CommandReturn, CustomInteraction} from '../../utils/types';
+import type {CommandReturn} from '../../utils/types';
 import {logger} from '../../utils/logging';
 
 export const name = 'trump';
 export const description = 'Get a random quote from Donald Trump!';
 export const deferred = false;
 
-export const execute = async(interaction: CustomInteraction): Promise<CommandReturn> => {
+export const execute = async(): Promise<CommandReturn> => {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     return fetch<{value: string, appeared_at: number}>('https://api.tronalddump.io/random/quote')
         .then(async(res) => res.json())

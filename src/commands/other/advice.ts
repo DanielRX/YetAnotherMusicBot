@@ -1,4 +1,4 @@
-import type {CommandReturn, CustomInteraction} from '../../utils/types';
+import type {CommandReturn} from '../../utils/types';
 import {fetch} from '../../utils/utils';
 import {SlashCommandBuilder} from '@discordjs/builders';
 import {MessageEmbed} from 'discord.js';
@@ -10,7 +10,7 @@ export const deferred = false;
 
 export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
-export const execute = async(interaction: CustomInteraction): Promise<CommandReturn> => {
+export const execute = async(): Promise<CommandReturn> => {
     return fetch<{slip: {advice: string}}>('https://api.adviceslip.com/advice')
         .then(async(res) => res.json())
         .then(async(json) => {

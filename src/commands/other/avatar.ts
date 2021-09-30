@@ -10,7 +10,7 @@ export const options = [
     {type: 'user' as const, name: 'user', description: 'The user which avatar you want to display', required: true, choices: []}
 ];
 
-export const execute = async(interaction: CustomInteraction, user: User): Promise<CommandReturn> => {
+export const execute = async(_: CustomInteraction, user: User): Promise<CommandReturn> => {
     const embed = new MessageEmbed()
         .setTitle(user.username)
         .setImage(user.displayAvatarURL({dynamic: true}))

@@ -1,4 +1,4 @@
-import type {CommandReturn, CustomInteraction} from '../../utils/types';
+import type {CommandReturn} from '../../utils/types';
 import {fetch} from '../../utils/utils';
 import {MessageEmbed} from 'discord.js';
 import {logger} from '../../utils/logging';
@@ -7,7 +7,7 @@ export const name = 'bored';
 export const description = 'Generate a random activity!';
 export const deferred = false;
 
-export const execute = async(interaction: CustomInteraction): Promise<CommandReturn> => {
+export const execute = async(): Promise<CommandReturn> => {
     return fetch<{activity: string}>('https://www.boredapi.com/api/activity?participants=1')
         .then(async(res) => res.json())
         .then(async(json) => {

@@ -43,7 +43,7 @@ const getCountryStats = async(country: string) => {
     }
 };
 
-export const execute = async(interaction: CustomInteraction, country: string): Promise<CommandReturn> => {
+export const execute = async(_: CustomInteraction, country: string): Promise<CommandReturn> => {
     if(country === 'all' || country === 'world' || country === 'global') {
         return getWorldStats()
             .then(async(res) => {

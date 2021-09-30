@@ -1,4 +1,4 @@
-import type {CommandReturn, CustomInteraction} from '../../utils/types';
+import type {CommandReturn} from '../../utils/types';
 import {fetch} from '../../utils/utils';
 import {MessageEmbed} from 'discord.js';
 import {logger} from '../../utils/logging';
@@ -7,7 +7,7 @@ export const name = 'fortune';
 export const description = 'Replies with a fortune cookie tip!';
 export const deferred = false;
 
-export const execute = async(interaction: CustomInteraction): Promise<CommandReturn> => {
+export const execute = async(): Promise<CommandReturn> => {
     try {
         const json = await fetch<{fortune: string}>('http://yerkee.com/api/fortune').then(async(res) => res.json());
         const embed = new MessageEmbed()
