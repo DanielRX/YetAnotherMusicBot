@@ -21,10 +21,11 @@ export const getMessage = async(language: Language, command: string, message: st
     return loadLocaleFile(language).then((file) => getMessageFromFile(file, command, message));
 };
 
-export const getAndFillMessage = (command: string, language: Language) => async(message: string, values?: any): Promise<string> => {
+export const getAndFillMessage = (command: string, language: Language) => async(message: string, values?: {[key: string]: string}): Promise<string> => {
     const messageString = await getMessage(language, command, message);
+    if(typeof values === 'undefined') { return messageString; }
     const templateMatcher = /{{\s?([^{}\s]*)\s?}}/g;
-    const text = messageString.replace(templateMatcher, (substring, value, index) => {
+    const text = messageString.replace(templateMatcher, (substring, value: string) => {
         value = values[value];
         return value;
     });

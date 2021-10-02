@@ -1,6 +1,5 @@
 import type {CommandReturn, CustomInteraction} from '../../utils/types';
 import member from '../../utils/models/Member';
-import {logger} from '../../utils/logging';
 import {getAndFillMessage} from '../../utils/messages';
 
 export const name = 'create-playlist';
@@ -14,10 +13,11 @@ export const options = [
 export const execute = async(interaction: CustomInteraction, playlistName: string): Promise<CommandReturn> => {
     const message = getAndFillMessage('createPlaylist', 'en_gb'); // TODO: User/server locale?
     const {member: {id, user: {username}, joinedAt}} = interaction;
+    const playlistData = {name: playlistName, urls: []};
     // Check if the user exists in the db
     const userData = await member.findOne({memberId: id}).exec(); // A clone object
     if(!userData) {
-        const userObject = {memberId: id, username, joinedAt, savedPlaylists: [{name: playlistName, urls: []}]};
+        const userObject = {memberId: id, username, joinedAt, savedPlaylists: [playlistData]};
         const user = new member(userObject);
         await user.save();
         return message('PLAYLIST_CREATED', {playlistName});
@@ -28,13 +28,7 @@ export const execute = async(interaction: CustomInteraction, playlistName: strin
     }
 
     // Create and save the playlist in the DB
-    userData.savedPlaylists.push({name: playlistName, urls: []});
-    try {
-        await member.updateOne({memberId: interaction.member.id}, userData);
-        return message('PLAYLIST_CREATED', {playlistName});
-    } catch(e: unknown) {
-        logger.error(e);
-        return message('GENERIC_ERROR');
-    }
+    userData.savedPlaylists.push(playlistData);
+    await member.updateOne({memberId: interaction.member.id}, userData);
+    return message('PLAYLIST_CREATED', {playlistName});
 };
-

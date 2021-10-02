@@ -1,9 +1,9 @@
 import type {BaseGuildTextChannel, Message, SelectMenuInteraction, User, VoiceChannel} from 'discord.js';
 import type {Video} from 'youtube-sr';
-import type MusicPlayer from '../../utils/music/Player';
+import type MusicPlayer from '../../utils/music/MusicPlayer';
 import type {CommandReturn, CustomAudioPlayer, CustomInteraction, GuildData, Playlist, PlayTrack, Track} from '../../utils/types';
 import {MessageSelectMenu, MessageActionRow} from 'discord.js';
-import Player from '../../utils/music/Player';
+import Player from '../../utils/music/MusicPlayer';
 import {getData} from 'spotify-url-info';
 import YouTube from 'youtube-sr';
 import member from '../../utils/models/Member';

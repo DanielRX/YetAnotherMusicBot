@@ -2,7 +2,6 @@ import {MessageEmbed} from 'discord.js';
 import ISO6391 from 'iso-639-1';
 import translate from '@vitalets/google-translate-api';
 import type {CommandReturn, CustomInteraction} from '../../utils/types';
-import {logger} from '../../utils/logging';
 
 export const name = 'translate';
 export const description = 'Translate to any language using Google translate.';
@@ -18,19 +17,13 @@ export const execute = async(_: CustomInteraction, targetLang: string, text: str
 
     if(langCode === '') { return ':x: Please provide a valid language!'; }
 
-    return translate(text, {to: targetLang})
-        .then(async(response) => {
-            const embed = new MessageEmbed()
-                .setColor('#FF0000')
-                .setTitle('Google Translate: ')
-                .setURL('https://translate.google.com/')
-                .setDescription(response.text)
-                .setFooter('Powered by Google Translate!');
-            return {embeds: [embed]};
-        })
-        .catch(async(e: unknown) => {
-            logger.error(e);
-            return ':x: Something went wrong when trying to translate the text';
-        });
+    const response = await translate(text, {to: targetLang});
+    const embed = new MessageEmbed()
+        .setColor('#FF0000')
+        .setTitle('Google Translate: ')
+        .setURL('https://translate.google.com/')
+        .setDescription(response.text)
+        .setFooter('Powered by Google Translate!');
+    return {embeds: [embed]};
 };
 

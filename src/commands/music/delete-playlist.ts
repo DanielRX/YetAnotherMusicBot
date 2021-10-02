@@ -1,6 +1,6 @@
 import type {CommandReturn, CustomInteraction} from '../../utils/types';
 import member from '../../utils/models/Member';
-import { getAndFillMessage } from '../../utils/messages';
+import {getAndFillMessage} from '../../utils/messages';
 
 export const name = 'delete-playlist';
 export const description = 'Delete a playlist from your saved playlists';

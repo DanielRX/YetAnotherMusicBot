@@ -1,156 +1,71 @@
-import type {AudioPlayer, VoiceConnection} from '@discordjs/voice';
-
-import {AudioPlayerStatus, createAudioPlayer, entersState, VoiceConnectionDisconnectReason, VoiceConnectionStatus, createAudioResource, StreamType} from '@discordjs/voice';
-import {setTimeout} from 'timers';
-import {promisify} from 'util';
-import ytdl from 'ytdl-core';
+import type {AudioPlayer, VoiceConnection, VoiceConnectionState} from '@discordjs/voice';
+import {VoiceConnectionDisconnectReason} from '@discordjs/voice';
+import {entersState, VoiceConnectionStatus} from '@discordjs/voice';
+import {createAudioPlayer} from '@discordjs/voice';
 import type {BaseGuildTextChannel} from 'discord.js';
-import {MessageEmbed} from 'discord.js';
 import type {PlayTrack} from '../types';
-import {guildData, triviaManager} from '../client';
-import {logger} from '../../utils/logging';
+import {promisify} from 'util';
+import {logger} from '../logging';
 
+const rejoinTimeout = 5000;
 const wait = promisify(setTimeout);
 
-class MusicPlayer { // TODO: Merge with TriviaPlayer
-    public commandLock = false;
+export class Player { // TODO: Merge with TriviaPlayer
     public connection: VoiceConnection = null!;
     public queue: PlayTrack[] = [];
     public textChannel: BaseGuildTextChannel = null!;
-    public loopSong = false;
     public readonly audioPlayer: AudioPlayer;
-    private readonly volume = 1;
-    private loopQueue = false;
-    private skipTimer = false;
-    private isPreviousTrack = false;
-    private nowPlaying: PlayTrack | null = null;
 
     public constructor() {
         this.audioPlayer = createAudioPlayer();
     }
 
-    public getQueueHistory(): PlayTrack[] {
-        // eslint-disable-next-line
-        return guildData.get(this.textChannel.guildId)?.queueHistory!;
-    }
-
     public passConnection(connection: VoiceConnection): void {
         this.connection = connection;
-        this.connection.on('stateChange', async(_, newState) => {
-            // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
-            switch(newState.status) {
-                case VoiceConnectionStatus.Disconnected: {
-                    if(newState.reason === VoiceConnectionDisconnectReason.WebSocketClose && newState.closeCode === 4014) {
-                        try {
-                            await entersState(this.connection, VoiceConnectionStatus.Connecting, 5000);
-                        } catch(e: unknown) {
-                            logger.error(e);
-                            this.connection.destroy();
-                        }
-                    } else if(this.connection.rejoinAttempts < 5) {
-                        await wait((this.connection.rejoinAttempts + 1) * 5000);
-                        this.connection.rejoin();
-                    } else {
-                        this.connection.destroy();
-                    }
-                    return;
-                }
-                case VoiceConnectionStatus.Destroyed: {
-                // when leaving
-                    if(this.nowPlaying !== null) {
-                        this.getQueueHistory().unshift(this.nowPlaying);
-                    }
-                    this.stop();
-                    break;
-                }
-                case VoiceConnectionStatus.Connecting:
-                case VoiceConnectionStatus.Signalling: {
-                    try {
-                        await entersState(this.connection, VoiceConnectionStatus.Ready, 20000);
-                    } catch(e: unknown) {
-                        logger.error(e);
-                        if(this.connection.state.status !== VoiceConnectionStatus.Destroyed) { this.connection.destroy(); }
-                    }
-                }
-            }
-        });
+        this.connection.on('stateChange', async(_, state) => this.onConnectionStateChange(state));
+        this.audioPlayer.on('error', (e) => { logger.error(e); });
 
-        this.audioPlayer.on('stateChange', (oldState, newState) => {
-            if(newState.status === AudioPlayerStatus.Idle && oldState.status !== AudioPlayerStatus.Idle) {
-                if(this.loopSong) {
-                    if(this.nowPlaying !== null) {
-                        this.queue.unshift(this.nowPlaying);
-                    }
-                    void this.process(this.queue);
-                } else if(this.loopQueue) {
-                    if(this.nowPlaying !== null) {
-                        this.queue.push(this.nowPlaying);
-                    }
-                    void this.process(this.queue);
-                } else {
-                    if(this.nowPlaying !== null) {
-                        this.getQueueHistory().unshift(this.nowPlaying);
-                    }
-                    // Finished playing audio
-                    if(this.queue.length) {
-                        void this.process(this.queue);
-                    } else {
-                        // leave channel close connection and subscription
-                        /* eslint-disable */
-                        if((this.connection as any)._state.status !== 'destroyed') {
-                            this.connection.destroy();
-                            triviaManager.delete(this.textChannel.guildId);
-                        }
-                        /* eslint-enable */
-                    }
-                }
-            } else if(newState.status === AudioPlayerStatus.Playing) {
-                if(this.nowPlaying) {
-                    const queueHistory = this.getQueueHistory();
-                    const playingEmbed = new MessageEmbed()
-                        .setThumbnail(this.nowPlaying.thumbnail)
-                        .setTitle(this.nowPlaying.name)
-                        .setColor('#ff0000')
-                        .addField('Duration', `:stopwatch: ${this.nowPlaying.duration}`, true)
-                        .setFooter(`Requested by ${this.nowPlaying.memberDisplayName}!`, this.nowPlaying.memberAvatar);
-                    if(queueHistory.length) {
-                        playingEmbed.addField('Previous Song', queueHistory[0].name, true);
-                    }
-                    void this.textChannel.send({embeds: [playingEmbed]});
-                }
-            }
-        });
-
-        this.audioPlayer.on('error', (error) => { logger.error(error); });
         this.connection.subscribe(this.audioPlayer);
     }
 
     public stop(): void {
         this.queue.length = 0;
-        this.nowPlaying = null!;
-        this.skipTimer = false;
-        this.isPreviousTrack = false;
-        this.loopSong = false;
-        this.loopQueue = false;
         this.audioPlayer.stop(true);
     }
 
-    public async process(queue: PlayTrack[]): Promise<void> {
-        if(this.audioPlayer.state.status !== AudioPlayerStatus.Idle || this.queue.length === 0) { return; }
-
-        const song = this.queue.shift() as unknown as PlayTrack;
-        this.nowPlaying = song;
-        if(this.commandLock) this.commandLock = false;
-        try {
-            //const resource = await this.createAudioResource(song.url);
-            const stream = ytdl(song.url || '', {filter: 'audio', quality: 'highestaudio', highWaterMark: 1 << 25});
-            const resource = createAudioResource(stream, {inputType: StreamType.Arbitrary});
-            this.audioPlayer.play(resource);
-        } catch(e: unknown) {
-            logger.error(e);
-            return this.process(queue);
+    protected async onConnectionStateChange(state: VoiceConnectionState): Promise<void> {
+        // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
+        switch(state.status) {
+            case VoiceConnectionStatus.Disconnected: {
+                if(state.reason === VoiceConnectionDisconnectReason.WebSocketClose && state.closeCode === 4014) {
+                    try {
+                        await entersState(this.connection, VoiceConnectionStatus.Connecting, rejoinTimeout);
+                    } catch(e: unknown) {
+                        this.connection.destroy();
+                    }
+                } else if(this.connection.rejoinAttempts < 5) {
+                    await wait((this.connection.rejoinAttempts + 1) * rejoinTimeout);
+                    this.connection.rejoin();
+                } else {
+                    this.connection.destroy();
+                }
+                break;
+            }
+            case VoiceConnectionStatus.Destroyed: {
+                // when leaving
+                this.stop();
+                break;
+            }
+            case VoiceConnectionStatus.Connecting:
+            case VoiceConnectionStatus.Signalling: {
+                try {
+                    await entersState(this.connection, VoiceConnectionStatus.Ready, 20000);
+                } catch(e: unknown) {
+                    logger.error(e);
+                    if(this.connection.state.status !== VoiceConnectionStatus.Destroyed) { this.connection.destroy(); }
+                }
+            }
         }
     }
 }
 
-export default MusicPlayer;

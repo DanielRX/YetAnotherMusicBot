@@ -2,7 +2,6 @@ import type {CommandReturn, CustomInteraction} from '../../utils/types';
 import {MessageEmbed} from 'discord.js';
 import {fetch} from '../../utils/utils';
 import type {Nullable} from 'discord-api-types/utils/internals';
-import {logger} from '../../utils/logging';
 
 export const name = 'tv-show-search';
 export const description = 'Search for TV shows';
@@ -39,26 +38,21 @@ type Show = {
 
 const getShowSearch = async(showQuery: string): Promise<Show[]> => {
     const url = `http://api.tvmaze.com/search/shows?q=${encodeURI(showQuery)}`;
-    try {
-        const body = await fetch<Show[]>(url);
-        if(body.status == `429`) {
-            throw new Error(':x: Rate Limit exceeded. Please try again in a few minutes.');
-        }
-        if(body.status == `503`) {
-            throw new Error(':x: The service is currently unavailable. Please try again later.');
-        }
-        if(body.status != '200') {
-            throw new Error('There was a problem getting data from the API, make sure you entered a valid TV show name');
-        }
-        const json = await body.json();
-        if(!json.length) {
-            throw new Error('There was a problem getting data from the API, make sure you entered a valid TV show name');
-        }
-        return json;
-    } catch(e: unknown) {
-        logger.error(e);
+    const body = await fetch<Show[]>(url);
+    if(body.status == `429`) {
+        throw new Error(':x: Rate Limit exceeded. Please try again in a few minutes.');
+    }
+    if(body.status == `503`) {
+        throw new Error(':x: The service is currently unavailable. Please try again later.');
+    }
+    if(body.status != '200') {
         throw new Error('There was a problem getting data from the API, make sure you entered a valid TV show name');
     }
+    const json = await body.json();
+    if(!json.length) {
+        throw new Error('There was a problem getting data from the API, make sure you entered a valid TV show name');
+    }
+    return json;
 };
 
 const cleanUp = (summary: string) => summary
@@ -75,68 +69,58 @@ const cleanUp = (summary: string) => summary
     .toLocaleString();
 
 export const execute = async(_: CustomInteraction, tvShow: string): Promise<CommandReturn> => {
-    let showResponse: Show[] = [];
-    try {
-        showResponse = await getShowSearch(`${tvShow}`);
-    } catch(e: unknown) {
-        return (e as Error).message;
-    }
+    const showResponse: Show[] = await getShowSearch(`${tvShow}`);
 
-    try {
-        const embedArray = [];
-        for(let i = 1; i <= showResponse.length; ++i) {
-            const showThumbnail = showResponse[i - 1].show.image?.original ?? 'https://static.tvmaze.com/images/no-img/no-img-portrait-text.png';
-            const showSummary = cleanUp(showResponse[i - 1].show.summary ?? 'None listed');
-            const showLanguage = showResponse[i - 1].show.language ?? 'None listed';
+    const embedArray = [];
+    for(let i = 1; i <= showResponse.length; ++i) {
+        const showThumbnail = showResponse[i - 1].show.image?.original ?? 'https://static.tvmaze.com/images/no-img/no-img-portrait-text.png';
+        const showSummary = cleanUp(showResponse[i - 1].show.summary ?? 'None listed');
+        const showLanguage = showResponse[i - 1].show.language ?? 'None listed';
 
-            let showGenre = '';
-            const genres = showResponse[i - 1].show.genres;
-            if(genres?.length == 0) showGenre = 'None listed';
-            if(Array.isArray(genres)) showGenre = genres.join(' ');
+        let showGenre = '';
+        const genres = showResponse[i - 1].show.genres;
+        if(genres?.length == 0) showGenre = 'None listed';
+        if(Array.isArray(genres)) showGenre = genres.join(' ');
 
-            const showType = showResponse[i - 1].show.type ?? 'None listed';
-            const showPremiered = showResponse[i - 1].show.premiered ?? 'None listed';
+        const showType = showResponse[i - 1].show.type ?? 'None listed';
+        const showPremiered = showResponse[i - 1].show.premiered ?? 'None listed';
 
-            // Filter Network Row 3
-            let showNetwork = '';
-            const network = showResponse[i - 1].show.network;
-            if(network === null) {
-                showNetwork = 'None listed';
-            } else {
-                showNetwork = `(**${network.country.code}**) ${network.name}`;
-            }
-            // Filter Runtime Row 3
-            let showRuntime = showResponse[i - 1].show.runtime;
-            if(showRuntime === null) showRuntime = 'None listed';
-            else showRuntime = `${showResponse[i - 1].show.runtime} Minutes`;
-
-            // Filter Ratings Row 4
-            const showRatings = showResponse[i - 1].show.rating?.average ?? 'None listed';
-
-            // Build each Tv Shows Embed
-            embedArray.push(new MessageEmbed()
-                .setTitle((showResponse[i - 1].show.name ?? '').toLocaleString())
-                .setURL(showResponse[i - 1].show.url ?? '')
-                .setThumbnail(showThumbnail)
-                // Row 1
-                .setDescription('**Summary**\n' + showSummary)
-                // Row 2
-                .addField('Language', showLanguage, true)
-                .addField('Genre(s)', showGenre, true)
-                .addField('Show Type', showType, true)
-                // Row 3
-                .addField('Premiered', showPremiered, true)
-                .addField('Network', showNetwork, true)
-                .addField('Runtime', showRuntime, true)
-                // Row 4
-                .addField('Average Rating', showRatings.toString())
-                .setFooter(`(Page ${i}/${showResponse.length}) ` + 'Powered by tvmaze.com', 'https://static.tvmaze.com/images/favico/favicon-32x32.png'));
+        // Filter Network Row 3
+        let showNetwork = '';
+        const network = showResponse[i - 1].show.network;
+        if(network === null) {
+            showNetwork = 'None listed';
+        } else {
+            showNetwork = `(**${network.country.code}**) ${network.name}`;
         }
-        const pageData = {pages: embedArray, color: '#17A589' as const};
-        return {pages: pageData};
-    } catch(e: unknown) {
-        logger.error(e);
-        return ':x: Something went wrong with your request.';
+        // Filter Runtime Row 3
+        let showRuntime = showResponse[i - 1].show.runtime;
+        if(showRuntime === null) showRuntime = 'None listed';
+        else showRuntime = `${showResponse[i - 1].show.runtime} Minutes`;
+
+        // Filter Ratings Row 4
+        const showRatings = showResponse[i - 1].show.rating?.average ?? 'None listed';
+
+        // Build each Tv Shows Embed
+        embedArray.push(new MessageEmbed()
+            .setTitle((showResponse[i - 1].show.name ?? '').toLocaleString())
+            .setURL(showResponse[i - 1].show.url ?? '')
+            .setThumbnail(showThumbnail)
+        // Row 1
+            .setDescription('**Summary**\n' + showSummary)
+        // Row 2
+            .addField('Language', showLanguage, true)
+            .addField('Genre(s)', showGenre, true)
+            .addField('Show Type', showType, true)
+        // Row 3
+            .addField('Premiered', showPremiered, true)
+            .addField('Network', showNetwork, true)
+            .addField('Runtime', showRuntime, true)
+        // Row 4
+            .addField('Average Rating', showRatings.toString())
+            .setFooter(`(Page ${i}/${showResponse.length}) ` + 'Powered by tvmaze.com', 'https://static.tvmaze.com/images/favico/favicon-32x32.png'));
     }
+    const pageData = {pages: embedArray, color: '#17A589' as const};
+    return {pages: pageData};
 };
 

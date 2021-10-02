@@ -88,18 +88,17 @@ export const execute = async(interaction: CustomInteraction, playlistName: strin
     const location = savedPlaylistsClone.findIndex((value) => value.name == playlistName);
     if(location === -1) { return `You have no playlist named ${playlistName}`; }
     let urlsArrayClone = savedPlaylistsClone[location].urls;
-    return processURL(url, interaction).then(async(processedURL) => {
-        if(!processedURL) return 'MISSING_ERR_MESSAGE';
-        if(Array.isArray(processedURL)) {
-            urlsArrayClone = urlsArrayClone.concat(processedURL);
-            savedPlaylistsClone[location].urls = urlsArrayClone;
-            await member.updateOne({memberId: interaction.member.id}, {savedPlaylists: savedPlaylistsClone}).exec();
-            return 'The playlist you provided was successfully saved!';
-        }
-
-        urlsArrayClone.push(processedURL);
+    const processedURL = await processURL(url, interaction);
+    if(!processedURL) return 'MISSING_ERR_MESSAGE';
+    if(Array.isArray(processedURL)) {
+        urlsArrayClone = urlsArrayClone.concat(processedURL);
         savedPlaylistsClone[location].urls = urlsArrayClone;
         await member.updateOne({memberId: interaction.member.id}, {savedPlaylists: savedPlaylistsClone}).exec();
-        return `I added **${savedPlaylistsClone[location].urls[savedPlaylistsClone[location].urls.length - 1].name}** to **${playlistName}**`;
-    });
+        return 'The playlist you provided was successfully saved!';
+    }
+
+    urlsArrayClone.push(processedURL);
+    savedPlaylistsClone[location].urls = urlsArrayClone;
+    await member.updateOne({memberId: interaction.member.id}, {savedPlaylists: savedPlaylistsClone}).exec();
+    return `I added **${savedPlaylistsClone[location].urls[savedPlaylistsClone[location].urls.length - 1].name}** to **${playlistName}**`;
 };

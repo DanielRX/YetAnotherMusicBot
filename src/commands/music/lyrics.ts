@@ -88,28 +88,23 @@ export const execute = async(interaction: CustomInteraction, songName: string): 
         songName = player.nowPlaying?.name ?? '';
     }
 
-    try {
-        const url = await searchSong(cleanSongName(songName));
-        const songPageURL = await getSongPageURL(url);
-        const lyrics = await getLyrics(songPageURL);
+    const url = await searchSong(cleanSongName(songName));
+    const songPageURL = await getSongPageURL(url);
+    const lyrics = await getLyrics(songPageURL);
 
-        const lyricsIndex = Math.round(lyrics.length / 4096) + 1;
-        const lyricsArray = [];
+    const lyricsIndex = Math.round(lyrics.length / 4096) + 1;
+    const lyricsArray = [];
 
-        for(let i = 1; i <= lyricsIndex; ++i) {
-            if(lyrics.trim().slice((i - 1) * 4096, i * 4096).length !== 0) {
-                lyricsArray.push(new MessageEmbed()
-                    .setTitle(`Lyrics page #${i}`)
-                    .setDescription(lyrics.slice((i - 1) * 4096, i * 4096))
-                    .setFooter('Provided by genius.com'));
-            }
+    for(let i = 1; i <= lyricsIndex; ++i) {
+        if(lyrics.trim().slice((i - 1) * 4096, i * 4096).length !== 0) {
+            lyricsArray.push(new MessageEmbed()
+                .setTitle(`Lyrics page #${i}`)
+                .setDescription(lyrics.slice((i - 1) * 4096, i * 4096))
+                .setFooter('Provided by genius.com'));
         }
-
-        const pageData = {title: `${songName} lyrics`, pages: lyricsArray, color: '#9096E6' as const, url: songPageURL, author: {username: interaction.member.user.username, avatar: interaction.member.user.displayAvatarURL()}};
-        return {pages: pageData};
-    } catch(e: unknown) {
-        logger.error(e);
-        return 'Something went wrong! Please try again later';
     }
+
+    const pageData = {title: `${songName} lyrics`, pages: lyricsArray, color: '#9096E6' as const, url: songPageURL, author: {username: interaction.member.user.username, avatar: interaction.member.user.displayAvatarURL()}};
+    return {pages: pageData};
 };
 

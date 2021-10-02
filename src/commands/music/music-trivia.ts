@@ -4,7 +4,7 @@ import {MessageEmbed} from 'discord.js';
 import fs from 'fs-extra';
 import {playerManager, triviaManager} from '../../utils/client';
 import TriviaPlayer from '../../utils/music/TriviaPlayer';
-import type {CustomInteraction} from '../../utils/types';
+import type {CommandReturn, CustomInteraction} from '../../utils/types';
 import {logger} from '../../utils/logging';
 
 import {getRandom} from '../../utils/utils';
@@ -19,7 +19,7 @@ export const options = [
 
 type TriviaElement = {youtubeUrl: string, previewUrl: string, artists: string[], album: string, name: string, id: string};
 
-const handleSubscription = async(interaction: CustomInteraction, player: TriviaPlayer): Promise<string | {content: string} | {embeds: MessageEmbed[]}> => {
+const handleSubscription = async(interaction: CustomInteraction, player: TriviaPlayer): Promise<CommandReturn> => {
     const {queue} = player;
     const {voiceChannel} = queue[0];
 
@@ -31,7 +31,7 @@ const handleSubscription = async(interaction: CustomInteraction, player: TriviaP
         await entersState(player.connection, VoiceConnectionStatus.Ready, 10000);
     } catch(e: unknown) {
         logger.error(e);
-        return {content: 'Failed to join your channel!'};
+        return 'Failed to join your channel!';
     }
     void player.process(player.queue);
 
@@ -43,7 +43,7 @@ const handleSubscription = async(interaction: CustomInteraction, player: TriviaP
     return {embeds: [startTriviaEmbed]};
 };
 
-export const execute = async(interaction: CustomInteraction, length: number): Promise<string | {content: string} | {embeds: MessageEmbed[]}> => {
+export const execute = async(interaction: CustomInteraction, length: number): Promise<CommandReturn> => {
     const voiceChannel = interaction.member.voice.channel;
     if(!voiceChannel) { return ':no_entry: Please join a voice channel and try again!'; }
     if(playerManager.has(interaction.guildId)) { return `You can't use this while a track is playing!`; }

@@ -44,41 +44,36 @@ const fetchFromReddit = async(interaction: CustomInteraction, subreddit: string,
 export const execute = async(interaction: CustomInteraction, subReddit: string, sort: 'best' | 'controversial' | 'hot' | 'new' | 'rising' | 'top'): Promise<CommandReturn> => {
     const message = await interaction.deferReply({fetchReply: true});
 
-    if(sort === 'top' || sort === 'controversial') {
-        const row = new MessageActionRow().addComponents(new MessageSelectMenu()
-            .setCustomId('top_or_controversial')
-            .setPlaceholder('Please select an option')
-            .addOptions([
-                {label: 'hour', value: 'hour'},
-                {label: 'week', value: 'week'},
-                {label: 'month', value: 'month'},
-                {label: 'year', value: 'year'},
-                {label: 'all', value: 'all'}
-            ]));
-        const menu = await message.channel.send({
-            content: `:loud_sound: Do you want to get the ${sort} posts from past hour/week/month/year or all?`,
-            components: [row]
-        });
+    if(!(sort === 'top' || sort === 'controversial')) { return fetchFromReddit(interaction, subReddit, sort); }
+    const row = new MessageActionRow().addComponents(new MessageSelectMenu()
+        .setCustomId('top_or_controversial')
+        .setPlaceholder('Please select an option')
+        .addOptions([
+            {label: 'hour', value: 'hour'},
+            {label: 'week', value: 'week'},
+            {label: 'month', value: 'month'},
+            {label: 'year', value: 'year'},
+            {label: 'all', value: 'all'}
+        ]));
+    const menu = await message.channel.send({
+        content: `:loud_sound: Do you want to get the ${sort} posts from past hour/week/month/year or all?`,
+        components: [row]
+    });
 
-        const collector = menu.createMessageComponentCollector({
-            componentType: 'SELECT_MENU',
-            time: opts.maxResponseTime * 1000
-        });
+    const collector = menu.createMessageComponentCollector({componentType: 'SELECT_MENU', time: opts.maxResponseTime * 1000});
 
-        collector.on('end', () => {
-            if(typeof menu !== 'undefined') menu.delete().catch(logger.error); //! Alt: menu?.delete().catch(console.error);
+    collector.on('end', () => {
+        if(typeof menu !== 'undefined') menu.delete().catch(logger.error); //! Alt: menu?.delete().catch(console.error);
+    });
+    return new Promise((resolve) => {
+        collector.on('collect', async(i: SelectMenuInteraction) => {
+            if(i.user.id !== interaction.user.id) {
+                return i.reply({content: `This element is not for you!`, ephemeral: true});
+            }
+            collector.stop();
+            const timeFilter = i.values[0];
+            return resolve(fetchFromReddit(interaction, subReddit, sort, timeFilter));
         });
-        return new Promise((resolve) => {
-            collector.on('collect', async(i: SelectMenuInteraction) => {
-                if(i.user.id !== interaction.user.id) {
-                    return i.reply({content: `This element is not for you!`, ephemeral: true});
-                }
-                collector.stop();
-                const timeFilter = i.values[0];
-                return resolve(fetchFromReddit(interaction, subReddit, sort, timeFilter));
-            });
-        });
-    }
-    return fetchFromReddit(interaction, subReddit, sort);
+    });
 };
 

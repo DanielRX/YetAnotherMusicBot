@@ -1,7 +1,6 @@
 import {fetch} from '../../utils/utils';
 import {MessageEmbed} from 'discord.js';
 import type {CommandReturn} from '../../utils/types';
-import {logger} from '../../utils/logging';
 
 export const name = 'kanye';
 export const description = 'Get a random Kanye quote.';
@@ -15,12 +14,7 @@ const makeEmbed = (quote: string) => new MessageEmbed()
     .setFooter('Powered by kanye.rest', '');
 
 export const execute = async(): Promise<CommandReturn> => {
-    return fetch<{quote: string}>('https://api.kanye.rest/?format=json')
-        .then(async(res) => res.json())
-        .then(async(json) => ({embeds: [makeEmbed(json.quote)]}))
-        .catch(async(e: unknown) => {
-            logger.error(e);
-            return 'Failed to deliver quote :sob:';
-        });
+    const json = await fetch<{quote: string}>('https://api.kanye.rest/?format=json').then(async(res) => res.json());
+    return {embeds: [makeEmbed(json.quote)]};
 };
 
