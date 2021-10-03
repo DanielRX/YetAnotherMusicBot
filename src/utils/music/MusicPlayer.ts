@@ -34,7 +34,6 @@ class MusicPlayer extends Player {
 
     public passConnection(connection: VoiceConnection): void {
         super.passConnection(connection);
-
         this.audioPlayer.on('stateChange', (oldState, newState) => {
             if(newState.status === AudioPlayerStatus.Idle && oldState.status !== AudioPlayerStatus.Idle) {
                 if(this.loopSong) {

@@ -2,9 +2,9 @@
   "name": "yet-another-music-bot",
   "version": "0.0.1",
   "description": "a discord music bot with guild , gifs and misc commands",
-  "main": "index.js",
+  "main": "",
   "scripts": {
-    "start": "node .",
+    "start": "ts-node -T src/index.ts",
     "test": "jest",
     "test:watch": "jest --watch",
     "pretest": "eslint --ignore-path .gitignore ."

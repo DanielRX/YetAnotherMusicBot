@@ -40,13 +40,19 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
                 if(typeof pagesData.author !== 'undefined') { pages.setAuthor(pagesData.author.username, pagesData.author.avatar); }
                 await pages.build();
             } else if(command.deferred) {
-                await interaction.followUp(output);
+                if(!interaction.replied) {
+                    await interaction.followUp(output);
+                }
             } else {
-                await interaction.reply(output);
+                if(!interaction.replied) {
+                    await interaction.reply(output);
+                }
             }
         }
     } catch(e: unknown) {
         logger.error(e);
-        return interaction.reply({content: 'There was an error while executing this command!', ephemeral: true});
+        if(!interaction.replied) {
+            return interaction.reply({content: 'There was an error while executing this command!', ephemeral: true});
+        }
     }
 };

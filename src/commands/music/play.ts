@@ -42,7 +42,7 @@ const handleSubscription = async(queue: PlayTrack[], interaction: CustomInteract
     const title = player.queue[0].name;
     let connection = player.connection;
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if(connection != undefined) {
+    if(connection == null) {
         connection = joinVoiceChannel({channelId: voiceChannel.id, guildId: interaction.guild.id, adapterCreator: interaction.guild.voiceAdapterCreator});
         connection.on('error', (e) => { logger.error(e); });
     }
@@ -153,7 +153,7 @@ const searchYoutube = async(interaction: CustomInteraction, rawQuery: string, vo
             await playOptions.delete().catch(logger.error);
         }
     });
-
+    
     const handleYoutubeData = async(video: Video): Promise<CommandReturn> => {
         const player2 = playerManager.get(interaction.guildId) as unknown as MusicPlayer;
         if(video.live && !opts.playLiveStreams) {
@@ -202,7 +202,7 @@ const searchYoutube = async(interaction: CustomInteraction, rawQuery: string, vo
         playOptionsCollector?.on('collect', async(i: SelectMenuInteraction) => {
             if(i.user.id !== interaction.user.id) {
                 return i.reply({content: 'This element is not for you!', ephemeral: true});
-            }
+            }    
             playOptionsCollector.stop();
             const value = i.values[0];
             if(value === 'cancel_option') {
@@ -213,7 +213,7 @@ const searchYoutube = async(interaction: CustomInteraction, rawQuery: string, vo
             }
             const videoIndex = parseInt(value);
 
-            resolve(YouTube.getVideo(`https://www.youtube.com/watch?v=${videos[videoIndex - 1].id}`)
+            YouTube.getVideo(`https://www.youtube.com/watch?v=${videos[videoIndex - 1].id}`)
                 .then(handleYoutubeData)
                 .catch(async(e: unknown) => {
                     player.commandLock = false;
@@ -221,7 +221,7 @@ const searchYoutube = async(interaction: CustomInteraction, rawQuery: string, vo
                     if(playOptions) playOptions.delete().catch(logger.error);
                     logger.error(e);
                     return 'An error has occurred while trying to get the video ID from youtube.';
-                }));
+                });
         });
     });
 };
