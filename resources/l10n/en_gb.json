@@ -14,7 +14,12 @@
         "PLAYLIST_NOT_FOUND": "You have no playlist named {{playlistName}}",
         "EMPTY_PLAYLIST": "**{{playlistName}}** is empty!"
     },
-
+    "leave": {
+        "NOT_IN_VC": "Please join a voice channel and try again!",
+        "NO_SONG_PLAYING": "There is no song playing right now!",
+        "NOT_IN_SAME_VC": "You must be in the same voice channel as the bot in order to skip!",
+        "LEFT_VC": "Left your voice channel!"
+    },
     "about": {
         "ABOUT": "Made by <@530808977794007051> with :heart: code is available on GitHub (coming soon)"
     }
