@@ -20,6 +20,24 @@
         "NOT_IN_SAME_VC": "You must be in the same voice channel as the bot in order to skip!",
         "LEFT_VC": "Left your voice channel!"
     },
+    "loopQueue": {
+        "NO_SONG_PLAYING": "There is no song playing right now!",
+        "TRIVIA_IS_RUNNING": "You can't use this command while a trivia is running!",
+        "NOT_IN_SAME_VC": "You must be in the same voice channel as the bot in order to use that!",
+        "LOOP_SONG_ON": ":x: Turn off the **loop** command before using the **loopqueue** command",
+        "LOOP_DISABLED": ":repeat: The queue is no longer playing on **loop**",
+        "LOOP_ENABLED": ":repeat: The queue is now playing on **loop**"
+    },
+    "loop": {
+        "NO_SONG_PLAYING": "There is no song playing right now!",
+        "TRIVIA_IS_RUNNING": "You can't use this command while a trivia is running!",
+        "NOT_IN_SAME_VC": "You must be in the same voice channel as the bot in order to use that!",
+        "LOOP_DISABLED": "**{{song}}** is no longer playing on repeat :repeat:",
+        "LOOP_ENABLED": "**{{song}}** is now playing on repeat :repeat:"
+    },
+    "lyrics": {
+
+    },
     "about": {
         "ABOUT": "Made by <@530808977794007051> with :heart: code is available on GitHub (coming soon)"
     }
