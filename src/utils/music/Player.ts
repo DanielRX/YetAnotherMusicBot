@@ -1,7 +1,5 @@
 import type {AudioPlayer, VoiceConnection, VoiceConnectionState} from '@discordjs/voice';
-import {VoiceConnectionDisconnectReason} from '@discordjs/voice';
-import {entersState, VoiceConnectionStatus} from '@discordjs/voice';
-import {createAudioPlayer} from '@discordjs/voice';
+import {VoiceConnectionDisconnectReason, entersState, VoiceConnectionStatus, createAudioPlayer} from '@discordjs/voice';
 import type {BaseGuildTextChannel} from 'discord.js';
 import type {PlayTrack} from '../types';
 import {promisify} from 'util';

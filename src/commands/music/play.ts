@@ -154,7 +154,7 @@ const searchYoutube = async(interaction: CustomInteraction, rawQuery: string, vo
             await playOptions.delete().catch(logger.error);
         }
     });
-    
+
     const handleYoutubeData = async(video: Video): Promise<CommandReturn> => {
         const player2 = playerManager.get(interaction.guildId) as unknown as MusicPlayer;
         if(video.live && !opts.playLiveStreams) {
@@ -203,7 +203,7 @@ const searchYoutube = async(interaction: CustomInteraction, rawQuery: string, vo
         playOptionsCollector?.on('collect', async(i: SelectMenuInteraction) => {
             if(i.user.id !== interaction.user.id) {
                 return i.reply({content: 'This element is not for you!', ephemeral: true});
-            }    
+            }
             playOptionsCollector.stop();
             const value = i.values[0];
             if(value === 'cancel_option') {

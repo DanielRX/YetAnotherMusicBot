@@ -1,7 +1,5 @@
 import type {VoiceConnection} from '@discordjs/voice';
-import {AudioPlayerStatus, entersState, VoiceConnectionDisconnectReason, VoiceConnectionStatus, createAudioResource, StreamType} from '@discordjs/voice';
-import {setTimeout} from 'timers';
-import {promisify} from 'util';
+import {AudioPlayerStatus, createAudioResource, StreamType} from '@discordjs/voice';
 import ytdl from 'ytdl-core';
 import type {BaseGuildTextChannel} from 'discord.js';
 import {MessageEmbed} from 'discord.js';
@@ -9,8 +7,6 @@ import type {PlayTrack} from '../types';
 import {guildData, triviaManager} from '../client';
 import {logger} from '../logging';
 import {Player} from './Player';
-
-const wait = promisify(setTimeout);
 
 class MusicPlayer extends Player {
     public commandLock = false;

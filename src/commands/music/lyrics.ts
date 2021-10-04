@@ -6,7 +6,7 @@ import {fetch} from '../../utils/utils';
 import type {CommandReturn, CustomInteraction} from '../../utils/types';
 import {playerManager, guildData} from '../../utils/client';
 import {logger} from '../../utils/logging';
-import { getAndFillMessage } from '../../utils/messages';
+import {getAndFillMessage} from '../../utils/messages';
 
 export const name = 'lyrics';
 export const description = 'Get the lyrics of any song or the lyrics of the currently playing song!';

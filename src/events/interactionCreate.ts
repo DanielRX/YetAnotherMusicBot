@@ -51,11 +51,10 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
         logger.error(e);
         if(!interaction.replied) {
             if(interaction.deferred) {
-                return interaction.followUp({content: 'There was an error while executing this command!', ephemeral: true});
+                await interaction.followUp({content: 'There was an error while executing this command!', ephemeral: true});
             } else {
-                return interaction.reply({content: 'There was an error while executing this command!', ephemeral: true});
+                await interaction.reply({content: 'There was an error while executing this command!', ephemeral: true});
             }
-            
         }
     }
 };

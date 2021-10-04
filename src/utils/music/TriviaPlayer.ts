@@ -1,7 +1,7 @@
 import type {VoiceConnection} from '@discordjs/voice';
 import type {BaseGuildTextChannel, Message} from 'discord.js';
 import type {PlayTrack} from '../types';
-import {AudioPlayerStatus, entersState, VoiceConnectionStatus, createAudioResource, StreamType} from '@discordjs/voice';
+import {AudioPlayerStatus, createAudioResource, StreamType} from '@discordjs/voice';
 import {setTimeout} from 'timers';
 import {MessageEmbed} from 'discord.js';
 import {triviaManager} from '../client';
