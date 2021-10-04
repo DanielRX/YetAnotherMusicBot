@@ -18,10 +18,9 @@ import {playerManager, guildData} from '../../utils/client';
 
 const deletePlayerIfNeeded = (interaction: CustomInteraction) => {
     const player = playerManager.get(interaction.guildId);
-    if(player) {
-        if((player.queue.length && !player.nowPlaying) || (!player.queue.length && !player.nowPlaying)) { return; }
-        return playerManager.delete(interaction.guildId);
-    }
+    if(!player) { return; }
+    if(!player.nowPlaying) { return; }
+    return playerManager.delete(interaction.guildId);
 };
 
 const constructSongObj = (video: Video, voiceChannel: VoiceChannel, user: User, timestamp?: number): PlayTrack => {
@@ -537,9 +536,7 @@ export const execute = async(interaction: CustomInteraction, rawQuery: string): 
         playerManager.set(interaction.guildId, player as unknown as CustomAudioPlayer);
     }
 
-    if(player.commandLock) {
-        return 'Please wait until the last play call is processed';
-    }
+    if(player.commandLock) { return 'Please wait until the last play call is processed'; }
 
     player.commandLock = true;
 

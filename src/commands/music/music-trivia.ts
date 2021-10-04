@@ -8,6 +8,7 @@ import type {CommandReturn, CustomInteraction} from '../../utils/types';
 import {logger} from '../../utils/logging';
 
 import {getRandom} from '../../utils/utils';
+import {getAndFillMessage} from '../../utils/messages';
 
 export const name = 'music-trivia';
 export const description = 'Engage in a music quiz with your friends!';
@@ -19,7 +20,7 @@ export const options = [
 
 type TriviaElement = {youtubeUrl: string, previewUrl: string, artists: string[], album: string, name: string, id: string};
 
-const handleSubscription = async(interaction: CustomInteraction, player: TriviaPlayer): Promise<CommandReturn> => {
+const handleSubscription = async(interaction: CustomInteraction, player: TriviaPlayer, desc: string, errorMsg: string): Promise<CommandReturn> => {
     const {queue} = player;
     const {voiceChannel} = queue[0];
 
@@ -31,23 +32,21 @@ const handleSubscription = async(interaction: CustomInteraction, player: TriviaP
         await entersState(player.connection, VoiceConnectionStatus.Ready, 10000);
     } catch(e: unknown) {
         logger.error(e);
-        return 'Failed to join your channel!';
+        throw new Error(errorMsg);
     }
     void player.process(player.queue);
 
-    const triviaDescription = `:notes: Get ready! There are ${queue.length} songs, you have 30 seconds to guess either the singer/band or the name of the song. Good luck!
-    Vote skip the song by entering the word 'skip'.
-    You can end the trivia at any point by using the end-trivia command!`;
-
-    const startTriviaEmbed = new MessageEmbed().setColor('#ff7373').setTitle(':notes: Starting Music Quiz!').setDescription(triviaDescription);
+    const startTriviaEmbed = new MessageEmbed().setColor('#ff7373').setTitle(':notes: Starting Music Quiz!').setDescription(desc);
     return {embeds: [startTriviaEmbed]};
 };
 
 export const execute = async(interaction: CustomInteraction, length: number): Promise<CommandReturn> => {
+    const message = getAndFillMessage('musicTrivia', 'en_gb'); // TODO: User/server locale?
+
     const voiceChannel = interaction.member.voice.channel;
-    if(!voiceChannel) { return ':no_entry: Please join a voice channel and try again!'; }
-    if(playerManager.has(interaction.guildId)) { return `You can't use this while a track is playing!`; }
-    if(triviaManager.has(interaction.guildId)) { return 'There is already a trivia in play!'; }
+    if(!voiceChannel) { return message('NOT_IN_VC'); }
+    if(playerManager.has(interaction.guildId)) { return message('TRACK_IS_PLAYING'); }
+    if(triviaManager.has(interaction.guildId)) { return message('TRIVIA_IS_RUNNING'); }
 
     const songs = await fs.readJSON('./resources/music/mk2/trivia.json') as TriviaElement[]; // TODO: Move type to types
     const albumData = await fs.readJSON('./resources/music/mk2/albums.json') as {[key: string]: {[key: string]: unknown}};
@@ -73,6 +72,6 @@ export const execute = async(interaction: CustomInteraction, length: number): Pr
     });
 
     // play and display embed that says trivia started and how many songs are going to be
-    return handleSubscription(interaction, triviaPlayer);
+    return handleSubscription(interaction, triviaPlayer, await message('START', {length: triviaPlayer.queue.length}), await message('FAILED_TO_JOIN'));
 };
 

@@ -15,7 +15,7 @@
         "EMPTY_PLAYLIST": "**{{playlistName}}** is empty!"
     },
     "leave": {
-        "NOT_IN_VC": "Please join a voice channel and try again!",
+        "NOT_IN_VC": ":no_entry: Please join a voice channel and try again!",
         "NO_SONG_PLAYING": "There is no song playing right now!",
         "NOT_IN_SAME_VC": "You must be in the same voice channel as the bot in order to do that!",
         "LEFT_VC": "Left your voice channel!"
@@ -48,6 +48,25 @@
         "NOT_IN_SAME_VC": "You must be in the same voice channel as the bot in order to do that!",
         "INVALID_POSITION": ":x: Try again and enter a valid song position number",
         "SONG_MOVED": "**{{songName}}** moved to position {{newPosition}}"
+    },
+    "musicTrivia": {
+        "START": ":notes: Get ready! There are {{length}} songs, you have 30 seconds to guess either the singer/band or the name of the song. Good luck!\n    Vote skip the song by entering the word 'skip'.\n    You can end the trivia at any point by using the end-trivia command!`",
+        "NOT_IN_VC": ":no_entry: Please join a voice channel and try again!",
+        "TRACK_IS_PLAYING": "You can't use this command while a track is playing!",
+        "TRIVIA_IS_RUNNING": "You can't use this command while a trivia is running!",
+        "FAILED_TO_JOIN": "Failed to join your channel!"
+    },
+    "myPlaylists": {
+        "NO_SAVED_PLAYLISTS": "You have zero saved playlists!",
+        "EMBED_TITLE": "Your saved playlists"
+    },
+    "pause": {
+        "NOT_IN_VC": ":no_entry: Please join a voice channel and try again!",
+        "NO_SONG_PLAYING": "There is no song playing right now!",
+        "NOT_IN_SAME_VC": "You must be in the same voice channel as the bot in order to do that!",
+        "ALREADY_PAUSED": "You already paused this song!",
+        "SUCCESS": ":pause_button: Song was paused! To unpause, use the resume command",
+        "FAIL": "Unable to pause this song, please try again soon"
     },
     "about": {
         "ABOUT": "Made by <@530808977794007051> with :heart: code is available on GitHub (coming soon)"
