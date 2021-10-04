@@ -26,7 +26,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
         }
         logger.verbose(params);
         if(command.deferred) {
-            void interaction.deferReply();
+            await interaction.deferReply();
         }
         const output = await command.execute(interaction, ...params);
         if(!interaction.replied) {
