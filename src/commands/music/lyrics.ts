@@ -6,6 +6,7 @@ import {fetch} from '../../utils/utils';
 import type {CommandReturn, CustomInteraction} from '../../utils/types';
 import {playerManager, guildData} from '../../utils/client';
 import {logger} from '../../utils/logging';
+import { getAndFillMessage } from '../../utils/messages';
 
 export const name = 'lyrics';
 export const description = 'Get the lyrics of any song or the lyrics of the currently playing song!';
@@ -21,7 +22,7 @@ const cleanSongName = (songName: string) => {
         .replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '');
 };
 
-const searchSong = async(query: string): Promise<string> => {
+const searchSong = async(query: string, errorMessage: string): Promise<string> => {
     const searchURL = `https://api.genius.com/search?q=${encodeURI(query)}`;
     const headers = {Authorization: `Bearer ${config.geniusLyricsAPI}`};
     try {
@@ -31,27 +32,27 @@ const searchSong = async(query: string): Promise<string> => {
         return `https://api.genius.com${songPath}`;
     } catch(e: unknown) {
         logger.error(e);
-        throw new Error(':x: No song has been found for this query');
+        throw new Error(errorMessage);
     }
 };
 
-const getSongPageURL = async(url: string) => {
+const getSongPageURL = async(url: string, errorMessage: string) => {
     const headers = {Authorization: `Bearer ${config.geniusLyricsAPI}`};
     try {
         const body = await fetch<{response: {song: {url: string}}}>(url, {headers});
         const result = await body.json();
         if(!result.response.song.url) {
-            throw new Error(':x: There was a problem finding a URL for this song');
+            throw new Error(errorMessage);
         } else {
             return result.response.song.url;
         }
     } catch(e: unknown) {
         logger.error(e);
-        throw new Error('There was a problem finding a URL for this song');
+        throw new Error(errorMessage);
     }
 };
 
-const getLyrics = async(url: string) => {
+const getLyrics = async(url: string, errorMessage: string) => {
     try {
         const response = await fetch(url);
         const text = await response.text();
@@ -61,7 +62,7 @@ const getLyrics = async(url: string) => {
             $('.Lyrics__Container-sc-1ynbvzw-8').find('br').replaceWith('\n');
             lyrics = $('.Lyrics__Container-sc-1ynbvzw-8').text();
             if(!lyrics) {
-                throw new Error('There was a problem fetching lyrics for this song, please try again');
+                throw new Error(errorMessage);
             } else {
                 return lyrics.replace(/(\[.+\])/g, '');
             }
@@ -70,27 +71,26 @@ const getLyrics = async(url: string) => {
         }
     } catch(e: unknown) {
         logger.error(e);
-        throw new Error('There was a problem fetching lyrics for this song, please try again');
+        throw new Error(errorMessage);
     }
 };
 
 export const execute = async(interaction: CustomInteraction, songName: string): Promise<CommandReturn> => {
-    if(!config.geniusLyricsAPI) { return ':x: Lyrics command is not enabled'; }
+    const message = getAndFillMessage('lyrics', 'en_gb'); // TODO: User/server locale?
+    if(!config.geniusLyricsAPI) { return message('COMMAND_DISABLED'); }
     const player = playerManager.get(interaction.guildId);
     const guild = guildData.get(interaction.guildId);
     if(songName === '') {
-        if(!player) { return 'There is no song playing! Enter a song name or play a song'; }
+        if(!player) { return message('NO_SONG_PLAYING'); }
         if(guild) {
-            if(guild.triviaData.isTriviaRunning) {
-                return ':x: Please try again after the trivia has ended';
-            }
+            if(guild.triviaData.isTriviaRunning) { return message('TRIVIA_IS_RUNNING'); }
         }
         songName = player.nowPlaying?.name ?? '';
     }
 
-    const url = await searchSong(cleanSongName(songName));
-    const songPageURL = await getSongPageURL(url);
-    const lyrics = await getLyrics(songPageURL);
+    const url = await searchSong(cleanSongName(songName), await message('SONG_NOT_FOUND'));
+    const songPageURL = await getSongPageURL(url, await message('GENERIC_ERROR'));
+    const lyrics = await getLyrics(songPageURL, await message('GENERIC_ERROR'));
 
     const lyricsIndex = Math.round(lyrics.length / 4096) + 1;
     const lyricsArray = [];
@@ -98,13 +98,13 @@ export const execute = async(interaction: CustomInteraction, songName: string): 
     for(let i = 1; i <= lyricsIndex; ++i) {
         if(lyrics.trim().slice((i - 1) * 4096, i * 4096).length !== 0) {
             lyricsArray.push(new MessageEmbed()
-                .setTitle(`Lyrics page #${i}`)
+                .setTitle(`Lyrics page #${i}`) // TODO: Replace by message
                 .setDescription(lyrics.slice((i - 1) * 4096, i * 4096))
-                .setFooter('Provided by genius.com'));
+                .setFooter('Provided by genius.com')); // TODO: Replace by message
         }
     }
 
-    const pageData = {title: `${songName} lyrics`, pages: lyricsArray, color: '#9096E6' as const, url: songPageURL, author: {username: interaction.member.user.username, avatar: interaction.member.user.displayAvatarURL()}};
+    const pageData = {title: `${songName} lyrics`, /* TODO: Replace by message */ pages: lyricsArray, color: '#9096E6' as const, url: songPageURL, author: {username: interaction.member.user.username, avatar: interaction.member.user.displayAvatarURL()}};
     return {pages: pageData};
 };
 

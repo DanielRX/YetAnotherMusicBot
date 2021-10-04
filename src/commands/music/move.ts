@@ -3,6 +3,7 @@ import {AudioPlayerStatus} from '@discordjs/voice';
 import createGuildData from '../../utils/createGuildData';
 import {arrayMove} from '../../utils/utils';
 import {guildData, playerManager} from '../../utils/client';
+import {getAndFillMessage} from '../../utils/messages';
 
 export const name = 'move';
 export const description = 'Move a song to a desired position in queue!';
@@ -14,19 +15,22 @@ export const options = [
 ];
 
 export const execute = async(interaction: CustomInteraction, oldPosition: number, newPosition: number): Promise<string> => {
+    const message = getAndFillMessage('move', 'en_gb'); // TODO: User/server locale?
+
     if(!guildData.get(interaction.guildId)) {
         guildData.set(interaction.guildId, createGuildData());
     }
     const guild = guildData.get(interaction.guildId) as unknown as GuildData;
     const player = playerManager.get(interaction.guildId);
-    if(!player) { return 'There is no song playing now!'; }
-    if(player.audioPlayer.state.status !== AudioPlayerStatus.Playing) { return 'There is no song playing now!'; }
-    if(guild.triviaData.isTriviaRunning) { return `You can't use this command while a trivia is running!`; } // && player.audioPlayer.state.status === AudioPlayerStatus.Playing
-    if(interaction.member.voice.channelId !== interaction.guild.me?.voice.channelId) { return `You must be in the same voice channel as the bot in order to use that!`; }
-    if(oldPosition < 1 || oldPosition > player.queue.length || newPosition < 1 || newPosition > player.queue.length || oldPosition == newPosition) { return ':x: Try again and enter a valid song position number'; }
+    if(!player) { return message('NO_SONG_PLAYING'); }
+    if(player.audioPlayer.state.status !== AudioPlayerStatus.Playing) { return message('NO_SONG_PLAYING'); }
+    if(guild.triviaData.isTriviaRunning) { return message('TRIVIA_IS_RUNNING'); } // && player.audioPlayer.state.status === AudioPlayerStatus.Playing
+    if(interaction.member.voice.channelId !== interaction.guild.me?.voice.channelId) { return message('NOT_IN_SAME_VC'); }
+    const invalidPosition = oldPosition < 1 || oldPosition > player.queue.length || newPosition < 1 || newPosition > player.queue.length || oldPosition == newPosition;
+    if(invalidPosition) { return message('INVALID_POSITION'); }
 
     const songName = player.queue[oldPosition - 1].name;
     arrayMove(player.queue, oldPosition - 1, newPosition - 1);
 
-    return `**${songName}** moved to position ${newPosition}`;
+    return message('SONG_MOVED', {songName, newPosition});
 };

@@ -17,7 +17,7 @@
     "leave": {
         "NOT_IN_VC": "Please join a voice channel and try again!",
         "NO_SONG_PLAYING": "There is no song playing right now!",
-        "NOT_IN_SAME_VC": "You must be in the same voice channel as the bot in order to skip!",
+        "NOT_IN_SAME_VC": "You must be in the same voice channel as the bot in order to do that!",
         "LEFT_VC": "Left your voice channel!"
     },
     "loopQueue": {
@@ -31,12 +31,23 @@
     "loop": {
         "NO_SONG_PLAYING": "There is no song playing right now!",
         "TRIVIA_IS_RUNNING": "You can't use this command while a trivia is running!",
-        "NOT_IN_SAME_VC": "You must be in the same voice channel as the bot in order to use that!",
+        "NOT_IN_SAME_VC": "You must be in the same voice channel as the bot in order to do that!",
         "LOOP_DISABLED": "**{{song}}** is no longer playing on repeat :repeat:",
         "LOOP_ENABLED": "**{{song}}** is now playing on repeat :repeat:"
     },
     "lyrics": {
-
+        "SONG_NOT_FOUND": ":x: No song has been found for this query",
+        "GENERIC_ERROR": "There was a problem fetching lyrics for this song, please try again",
+        "COMMAND_DISABLED": ":x: This command is not enabled",
+        "NO_SONG_PLAYING": "There is no song playing! Enter a song name or play a song",
+        "TRIVIA_IS_RUNNING": "You can't use this command while a trivia is running!"
+    },
+    "move": {
+        "NO_SONG_PLAYING": "There is no song playing right now!",
+        "TRIVIA_IS_RUNNING": "You can't use this command while a trivia is running!",
+        "NOT_IN_SAME_VC": "You must be in the same voice channel as the bot in order to do that!",
+        "INVALID_POSITION": ":x: Try again and enter a valid song position number",
+        "SONG_MOVED": "**{{songName}}** moved to position {{newPosition}}"
     },
     "about": {
         "ABOUT": "Made by <@530808977794007051> with :heart: code is available on GitHub (coming soon)"
