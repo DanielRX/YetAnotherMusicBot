@@ -49,7 +49,6 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
         }
     } catch(e: unknown) {
         logger.error(e);
-        console.log({interaction});
         if(!interaction.replied) {
             if(interaction.deferred) {
                 return interaction.followUp({content: 'There was an error while executing this command!', ephemeral: true});
