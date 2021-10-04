@@ -270,7 +270,8 @@ const handleYoutubeURL = async(interaction: CustomInteraction, rawQuery: string)
         flagLogic(interaction, video, jumpFlag);
     } else {
         player.queue.push(constructSongObj(video, interaction.member.voice.channel as VoiceChannel, interaction.member.user, timestamp));
-    }    
+    }
+
     if(player.audioPlayer.state.status !== AudioPlayerStatus.Playing) {
         return handleSubscription(player.queue, interaction, player as unknown as MusicPlayer);
     }
