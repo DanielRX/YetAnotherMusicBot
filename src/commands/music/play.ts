@@ -58,6 +58,7 @@ const handleSubscription = async(queue: PlayTrack[], interaction: CustomInteract
         return {content: 'Failed to join your channel!'};
     }
     void player.process(player.queue);
+
     return `Enqueued ${title}`;
 };
 
@@ -213,7 +214,7 @@ const searchYoutube = async(interaction: CustomInteraction, rawQuery: string, vo
             }
             const videoIndex = parseInt(value);
 
-            YouTube.getVideo(`https://www.youtube.com/watch?v=${videos[videoIndex - 1].id}`)
+            resolve(YouTube.getVideo(`https://www.youtube.com/watch?v=${videos[videoIndex - 1].id}`)
                 .then(handleYoutubeData)
                 .catch(async(e: unknown) => {
                     player.commandLock = false;
@@ -221,7 +222,7 @@ const searchYoutube = async(interaction: CustomInteraction, rawQuery: string, vo
                     if(playOptions) playOptions.delete().catch(logger.error);
                     logger.error(e);
                     return 'An error has occurred while trying to get the video ID from youtube.';
-                });
+                }));
         });
     });
 };

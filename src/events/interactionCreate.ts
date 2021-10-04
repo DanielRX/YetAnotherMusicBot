@@ -29,30 +29,34 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
             void interaction.deferReply();
         }
         const output = await command.execute(interaction, ...params);
-        if(typeof output !== 'undefined') {
-            if(typeof output !== 'string' && 'pages' in output) {
-                const pagesData = output.pages;
-                const pages = new PagesBuilder(interaction).setPages(pagesData.pages);
-                if(typeof pagesData.title !== 'undefined') { pages.setTitle(pagesData.title); }
-                if(typeof pagesData.color !== 'undefined') { pages.setColor(pagesData.color as unknown as ColorResolvable); }
-                if(typeof pagesData.url !== 'undefined') { pages.setURL(pagesData.url); }
-                if(typeof pagesData.thumbnail !== 'undefined') { pages.setThumbnail(pagesData.thumbnail); }
-                if(typeof pagesData.author !== 'undefined') { pages.setAuthor(pagesData.author.username, pagesData.author.avatar); }
-                await pages.build();
-            } else if(command.deferred) {
-                if(!interaction.replied) {
+        if(!interaction.replied) {
+            if(typeof output !== 'undefined') {
+                if(typeof output !== 'string' && 'pages' in output) {
+                    const pagesData = output.pages;
+                    const pages = new PagesBuilder(interaction).setPages(pagesData.pages);
+                    if(typeof pagesData.title !== 'undefined') { pages.setTitle(pagesData.title); }
+                    if(typeof pagesData.color !== 'undefined') { pages.setColor(pagesData.color as unknown as ColorResolvable); }
+                    if(typeof pagesData.url !== 'undefined') { pages.setURL(pagesData.url); }
+                    if(typeof pagesData.thumbnail !== 'undefined') { pages.setThumbnail(pagesData.thumbnail); }
+                    if(typeof pagesData.author !== 'undefined') { pages.setAuthor(pagesData.author.username, pagesData.author.avatar); }
+                    await pages.build();
+                } else if(interaction.deferred) {
                     await interaction.followUp(output);
-                }
-            } else {
-                if(!interaction.replied) {
+                } else {
                     await interaction.reply(output);
                 }
             }
         }
     } catch(e: unknown) {
         logger.error(e);
+        console.log({interaction});
         if(!interaction.replied) {
-            return interaction.reply({content: 'There was an error while executing this command!', ephemeral: true});
+            if(interaction.deferred) {
+                return interaction.followUp({content: 'There was an error while executing this command!', ephemeral: true});
+            } else {
+                return interaction.reply({content: 'There was an error while executing this command!', ephemeral: true});
+            }
+            
         }
     }
 };
