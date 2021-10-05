@@ -1,15 +1,15 @@
 {
-    "createPlaylist": {
+    "create-playlist": {
         "PLAYLIST_NAME_EXISTS": "There is already a playlist named **{{playlistName}}** in your saved playlists!",
         "PLAYLIST_CREATED": "Created a new playlist named **{{playlistName}}**",
         "GENERIC_ERROR": "There was a problem executing this command, please try again later"
     },
-    "deletePlaylist": {
+    "delete-playlist": {
         "NO_SAVED_PLAYLISTS": "You have zero saved playlists!",
         "PLAYLIST_NOT_FOUND": "You have no playlist named {{playlistName}}",
         "PLAYLIST_REMOVED": "I removed **{{playlistName}}** from your saved playlists!"
     },
-    "displayPlaylist": {
+    "display-playlist": {
         "NO_SAVED_PLAYLISTS": "You have zero saved playlists!",
         "PLAYLIST_NOT_FOUND": "You have no playlist named {{playlistName}}",
         "EMPTY_PLAYLIST": "**{{playlistName}}** is empty!"
@@ -20,7 +20,7 @@
         "NOT_IN_SAME_VC": "You must be in the same voice channel as the bot in order to do that!",
         "LEFT_VC": "Left your voice channel!"
     },
-    "loopQueue": {
+    "loop-queue": {
         "NO_SONG_PLAYING": "There is no song playing right now!",
         "TRIVIA_IS_RUNNING": "You can't use this command while a trivia is running!",
         "NOT_IN_SAME_VC": "You must be in the same voice channel as the bot in order to use that!",
@@ -49,14 +49,14 @@
         "INVALID_POSITION": ":x: Try again and enter a valid song position number",
         "SONG_MOVED": "**{{songName}}** moved to position {{newPosition}}"
     },
-    "musicTrivia": {
+    "music-trivia": {
         "START": ":notes: Get ready! There are {{length}} songs, you have 30 seconds to guess either the singer/band or the name of the song. Good luck!\n    Vote skip the song by entering the word 'skip'.\n    You can end the trivia at any point by using the end-trivia command!`",
         "NOT_IN_VC": ":no_entry: Please join a voice channel and try again!",
         "TRACK_IS_PLAYING": "You can't use this command while a track is playing!",
         "TRIVIA_IS_RUNNING": "You can't use this command while a trivia is running!",
         "FAILED_TO_JOIN": "Failed to join your channel!"
     },
-    "myPlaylists": {
+    "my-playlists": {
         "NO_SAVED_PLAYLISTS": "You have zero saved playlists!",
         "EMBED_TITLE": "Your saved playlists"
     },
@@ -67,6 +67,23 @@
         "ALREADY_PAUSED": "You already paused this song!",
         "SUCCESS": ":pause_button: Song was paused! To unpause, use the resume command",
         "FAIL": "Unable to pause this song, please try again soon"
+    },
+    "play": {
+        "NOT_IN_VC": ":no_entry: Please join a voice channel and try again!",
+        "TRIVIA_IS_RUNNING": "You can't use this command while a trivia is running!",
+        "PLAY_CALL_RUNNING": "Please wait until the last play call is processed"
+    },
+    "queue-history": {
+        "NO_HISTORY": "There is no music queue history!",
+        "EMBED_TITLE": "Music Queue History",
+        "PAGE_TITLE": "Page {{i}}"
+    },
+    "queue": {
+        "TRIVIA_IS_RUNNING": "You can't use this command while a trivia is running!",
+        "NO_SONGS": ":x: There are no songs in queue!",
+        "NO_SONG_PLAYING": "There is nothing playing!",
+        "EMBED_TITLE": "Music Queue",
+        "PAGE_TITLE": "Page {{i}}"
     },
     "about": {
         "ABOUT": "Made by <@530808977794007051> with :heart: code is available on GitHub (coming soon)"

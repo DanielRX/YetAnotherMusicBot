@@ -1,5 +1,5 @@
 import {playerManager} from '../../utils/client';
-import type {CommandReturn, CustomInteraction} from '../../utils/types';
+import type {CommandReturn, CustomInteraction, MessageFunction} from '../../utils/types';
 
 export const name = 'skip-to';
 export const description = 'Skip to a song in queue';
@@ -9,7 +9,7 @@ export const options = [
     {type: 'integer' as const, name: 'position', description: 'What is the position in queue you want to skip to?', required: true, choices: []},
 ];
 
-export const execute = async(interaction: CustomInteraction, position: number): Promise<CommandReturn> => {
+export const execute = async(interaction: CustomInteraction, message: MessageFunction, position: number): Promise<CommandReturn> => {
     const voiceChannel = interaction.member.voice.channel;
     if(!voiceChannel) { return `:no_entry: You must be in the same voice channel as the bot in order to use that!`; }
     if(voiceChannel.id !== interaction.member.voice.channelId) { return `:no_entry: You must be in the same voice channel as the bot in order to use that!`; }

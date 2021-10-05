@@ -1,7 +1,7 @@
 import type {BaseGuildTextChannel, Message, SelectMenuInteraction, User, VoiceChannel} from 'discord.js';
 import type {Video} from 'youtube-sr';
 import type MusicPlayer from '../../utils/music/MusicPlayer';
-import type {CommandReturn, CustomAudioPlayer, CustomInteraction, GuildData, Playlist, PlayTrack, Track} from '../../utils/types';
+import type {CommandReturn, CustomAudioPlayer, CustomInteraction, GuildData, MessageFunction, Playlist, PlayTrack, Track} from '../../utils/types';
 import {MessageSelectMenu, MessageActionRow} from 'discord.js';
 import Player from '../../utils/music/MusicPlayer';
 import {getData} from 'spotify-url-info';
@@ -509,19 +509,19 @@ export const options = [
     {type: 'string' as const, name: 'query', description: ':notes: What song or playlist would you like to listen to? Add -s to shuffle a playlist', required: true, choices: []}
 ];
 
-export const execute = async(interaction: CustomInteraction, rawQuery: string): Promise<CommandReturn> => {
+export const execute = async(interaction: CustomInteraction, messageF: MessageFunction, rawQuery: string): Promise<CommandReturn> => {
     if(!guildData.get(interaction.guildId)) {
         guildData.set(interaction.guildId, createGuildData());
     }
     const message = await interaction.deferReply({fetchReply: true});
     // Make sure that only users present in a voice channel can use 'play'
     if(!interaction.member.voice.channel) {
-        return ':no_entry: Please join a voice channel and try again!';
+        return messageF('NOT_IN_VC');
     }
     // Make sure there isn't a 'music-trivia' running
     const guild = guildData.get(interaction.guild.id) as unknown as GuildData;
     if(guild.triviaData.isTriviaRunning) {
-        return ':x: Please try after the trivia has ended!';
+        return messageF('TRIVIA_IS_RUNNING');
     }
     //Parse query to check for flags
     const splitQuery = rawQuery.split(' ');
@@ -536,7 +536,7 @@ export const execute = async(interaction: CustomInteraction, rawQuery: string): 
         playerManager.set(interaction.guildId, player as unknown as CustomAudioPlayer);
     }
 
-    if(player.commandLock) { return 'Please wait until the last play call is processed'; }
+    if(player.commandLock) { return messageF('PLAY_CALL_RUNNING'); }
 
     player.commandLock = true;
 

@@ -1,4 +1,4 @@
-import type {CommandReturn, CustomInteraction} from '../../utils/types';
+import type {CommandReturn, CustomInteraction, MessageFunction} from '../../utils/types';
 import member from '../../utils/models/Member';
 
 export const name = 'remove-from-playlist';
@@ -10,7 +10,7 @@ export const options = [
     {type: 'integer' as const, name: 'index', description: 'What is the index of the video you would like to delete from your saved playlist?', required: true, choices: []}
 ];
 
-export const execute = async(interaction: CustomInteraction, playlistName: string, index: number): Promise<CommandReturn> => {
+export const execute = async(interaction: CustomInteraction, message: MessageFunction, playlistName: string, index: number): Promise<CommandReturn> => {
     const userData = await member.findOne({memberId: interaction.member.id}).exec();
     if(!userData) { return 'You have no custom playlists!'; }
     const savedPlaylistsClone = userData.savedPlaylists;

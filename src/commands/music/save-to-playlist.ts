@@ -1,6 +1,6 @@
 import type {User} from 'discord.js';
 import type {Video} from 'youtube-sr';
-import type {CommandReturn, CustomInteraction, PlayTrack, Track} from '../../utils/types';
+import type {CommandReturn, CustomInteraction, MessageFunction, PlayTrack, Track} from '../../utils/types';
 import member from '../../utils/models/Member';
 import YouTube from 'youtube-sr';
 import {getData} from 'spotify-url-info';
@@ -77,7 +77,7 @@ const processURL = async(url: string, interaction: CustomInteraction) => {
     return constructSongObj(video, interaction.member.user);
 };
 
-export const execute = async(interaction: CustomInteraction, playlistName: string, url: string): Promise<CommandReturn> => {
+export const execute = async(interaction: CustomInteraction, message: MessageFunction, playlistName: string, url: string): Promise<CommandReturn> => {
     const userData = await member.findOne({memberId: interaction.member.id}).exec();
     if(!userData) { return 'You have no custom playlists!'; }
     const savedPlaylistsClone = userData.savedPlaylists;

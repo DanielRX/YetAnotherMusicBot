@@ -3,10 +3,9 @@ import {MessageEmbed} from 'discord.js';
 import cheerio from 'cheerio';
 import {config} from '../../utils/config';
 import {fetch} from '../../utils/utils';
-import type {CommandReturn, CustomInteraction} from '../../utils/types';
+import type {CustomInteraction, CommandReturn, MessageFunction} from '../../utils/types';
 import {playerManager, guildData} from '../../utils/client';
 import {logger} from '../../utils/logging';
-import {getAndFillMessage} from '../../utils/messages';
 
 export const name = 'lyrics';
 export const description = 'Get the lyrics of any song or the lyrics of the currently playing song!';
@@ -75,8 +74,7 @@ const getLyrics = async(url: string, errorMessage: string) => {
     }
 };
 
-export const execute = async(interaction: CustomInteraction, songName: string): Promise<CommandReturn> => {
-    const message = getAndFillMessage('lyrics', 'en_gb'); // TODO: User/server locale?
+export const execute = async(interaction: CustomInteraction, message: MessageFunction, songName: string): Promise<CommandReturn> => {
     if(!config.geniusLyricsAPI) { return message('COMMAND_DISABLED'); }
     const player = playerManager.get(interaction.guildId);
     const guild = guildData.get(interaction.guildId);

@@ -1,4 +1,4 @@
-import type {CommandReturn} from '../../utils/types';
+import type {CommandReturn, MessageFunction} from '../../utils/types';
 import {MessageEmbed} from 'discord.js';
 import {fetch} from '../../utils/utils';
 import {config} from '../../utils/config';
@@ -7,7 +7,7 @@ export const name = 'world-news';
 export const description = 'Replies with the 10 latest world news headlines!';
 export const deferred = false;
 
-export const execute = async(): Promise<CommandReturn> => {
+export const execute = async(message: MessageFunction): Promise<CommandReturn> => {
     if(!config.newsAPI) { return ':x: This command is not enabled'; }
     // powered by NewsAPI.org
     const response = await fetch<{articles: ({title: string, url: string, author: string, description: string, urlToImage: string, publishedAt: number})[]}>(`https://newsapi.org/v2/top-headlines?sources=reuters&pageSize=10&apiKey=${config.newsAPI}`);

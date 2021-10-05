@@ -1,6 +1,5 @@
-import type {CommandReturn, CustomInteraction} from '../../utils/types';
+import type {CommandReturn, CustomInteraction, MessageFunction} from '../../utils/types';
 import member from '../../utils/models/Member';
-import {getAndFillMessage} from '../../utils/messages';
 
 export const name = 'delete-playlist';
 export const description = 'Delete a playlist from your saved playlists';
@@ -10,8 +9,7 @@ export const options = [
     {type: 'string' as const, name: 'playlistname', description: 'Which playlist would you like to delete?', required: true, choices: []}
 ];
 
-export const execute = async(interaction: CustomInteraction, playlistName: string): Promise<CommandReturn> => {
-    const message = getAndFillMessage('deletePlaylist', 'en_gb');
+export const execute = async(interaction: CustomInteraction, message: MessageFunction, playlistName: string): Promise<CommandReturn> => {
     // Check if user has playlists or if user is saved in the DB
     const userData = await member.findOne({memberId: interaction.member.id}).exec();
     if(!userData) { return message('NO_SAVED_PLAYLISTS'); }

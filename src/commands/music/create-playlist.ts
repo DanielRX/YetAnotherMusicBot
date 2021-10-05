@@ -1,6 +1,5 @@
-import type {CommandReturn, CustomInteraction} from '../../utils/types';
+import type {CommandReturn, CustomInteraction, MessageFunction} from '../../utils/types';
 import member from '../../utils/models/Member';
-import {getAndFillMessage} from '../../utils/messages';
 
 export const name = 'create-playlist';
 export const description = 'Create a custom playlist that you can play anytime';
@@ -10,8 +9,7 @@ export const options = [
     {type: 'string' as const, name: 'playlistname', description: 'What is the name of the playlist you would like to create?', required: true, choices: []}
 ];
 
-export const execute = async(interaction: CustomInteraction, playlistName: string): Promise<CommandReturn> => {
-    const message = getAndFillMessage('createPlaylist', 'en_gb'); // TODO: User/server locale?
+export const execute = async(interaction: CustomInteraction, message: MessageFunction, playlistName: string): Promise<CommandReturn> => {
     const {member: {id, user: {username}, joinedAt}} = interaction;
     const playlistData = {name: playlistName, urls: []};
     // Check if the user exists in the db

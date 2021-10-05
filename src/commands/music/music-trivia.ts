@@ -4,11 +4,10 @@ import {MessageEmbed} from 'discord.js';
 import fs from 'fs-extra';
 import {playerManager, triviaManager} from '../../utils/client';
 import TriviaPlayer from '../../utils/music/TriviaPlayer';
-import type {CommandReturn, CustomInteraction} from '../../utils/types';
+import type {CustomInteraction, CommandReturn, MessageFunction} from '../../utils/types';
 import {logger} from '../../utils/logging';
 
 import {getRandom} from '../../utils/utils';
-import {getAndFillMessage} from '../../utils/messages';
 
 export const name = 'music-trivia';
 export const description = 'Engage in a music quiz with your friends!';
@@ -40,9 +39,7 @@ const handleSubscription = async(interaction: CustomInteraction, player: TriviaP
     return {embeds: [startTriviaEmbed]};
 };
 
-export const execute = async(interaction: CustomInteraction, length: number): Promise<CommandReturn> => {
-    const message = getAndFillMessage('musicTrivia', 'en_gb'); // TODO: User/server locale?
-
+export const execute = async(interaction: CustomInteraction, message: MessageFunction, length: number): Promise<CommandReturn> => {
     const voiceChannel = interaction.member.voice.channel;
     if(!voiceChannel) { return message('NOT_IN_VC'); }
     if(playerManager.has(interaction.guildId)) { return message('TRACK_IS_PLAYING'); }

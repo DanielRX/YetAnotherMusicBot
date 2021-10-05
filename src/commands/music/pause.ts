@@ -1,15 +1,12 @@
-import type {CommandReturn, CustomInteraction} from '../../utils/types';
+import type {CustomInteraction, CommandReturn, MessageFunction} from '../../utils/types';
 import {AudioPlayerStatus} from '@discordjs/voice';
 import {playerManager} from '../../utils/client';
-import {getAndFillMessage} from '../../utils/messages';
 
 export const name = 'pause';
 export const description = 'Pause the playing track';
 export const deferred = false;
 
-export const execute = async(interaction: CustomInteraction): Promise<CommandReturn> => {
-    const message = getAndFillMessage('myPlaylists', 'en_gb'); // TODO: User/server locale?
-
+export const execute = async(interaction: CustomInteraction, message: MessageFunction): Promise<CommandReturn> => {
     const voiceChannel = interaction.member.voice.channel;
     if(!voiceChannel) { return message('NOT_IN_VC'); }
 

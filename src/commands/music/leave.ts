@@ -1,14 +1,12 @@
 import {AudioPlayerStatus} from '@discordjs/voice';
-import type {CustomInteraction} from '../../utils/types';
+import type {CustomInteraction, MessageFunction} from '../../utils/types';
 import {playerManager} from '../../utils/client';
-import {getAndFillMessage} from '../../utils/messages';
 
 export const name = 'leave';
 export const description = 'Leaves a voice channel if in one!';
 export const deferred = false;
 
-export const execute = async(interaction: CustomInteraction): Promise<string> => {
-    const message = getAndFillMessage('leave', 'en_gb'); // TODO: User/server locale?
+export const execute = async(interaction: CustomInteraction, message: MessageFunction): Promise<string> => {
     const voiceChannel = interaction.member.voice.channel;
     if(!voiceChannel) { return message('NOT_IN_VC'); }
 

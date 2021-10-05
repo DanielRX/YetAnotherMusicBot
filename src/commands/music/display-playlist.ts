@@ -1,7 +1,6 @@
-import type {CommandReturn, CustomInteraction} from '../../utils/types';
+import type {CommandReturn, CustomInteraction, MessageFunction} from '../../utils/types';
 import member from '../../utils/models/Member';
 import {MessageEmbed} from 'discord.js';
-import {getAndFillMessage} from '../../utils/messages';
 
 export const name = 'display-playlist';
 export const description = 'Display a saved playlist';
@@ -13,9 +12,7 @@ export const options = [
 
 const maxLength = 24;
 
-export const execute = async(interaction: CustomInteraction, playlistName: string): Promise<CommandReturn> => {
-    const message = getAndFillMessage('displayPlaylist', 'en_gb');
-
+export const execute = async(interaction: CustomInteraction, message: MessageFunction, playlistName: string): Promise<CommandReturn> => {
     // Check if user has playlists or if user is saved in the DB
     const userData = await member.findOne({memberId: interaction.member.id}).exec();
     if(!userData) { return message('NO_SAVED_PLAYLISTS'); }

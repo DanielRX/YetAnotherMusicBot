@@ -1,4 +1,4 @@
-import type {CommandReturn, CustomInteraction, GuildData} from '../../utils/types';
+import type {CommandReturn, CustomInteraction, GuildData, MessageFunction} from '../../utils/types';
 import {AudioPlayerStatus} from '@discordjs/voice';
 import {playerManager, guildData} from '../../utils/client';
 
@@ -6,7 +6,7 @@ export const name = 'skip';
 export const description = 'Skip the currently playing song!';
 export const deferred = false;
 
-export const execute = async(interaction: CustomInteraction): Promise<CommandReturn> => {
+export const execute = async(interaction: CustomInteraction, message: MessageFunction): Promise<CommandReturn> => {
     const voiceChannel = interaction.member.voice.channel;
     if(!voiceChannel) { return 'Please join a voice channel and try again!'; }
 

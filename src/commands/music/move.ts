@@ -1,9 +1,8 @@
-import type {CustomInteraction, GuildData} from '../../utils/types';
+import type {CustomInteraction, GuildData, MessageFunction} from '../../utils/types';
 import {AudioPlayerStatus} from '@discordjs/voice';
 import createGuildData from '../../utils/createGuildData';
 import {arrayMove} from '../../utils/utils';
 import {guildData, playerManager} from '../../utils/client';
-import {getAndFillMessage} from '../../utils/messages';
 
 export const name = 'move';
 export const description = 'Move a song to a desired position in queue!';
@@ -14,9 +13,7 @@ export const options = [
     {type: 'integer' as const, name: 'newposition', description: 'What position do you want to move the song to?', required: true, choices: []}
 ];
 
-export const execute = async(interaction: CustomInteraction, oldPosition: number, newPosition: number): Promise<string> => {
-    const message = getAndFillMessage('move', 'en_gb'); // TODO: User/server locale?
-
+export const execute = async(interaction: CustomInteraction, message: MessageFunction, oldPosition: number, newPosition: number): Promise<string> => {
     if(!guildData.get(interaction.guildId)) {
         guildData.set(interaction.guildId, createGuildData());
     }

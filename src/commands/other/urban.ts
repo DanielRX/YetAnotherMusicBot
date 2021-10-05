@@ -1,5 +1,5 @@
 import {MessageEmbed} from 'discord.js';
-import type {CommandReturn, CustomInteraction} from '../../utils/types';
+import type {CommandReturn, CustomInteraction, MessageFunction} from '../../utils/types';
 import {fetch} from '../../utils/utils';
 
 export const name = 'urban';
@@ -10,7 +10,7 @@ export const options = [
     {type: 'string' as const, name: 'query', description: 'What do you want to search for?', required: true, choices: []},
 ];
 
-export const execute = async(interaction: CustomInteraction, query: string): Promise<CommandReturn> => {
+export const execute = async(interaction: CustomInteraction, message: MessageFunction, query: string): Promise<CommandReturn> => {
     const json = await fetch<{list: ({definition: string, permalink: string})[]}>(`https://api.urbandictionary.com/v0/define?term=${interaction.options.get('query')?.value}`).then(async(res) => res.json());
     const embed = new MessageEmbed()
         .setColor('#BB7D61')

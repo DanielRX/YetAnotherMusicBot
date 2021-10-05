@@ -1,16 +1,13 @@
-import type {CustomInteraction, GuildData} from '../../utils/types';
+import type {CustomInteraction, GuildData, MessageFunction} from '../../utils/types';
 import {AudioPlayerStatus} from '@discordjs/voice';
 import createGuildData from '../../utils/createGuildData';
 import {guildData, playerManager} from '../../utils/client';
-import {getAndFillMessage} from '../../utils/messages';
 
 export const name = 'loop';
 export const description = 'Set a song to play on loop';
 export const deferred = false;
 
-export const execute = async(interaction: CustomInteraction): Promise<string> => {
-    const message = getAndFillMessage('loop', 'en_gb'); // TODO: User/server locale?
-
+export const execute = async(interaction: CustomInteraction, message: MessageFunction): Promise<string> => {
     if(!guildData.get(interaction.guildId)) {
         guildData.set(interaction.guildId, createGuildData());
     }

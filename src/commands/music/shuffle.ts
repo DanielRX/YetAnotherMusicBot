@@ -1,12 +1,12 @@
 import {playerManager} from '../../utils/client';
-import type {CommandReturn, CustomInteraction} from '../../utils/types';
+import type {CommandReturn, CustomInteraction, MessageFunction} from '../../utils/types';
 import {shuffleArray} from '../../utils/utils';
 
 export const name = 'shuffle';
 export const description = 'Shuffle the music queue!';
 export const deferred = true;
 
-export const execute = async(interaction: CustomInteraction): Promise<CommandReturn> => {
+export const execute = async(interaction: CustomInteraction, message: MessageFunction): Promise<CommandReturn> => {
     const voiceChannel = interaction.member.voice.channel;
     if(!voiceChannel) { return `:no_entry: You must be in the same voice channel as the bot in order to use that!`; }
     if(voiceChannel.id !== interaction.guild.me?.voice.channel?.id) { return `:no_entry: You must be in the same voice channel as the bot in order to use that!`; }

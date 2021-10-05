@@ -1,11 +1,11 @@
 import {triviaManager} from '../../utils/client';
-import type {CommandReturn, CustomInteraction} from '../../utils/types';
+import type {CommandReturn, CustomInteraction, MessageFunction} from '../../utils/types';
 
 export const name = 'stop-trivia';
 export const description = 'End a music trivia (if one is in play)';
 export const deferred = false;
 
-export const execute = async(interaction: CustomInteraction): Promise<CommandReturn> => {
+export const execute = async(interaction: CustomInteraction, message: MessageFunction): Promise<CommandReturn> => {
     const triviaPlayer = triviaManager.get(interaction.guildId);
     if(!triviaPlayer) { return ':x: No trivia is currently running!'; }
 

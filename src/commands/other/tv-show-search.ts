@@ -1,4 +1,4 @@
-import type {CommandReturn, CustomInteraction} from '../../utils/types';
+import type {CommandReturn, CustomInteraction, MessageFunction} from '../../utils/types';
 import {MessageEmbed} from 'discord.js';
 import {fetch} from '../../utils/utils';
 import type {Nullable} from 'discord-api-types/utils/internals';
@@ -68,7 +68,7 @@ const cleanUp = (summary: string) => summary
     .replace(/&#39;/g, "'")
     .toLocaleString();
 
-export const execute = async(_: CustomInteraction, tvShow: string): Promise<CommandReturn> => {
+export const execute = async(_: CustomInteraction, message: MessageFunction, tvShow: string): Promise<CommandReturn> => {
     const showResponse: Show[] = await getShowSearch(`${tvShow}`);
 
     const embedArray = [];

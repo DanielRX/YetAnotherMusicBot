@@ -1,5 +1,5 @@
 import {MessageEmbed} from 'discord.js';
-import type {CommandReturn, CustomInteraction} from '../../utils/types';
+import type {CommandReturn, CustomInteraction, MessageFunction} from '../../utils/types';
 import {fetch} from '../../utils/utils';
 
 export const name = 'lookup';
@@ -12,7 +12,7 @@ export const options = [
 
 type Data = {query: string, city: string, zip: string, regionName: string, country: string, org: string, isp: string, as: string};
 
-export const execute = async(_: CustomInteraction, resl: string): Promise<CommandReturn> => {
+export const execute = async(_: CustomInteraction, message: MessageFunction, resl: string): Promise<CommandReturn> => {
     const json = await fetch<Data>(`http://ip-api.com/json/${resl}`).then(async(res) => res.json()); // fetch json data from ip-api.com
 
     //embed json results

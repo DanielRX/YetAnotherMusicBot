@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import type {CommandReturn, CustomInteraction} from '../../utils/types';
+import type {CommandReturn, CustomInteraction, MessageFunction} from '../../utils/types';
 import {MessageEmbed} from 'discord.js';
 import {config} from '../../utils/config';
 import {fetch} from '../../utils/utils';
@@ -57,7 +57,7 @@ const getGameDetails = async(query: string) => {
     return json;
 };
 
-export const execute = async(_: CustomInteraction, game: string): Promise<CommandReturn> => {
+export const execute = async(_: CustomInteraction, message: MessageFunction, game: string): Promise<CommandReturn> => {
     if(!config.rawgAPI) { return 'This command is not enabled on this bot!'; }
     const gameTitleFiltered = game.replace(/ /g, '-').replace(/'/g, '').toLowerCase();
 

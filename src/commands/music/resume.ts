@@ -1,4 +1,4 @@
-import type {CommandReturn, CustomInteraction} from '../../utils/types';
+import type {CommandReturn, CustomInteraction, MessageFunction} from '../../utils/types';
 import {AudioPlayerStatus} from '@discordjs/voice';
 import {playerManager} from '../../utils/client';
 
@@ -6,7 +6,7 @@ export const name = 'resume';
 export const description = 'Resume a paused track';
 export const deferred = false;
 
-export const execute = async(interaction: CustomInteraction): Promise<CommandReturn> => {
+export const execute = async(interaction: CustomInteraction, message: MessageFunction): Promise<CommandReturn> => {
     const voiceChannel = interaction.member.voice.channel;
     if(!voiceChannel) { return 'Please join a voice channel and try again!'; }
 

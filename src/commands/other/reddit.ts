@@ -1,7 +1,7 @@
 import {fetch} from '../../utils/utils';
 import type {SelectMenuInteraction} from 'discord.js';
 import {MessageEmbed, MessageActionRow, MessageSelectMenu} from 'discord.js';
-import type {CommandReturn, CustomInteraction} from '../../utils/types';
+import type {CommandReturn, CustomInteraction, MessageFunction} from '../../utils/types';
 import {options as opts} from '../../utils/options';
 import {logger} from '../../utils/logging';
 
@@ -41,7 +41,7 @@ const fetchFromReddit = async(interaction: CustomInteraction, subreddit: string,
     return {pages: pageData};
 };
 
-export const execute = async(interaction: CustomInteraction, subReddit: string, sort: 'best' | 'controversial' | 'hot' | 'new' | 'rising' | 'top'): Promise<CommandReturn> => {
+export const execute = async(interaction: CustomInteraction, messageF: MessageFunction, subReddit: string, sort: 'best' | 'controversial' | 'hot' | 'new' | 'rising' | 'top'): Promise<CommandReturn> => {
     const message = await interaction.deferReply({fetchReply: true});
 
     if(!(sort === 'top' || sort === 'controversial')) { return fetchFromReddit(interaction, subReddit, sort); }

@@ -1,4 +1,4 @@
-import type {CommandReturn, CustomInteraction} from '../../utils/types';
+import type {CommandReturn, CustomInteraction, MessageFunction} from '../../utils/types';
 import {MessageEmbed} from 'discord.js';
 import {fetch} from '../../utils/utils';
 import prettyMilliseconds from 'pretty-ms';
@@ -11,7 +11,7 @@ export const options = [
     {type: 'string' as const, name: 'user', description: 'Who do you want to look up?', required: true, choices: []},
 ];
 
-export const execute = async(interaction: CustomInteraction, userQuery: string): Promise<CommandReturn> => {
+export const execute = async(interaction: CustomInteraction, message: MessageFunction, userQuery: string): Promise<CommandReturn> => {
     const userFiltered = userQuery.toLowerCase();
     const userRes = await fetch<{runners: ({name: string, avatar: string})[], status :number}>(`https://splits.io/api/v4/runners?search=${userFiltered}`).then(async(res) => res.json());
     const runnerCount = userRes.runners.length;
