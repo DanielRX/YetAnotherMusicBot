@@ -76,4 +76,6 @@ const validateURL = (url: string): boolean => isYouTubePlaylistURL(url) || isYou
 type FetchConfig = {method?: 'GET' | 'POST', headers?: {'client-id'?: string, Authorization: string}};
 const fetch = f as <T>(url: string, config?: FetchConfig) => Promise<{slug: string, status: string, json: () => Promise<T & {length: number}>, text: () => Promise<string>}>;
 
-export {fetch, arrayMove, getRandom, shuffleArray, isSpotifyURL, isYouTubePlaylistURL, isYouTubeVideoURL, validateURL, randomEl, setupOption};
+const filterEmpty = <T>(x: T[]): T[] => x.filter((y) => typeof y !== 'undefined')
+
+export {filterEmpty, fetch, arrayMove, getRandom, shuffleArray, isSpotifyURL, isYouTubePlaylistURL, isYouTubeVideoURL, validateURL, randomEl, setupOption};

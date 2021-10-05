@@ -3,9 +3,9 @@ import type {Video} from 'youtube-sr';
 import type {CommandReturn, CustomInteraction, MessageFunction, PlayTrack, Track} from '../../utils/types';
 import member from '../../utils/models/Member';
 import YouTube from 'youtube-sr';
-import {getData} from 'spotify-url-info';
+import {getData as gd} from 'spotify-url-info';
 import {searchOne} from '../../utils/music/searchOne';
-import {isSpotifyURL, validateURL} from '../../utils/utils';
+import {filterEmpty, isSpotifyURL, validateURL} from '../../utils/utils';
 import {logger} from '../../utils/logging';
 
 export const name = 'save-to-playlist';
@@ -31,25 +31,19 @@ const constructSongObj = (video: Video, user: User): PlayTrack => {
     } as PlayTrack;
 };
 
+const getData: (url: string) => Promise<Track | {tracks: {items: ({track: Track})[]}}> = gd;
+
+const processTrack = (user: User) => async(track: {track: Track}): Promise<PlayTrack> => searchOne(track.track).then((video) => constructSongObj(video, user))
+
 const processURL = async(url: string, interaction: CustomInteraction) => {
     if(isSpotifyURL(url)) {
-        return (getData as (url: string) => Promise<Track | {tracks: {items: ({track: Track})[]}}>)(url)
+        return getData(url)
             .then(async(res: Track | {tracks: {items: ({track: Track})[]}}) => {
                 if('tracks' in res) {
                     const spotifyPlaylistItems = res.tracks.items;
-                    const urlsArr = [];
-                    for(const track of spotifyPlaylistItems) {
-                        try {
-                            const video = await searchOne(track.track);
-                            urlsArr.push(constructSongObj(video, interaction.member.user));
-                        } catch(e: unknown) {
-                            logger.error(e);
-                        }
-                    }
-                    return urlsArr;
+                    return Promise.all(spotifyPlaylistItems.map(processTrack(interaction.member.user))).then(filterEmpty);
                 }
-                const video = await searchOne(res);
-                return constructSongObj(video, interaction.member.user);
+                return searchOne(res).then((video) => constructSongObj(video, interaction.member.user));
             })
             .catch((e: unknown) => { logger.error(e); });
     }
@@ -58,22 +52,13 @@ const processURL = async(url: string, interaction: CustomInteraction) => {
             throw new Error(':x: Playlist is either private or it does not exist!');
         });
         const videosArr = await playlist.fetch().then((v) => v.videos);
-        const urlsArr = [];
-        for(const video of videosArr) {
-            if(video.private) {
-                continue;
-            } else {
-                urlsArr.push(constructSongObj(video, interaction.member.user));
-            }
-        }
+        const urlsArr = videosArr.filter((v) => !v.private).map((v) => constructSongObj(v, interaction.member.user));
         return urlsArr;
     }
     const video = await YouTube.getVideo(url).catch(() => {
         throw new Error(':x: There was a problem getting the video you provided!');
     });
-    if(video.live) {
-        throw new Error("I don't support live streams!");
-    }
+    if(video.live) { throw new Error("I don't support live streams!"); }
     return constructSongObj(video, interaction.member.user);
 };
 
