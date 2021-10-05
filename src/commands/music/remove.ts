@@ -12,15 +12,15 @@ export const options = [
 export const execute = async(interaction: CustomInteraction, message: MessageFunction, position: number): Promise<CommandReturn> => {
     const player = playerManager.get(interaction.guildId);
 
-    if(!player) { return 'There is nothing playing now!'; }
+    if(!player) { return message('NO_SONG_PLAYING'); }
 
     const voiceChannel = interaction.member.voice.channel;
 
-    if(!voiceChannel) { return ':no_entry: Please join a voice channel and try again!'; }
-    if(voiceChannel.id !== interaction.guild.me?.voice.channel?.id) { return `:no_entry: You must be in the same voice channel as the bot in order to use that!`; }
+    if(!voiceChannel) { return message('NOT_IN_VC'); }
+    if(voiceChannel.id !== interaction.guild.me?.voice.channel?.id) { return message('NOT_IN_SAME_VC'); }
 
-    if(position < 1 || position > player.queue.length) { return 'Please enter a valid position!'; }
+    if(position < 1 || position > player.queue.length) { return message('INVALID_INDEX'); }
 
     player.queue.splice(position - 1, 1);
-    return `:wastebasket: Removed song number ${position} from queue!`;
+    return message('REMOVED', {position});
 };

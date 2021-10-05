@@ -8,16 +8,16 @@ export const deferred = false;
 
 export const execute = async(interaction: CustomInteraction, message: MessageFunction): Promise<CommandReturn> => {
     const voiceChannel = interaction.member.voice.channel;
-    if(!voiceChannel) { return 'Please join a voice channel and try again!'; }
+    if(!voiceChannel) { return message('NOT_IN_VC'); }
 
     const player = playerManager.get(interaction.guildId);
-    if(!player) { return 'There is no song playing right now!'; }
-    if(player.audioPlayer.state.status == AudioPlayerStatus.Playing) { return 'This song is not paused!'; }
-    if(voiceChannel.id !== interaction.guild.me?.voice.channel?.id) { return 'You must be in the same voice channel as the bot in order to resume!'; }
+    if(!player) { return message('NO_SONG_PLAYING'); }
+    if(voiceChannel.id !== interaction.guild.me?.voice.channel?.id) { return message('NOT_IN_SAME_VC'); }
+    if(player.audioPlayer.state.status == AudioPlayerStatus.Playing) { return message('NOT_PAUSED'); }
 
     const success = player.audioPlayer.unpause();
 
-    if(success) { return ':play_pause: Track resumed!'; }
-    return 'I was unable to unpause this song, please try again soon';
+    if(success) { return message('RESUMED'); }
+    return message('GENERIC_ERROR');
 };
 

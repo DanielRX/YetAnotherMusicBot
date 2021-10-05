@@ -81,9 +81,31 @@
     "queue": {
         "TRIVIA_IS_RUNNING": "You can't use this command while a trivia is running!",
         "NO_SONGS": ":x: There are no songs in queue!",
-        "NO_SONG_PLAYING": "There is nothing playing!",
+        "NO_SONG_PLAYING": "There is no song playing right now!",
         "EMBED_TITLE": "Music Queue",
         "PAGE_TITLE": "Page {{i}}"
+    },
+    "remove-from-playlist": {
+        "NO_SAVED_PLAYLISTS": "You have zero saved playlists!",
+        "PLAYLIST_NOT_FOUND": "You have no playlist named {{playlistName}}",
+        "EMPTY_PLAYLIST": "**{{playlistName}}** is empty!",
+        "INDEX_TOO_HIGH": "The index you provided is larger than the playlist's length",
+        "REMOVED": "I removed **{{title}}** from **{{name}}**"
+    },
+    "remove": {
+        "NOT_IN_VC": ":no_entry: Please join a voice channel and try again!",
+        "NO_SONG_PLAYING": "There is no song playing right now!",
+        "NOT_IN_SAME_VC": "You must be in the same voice channel as the bot in order to do that!",
+        "INVALID_INDEX": "Please enter a valid position!",
+        "REMOVED": ":wastebasket: Removed song number {{position}} from queue!"
+    },
+    "resume": {
+        "NOT_IN_VC": ":no_entry: Please join a voice channel and try again!",
+        "NO_SONG_PLAYING": "There is no song playing right now!",
+        "NOT_IN_SAME_VC": "You must be in the same voice channel as the bot in order to do that!",
+        "NOT_PAUSED": "This song is not paused!",
+        "RESUMED": ":play_pause: Track resumed!",
+        "GENERIC_ERROR": "I was unable to unpause this song, please try again soon"
     },
     "about": {
         "ABOUT": "Made by <@530808977794007051> with :heart: code is available on GitHub (coming soon)"
