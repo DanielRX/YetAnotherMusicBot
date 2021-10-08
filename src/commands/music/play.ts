@@ -497,7 +497,7 @@ export const description = 'Play any song or playlist from YouTube or Spotify!';
 export const deferred = false; // TODO: Fix this
 
 export const options = [
-    {type: 'string' as const, name: 'query', description: ':notes: What song or playlist would you like to listen to? Add -s to shuffle a playlist. Suffix -n to play next, -j to play now', required: true, choices: []},
+    {type: 'string' as const, name: 'query', description: ':notes: What song or playlist would you like to listen to?', required: true, choices: []},
     {type: 'string' as const, name: 'flags', description: ':notes: Add s to shuffle a playlist, r to reverse it, n to play next, j to play now', required: false, choices: [], default: ''}
 ];
 
