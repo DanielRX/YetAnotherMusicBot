@@ -1,16 +1,5 @@
 import {MessageSelectMenu, MessageActionRow} from 'discord.js';
 
-export const getFlags = (query: string): {shuffleFlag: boolean, reverseFlag: boolean, jumpFlag: boolean, nextFlag: boolean, query: string} => {
-    const splitQuery = query.split(' ');
-    const shuffleFlag = splitQuery[splitQuery.length - 1] === '-s';
-    const reverseFlag = splitQuery[splitQuery.length - 1] === '-r';
-    const nextFlag = splitQuery[splitQuery.length - 1] === '-n';
-    const jumpFlag = splitQuery[splitQuery.length - 1] === '-j';
-    if(shuffleFlag || reverseFlag || nextFlag || jumpFlag) splitQuery.pop();
-    query = splitQuery.join(' ');
-    return {shuffleFlag, reverseFlag, jumpFlag, nextFlag, query};
-};
-
 export const createSelectMenu = (namesArray: string[]): MessageActionRow =>
     new MessageActionRow().addComponents(new MessageSelectMenu()
         .setCustomId('search-yt-menu')

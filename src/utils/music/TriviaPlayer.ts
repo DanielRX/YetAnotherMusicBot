@@ -14,22 +14,24 @@ const capitalizeWords = (str: string) => {
     });
 };
 
-const normalizeValue = (value: string) =>
-    value
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
-        .replace(/[^0-9a-zA-Z\s]/g, '') // Remove non-alphanumeric characters
+const normalizeValue = (hardMode: boolean) => (value: string) => {
+    let val = value.normalize('NFD').replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+    if(!hardMode) {
+        val = val.replace(/[^0-9a-zA-Z\s]/g, ''); // Remove non-alphanumeric characters
+    }
+    return val
         .replace(/ - .*/g, '')
         .replace(/ \(.*\)/g, '')
         .replace(/ \[.*\]/g, '')
-        .trim()
         .replace(/\s+/g, ' ')
+        .trim()
         .toLowerCase(); // Remove duplicate spaces
+};
 
 const getLeaderBoard = (arr: [string, number][]) => { // TODO: Shared medals
     if(typeof arr === 'undefined') { return; }
-    if(typeof arr[0] === 'undefined') { return; } // Issue #422
     const players = arr.filter(([, points]) => points > 0);
+    if(typeof players[0] === 'undefined') { return; } // Issue #422
     let leaderBoard = '';
 
     leaderBoard = `:first_place:  **${players[0][0]}:** ${players[0][1]}`;
@@ -71,7 +73,7 @@ export class TriviaPlayer extends Player {
     private songNameWinners: {[key: string]: boolean} = {};
     private songSingerWinners: {[key: string]: boolean} = {};
     // eslint-disable-next-line @typescript-eslint/no-parameter-properties
-    public constructor() {
+    public constructor(public hardMode: boolean) {
         super();
     }
 
@@ -126,19 +128,17 @@ export class TriviaPlayer extends Player {
             this.startRound();
 
             const collector = this.textChannel.createMessageCollector({time: timeForSong});
-
-            nextHintInt = setInterval(() => {
-                void this.showHint(normalizeValue((this.queue[0] ?? {artists: ['']}).artists[0]), normalizeValue((this.queue[0] ?? {name: ''}).name), (this.queue[0] ?? {artists: ['']}).artists.map(normalizeValue));
-            }, 5000);
-
-            void this.showHint(normalizeValue((this.queue[0] ?? {artists: ['']}).artists[0]), normalizeValue((this.queue[0] ?? {name: ''}).name), (this.queue[0] ?? {artists: ['']}).artists.map(normalizeValue));
+            const song = normalizeValue(this.hardMode)((this.queue[0] ?? {name: ''}).name);
+            const artists = (this.queue[0] ?? {artists: ['']}).artists.map(normalizeValue(this.hardMode));
+            void this.showHint(artists[0], song, artists);
+            nextHintInt = setInterval(() => { void this.showHint(artists[0], song, artists); }, 5000);
 
             collector.on('collect', (msg: Message) => {
                 if(!this.score.has(msg.author.username)) { return; }
                 const time = Date.now();
-                const guess = normalizeValue(msg.content);
-                const title = normalizeValue(this.queue[0].name);
-                const singers = this.queue[0].artists.map(normalizeValue);
+                const guess = normalizeValue(this.hardMode)(msg.content);
+                const title = normalizeValue(this.hardMode)(this.queue[0].name);
+                const singers = this.queue[0].artists.map(normalizeValue(this.hardMode));
 
                 if(guess === 'skip') {
                     if(this.skippedArray.includes(msg.author.username)) { return; }
