@@ -10,7 +10,7 @@ export const options = [];
 export const execute = async(interaction: CustomInteraction, message: MessageFunction): Promise<CommandReturn> => {
     const triviaPlayer = triviaManager.get(interaction.guildId);
     if(!triviaPlayer) { return 'Trivia is not running right now!'; }
-    if(triviaPlayer.score.has(interaction.user.username)) { return 'You\'re not in the trivia!'; }
+    if(!triviaPlayer.score.has(interaction.user.username)) { return 'You\'re not in the trivia!'; }
     triviaPlayer.score.delete(interaction.user.username);
     return 'Removed you from the music trivia!';
 };
