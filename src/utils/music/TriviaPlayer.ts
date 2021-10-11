@@ -73,7 +73,7 @@ export class TriviaPlayer extends Player {
     private songNameWinners: {[key: string]: boolean} = {};
     private songSingerWinners: {[key: string]: boolean} = {};
     // eslint-disable-next-line @typescript-eslint/no-parameter-properties
-    public constructor(public hardMode: boolean) {
+    public constructor(public hardMode: boolean, public roundMode: boolean) {
         super();
     }
 
