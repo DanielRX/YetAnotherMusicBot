@@ -15,7 +15,7 @@ export const deferred = true;
 
 export const options = [
     {type: 'string' as const, name: 'length', description: 'How many songs would you like the trivia to have?', required: false, choices: [], default: 25},
-    {type: 'boolean' as const, name: 'hard', description: 'Super strict answer mode', required: false, choices: [], default: false}
+    {type: 'boolean' as const, name: 'hard', description: 'Super strict answer mode', required: false, choices: [], default: false},
     {type: 'boolean' as const, name: 'roundMode', description: 'Play forever with rounds', required: false, choices: [], default: false}
 ];
 
