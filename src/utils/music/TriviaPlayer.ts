@@ -48,7 +48,7 @@ const getLeaderBoard = (arr: [string, number][]) => { // TODO: Shared medals
 
     players.forEach(([player, score], i) => {
         if(i === 0) { return; }
-        leaderBoard += `\n\n   ${i + 1 === 2 ? ':second_place:' : i + 1 === 3 ? ':third_place:' : i + 1}: ${cleanPlayer(player)}: ${score}`;
+        leaderBoard += `\n\n   ${i + 1 === 2 ? ':second_place:' : i + 1 === 3 ? ':third_place:' : i + 1} ${cleanPlayer(player)}: ${score}`;
     });
     return leaderBoard;
 };
