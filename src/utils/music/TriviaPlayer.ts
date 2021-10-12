@@ -39,9 +39,9 @@ const getLeaderBoard = (arr: [string, number][]) => { // TODO: Shared medals
     const cleanPlayer = (player: string) => {
         const [platform, username] = player.split(':');
         if(platform === 't') {
-            return `<:Swag:750368789303918723> ${username}`;
+            return `<:twitch:593301958106808350> ${username}`;
         }
-        return username;
+        return `<:discord:897536633145032706> ${username}>`;
     };
 
     leaderBoard = `:first_place:  **${cleanPlayer(players[0][0])}:** ${players[0][1]}`;
