@@ -11,7 +11,7 @@ export const execute = async(interaction: CustomInteraction, message: MessageFun
 
     if(interaction.guild.me?.voice.channel !== interaction.member.voice.channel) { return ':no_entry: Please join a voice channel and try again!'; }
 
-    if(!triviaPlayer.score.has(interaction.member.user.username)) { return ':stop_sign: You need to participate in the trivia in order to end it'; }
+    if(!triviaPlayer.score.has(`d:${interaction.user.username.toLowerCase()}`)) { return ':stop_sign: You need to participate in the trivia in order to end it'; }
     triviaPlayer.reset();
     triviaManager.delete(interaction.guildId);
 

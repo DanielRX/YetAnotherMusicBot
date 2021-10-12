@@ -148,50 +148,12 @@ export class TriviaPlayer extends Player {
             void this.showHint(artists[0], song, artists);
             nextHintInt = setInterval(() => { void this.showHint(artists[0], song, artists); }, 5000);
 
-            this.twitchClient?.on('message', (channel: string, user: tmi.ChatUserstate, message: string, self: boolean) => {
-                if(self) { return; }
+            const onMessage = (username: string, message: string, isDiscord: boolean, msg?: Message) => {
                 if(!this.queue[0]) { return; }
                 const username = `t:${user.username}`;
                 // if(!this.score.has(username)) { return; }
                 const time = Date.now();
                 const guess = normalizeValue(this.hardMode)(message);
-                const title = normalizeValue(this.hardMode)(this.queue[0].name);
-                const singers = this.queue[0].artists.map(normalizeValue(this.hardMode));
-
-                const gotAnArtist = singers.some((artist) => guess.includes(artist));
-                const gotName = guess.includes(title);
-
-                let gotSingerInTime = false;
-                let gotNameInTime = false;
-
-                const firstSingerGuess = this.songSingerFoundTime === -1 && (gotAnArtist);
-                const firstNameGuess = this.songNameFoundTime === -1 && (gotName);
-
-                if(firstSingerGuess) { this.songSingerFoundTime = time; setTimeout(() => { this.twitchClient?.say(this.twitchChannel, `The artists were guessed by: ${Object.keys(this.songSingerWinners).join(', ')} and were: ${singers.join(', ')}`); }, answerTimeout); }
-                if(((time - this.songSingerFoundTime) < answerTimeout && !this.songSingerWinners[username])) { gotSingerInTime = true; }
-                if(firstNameGuess) { this.songNameFoundTime = time; setTimeout(() => { this.twitchClient?.say(this.twitchChannel, `The song was guessed by: ${Object.keys(this.songNameWinners).join(', ')} and was: ${title}`); }, answerTimeout); }
-                if(((time - this.songNameFoundTime) < answerTimeout) && !this.songNameWinners[username]) { gotNameInTime = true; }
-
-                if(gotSingerInTime) {
-                    this.songSingerWinners[username] = true;
-                    this.score.set(username, (this.score.get(username) ?? 0) + 1);
-                }
-
-                if(gotNameInTime) {
-                    this.songNameWinners[username] = true;
-                    this.score.set(username, (this.score.get(username) ?? 0) + 1);
-                }
-
-                if((this.songSingerFoundTime !== -1) && (this.songNameFoundTime !== -1)) {
-                    setTimeout(() => { collector.stop(); }, 1000);
-                }
-            });
-
-            const onDiscordMessage = (msg: Message) => {
-                const username = `d:${msg.author.username.toLowerCase()}`;
-                if(!this.score.has(username)) { return; }
-                const time = Date.now();
-                const guess = normalizeValue(this.hardMode)(msg.content);
                 const title = normalizeValue(this.hardMode)(this.queue[0].name);
                 const singers = this.queue[0].artists.map(normalizeValue(this.hardMode));
 
@@ -202,11 +164,12 @@ export class TriviaPlayer extends Player {
                     return;
                 }
 
-                if(msg.content.includes(':')) { return; }
+                if(message.includes(':') && isDiscord) { return; }
+
                 const gotAnArtist = singers.some((artist) => guess.includes(artist));
                 const gotName = guess.includes(title);
 
-                if(!gotName && !gotAnArtist) { return void msg.react('❌'); }
+                if(!gotName && !gotAnArtist && isDiscord) { return void msg?.react('❌'); }
 
                 let gotSingerInTime = false;
                 let gotNameInTime = false;
@@ -222,17 +185,26 @@ export class TriviaPlayer extends Player {
                 if(gotSingerInTime) {
                     this.songSingerWinners[username] = true;
                     this.score.set(username, (this.score.get(username) ?? 0) + 1);
-                    void msg.react('☑');
+                    if(isDiscord) { void msg?.react('☑'); }
                 }
 
                 if(gotNameInTime) {
                     this.songNameWinners[username] = true;
                     this.score.set(username, (this.score.get(username) ?? 0) + 1);
-                    void msg.react('☑');
+                    if(isDiscord) { void msg?.react('☑'); }
                 }
 
-                if((this.songSingerFoundTime !== -1) && (this.songNameFoundTime !== -1)) { setTimeout(() => collector.stop(), 1000); }
+                if((this.songSingerFoundTime !== -1) && (this.songNameFoundTime !== -1)) {
+                    setTimeout(() => { collector.stop(); }, 1000);
+                }
             };
+
+            this.twitchClient?.on('message', (channel: string, user: tmi.ChatUserstate, message: string, self: boolean) => {
+                if(self) { return; }
+                return onMessage( `t:${user.username?.toLowerCase()}`, message, false);
+            });
+
+            const onDiscordMessage = (msg: Message) => onMessage(`d:${msg.author.username.toLowerCase()}`, msg.content, true, msg);
 
             const onCollectorEnd = () => {
                 if(typeof nextHintInt !== 'undefined') {
