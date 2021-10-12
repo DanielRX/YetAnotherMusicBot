@@ -13,7 +13,7 @@ export const execute = async(interaction: CustomInteraction, message: MessageFun
 
     const triviaPlayer = triviaManager.get(interaction.guildId);
     if(!triviaPlayer) { return 'Trivia is not running right now!'; }
-    if(triviaPlayer.score.has(interaction.user.username)) { return 'You\'re already in the trivia!'; }
-    triviaPlayer.score.set(interaction.user.username, 0);
+    if(triviaPlayer.score.has(`d:${interaction.user.username.toLowerCase()}`)) { return 'You\'re already in the trivia!'; }
+    triviaPlayer.score.set(`d:${interaction.user.username.toLowerCase()}`, 0);
     return 'Added you to the music trivia!';
 };
