@@ -8,5 +8,7 @@
   "newsAPI": "news-api-key",
   "twitchClientID": "your-id",
   "twitchClientSecret": "your-secret",
-  "rawgAPI": "rawg-api-key"
+  "rawgAPI": "rawg-api-key",
+  "twitchUsername": "",
+  "twitchToken": ""
 }
