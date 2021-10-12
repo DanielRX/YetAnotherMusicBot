@@ -36,11 +36,19 @@ const getLeaderBoard = (arr: [string, number][]) => { // TODO: Shared medals
     if(typeof players[0] === 'undefined') { return; } // Issue #422
     let leaderBoard = '';
 
-    leaderBoard = `:first_place:  **${players[0][0]}:** ${players[0][1]}`;
+    const cleanPlayer = (player: string) => {
+        const [platform, username] = player.split(':');
+        if(platform === 't') {
+            return `<:twitch:897531710768558091> ${username}`;
+        }
+        return username;
+    };
+
+    leaderBoard = `:first_place:  **${cleanPlayer(players[0][0])}:** ${players[0][1]}`;
 
     players.forEach(([player, score], i) => {
         if(i === 0) { return; }
-        leaderBoard += `\n\n   ${i + 1 === 2 ? ':second_place:' : i + 1 === 3 ? ':third_place:' : i + 1}: ${player}: ${score}`;
+        leaderBoard += `\n\n   ${i + 1 === 2 ? ':second_place:' : i + 1 === 3 ? ':third_place:' : i + 1}: ${cleanPlayer(player)}: ${score}`;
     });
     return leaderBoard;
 };
