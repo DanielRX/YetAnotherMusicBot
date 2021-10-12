@@ -29,6 +29,7 @@
     "node-fetch": "^2.6.1",
     "pretty-ms": "^7.0.1",
     "spotify-url-info": "^2.2.3",
+    "ts-node": "^10.3.0",
     "winston": "^3.3.3",
     "youtube-dl-exec": "^1.2.4",
     "youtube-sr": "^4.1.7",
