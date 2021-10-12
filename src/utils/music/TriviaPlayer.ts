@@ -159,9 +159,9 @@ export class TriviaPlayer extends Player {
                 const firstSingerGuess = this.songSingerFoundTime === -1 && (gotAnArtist);
                 const firstNameGuess = this.songNameFoundTime === -1 && (gotName);
 
-                if(firstSingerGuess) { this.songSingerFoundTime = time; setTimeout(() => { this.twitchClient?.say(this.twitchChannel, `The artists were guessed by: ${Object.keys(this.songSingerWinners).join(', ')} and were: ${this.queue[0].artists.join(', ')}`); }, answerTimeout); }
+                if(firstSingerGuess) { this.songSingerFoundTime = time; setTimeout(() => { this.twitchClient?.say(this.twitchChannel, `The artists were guessed by: ${Object.keys(this.songSingerWinners).join(', ')} and were: ${singers.join(', ')}`); }, answerTimeout); }
                 if(((time - this.songSingerFoundTime) < answerTimeout && !this.songSingerWinners[username])) { gotSingerInTime = true; }
-                if(firstNameGuess) { this.songNameFoundTime = time; setTimeout(() => { this.twitchClient?.say(this.twitchChannel, `The song was guessed by: ${Object.keys(this.songNameWinners).join(', ')} and was: ${this.queue[0].name}`); }, answerTimeout); }
+                if(firstNameGuess) { this.songNameFoundTime = time; setTimeout(() => { this.twitchClient?.say(this.twitchChannel, `The song was guessed by: ${Object.keys(this.songNameWinners).join(', ')} and was: ${title}`); }, answerTimeout); }
                 if(((time - this.songNameFoundTime) < answerTimeout) && !this.songNameWinners[username]) { gotNameInTime = true; }
 
                 if(gotSingerInTime) {
@@ -205,9 +205,9 @@ export class TriviaPlayer extends Player {
                 const firstSingerGuess = this.songSingerFoundTime === -1 && (gotAnArtist);
                 const firstNameGuess = this.songNameFoundTime === -1 && (gotName);
 
-                if(firstSingerGuess) { this.songSingerFoundTime = time; setTimeout(() => { this.twitchClient?.say(this.twitchChannel, `The artists were guessed by: ${Object.keys(this.songSingerWinners).join(', ')} and were: ${this.queue[0].artists.join(', ')}`); }, answerTimeout); }
+                if(firstSingerGuess) { this.songSingerFoundTime = time; setTimeout(() => { this.twitchClient?.say(this.twitchChannel, `The artists were guessed by: ${Object.keys(this.songSingerWinners).join(', ')} and were: ${singers.join(', ')}`); }, answerTimeout); }
                 if(((time - this.songSingerFoundTime) < answerTimeout && !this.songSingerWinners[msg.author.username])) { gotSingerInTime = true; }
-                if(firstNameGuess) { this.songNameFoundTime = time; setTimeout(() => { this.twitchClient?.say(this.twitchChannel, `The song was guessed by: ${Object.keys(this.songNameWinners).join(', ')} and was: ${this.queue[0].name}`); }, answerTimeout); }
+                if(firstNameGuess) { this.songNameFoundTime = time; setTimeout(() => { this.twitchClient?.say(this.twitchChannel, `The song was guessed by: ${Object.keys(this.songNameWinners).join(', ')} and was: ${title}`); }, answerTimeout); }
                 if(((time - this.songNameFoundTime) < answerTimeout) && !this.songNameWinners[msg.author.username]) { gotNameInTime = true; }
 
                 if(gotSingerInTime) {
