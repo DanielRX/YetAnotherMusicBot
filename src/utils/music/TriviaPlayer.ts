@@ -142,6 +142,7 @@ export class TriviaPlayer extends Player {
 
             this.twitchClient?.on('message', (channel: string, user: tmi.ChatUserstate, message: string, self: boolean) => {
                 if(self) { return; }
+                if(!this.queue[0]) { return; }
                 const username = `${user.username}`;
                 // if(!this.score.has(username)) { return; }
                 const time = Date.now();
