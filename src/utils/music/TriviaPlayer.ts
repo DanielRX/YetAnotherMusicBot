@@ -39,7 +39,7 @@ const getLeaderBoard = (arr: [string, number][]) => { // TODO: Shared medals
     const cleanPlayer = (player: string) => {
         const [platform, username] = player.split(':');
         if(platform === 't') {
-            return `<:Swag:897534837307633705> ${username}`;
+            return `<:Swag:750368789303918723> ${username}`;
         }
         return username;
     };
