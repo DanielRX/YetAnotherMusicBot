@@ -68,7 +68,7 @@ export const execute = async(interaction: CustomInteraction, message: MessageFun
 
     membersInChannel?.each((user) => {
         if(user.user.bot) { return; }
-        triviaPlayer.score.set(user.user.username, 0);
+        triviaPlayer.score.set(`d:${user.user.username.toLowerCase()}`, 0);
     });
 
     // play and display embed that says trivia started and how many songs are going to be
