@@ -4,7 +4,7 @@ import ytdl from 'ytdl-core';
 import type {BaseGuildTextChannel} from 'discord.js';
 import {MessageEmbed} from 'discord.js';
 import type {PlayTrack} from '../types';
-import {guildData, triviaManager} from '../client';
+import {guildData, playerManager, triviaManager} from '../client';
 import {logger} from '../logging';
 import {Player} from './Player';
 
@@ -53,7 +53,7 @@ class MusicPlayer extends Player {
                 /* eslint-disable */
                 if((this.connection as any)._state.status !== 'destroyed') {
                     this.connection.destroy();
-                    triviaManager.delete(this.textChannel.guildId);
+                    playerManager.delete(this.textChannel.guildId);
                 }
                 return;
                 /* eslint-enable */
