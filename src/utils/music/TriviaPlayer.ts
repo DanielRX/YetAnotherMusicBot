@@ -7,6 +7,8 @@ import {MessageEmbed} from 'discord.js';
 import {triviaManager} from '../client';
 import {logger} from '../../utils/logging';
 import {Player} from './Player';
+import {config} from '../config';
+import * as tmi from 'tmi.js';
 
 const capitalizeWords = (str: string) => {
     return str.replace(/\w\S*/g, function(txt) {
@@ -72,9 +74,14 @@ export class TriviaPlayer extends Player {
     private skippedArray: string[] = [];
     private songNameWinners: {[key: string]: boolean} = {};
     private songSingerWinners: {[key: string]: boolean} = {};
+    private readonly twitchClient: tmi.Client | null;
     // eslint-disable-next-line @typescript-eslint/no-parameter-properties
-    public constructor(public hardMode: boolean, public roundMode: boolean) {
+    public constructor(public hardMode: boolean, public roundMode: boolean, public twitchChannel: string) {
         super();
+        if(this.twitchChannel !== '') {
+            this.twitchClient = new tmi.client({identity: {username: config.twitchUsername, password: config.twitchToken}, channels: [this.twitchChannel]});
+            void this.twitchClient.connect();
+        }
     }
 
     public startRound(): void {
@@ -133,7 +140,43 @@ export class TriviaPlayer extends Player {
             void this.showHint(artists[0], song, artists);
             nextHintInt = setInterval(() => { void this.showHint(artists[0], song, artists); }, 5000);
 
-            collector.on('collect', (msg: Message) => {
+            this.twitchClient?.on('message', (channel: string, user: tmi.ChatUserstate, message: string, self: boolean) => {
+                if(self) { return; }
+                const username = `${user.username}`;
+                // if(!this.score.has(username)) { return; }
+                const time = Date.now();
+                const guess = normalizeValue(this.hardMode)(message);
+                const title = normalizeValue(this.hardMode)(this.queue[0].name);
+                const singers = this.queue[0].artists.map(normalizeValue(this.hardMode));
+
+                const gotAnArtist = singers.some((artist) => guess.includes(artist));
+                const gotName = guess.includes(title);
+
+                let gotSingerInTime = false;
+                let gotNameInTime = false;
+
+                const firstSingerGuess = this.songSingerFoundTime === -1 && (gotAnArtist);
+                const firstNameGuess = this.songNameFoundTime === -1 && (gotName);
+
+                if(firstSingerGuess) { this.songSingerFoundTime = time; }
+                if(((time - this.songSingerFoundTime) < answerTimeout && !this.songSingerWinners[username])) { gotSingerInTime = true; }
+                if(firstNameGuess) { this.songNameFoundTime = time; }
+                if(((time - this.songNameFoundTime) < answerTimeout) && !this.songNameWinners[username]) { gotNameInTime = true; }
+
+                if(gotSingerInTime) {
+                    this.songSingerWinners[username] = true;
+                    this.score.set(username, (this.score.get(username) ?? 0) + 1);
+                }
+
+                if(gotNameInTime) {
+                    this.songNameWinners[username] = true;
+                    this.score.set(username, (this.score.get(username) ?? 0) + 1);
+                }
+
+                if((this.songSingerFoundTime !== -1) && (this.songNameFoundTime !== -1)) { setTimeout(() => collector.stop(), 1000); }
+            });
+
+            const onDiscordMessage = (msg: Message) => {
                 if(!this.score.has(msg.author.username)) { return; }
                 const time = Date.now();
                 const guess = normalizeValue(this.hardMode)(msg.content);
@@ -177,9 +220,9 @@ export class TriviaPlayer extends Player {
                 }
 
                 if((this.songSingerFoundTime !== -1) && (this.songNameFoundTime !== -1)) { setTimeout(() => collector.stop(), 1000); }
-            });
+            };
 
-            collector.on('end', () => {
+            const onCollectorEnd = () => {
                 if(typeof nextHintInt !== 'undefined') {
                     clearTimeout(nextHintInt);
                 }
@@ -203,7 +246,10 @@ export class TriviaPlayer extends Player {
                     .setDescription(`**[${song}](https://open.spotify.com/track/${(this.queue[0] as any).id})**\n\n${board}`);
 
                 void this.textChannel.send({embeds: [embed]});
-            });
+            };
+
+            collector.on('collect', onDiscordMessage);
+            collector.on('end', onCollectorEnd);
         });
     }
 

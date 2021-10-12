@@ -16,7 +16,8 @@ export const deferred = true;
 export const options = [
     {type: 'string' as const, name: 'length', description: 'How many songs would you like the trivia to have?', required: false, choices: [], default: 25},
     {type: 'boolean' as const, name: 'hard', description: 'Super strict answer mode', required: false, choices: [], default: false},
-    {type: 'boolean' as const, name: 'round-mode', description: 'Play forever with rounds', required: false, choices: [], default: false}
+    {type: 'boolean' as const, name: 'round-mode', description: 'Play forever with rounds', required: false, choices: [], default: false},
+    {type: 'string' as const, name: 'twitch-channel', description: 'Which twitch channel would you like to listen to?', required: false, choices: [], default: ''},
 ];
 
 type TriviaElement = {youtubeUrl: string, previewUrl: string, artists: string[], album: string, name: string, id: string};
@@ -41,7 +42,7 @@ const handleSubscription = async(interaction: CustomInteraction, player: TriviaP
     return {embeds: [startTriviaEmbed]};
 };
 
-export const execute = async(interaction: CustomInteraction, message: MessageFunction, length: number, hardMode: boolean, roundMode: boolean): Promise<CommandReturn> => {
+export const execute = async(interaction: CustomInteraction, message: MessageFunction, length: number, hardMode: boolean, roundMode: boolean, twitchChannel: string): Promise<CommandReturn> => {
     const voiceChannel = interaction.member.voice.channel;
     if(!voiceChannel) { return message('NOT_IN_VC'); }
     if(playerManager.has(interaction.guildId)) { return message('TRACK_IS_PLAYING'); }
@@ -54,7 +55,7 @@ export const execute = async(interaction: CustomInteraction, message: MessageFun
     // Get random numberOfSongs videos from the array
 
     const randomLinks = getRandom(videoDataArray, length);
-    triviaManager.set(interaction.guildId, new TriviaPlayer(hardMode, roundMode));
+    triviaManager.set(interaction.guildId, new TriviaPlayer(hardMode, roundMode, twitchChannel));
 
     const triviaPlayer = triviaManager.get(interaction.guildId) as unknown as TriviaPlayer;
 
