@@ -150,7 +150,6 @@ export class TriviaPlayer extends Player {
 
             const onMessage = (username: string, message: string, isDiscord: boolean, msg?: Message) => {
                 if(!this.queue[0]) { return; }
-                const username = `t:${user.username}`;
                 // if(!this.score.has(username)) { return; }
                 const time = Date.now();
                 const guess = normalizeValue(this.hardMode)(message);
