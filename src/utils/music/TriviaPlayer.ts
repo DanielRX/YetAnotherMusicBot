@@ -4,7 +4,7 @@ import type {PlayTrack} from '../types';
 import {AudioPlayerStatus, createAudioResource, StreamType} from '@discordjs/voice';
 import {setTimeout} from 'timers';
 import {MessageEmbed} from 'discord.js';
-import {triviaManager} from '../client';
+import {client, triviaManager} from '../client';
 import {logger} from '../../utils/logging';
 import {Player} from './Player';
 import {config} from '../config';
@@ -203,7 +203,10 @@ export class TriviaPlayer extends Player {
                 return onMessage( `t:${user.username?.toLowerCase()}`, message, false);
             });
 
-            const onDiscordMessage = (msg: Message) => onMessage(`d:${msg.author.username.toLowerCase()}`, msg.content, true, msg);
+            const onDiscordMessage = (msg: Message) => {
+                if(msg.author.username === msg.client.user?.username) { return; };
+                return onMessage(`d:${msg.author.username.toLowerCase()}`, msg.content, true, msg);
+            };
 
             const onCollectorEnd = () => {
                 if(typeof nextHintInt !== 'undefined') {
