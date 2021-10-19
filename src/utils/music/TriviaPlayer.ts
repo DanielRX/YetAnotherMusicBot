@@ -1,14 +1,16 @@
 import type {VoiceConnection} from '@discordjs/voice';
-import type {BaseGuildTextChannel, Message} from 'discord.js';
+import type {BaseGuildTextChannel, Message, VoiceChannel} from 'discord.js';
 import type {PlayTrack} from '../types';
 import {AudioPlayerStatus, createAudioResource, StreamType} from '@discordjs/voice';
 import {setTimeout} from 'timers';
 import {MessageEmbed} from 'discord.js';
+import fs from 'fs-extra';
 import {client, triviaManager} from '../client';
 import {logger} from '../../utils/logging';
 import {Player} from './Player';
 import {config} from '../config';
 import * as tmi from 'tmi.js';
+import { getRandom } from '../utils';
 
 const capitalizeWords = (str: string) => {
     return str.replace(/\w\S*/g, function(txt) {
@@ -69,6 +71,9 @@ const convertToHint = (str: string, hintCount: number) => {
 
 const timeForSong = 30000;
 const answerTimeout = 1500;
+const ROUND_SIZE = 25;
+
+type TriviaElement = {youtubeUrl: string, previewUrl: string, artists: string[], album: string, name: string, id: string};
 
 export class TriviaPlayer extends Player {
     public textChannel: BaseGuildTextChannel = null!;
@@ -83,8 +88,10 @@ export class TriviaPlayer extends Player {
     private songNameWinners: {[key: string]: boolean} = {};
     private songSingerWinners: {[key: string]: boolean} = {};
     private readonly twitchClient: tmi.Client | null;
+    private rounds = 1;
+    private correctThisRound = 0;
     // eslint-disable-next-line @typescript-eslint/no-parameter-properties
-    public constructor(public hardMode: boolean, public roundMode: boolean, public twitchChannel: string) {
+    public constructor(public hardMode: boolean, public roundMode: boolean, public twitchChannel: string, public voiceChannel: VoiceChannel) {
         super();
         if(this.twitchChannel !== '') {
             this.twitchClient = new tmi.client({identity: {username: config.twitchUsername, password: config.twitchToken}, channels: [this.twitchChannel]});
@@ -105,10 +112,27 @@ export class TriviaPlayer extends Player {
     public passConnection(connection: VoiceConnection): void {
         super.passConnection(connection);
 
-        this.audioPlayer.on('stateChange', (oldState, newState) => {
+        this.audioPlayer.on('stateChange', async(oldState, newState) => {
             let nextHintInt: NodeJS.Timeout | undefined = undefined;
             if(newState.status === AudioPlayerStatus.Idle && oldState.status !== AudioPlayerStatus.Idle) {
                 this.queue.shift();
+                if(this.roundMode && this.correctThisRound > this.rounds) {
+                    const embed = new MessageEmbed().setColor('#ff7373').setTitle(`Round Complete`).setDescription(`You got through round ${this.rounds}`);
+                    void this.textChannel.send({embeds: [embed]});
+                    this.rounds++;
+                    this.correctThisRound = 0;
+                    const songs = await fs.readJSON('./resources/music/mk2/trivia.json') as TriviaElement[]; // TODO: Move type to types
+                    const albumData = await fs.readJSON('./resources/music/mk2/albums.json') as {[key: string]: {[key: string]: unknown}};
+                    const artistsData = await fs.readJSON('./resources/music/mk2/artists.json') as {[key: string]: string};
+                    const videoDataArray = songs.map((track) => ({...track, album: albumData[track.album], artists: track.artists.map((id) => artistsData[id])}));
+                    // Get random numberOfSongs videos from the array
+
+                    const randomLinks = getRandom(videoDataArray, ROUND_SIZE);
+                    this.queue = [];
+                    randomLinks.forEach(({artists, name, previewUrl, youtubeUrl, id}) => {
+                        this.queue.push({url: youtubeUrl, artists, previewUrl, name, voiceChannel: this.voiceChannel, id} as any);
+                    });
+                }
                 // Finished playing audio
                 if(this.queue.length) {
                     // Play next song
@@ -194,6 +218,7 @@ export class TriviaPlayer extends Player {
                 }
 
                 if((this.songSingerFoundTime !== -1) && (this.songNameFoundTime !== -1)) {
+                    this.correctThisRound++;
                     setTimeout(() => { collector.stop(); }, 1000);
                 }
             };

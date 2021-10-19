@@ -55,7 +55,7 @@ export const execute = async(interaction: CustomInteraction, message: MessageFun
     // Get random numberOfSongs videos from the array
 
     const randomLinks = getRandom(videoDataArray, length);
-    triviaManager.set(interaction.guildId, new TriviaPlayer(hardMode, roundMode, twitchChannel));
+    triviaManager.set(interaction.guildId, new TriviaPlayer(hardMode, roundMode, twitchChannel, voiceChannel));
 
     const triviaPlayer = triviaManager.get(interaction.guildId) as unknown as TriviaPlayer;
 
