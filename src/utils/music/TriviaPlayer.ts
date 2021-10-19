@@ -116,6 +116,14 @@ export class TriviaPlayer extends Player {
             let nextHintInt: NodeJS.Timeout | undefined = undefined;
             if(newState.status === AudioPlayerStatus.Idle && oldState.status !== AudioPlayerStatus.Idle) {
                 this.queue.shift();
+                if(this.roundMode && (this.correctThisRound + this.queue.length < this.rounds)) {
+                    const embed = new MessageEmbed()
+                        .setColor('#ff7373')
+                        .setTitle(`You lost the game!`)
+                        .setDescription(`You needed ${this.rounds} but you only have ${this.correctThisRound} and ${this.queue.length} songs left`);
+                    this.reset();
+                    return this.textChannel.send({embeds: [embed]});
+                }
                 if(this.roundMode && this.correctThisRound >= this.rounds) {
                     const embed = new MessageEmbed().setColor('#ff7373').setTitle(`Round Complete`).setDescription(`You got through round ${this.rounds}`);
                     void this.textChannel.send({embeds: [embed]});
