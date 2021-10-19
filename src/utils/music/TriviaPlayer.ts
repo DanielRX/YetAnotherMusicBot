@@ -5,12 +5,12 @@ import {AudioPlayerStatus, createAudioResource, StreamType} from '@discordjs/voi
 import {setTimeout} from 'timers';
 import {MessageEmbed} from 'discord.js';
 import fs from 'fs-extra';
-import {client, triviaManager} from '../client';
+import {triviaManager} from '../client';
 import {logger} from '../../utils/logging';
 import {Player} from './Player';
 import {config} from '../config';
 import * as tmi from 'tmi.js';
-import { getRandom } from '../utils';
+import {getRandom} from '../utils';
 
 const capitalizeWords = (str: string) => {
     return str.replace(/\w\S*/g, function(txt) {
@@ -109,6 +109,18 @@ export class TriviaPlayer extends Player {
         this.hints = 0;
     }
 
+    public async loadSongs(count: number): Promise<void> {
+        const songs = await fs.readJSON('./resources/music/mk2/trivia.json') as TriviaElement[]; // TODO: Move type to types
+        const albumData = await fs.readJSON('./resources/music/mk2/albums.json') as {[key: string]: {[key: string]: unknown}};
+        const artistsData = await fs.readJSON('./resources/music/mk2/artists.json') as {[key: string]: string};
+        const videoDataArray = songs.map((track) => ({...track, album: albumData[track.album], artists: track.artists.map((id) => artistsData[id])}));
+        const randomLinks = getRandom(videoDataArray, count);
+        this.queue = [];
+        randomLinks.forEach(({artists, name, previewUrl, youtubeUrl, id}) => {
+            this.queue.push({url: youtubeUrl, artists, previewUrl, name, voiceChannel: this.voiceChannel, id} as any);
+        });
+    }
+
     public passConnection(connection: VoiceConnection): void {
         super.passConnection(connection);
 
@@ -129,17 +141,7 @@ export class TriviaPlayer extends Player {
                     void this.textChannel.send({embeds: [embed]});
                     this.rounds++;
                     this.correctThisRound = 0;
-                    const songs = await fs.readJSON('./resources/music/mk2/trivia.json') as TriviaElement[]; // TODO: Move type to types
-                    const albumData = await fs.readJSON('./resources/music/mk2/albums.json') as {[key: string]: {[key: string]: unknown}};
-                    const artistsData = await fs.readJSON('./resources/music/mk2/artists.json') as {[key: string]: string};
-                    const videoDataArray = songs.map((track) => ({...track, album: albumData[track.album], artists: track.artists.map((id) => artistsData[id])}));
-                    // Get random numberOfSongs videos from the array
-
-                    const randomLinks = getRandom(videoDataArray, ROUND_SIZE);
-                    this.queue = [];
-                    randomLinks.forEach(({artists, name, previewUrl, youtubeUrl, id}) => {
-                        this.queue.push({url: youtubeUrl, artists, previewUrl, name, voiceChannel: this.voiceChannel, id} as any);
-                    });
+                    await this.loadSongs(ROUND_SIZE);
                 }
                 // Finished playing audio
                 if(this.queue.length) {
@@ -262,7 +264,7 @@ export class TriviaPlayer extends Player {
                 const embed = new MessageEmbed()
                     .setColor('#ff7373')
                     .setTitle(`:musical_note: The song was: (${Math.max(this.queue.length - 1, 0)} left${this.roundMode ? ' this round' : ''})`)
-                    .setDescription(`**[${song}](https://open.spotify.com/track/${(this.queue[0] as any).id})**\n${this.roundMode ? `You've got ${this.correctThisRound / this.rounds} right to pass this round!` : ''}\n${board}`);
+                    .setDescription(`**[${song}](https://open.spotify.com/track/${(this.queue[0] as any).id})**\n${this.roundMode ? `You've got ${this.correctThisRound} / ${this.rounds} right to pass this round!` : ''}\n${board}`);
 
                 void this.textChannel.send({embeds: [embed]});
             };

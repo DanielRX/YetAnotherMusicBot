@@ -1,13 +1,10 @@
 import {joinVoiceChannel, VoiceConnectionStatus, entersState} from '@discordjs/voice';
 import type {BaseGuildTextChannel} from 'discord.js';
 import {MessageEmbed} from 'discord.js';
-import fs from 'fs-extra';
 import {playerManager, triviaManager} from '../../utils/client';
 import TriviaPlayer from '../../utils/music/TriviaPlayer';
 import type {CustomInteraction, CommandReturn, MessageFunction} from '../../utils/types';
 import {logger} from '../../utils/logging';
-
-import {getRandom} from '../../utils/utils';
 
 export const name = 'music-trivia';
 export const description = 'Engage in a music quiz with your friends!';
@@ -19,8 +16,6 @@ export const options = [
     {type: 'boolean' as const, name: 'round-mode', description: 'Play forever with rounds', required: false, choices: [], default: false},
     {type: 'string' as const, name: 'twitch-channel', description: 'Which twitch channel would you like to listen to?', required: false, choices: [], default: ''},
 ];
-
-type TriviaElement = {youtubeUrl: string, previewUrl: string, artists: string[], album: string, name: string, id: string};
 
 const handleSubscription = async(interaction: CustomInteraction, player: TriviaPlayer, desc: string, errorMsg: string): Promise<CommandReturn> => {
     const {queue} = player;
@@ -48,21 +43,11 @@ export const execute = async(interaction: CustomInteraction, message: MessageFun
     if(playerManager.has(interaction.guildId)) { return message('TRACK_IS_PLAYING'); }
     if(triviaManager.has(interaction.guildId)) { return message('TRIVIA_IS_RUNNING'); }
 
-    const songs = await fs.readJSON('./resources/music/mk2/trivia.json') as TriviaElement[]; // TODO: Move type to types
-    const albumData = await fs.readJSON('./resources/music/mk2/albums.json') as {[key: string]: {[key: string]: unknown}};
-    const artistsData = await fs.readJSON('./resources/music/mk2/artists.json') as {[key: string]: string};
-    const videoDataArray = songs.map((track) => ({...track, album: albumData[track.album], artists: track.artists.map((id) => artistsData[id])}));
-    // Get random numberOfSongs videos from the array
-
-    const randomLinks = getRandom(videoDataArray, length);
     triviaManager.set(interaction.guildId, new TriviaPlayer(hardMode, roundMode, twitchChannel, voiceChannel));
 
     const triviaPlayer = triviaManager.get(interaction.guildId) as unknown as TriviaPlayer;
-
+    await triviaPlayer.loadSongs(length);
     // eslint-disable-next-line @typescript-eslint/no-shadow
-    randomLinks.forEach(({artists, name, previewUrl, youtubeUrl, id}) => {
-        triviaPlayer.queue.push({url: youtubeUrl, artists, previewUrl, name, voiceChannel, id} as any);
-    });
 
     const membersInChannel = interaction.member.voice.channel?.members;
 
