@@ -253,8 +253,8 @@ export class TriviaPlayer extends Player {
                 if(typeof board === 'undefined') { return; }
                 const embed = new MessageEmbed()
                     .setColor('#ff7373')
-                    .setTitle(`:musical_note: The song was: (${Math.max(this.queue.length - 1, 0)} left)`)
-                    .setDescription(`**[${song}](https://open.spotify.com/track/${(this.queue[0] as any).id})**\n\n${board}`);
+                    .setTitle(`:musical_note: The song was: (${Math.max(this.queue.length - 1, 0)} left${this.roundMode ? ' this round' : ''})`)
+                    .setDescription(`**[${song}](https://open.spotify.com/track/${(this.queue[0] as any).id})**\n${this.roundMode ? `You've got ${this.correctThisRound / this.rounds} right to pass this round!` : ''}\n${board}`);
 
                 void this.textChannel.send({embeds: [embed]});
             };
