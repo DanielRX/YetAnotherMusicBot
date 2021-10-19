@@ -14,7 +14,7 @@ export const execute = async(interaction: CustomInteraction, message: MessageFun
     if(interaction.user.id !== '530808977794007051') { return 'Only the owner of the bot can do this!'; }
     const triviaPlayer = triviaManager.get(interaction.guildId);
     if(!triviaPlayer) { return 'Trivia is not running right now!'; }
-    if(!triviaPlayer.score.has(player.username)) { return 'They\'re not in the trivia!'; }
-    triviaPlayer.score.delete(player.username);
+    if(!triviaPlayer.score.has(`d:${player.username.toLowerCase()}`)) { return 'They\'re not in the trivia!'; }
+    triviaPlayer.score.delete(`d:${player.username.toLowerCase()}`);
     return 'Removed them from the music trivia!';
 };
