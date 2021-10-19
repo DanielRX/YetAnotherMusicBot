@@ -136,7 +136,7 @@ export class TriviaPlayer extends Player {
                     this.reset();
                     return this.textChannel.send({embeds: [embed]});
                 }
-                if(this.roundMode && this.correctThisRound >= this.rounds) {
+                if(this.roundMode && (this.correctThisRound >= this.rounds)) {
                     const embed = new MessageEmbed().setColor('#ff7373').setTitle(`Round Complete`).setDescription(`You got through round ${this.rounds}`);
                     void this.textChannel.send({embeds: [embed]});
                     this.rounds++;
