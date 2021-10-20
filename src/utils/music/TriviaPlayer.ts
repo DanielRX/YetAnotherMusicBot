@@ -81,6 +81,7 @@ export class TriviaPlayer extends Player {
     public queue: PlayTrack[] = [];
     private wasTriviaEndCalled = false;
     private lastMessage: Message | null = null;
+    private lastSongMessage: Message | null = null;
     private hints = 0;
     private songNameFoundTime = -1;
     private songSingerFoundTime = -1;
@@ -210,9 +211,15 @@ export class TriviaPlayer extends Player {
                 const firstSingerGuess = this.songSingerFoundTime === -1 && (gotAnArtist);
                 const firstNameGuess = this.songNameFoundTime === -1 && (gotName);
 
-                if(firstSingerGuess) { this.songSingerFoundTime = time; setTimeout(() => { this.twitchClient?.say(this.twitchChannel, `The artists were guessed by: ${Object.keys(this.songSingerWinners).join(', ')} and were: ${singers.join(', ')}`); }, answerTimeout); }
+                if(firstSingerGuess) {
+                    this.songSingerFoundTime = time;
+                    setTimeout(() => { this.twitchClient?.say(this.twitchChannel, `The artists were guessed by: ${Object.keys(this.songSingerWinners).map((x) => x.replace('t:', '').replace('d:', '')).join(', ')} and were: ${singers.join(', ')}`); }, answerTimeout);
+                }
                 if(((time - this.songSingerFoundTime) < answerTimeout && !this.songSingerWinners[username])) { gotSingerInTime = true; }
-                if(firstNameGuess) { this.songNameFoundTime = time; setTimeout(() => { this.twitchClient?.say(this.twitchChannel, `The song was guessed by: ${Object.keys(this.songNameWinners).join(', ')} and was: ${title}`); }, answerTimeout); }
+                if(firstNameGuess) {
+                    this.songNameFoundTime = time;
+                    setTimeout(() => { this.twitchClient?.say(this.twitchChannel, `The song was guessed by: ${Object.keys(this.songNameWinners).map((x) => x.replace('t:', '').replace('d:', '')).join(', ')} and was: ${title}`); }, answerTimeout);
+                }
                 if(((time - this.songNameFoundTime) < answerTimeout) && !this.songNameWinners[username]) { gotNameInTime = true; }
 
                 if(gotSingerInTime) {
@@ -243,11 +250,12 @@ export class TriviaPlayer extends Player {
                 return onMessage(`d:${msg.author.username.toLowerCase()}`, msg.content, true, msg);
             };
 
-            const onCollectorEnd = () => {
+            const onCollectorEnd = async() => {
                 if(typeof nextHintInt !== 'undefined') {
                     clearTimeout(nextHintInt);
                 }
                 if(this.lastMessage !== null) { void this.lastMessage.delete().catch(() => { logger.error('Failed to delete message'); }); }
+                if(this.lastSongMessage !== null && this.roundMode) { void this.lastSongMessage.delete().catch(() => { logger.error('Failed to delete message'); }); }
                 /*The reason for this if statement is that we don't want to get an empty embed returned via chat by the bot if end-trivia command was called */
                 if(this.wasTriviaEndCalled) {
                     this.wasTriviaEndCalled = false;
@@ -264,9 +272,9 @@ export class TriviaPlayer extends Player {
                 const embed = new MessageEmbed()
                     .setColor('#ff7373')
                     .setTitle(`:musical_note: The song was: (${Math.max(this.queue.length - 1, 0)} left${this.roundMode ? ' this round' : ''})`)
-                    .setDescription(`**[${song}](https://open.spotify.com/track/${(this.queue[0] as any).id})**\n${this.roundMode ? `You've got ${this.correctThisRound} / ${this.rounds} right to pass this round!` : ''}\n${board}`);
+                    .setDescription(`**[${song}](https://open.spotify.com/track/${(this.queue[0] as any).id})**\n${this.roundMode ? `You've got ${this.correctThisRound} / ${this.rounds} right to pass this round!\n` : ''}\n${board}`);
 
-                void this.textChannel.send({embeds: [embed]});
+                this.lastSongMessage = await this.textChannel.send({embeds: [embed]});
             };
 
             collector.on('collect', onDiscordMessage);
