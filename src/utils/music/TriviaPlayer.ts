@@ -139,11 +139,11 @@ export class TriviaPlayer extends Player {
                     return this.textChannel.send({embeds: [embed]});
                 }
                 if(this.roundMode && (this.correctThisRound >= this.rounds)) {
-                    if(this.lastRoundMessage !== null) { void this.lastRoundMessage.delete().catch(() => { logger.error('Failed to delete message'); }); }
-                    const embed = new MessageEmbed().setColor('#ff7373').setTitle(`Round Complete`).setDescription(`You got through round ${this.rounds}`);
-                    this.lastRoundMessage = await this.textChannel.send({embeds: [embed]});
-                    this.rounds++;
                     this.correctThisRound = 0;
+                    const embed = new MessageEmbed().setColor('#ff7373').setTitle(`Round Complete`).setDescription(`You got through round ${this.rounds}`);
+                    this.rounds++;
+                    if(this.lastRoundMessage !== null) { void this.lastRoundMessage.delete().catch(() => { logger.error('Failed to delete message'); }); }
+                    this.lastRoundMessage = await this.textChannel.send({embeds: [embed]});
                     await this.loadSongs(ROUND_SIZE);
                 }
                 // Finished playing audio
