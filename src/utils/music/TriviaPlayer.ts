@@ -90,7 +90,7 @@ export class TriviaPlayer extends Player {
     private songNameWinners: {[key: string]: boolean} = {};
     private songSingerWinners: {[key: string]: boolean} = {};
     private readonly twitchClient: tmi.Client | null;
-    private rounds = 1;
+    private rounds = 6;
     private correctThisRound = 0;
     // eslint-disable-next-line @typescript-eslint/no-parameter-properties
     public constructor(public hardMode: boolean, public roundMode: boolean, public twitchChannel: string, public voiceChannel: VoiceChannel) {
@@ -140,7 +140,7 @@ export class TriviaPlayer extends Player {
                     logger.info(getLeaderBoard(Array.from(sortedScoreMap.entries()), Infinity));
                     const embed2 = new MessageEmbed()
                         .setColor('#ff7373')
-                        .setTitle(`:musical_note: Scores: })`)
+                        .setTitle(`:musical_note: Scores:`)
                         .setDescription(`${board}`);
                     this.reset();
                     await this.textChannel.send({embeds: [embed2]});
@@ -223,12 +223,12 @@ export class TriviaPlayer extends Player {
 
                 if(firstSingerGuess) {
                     this.songSingerFoundTime = time;
-                    setTimeout(() => { this.twitchClient?.say(this.twitchChannel, `The artists were guessed by: ${Object.keys(this.songSingerWinners).map((x) => x.replace('t:', '').replace('d:', '')).join(', ')} and were: ${singers.join(', ')}`); }, answerTimeout);
+                    // setTimeout(() => { this.twitchClient?.say(this.twitchChannel, `The artists were guessed by: ${Object.keys(this.songSingerWinners).map((x) => x.replace('t:', '').replace('d:', '')).join(', ')} and were: ${singers.join(', ')}`); }, answerTimeout);
                 }
                 if(((time - this.songSingerFoundTime) < answerTimeout && !this.songSingerWinners[username])) { gotSingerInTime = true; }
                 if(firstNameGuess) {
                     this.songNameFoundTime = time;
-                    setTimeout(() => { this.twitchClient?.say(this.twitchChannel, `The song was guessed by: ${Object.keys(this.songNameWinners).map((x) => x.replace('t:', '').replace('d:', '')).join(', ')} and was: ${title}`); }, answerTimeout);
+                    // setTimeout(() => { this.twitchClient?.say(this.twitchChannel, `The song was guessed by: ${Object.keys(this.songNameWinners).map((x) => x.replace('t:', '').replace('d:', '')).join(', ')} and was: ${title}`); }, answerTimeout);
                 }
                 if(((time - this.songNameFoundTime) < answerTimeout) && !this.songNameWinners[username]) { gotNameInTime = true; }
 
