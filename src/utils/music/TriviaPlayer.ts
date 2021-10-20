@@ -82,6 +82,7 @@ export class TriviaPlayer extends Player {
     private wasTriviaEndCalled = false;
     private lastMessage: Message | null = null;
     private lastSongMessage: Message | null = null;
+    private lastRoundMessage: Message | null = null;
     private hints = 0;
     private songNameFoundTime = -1;
     private songSingerFoundTime = -1;
@@ -132,14 +133,15 @@ export class TriviaPlayer extends Player {
                 if(this.roundMode && (this.correctThisRound + this.queue.length < this.rounds)) {
                     const embed = new MessageEmbed()
                         .setColor('#ff7373')
-                        .setTitle(`You lost the game!`)
+                        .setTitle(`You lost the game at round ${this.rounds}!`)
                         .setDescription(`You needed ${this.rounds} but you only have ${this.correctThisRound} and ${this.queue.length} songs left`);
                     this.reset();
                     return this.textChannel.send({embeds: [embed]});
                 }
                 if(this.roundMode && (this.correctThisRound >= this.rounds)) {
+                    if(this.lastRoundMessage !== null) { void this.lastRoundMessage.delete().catch(() => { logger.error('Failed to delete message'); }); }
                     const embed = new MessageEmbed().setColor('#ff7373').setTitle(`Round Complete`).setDescription(`You got through round ${this.rounds}`);
-                    void this.textChannel.send({embeds: [embed]});
+                    this.lastRoundMessage = await this.textChannel.send({embeds: [embed]});
                     this.rounds++;
                     this.correctThisRound = 0;
                     await this.loadSongs(ROUND_SIZE);
