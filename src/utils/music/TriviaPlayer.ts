@@ -90,7 +90,7 @@ export class TriviaPlayer extends Player {
     private songNameWinners: {[key: string]: boolean} = {};
     private songSingerWinners: {[key: string]: boolean} = {};
     private readonly twitchClient: tmi.Client | null;
-    private rounds = 17;
+    private rounds = 14;
     private correctThisRound = 0;
     // eslint-disable-next-line @typescript-eslint/no-parameter-properties
     public constructor(public hardMode: boolean, public roundMode: boolean, public twitchChannel: string, public voiceChannel: VoiceChannel) {
