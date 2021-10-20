@@ -237,7 +237,6 @@ export class TriviaPlayer extends Player {
                 }
 
                 if((this.songSingerFoundTime !== -1) && (this.songNameFoundTime !== -1)) {
-                    this.correctThisRound++;
                     setTimeout(() => { collector.stop(); }, 1000);
                 }
             };
@@ -253,6 +252,9 @@ export class TriviaPlayer extends Player {
             };
 
             const onCollectorEnd = async() => {
+                if((this.songSingerFoundTime !== -1) && (this.songNameFoundTime !== -1)) {
+                    this.correctThisRound++;
+                }
                 if(typeof nextHintInt !== 'undefined') {
                     clearTimeout(nextHintInt);
                 }
