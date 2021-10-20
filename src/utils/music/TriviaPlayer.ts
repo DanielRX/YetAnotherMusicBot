@@ -32,9 +32,9 @@ const normalizeValue = (hardMode: boolean) => (value: string) => {
         .toLowerCase(); // Remove duplicate spaces
 };
 
-const getLeaderBoard = (arr: [string, number][]) => { // TODO: Shared medals
+const getLeaderBoard = (arr: [string, number][], limit = 10) => { // TODO: Shared medals
     if(typeof arr === 'undefined') { return; }
-    const players = arr.filter(([, points]) => points > 0);
+    const players = arr.filter(([, points]) => points > 0).slice(0, limit);
     if(typeof players[0] === 'undefined') { return; } // Issue #422
     let leaderBoard = '';
 
@@ -135,7 +135,15 @@ export class TriviaPlayer extends Player {
                         .setColor('#ff7373')
                         .setTitle(`You lost the game at round ${this.rounds}!`)
                         .setDescription(`You needed ${this.rounds} but you only have ${this.correctThisRound} and ${this.queue.length} songs left`);
+                    const sortedScoreMap = new Map([...this.score.entries()].sort((a, b) => b[1] - a[1]));
+                    const board = getLeaderBoard(Array.from(sortedScoreMap.entries()), 20);
+                    logger.info(getLeaderBoard(Array.from(sortedScoreMap.entries()), Infinity));
+                    const embed2 = new MessageEmbed()
+                        .setColor('#ff7373')
+                        .setTitle(`:musical_note: Scores: })`)
+                        .setDescription(`${board}`);
                     this.reset();
+                    await this.textChannel.send({embeds: [embed2]});
                     return this.textChannel.send({embeds: [embed]});
                 }
                 if(this.roundMode && (this.correctThisRound >= this.rounds)) {
@@ -271,7 +279,7 @@ export class TriviaPlayer extends Player {
                 const sortedScoreMap = new Map([...this.score.entries()].sort((a, b) => b[1] - a[1]));
 
                 const song = `${capitalizeWords(this.queue[0].artists[0])}: ${capitalizeWords(this.queue[0].name)}`;
-                const board = getLeaderBoard(Array.from(sortedScoreMap.entries()));
+                const board = getLeaderBoard(Array.from(sortedScoreMap.entries()), 10);
                 if(typeof board === 'undefined') { return; }
                 const embed = new MessageEmbed()
                     .setColor('#ff7373')
