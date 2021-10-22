@@ -41,7 +41,6 @@ for(const file of commandFiles) {
 void (async() => {
     try {
         logger.info('Started refreshing application (/) commands.');
-        await rest.put(Routes.applicationGuildCommands(config.clientId, '653926858873765938') as any, {body: commandsArr});
         await rest.put(Routes.applicationCommands(config.clientId) as any, {body: commandsArr});
         logger.info('Successfully reloaded application (/) commands.');
     } catch(e: unknown) {
