@@ -1,4 +1,4 @@
-import type {CustomInteraction, GuildData, MessageFunction} from '../../utils/types';
+import type {CommandInput, GuildData} from '../../utils/types';
 import {AudioPlayerStatus} from '@discordjs/voice';
 import createGuildData from '../../utils/createGuildData';
 import {arrayMove} from '../../utils/utils';
@@ -13,12 +13,12 @@ export const options = [
     {type: 'integer' as const, name: 'newposition', description: 'What position do you want to move the song to?', required: true, choices: []}
 ];
 
-export const execute = async(interaction: CustomInteraction, message: MessageFunction, oldPosition: number, newPosition: number): Promise<string> => {
-    if(!guildData.get(interaction.guildId)) {
-        guildData.set(interaction.guildId, createGuildData());
+export const execute = async({interaction, guildId, message, params: {oldPosition, newPosition}}: CommandInput<{oldPosition: number, newPosition: number}>): Promise<string> => {
+    if(!guildData.get(guildId)) {
+        guildData.set(guildId, createGuildData());
     }
-    const guild = guildData.get(interaction.guildId) as unknown as GuildData;
-    const player = playerManager.get(interaction.guildId);
+    const guild = guildData.get(guildId) as unknown as GuildData;
+    const player = playerManager.get(guildId);
     if(!player) { return message('NO_SONG_PLAYING'); }
     if(player.audioPlayer.state.status !== AudioPlayerStatus.Playing) { return message('NO_SONG_PLAYING'); }
     if(guild.triviaData.isTriviaRunning) { return message('TRIVIA_IS_RUNNING'); } // && player.audioPlayer.state.status === AudioPlayerStatus.Playing

@@ -1,7 +1,7 @@
 import {MessageEmbed} from 'discord.js';
 import ISO6391 from 'iso-639-1';
 import translate from '@vitalets/google-translate-api';
-import type {CommandReturn, CustomInteraction, MessageFunction} from '../../utils/types';
+import type {CommandInput, CommandReturn} from '../../utils/types';
 
 export const name = 'translate';
 export const description = 'Translate to any language using Google translate.';
@@ -12,7 +12,7 @@ export const options = [
     {type: 'string' as const, name: 'text', description: 'What text do you want to translate?', required: true, choices: []}
 ];
 
-export const execute = async(_: CustomInteraction, message: MessageFunction, targetLang: string, text: string): Promise<CommandReturn> => {
+export const execute = async({params: {text, targetLang}}: CommandInput<{targetLang: string, text: string}>): Promise<CommandReturn> => {
     const langCode = ISO6391.getCode(targetLang);
 
     if(langCode === '') { return ':x: Please provide a valid language!'; }

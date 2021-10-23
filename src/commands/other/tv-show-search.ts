@@ -1,4 +1,4 @@
-import type {CommandReturn, CustomInteraction, MessageFunction} from '../../utils/types';
+import type {CommandInput, CommandReturn} from '../../utils/types';
 import {MessageEmbed} from 'discord.js';
 import {fetch} from '../../utils/utils';
 import type {Nullable} from 'discord-api-types/utils/internals';
@@ -39,19 +39,11 @@ type Show = {
 const getShowSearch = async(showQuery: string): Promise<Show[]> => {
     const url = `http://api.tvmaze.com/search/shows?q=${encodeURI(showQuery)}`;
     const body = await fetch<Show[]>(url);
-    if(body.status == `429`) {
-        throw new Error(':x: Rate Limit exceeded. Please try again in a few minutes.');
-    }
-    if(body.status == `503`) {
-        throw new Error(':x: The service is currently unavailable. Please try again later.');
-    }
-    if(body.status != '200') {
-        throw new Error('There was a problem getting data from the API, make sure you entered a valid TV show name');
-    }
+    if(body.status == `429`) { throw new Error(':x: Rate Limit exceeded. Please try again in a few minutes.'); }
+    if(body.status == `503`) { throw new Error(':x: The service is currently unavailable. Please try again later.'); }
+    if(body.status != '200') { throw new Error('There was a problem getting data from the API, make sure you entered a valid TV show name'); }
     const json = await body.json();
-    if(!json.length) {
-        throw new Error('There was a problem getting data from the API, make sure you entered a valid TV show name');
-    }
+    if(!json.length) { throw new Error('There was a problem getting data from the API, make sure you entered a valid TV show name'); }
     return json;
 };
 
@@ -68,7 +60,7 @@ const cleanUp = (summary: string) => summary
     .replace(/&#39;/g, "'")
     .toLocaleString();
 
-export const execute = async(_: CustomInteraction, message: MessageFunction, tvShow: string): Promise<CommandReturn> => {
+export const execute = async({params: {tvShow}}: CommandInput<{tvShow: string}>): Promise<CommandReturn> => {
     const showResponse: Show[] = await getShowSearch(`${tvShow}`);
 
     const embedArray = [];

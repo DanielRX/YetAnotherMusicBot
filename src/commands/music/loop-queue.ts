@@ -1,4 +1,4 @@
-import type {CustomInteraction, GuildData, MessageFunction} from '../../utils/types';
+import type {CommandInput, GuildData} from '../../utils/types';
 import {AudioPlayerStatus} from '@discordjs/voice';
 import createGuildData from '../../utils/createGuildData';
 import {guildData, playerManager} from '../../utils/client';
@@ -11,7 +11,7 @@ export const options = [
     {type: 'integer' as const, name: 'looptimes', description: 'How many times do you want to loop the queue?', required: true, choices: []}
 ];
 
-export const execute = async(interaction: CustomInteraction, message: MessageFunction, loopTimes: number): Promise<string> => {
+export const execute = async({interaction, message, params: {loopTimes}}: CommandInput<{loopTimes: number}>): Promise<string> => {
     if(!guildData.get(interaction.guildId)) {
         guildData.set(interaction.guildId, createGuildData());
     }

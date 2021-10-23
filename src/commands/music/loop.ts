@@ -1,4 +1,4 @@
-import type {CustomInteraction, GuildData, MessageFunction} from '../../utils/types';
+import type {CommandInput, GuildData} from '../../utils/types';
 import {AudioPlayerStatus} from '@discordjs/voice';
 import createGuildData from '../../utils/createGuildData';
 import {guildData, playerManager} from '../../utils/client';
@@ -7,7 +7,7 @@ export const name = 'loop';
 export const description = 'Set a song to play on loop';
 export const deferred = false;
 
-export const execute = async(interaction: CustomInteraction, message: MessageFunction): Promise<string> => {
+export const execute = async({interaction, message}: CommandInput): Promise<string> => {
     if(!guildData.get(interaction.guildId)) {
         guildData.set(interaction.guildId, createGuildData());
     }

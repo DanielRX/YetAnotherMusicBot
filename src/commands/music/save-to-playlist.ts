@@ -1,6 +1,6 @@
 import type {User} from 'discord.js';
 import type {Video} from 'youtube-sr';
-import type {CommandReturn, CustomInteraction, MessageFunction, PlayTrack, Track} from '../../utils/types';
+import type {CommandInput, CommandReturn, CustomInteraction, PlayTrack, Track} from '../../utils/types';
 import member from '../../utils/models/Member';
 import YouTube from 'youtube-sr';
 import {getData as gd} from 'spotify-url-info';
@@ -33,7 +33,7 @@ const constructSongObj = (video: Video, user: User): PlayTrack => {
 
 const getData: (url: string) => Promise<Track | {tracks: {items: ({track: Track})[]}}> = gd;
 
-const processTrack = (user: User) => async(track: {track: Track}): Promise<PlayTrack> => searchOne(track.track).then((video) => constructSongObj(video, user))
+const processTrack = (user: User) => async(track: {track: Track}): Promise<PlayTrack> => searchOne(track.track).then((video) => constructSongObj(video, user));
 
 const processURL = async(url: string, interaction: CustomInteraction) => {
     if(isSpotifyURL(url)) {
@@ -62,7 +62,7 @@ const processURL = async(url: string, interaction: CustomInteraction) => {
     return constructSongObj(video, interaction.member.user);
 };
 
-export const execute = async(interaction: CustomInteraction, message: MessageFunction, playlistName: string, url: string): Promise<CommandReturn> => {
+export const execute = async({interaction, params: {playlistName, url}}: CommandInput<{playlistName: string, url: string}>): Promise<CommandReturn> => {
     const userData = await member.findOne({memberId: interaction.member.id}).exec();
     if(!userData) { return 'You have no custom playlists!'; }
     const savedPlaylistsClone = userData.savedPlaylists;

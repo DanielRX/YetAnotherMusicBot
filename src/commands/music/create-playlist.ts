@@ -1,4 +1,4 @@
-import type {CommandReturn, CustomInteraction, MessageFunction} from '../../utils/types';
+import type {CommandInput, CommandReturn} from '../../utils/types';
 import member from '../../utils/models/Member';
 
 export const name = 'create-playlist';
@@ -9,7 +9,7 @@ export const options = [
     {type: 'string' as const, name: 'playlistname', description: 'What is the name of the playlist you would like to create?', required: true, choices: []}
 ];
 
-export const execute = async(interaction: CustomInteraction, message: MessageFunction, playlistName: string): Promise<CommandReturn> => {
+export const execute = async({interaction, message, params: {playlistName}}: CommandInput<{playlistName: string}>): Promise<CommandReturn> => {
     const {member: {id, user: {username}, joinedAt}} = interaction;
     const playlistData = {name: playlistName, urls: []};
     // Check if the user exists in the db
@@ -30,3 +30,4 @@ export const execute = async(interaction: CustomInteraction, message: MessageFun
     await member.updateOne({memberId: interaction.member.id}, userData);
     return message('PLAYLIST_CREATED', {playlistName});
 };
+

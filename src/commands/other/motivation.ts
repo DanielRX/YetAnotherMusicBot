@@ -1,4 +1,4 @@
-import type {CommandReturn, MessageFunction} from '../../utils/types';
+import type {CommandInput, CommandReturn} from '../../utils/types';
 import fs from 'fs-extra';
 import {MessageEmbed} from 'discord.js';
 
@@ -6,10 +6,10 @@ export const name = 'motivation';
 export const description = 'Get a random motivational quote!';
 export const deferred = false;
 
-export const execute = async(message: MessageFunction): Promise<CommandReturn> => {
+export const execute = async({}: CommandInput): Promise<CommandReturn> => {
     // thanks to https://type.fit/api/quotes
 
-    const jsonQuotes = fs.readJSONSync('././resources/quotes/motivational.json', 'utf8') as {quotes: ({text: string, author: string})[]};
+    const jsonQuotes = fs.readJSONSync('./resources/quotes/motivational.json', 'utf8') as {quotes: ({text: string, author: string})[]};
     const quoteArray = jsonQuotes.quotes;
 
     const randomQuote = quoteArray[Math.floor(Math.random() * quoteArray.length)];

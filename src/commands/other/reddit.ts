@@ -1,7 +1,7 @@
 import {fetch} from '../../utils/utils';
 import type {SelectMenuInteraction} from 'discord.js';
 import {MessageEmbed, MessageActionRow, MessageSelectMenu} from 'discord.js';
-import type {CommandReturn, CustomInteraction, MessageFunction} from '../../utils/types';
+import type {CommandInput, CommandReturn} from '../../utils/types';
 import {options as opts} from '../../utils/options';
 import {logger} from '../../utils/logging';
 
@@ -14,7 +14,7 @@ export const options = [
     {type: 'string' as const, name: 'sort', description: 'What posts do you want to see? Select from best/hot/top/new/controversial/rising', required: true, choices: ['best', 'hot', 'new', 'top', 'controversial', 'rising']},
 ];
 
-const fetchFromReddit = async(interaction: CustomInteraction, subreddit: string, sort: string, timeFilter = 'day') => {
+const fetchFromReddit = async(subreddit: string, sort: string, timeFilter = 'day') => {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     const response = await fetch<{data: {children: ({data: {title: string, over_18: boolean, score: string, author: string, permalink: string}})[]}}>(`https://www.reddit.com/r/${subreddit}/${sort}/.json?limit=10&t=${timeFilter}`);
     const json = await response.json();
@@ -41,10 +41,10 @@ const fetchFromReddit = async(interaction: CustomInteraction, subreddit: string,
     return {pages: pageData};
 };
 
-export const execute = async(interaction: CustomInteraction, messageF: MessageFunction, subReddit: string, sort: 'best' | 'controversial' | 'hot' | 'new' | 'rising' | 'top'): Promise<CommandReturn> => {
+export const execute = async({interaction, params: {subReddit, sort}}: CommandInput<{subReddit: string, sort: 'best' | 'controversial' | 'hot' | 'new' | 'rising' | 'top'}>): Promise<CommandReturn> => {
     const message = await interaction.deferReply({fetchReply: true});
 
-    if(!(sort === 'top' || sort === 'controversial')) { return fetchFromReddit(interaction, subReddit, sort); }
+    if(!(sort === 'top' || sort === 'controversial')) { return fetchFromReddit(subReddit, sort); }
     const row = new MessageActionRow().addComponents(new MessageSelectMenu()
         .setCustomId('top_or_controversial')
         .setPlaceholder('Please select an option')
@@ -72,7 +72,7 @@ export const execute = async(interaction: CustomInteraction, messageF: MessageFu
             }
             collector.stop();
             const timeFilter = i.values[0];
-            return resolve(fetchFromReddit(interaction, subReddit, sort, timeFilter));
+            return resolve(fetchFromReddit(subReddit, sort, timeFilter));
         });
     });
 };

@@ -1,16 +1,16 @@
 import {playerManager} from '../../utils/client';
-import type {CommandReturn, CustomInteraction, MessageFunction} from '../../utils/types';
+import type {CommandInput, CommandReturn} from '../../utils/types';
 import {shuffleArray} from '../../utils/utils';
 
 export const name = 'shuffle';
 export const description = 'Shuffle the music queue!';
 export const deferred = true;
 
-export const execute = async(interaction: CustomInteraction, message: MessageFunction): Promise<CommandReturn> => {
+export const execute = async({interaction, guildId}: CommandInput): Promise<CommandReturn> => {
     const voiceChannel = interaction.member.voice.channel;
     if(!voiceChannel) { return `:no_entry: You must be in the same voice channel as the bot in order to use that!`; }
     if(voiceChannel.id !== interaction.guild.me?.voice.channel?.id) { return `:no_entry: You must be in the same voice channel as the bot in order to use that!`; }
-    const player = playerManager.get(interaction.guildId);
+    const player = playerManager.get(guildId);
     if(!player) { return ':x: There is nothing playing right now!'; }
     if(player.loopSong) { return ':x: Turn off the **loop** command before using the **shuffle** command!'; }
     if(player.queue.length < 1) { return 'There are no songs in queue!'; }

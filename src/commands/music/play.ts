@@ -1,7 +1,7 @@
 import type {BaseGuildTextChannel, Message, SelectMenuInteraction, User, VoiceChannel} from 'discord.js';
 import type {Video} from 'youtube-sr';
 import type MusicPlayer from '../../utils/music/MusicPlayer';
-import type {CommandReturn, CustomAudioPlayer, CustomInteraction, GuildData, MessageFunction, Playlist, PlayTrack, Track} from '../../utils/types';
+import type {CommandInput, CommandReturn, CustomAudioPlayer, CustomInteraction, GuildData, Playlist, PlayTrack, Track} from '../../utils/types';
 import {MessageSelectMenu, MessageActionRow} from 'discord.js';
 import Player from '../../utils/music/MusicPlayer';
 import {getData} from 'spotify-url-info';
@@ -501,22 +501,22 @@ export const options = [
     {type: 'string' as const, name: 'flags', description: ':notes: Add s to shuffle a playlist, r to reverse it, n to play next, j to play now', required: false, choices: [], default: ''}
 ];
 
-export const execute = async(interaction: CustomInteraction, messageF: MessageFunction, rawQuery: string, flags: string): Promise<CommandReturn> => {
-    if(!guildData.get(interaction.guildId)) {
-        guildData.set(interaction.guildId, createGuildData());
+export const execute = async({interaction, guildId, message: messageF, params: {rawQuery, flags}}: CommandInput<{rawQuery: string, flags: string}>): Promise<CommandReturn> => {
+    if(!guildData.get(guildId)) {
+        guildData.set(guildId, createGuildData());
     }
     const message = await interaction.deferReply({fetchReply: true});
     // Make sure that only users present in a voice channel can use 'play'
     if(!interaction.member.voice.channel) { return messageF('NOT_IN_VC'); }
     // Make sure there isn't a 'music-trivia' running
-    const guild = guildData.get(interaction.guild.id) as unknown as GuildData;
+    const guild = guildData.get(guildId) as unknown as GuildData;
     if(guild.triviaData.isTriviaRunning) { return messageF('TRIVIA_IS_RUNNING'); }
 
-    let player = playerManager.get(interaction.guildId) as unknown as MusicPlayer | undefined;
+    let player = playerManager.get(guildId) as unknown as MusicPlayer | undefined;
 
     if(!player) {
         player = new Player();
-        playerManager.set(interaction.guildId, player as unknown as CustomAudioPlayer);
+        playerManager.set(guildId, player as unknown as CustomAudioPlayer);
     }
 
     if(player.commandLock) { return messageF('PLAY_CALL_RUNNING'); }

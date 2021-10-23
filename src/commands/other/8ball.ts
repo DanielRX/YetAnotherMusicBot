@@ -1,4 +1,4 @@
-import type {CommandReturn, CustomInteraction, MessageFunction} from '../../utils/types';
+import type {CommandInput, CommandReturn} from '../../utils/types';
 import {MessageEmbed} from 'discord.js';
 import fs from 'fs-extra';
 
@@ -10,7 +10,7 @@ export const options = [
     {type: 'string' as const, name: 'question', description: 'What do you want to ask?', required: true, choices: []}
 ];
 
-export const execute = async(_: CustomInteraction, message: MessageFunction, question: string): Promise<CommandReturn> => {
+export const execute = async({params: {question}}: CommandInput<{question: string}>): Promise<CommandReturn> => {
     if(question.length > 255) { return 'Please ask a shorter question!'; }
 
     const {answers} = fs.readJSONSync('././resources/other/8ball.json', 'utf8') as {answers: ({text: string})[]};

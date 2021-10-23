@@ -1,9 +1,9 @@
 import {joinVoiceChannel, VoiceConnectionStatus, entersState} from '@discordjs/voice';
-import type {BaseGuildTextChannel} from 'discord.js';
+import type {BaseGuildTextChannel, VoiceChannel} from 'discord.js';
 import {MessageEmbed} from 'discord.js';
 import {playerManager, triviaManager} from '../../utils/client';
 import TriviaPlayer from '../../utils/music/TriviaPlayer';
-import type {CustomInteraction, CommandReturn, MessageFunction} from '../../utils/types';
+import type {CustomInteraction, CommandReturn, CommandInput} from '../../utils/types';
 import {logger} from '../../utils/logging';
 
 export const name = 'music-trivia';
@@ -37,15 +37,15 @@ const handleSubscription = async(interaction: CustomInteraction, player: TriviaP
     return {embeds: [startTriviaEmbed]};
 };
 
-export const execute = async(interaction: CustomInteraction, message: MessageFunction, length: number, hardMode: boolean, roundMode: boolean, twitchChannel: string): Promise<CommandReturn> => {
+export const execute = async({interaction, guildId, message, params: {length, hardMode, roundMode, twitchChannel}}: CommandInput<{length: number, hardMode: boolean, roundMode: boolean, twitchChannel: string}>): Promise<CommandReturn> => {
     const voiceChannel = interaction.member.voice.channel;
     if(!voiceChannel) { return message('NOT_IN_VC'); }
-    if(playerManager.has(interaction.guildId)) { return message('TRACK_IS_PLAYING'); }
-    if(triviaManager.has(interaction.guildId)) { return message('TRIVIA_IS_RUNNING'); }
+    if(playerManager.has(guildId)) { return message('TRACK_IS_PLAYING'); }
+    if(triviaManager.has(guildId)) { return message('TRIVIA_IS_RUNNING'); }
 
-    triviaManager.set(interaction.guildId, new TriviaPlayer(hardMode, roundMode, twitchChannel, voiceChannel));
+    triviaManager.set(guildId, new TriviaPlayer(hardMode, roundMode, twitchChannel, voiceChannel as VoiceChannel));
 
-    const triviaPlayer = triviaManager.get(interaction.guildId) as unknown as TriviaPlayer;
+    const triviaPlayer = triviaManager.get(guildId) as unknown as TriviaPlayer;
     await triviaPlayer.loadSongs(length);
     // eslint-disable-next-line @typescript-eslint/no-shadow
 

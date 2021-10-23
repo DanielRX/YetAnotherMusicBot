@@ -1,5 +1,5 @@
 import {MessageEmbed} from 'discord.js';
-import type {CommandReturn, CustomInteraction, MessageFunction} from '../../utils/types';
+import type {CommandInput, CommandReturn} from '../../utils/types';
 import {fetch} from '../../utils/utils';
 
 export const name = 'covid';
@@ -47,7 +47,7 @@ const makeEmbed = (res: WorldStats) => {
         .setTimestamp(res.updated);
 };
 
-export const execute = async(_: CustomInteraction, message: MessageFunction, country: string): Promise<CommandReturn> => {
+export const execute = async({params: {country}}: CommandInput<{country: string}>): Promise<CommandReturn> => {
     if(country === 'all' || country === 'world' || country === 'global') {
         const res = await getWorldStats();
         const covidall = makeEmbed(res)

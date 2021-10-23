@@ -1,4 +1,4 @@
-import type {CommandReturn, CustomInteraction, MessageFunction} from '../../utils/types';
+import type {CommandInput, CommandReturn} from '../../utils/types';
 import {MessageEmbed} from 'discord.js';
 import {fetch} from '../../utils/utils';
 import prettyMilliseconds from 'pretty-ms';
@@ -11,28 +11,23 @@ export const options = [
     {type: 'string' as const, name: 'user', description: 'Who do you want to look up?', required: true, choices: []},
 ];
 
-export const execute = async(interaction: CustomInteraction, message: MessageFunction, userQuery: string): Promise<CommandReturn> => {
+export const execute = async({interaction, params: {userQuery}}: CommandInput<{userQuery: string}>): Promise<CommandReturn> => {
     const userFiltered = userQuery.toLowerCase();
     const userRes = await fetch<{runners: ({name: string, avatar: string})[], status :number}>(`https://splits.io/api/v4/runners?search=${userFiltered}`).then(async(res) => res.json());
     const runnerCount = userRes.runners.length;
     if(runnerCount == 0) {
-        return ':x: The Runner ' + userQuery + ' was  not found.';
+        return `:x: The Runner ${userQuery} was not found.`;
     }
 
     if(userRes.status == 404) {
-        return ':x: The Runner ' + userQuery + ' was  not found.';
+        return `:x: The Runner ${userQuery} was not found.`;
     }
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
     const pbsRes = await fetch<{pbs: ({id: string, realtime_duration_ms: number, realtime_sum_of_best_ms: number, program: string, parsed_at: number, attempts: any[], game: {cover_url: string, name: string}, category: {name: string}, segments: any[]})[], status :number}>(`https://splits.io/api/v4/runners/${userRes.runners[0].name}/pbs`).then(async(res) => res.json());
 
-    if(pbsRes.length == 0) {
-        return interaction.followUp(':x: The Runner ' + userRes.runners[0].name + `s hasn't submitted any speedruns to Splits.io\n
-        Please try again later.`);
-    }
-    if(pbsRes.status == 404) {
-        return ':x: The User ' + userQuery + 's stats were not found.';
-    }
+    if(pbsRes.length == 0) { return interaction.followUp(`:x: The Runner ${userRes.runners[0].name}'s hasn't submitted any speedruns to Splits.io\n\n        Please try again later.`); }
+    if(pbsRes.status == 404) { return `:x: The User ${userQuery}s stats were not found.`; }
 
     if(runnerCount != 0) {
         const pbArray = pbsRes.pbs;

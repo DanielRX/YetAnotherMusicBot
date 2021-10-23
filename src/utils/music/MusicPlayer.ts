@@ -4,7 +4,7 @@ import ytdl from 'ytdl-core';
 import type {BaseGuildTextChannel} from 'discord.js';
 import {MessageEmbed} from 'discord.js';
 import type {PlayTrack} from '../types';
-import {guildData, playerManager, triviaManager} from '../client';
+import {guildData, playerManager} from '../client';
 import {logger} from '../logging';
 import {Player} from './Player';
 

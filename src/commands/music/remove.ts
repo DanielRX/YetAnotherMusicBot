@@ -1,4 +1,4 @@
-import type {CommandReturn, CustomInteraction, MessageFunction} from '../../utils/types';
+import type {CommandInput, CommandReturn} from '../../utils/types';
 import {playerManager} from '../../utils/client';
 
 export const name = 'remove';
@@ -9,8 +9,8 @@ export const options = [
     {type: 'integer' as const, name: 'position', description: 'What song number do you want to remove from queue?', required: true, choices: []}
 ];
 
-export const execute = async(interaction: CustomInteraction, message: MessageFunction, position: number): Promise<CommandReturn> => {
-    const player = playerManager.get(interaction.guildId);
+export const execute = async({interaction, guildId, message, params: {position}}: CommandInput<{position: number}>): Promise<CommandReturn> => {
+    const player = playerManager.get(guildId);
 
     if(!player) { return message('NO_SONG_PLAYING'); }
 

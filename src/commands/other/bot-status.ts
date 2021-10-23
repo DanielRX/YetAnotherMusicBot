@@ -1,4 +1,4 @@
-import type {CommandReturn, CustomInteraction, MessageFunction} from '../../utils/types';
+import type {CommandInput, CommandReturn} from '../../utils/types';
 import type {Message, User} from 'discord.js';
 import Discord from 'discord.js';
 import os from 'os';
@@ -10,7 +10,7 @@ export const name = 'bot-status';
 export const description = 'Shows the current system status';
 export const deferred = false;
 
-export const execute = async(interaction: CustomInteraction, message: MessageFunction): Promise<CommandReturn> => {
+export const execute = async({interaction}: CommandInput): Promise<CommandReturn> => {
     const owner = await interaction.guild.fetchOwner();
     const isOwner = owner.id == interaction.member.id ? true : false;
 

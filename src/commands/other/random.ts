@@ -1,5 +1,5 @@
 import {MessageEmbed} from 'discord.js';
-import type {CommandReturn, CustomInteraction, MessageFunction} from '../../utils/types';
+import type {CommandInput, CommandReturn} from '../../utils/types';
 
 export const name = 'random';
 export const description = 'Generate a random number between two provided numbers!';
@@ -10,7 +10,7 @@ export const options = [
     {type: 'integer' as const, name: 'max', description: 'What is the maximum number?', required: true, choices: []}
 ];
 
-export const execute = async(_: CustomInteraction, message: MessageFunction, minIn: number, maxIn: number): Promise<CommandReturn> => {
+export const execute = async({params: {minIn, maxIn}}: CommandInput<{minIn: number, maxIn: number}>): Promise<CommandReturn> => {
     const min = Math.ceil(minIn);
     const max = Math.floor(maxIn);
     const rngEmbed = new MessageEmbed().setTitle(`${Math.floor(Math.random() * (max - min + 1)) + min}`);

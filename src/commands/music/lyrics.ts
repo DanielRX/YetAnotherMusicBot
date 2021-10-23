@@ -3,7 +3,7 @@ import {MessageEmbed} from 'discord.js';
 import cheerio from 'cheerio';
 import {config} from '../../utils/config';
 import {fetch} from '../../utils/utils';
-import type {CustomInteraction, CommandReturn, MessageFunction} from '../../utils/types';
+import type {CommandReturn, CommandInput} from '../../utils/types';
 import {playerManager, guildData} from '../../utils/client';
 import {logger} from '../../utils/logging';
 
@@ -74,10 +74,10 @@ const getLyrics = async(url: string, errorMessage: string) => {
     }
 };
 
-export const execute = async(interaction: CustomInteraction, message: MessageFunction, songName: string): Promise<CommandReturn> => {
+export const execute = async({interaction, guildId, message, params: {songName}}: CommandInput<{songName: string}>): Promise<CommandReturn> => {
     if(!config.geniusLyricsAPI) { return message('COMMAND_DISABLED'); }
-    const player = playerManager.get(interaction.guildId);
-    const guild = guildData.get(interaction.guildId);
+    const player = playerManager.get(guildId);
+    const guild = guildData.get(guildId);
     if(songName === '') {
         if(!player) { return message('NO_SONG_PLAYING'); }
         if(guild) {

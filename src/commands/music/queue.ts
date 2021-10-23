@@ -1,4 +1,4 @@
-import type {CommandReturn, CustomInteraction, MessageFunction} from '../../utils/types';
+import type {CommandInput, CommandReturn} from '../../utils/types';
 import {MessageEmbed} from 'discord.js';
 import {guildData, playerManager} from '../../utils/client';
 
@@ -6,10 +6,10 @@ export const name = 'queue';
 export const description = 'Display the music queue';
 export const deferred = true;
 
-export const execute = async(interaction: CustomInteraction, message: MessageFunction): Promise<CommandReturn> => {
-    const guild = guildData.get(interaction.guildId);
+export const execute = async({interaction, message, guildId}: CommandInput): Promise<CommandReturn> => {
+    const guild = guildData.get(guildId);
     if(guild && guild.triviaData.isTriviaRunning) { return message('TRIVIA_IS_RUNNING'); }
-    const player = playerManager.get(interaction.guildId);
+    const player = playerManager.get(guildId);
     if(player && player.queue.length == 0) { return message('NO_SONGS'); }
     if(!player) { return message('NO_SONG_PLAYING'); }
 
