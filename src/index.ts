@@ -49,8 +49,10 @@ void (async() => {
 })();
 
 import * as interactionCreate from './events/interactionCreate';
+import * as messageCreate from './events/messageCreate';
 
 client.on(interactionCreate.name, async(interaction) => interactionCreate.execute(interaction as CustomInteraction));
+client.on(messageCreate.name, async(message) => messageCreate.execute(message));
 
 client.once('ready', () => {
     client.user?.setActivity('/', {type: 'WATCHING'});
