@@ -3,6 +3,7 @@
 const f = require('node-fetch');
 import {SlashCommandStringOption, SlashCommandIntegerOption, SlashCommandBooleanOption, SlashCommandUserOption} from '@discordjs/builders';
 import type {OptionConfig, SlashCommandOption} from './types';
+import fs from 'fs-extra';
 
 const arrayMove = <T>(arr: T[], oldIndex: number, newIndex: number): T[] => {
     while(oldIndex < 0) {
@@ -76,6 +77,8 @@ const validateURL = (url: string): boolean => isYouTubePlaylistURL(url) || isYou
 type FetchConfig = {method?: 'GET' | 'POST', headers?: {'client-id'?: string, Authorization: string}};
 const fetch = f as <T>(url: string, config?: FetchConfig) => Promise<{slug: string, status: string, json: () => Promise<T & {length: number}>, text: () => Promise<string>}>;
 
-const filterEmpty = <T>(x: T[]): T[] => x.filter((y) => typeof y !== 'undefined')
+const filterEmpty = <T>(x: T[]): T[] => x.filter((y) => typeof y !== 'undefined');
 
-export {filterEmpty, fetch, arrayMove, getRandom, shuffleArray, isSpotifyURL, isYouTubePlaylistURL, isYouTubeVideoURL, validateURL, randomEl, setupOption};
+const randomLineFromFile = async(file: string): Promise<string> => fs.readFile(file, 'utf8').then((links) => links.split('\n')).then(randomEl);
+
+export {randomLineFromFile, filterEmpty, fetch, arrayMove, getRandom, shuffleArray, isSpotifyURL, isYouTubePlaylistURL, isYouTubeVideoURL, validateURL, randomEl, setupOption};

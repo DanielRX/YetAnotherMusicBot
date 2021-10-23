@@ -32,18 +32,10 @@ type GameData = {
 const getGameDetails = async(query: string) => {
     const url = `https://api.rawg.io/api/games/${query}?key=${config.rawgAPI}`;
     const body = await fetch<GameData>(url);
-    if(body.status == `429`) {
-        throw new Error(':x: Rate Limit exceeded. Please try again in a few minutes.');
-    }
-    if(body.status == `503`) {
-        throw new Error(':x: The service is currently unavailable. Please try again later.');
-    }
-    if(body.status == '404') {
-        throw new Error(`:x: Error: ${query} was not found`);
-    }
-    if(body.status !== '200') {
-        throw new Error(':x: There was a problem getting data from the API, make sure you entered a valid game tittle');
-    }
+    if(body.status == `429`) { throw new Error(':x: Rate Limit exceeded. Please try again in a few minutes.'); }
+    if(body.status == `503`) { throw new Error(':x: The service is currently unavailable. Please try again later.'); }
+    if(body.status == '404') { throw new Error(`:x: Error: ${query} was not found`); }
+    if(body.status !== '200') { throw new Error(':x: There was a problem getting data from the API, make sure you entered a valid game tittle'); }
 
     let json = await body.json();
     if(json.redirect) {
