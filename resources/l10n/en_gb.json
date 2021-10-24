@@ -107,6 +107,17 @@
         "RESUMED": ":play_pause: Track resumed!",
         "GENERIC_ERROR": "I was unable to unpause this song, please try again soon"
     },
+    "save-to-playlist": {
+        "NO_SAVED_PLAYLISTS": "You have zero saved playlists!",
+        "INVALID_URL": "Please enter a valid YouTube or Spotify URL!",
+        "PLAYLIST_NOT_FOUND": "You have no playlist named {{playlistName}}",
+        "MISSING_ERR_MESSAGE": "This is a placeholder error message",
+        "SUCCESS_PLAYLIST": "The playlist you provided was successfully saved!",
+        "SUCCESS_APPEND": "I added **{{name}}** to **{{playlistName}}**",
+        "PLAYLIST_DOES_NOT_EXIST": ":x: Playlist is either private or it does not exist!",
+        "CANT_GET_VIDEO": ":x: There was a problem getting the video you provided!",
+        "NO_LIVE": "I don't support live streams!"
+    },
     "about": {
         "ABOUT": "Made by <@530808977794007051> with :heart: code is available on GitHub (coming soon)"
     }
