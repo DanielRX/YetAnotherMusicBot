@@ -35,7 +35,7 @@ const getData: (url: string) => Promise<Track | {tracks: {items: ({track: Track}
 
 const processTrack = (user: User) => async(track: {track: Track}): Promise<PlayTrack> => searchOne(track.track).then((video) => constructSongObj(video, user));
 
-const processURL = async(url: string, interaction: CustomInteraction) => {
+const processURL = async(url: string, interaction: CustomInteraction, message: CommandInput['message']) => {
     if(isSpotifyURL(url)) {
         return getData(url)
             .then(async(res: Track | {tracks: {items: ({track: Track})[]}}) => {
@@ -48,42 +48,46 @@ const processURL = async(url: string, interaction: CustomInteraction) => {
             .catch((e: unknown) => { logger.error(e); });
     }
     if(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/.exec(url)) {
-        const playlist = await YouTube.getPlaylist(url).catch(function() {
-            throw new Error(':x: Playlist is either private or it does not exist!');
+        const playlist = await YouTube.getPlaylist(url).catch(async()=> {
+            return message('PLAYLIST_DOES_NOT_EXIST');
         });
+        if(typeof playlist === 'string') { return playlist; }
         const videosArr = await playlist.fetch().then((v) => v.videos);
         const urlsArr = videosArr.filter((v) => !v.private).map((v) => constructSongObj(v, interaction.member.user));
         return urlsArr;
     }
-    const video = await YouTube.getVideo(url).catch(() => {
-        throw new Error(':x: There was a problem getting the video you provided!');
+    const video = await YouTube.getVideo(url).catch(async() => {
+        return message('CANT_GET_VIDEO');
     });
-    if(video.live) { throw new Error("I don't support live streams!"); }
+    if(typeof video === 'string') { return video; }
+
+    if(video.live) { return message('NO_LIVE'); }
     return constructSongObj(video, interaction.member.user);
 };
 
-export const execute = async({interaction, params: {playlistName, url}}: CommandInput<{playlistName: string, url: string}>): Promise<CommandReturn> => {
+export const execute = async({interaction, message, params: {playlistName, url}}: CommandInput<{playlistName: string, url: string}>): Promise<CommandReturn> => {
     const userData = await member.findOne({memberId: interaction.member.id}).exec();
-    if(!userData) { return 'You have no custom playlists!'; }
+    if(!userData) { return message('NO_SAVED_PLAYLISTS'); }
     const savedPlaylistsClone = userData.savedPlaylists;
-    if(savedPlaylistsClone.length == 0) { return 'You have no custom playlists!'; }
+    if(savedPlaylistsClone.length == 0) { return message('NO_SAVED_PLAYLISTS'); }
 
-    if(!validateURL(url)) { return 'Please enter a valid YouTube or Spotify URL!'; }
+    if(!validateURL(url)) { return message('INVALID_URL'); }
 
     const location = savedPlaylistsClone.findIndex((value) => value.name == playlistName);
-    if(location === -1) { return `You have no playlist named ${playlistName}`; }
+    if(location === -1) { return message('PLAYLIST_NOT_FOUND', {playlistName}); }
     let urlsArrayClone = savedPlaylistsClone[location].urls;
-    const processedURL = await processURL(url, interaction);
-    if(!processedURL) return 'MISSING_ERR_MESSAGE';
+    const processedURL = await processURL(url, interaction, message);
+    if(typeof processedURL === 'string') { throw new Error(processedURL); }
+    if(!processedURL) return message('MISSING_ERR_MESSAGE');
     if(Array.isArray(processedURL)) {
         urlsArrayClone = urlsArrayClone.concat(processedURL);
         savedPlaylistsClone[location].urls = urlsArrayClone;
         await member.updateOne({memberId: interaction.member.id}, {savedPlaylists: savedPlaylistsClone}).exec();
-        return 'The playlist you provided was successfully saved!';
+        return message('SUCCESS_PLAYLIST');
     }
 
     urlsArrayClone.push(processedURL);
     savedPlaylistsClone[location].urls = urlsArrayClone;
     await member.updateOne({memberId: interaction.member.id}, {savedPlaylists: savedPlaylistsClone}).exec();
-    return `I added **${savedPlaylistsClone[location].urls[savedPlaylistsClone[location].urls.length - 1].name}** to **${playlistName}**`;
+    return message('SUCCESS_APPEND', {name: savedPlaylistsClone[location].urls.slice(-1)[0].name, playlistName});
 };
