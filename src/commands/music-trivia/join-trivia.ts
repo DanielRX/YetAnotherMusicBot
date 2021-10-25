@@ -7,9 +7,9 @@ export const deferred = true;
 
 export const options = [];
 
-export const execute = async({interaction, guildId, message}: CommandInput): Promise<CommandReturn> => {
+export const execute = async({interaction, guildId, messages}: CommandInput): Promise<CommandReturn> => {
     const voiceChannel = interaction.member.voice.channel;
-    if(!voiceChannel) { return message('NOT_IN_VC'); }
+    if(!voiceChannel) { return messages.NOT_IN_VC(); }
 
     const triviaPlayer = triviaManager.get(guildId);
     if(!triviaPlayer) { return 'Trivia is not running right now!'; }

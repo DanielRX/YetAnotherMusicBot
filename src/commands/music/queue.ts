@@ -6,12 +6,12 @@ export const name = 'queue';
 export const description = 'Display the music queue';
 export const deferred = true;
 
-export const execute = async({interaction, message, guildId}: CommandInput): Promise<CommandReturn> => {
+export const execute = async({interaction, messages, guildId}: CommandInput): Promise<CommandReturn> => {
     const guild = guildData.get(guildId);
-    if(guild && guild.triviaData.isTriviaRunning) { return message('TRIVIA_IS_RUNNING'); }
+    if(guild && guild.triviaData.isTriviaRunning) { return messages.TRIVIA_IS_RUNNING(); }
     const player = playerManager.get(guildId);
-    if(player && player.queue.length == 0) { return message('NO_SONGS'); }
-    if(!player) { return message('NO_SONG_PLAYING'); }
+    if(player && player.queue.length == 0) { return messages.NO_SONGS(); }
+    if(!player) { return messages.NO_SONG_PLAYING(); }
 
     const queueClone = Array.from(player.queue);
     const embeds = [];
@@ -22,9 +22,9 @@ export const execute = async({interaction, message, guildId}: CommandInput): Pro
             .filter((e) => typeof e !== 'undefined')
             .map((e, j) => ({name: `${j + 1 + i * 24}`, value: `${e.name}`}));
 
-        embeds.push(new MessageEmbed().setTitle(await message('PAGE_TITLE', {i})).setFields(fields));
+        embeds.push(new MessageEmbed().setTitle(messages.PAGE_TITLE({i})).setFields(fields));
     }
 
-    const pageData = {title: await message('EMBED_TITLE'), pages: embeds, color: '#9096E6' as const, author: {username: interaction.member.user.username, avatar: interaction.member.user.displayAvatarURL()}, listenTimeout: 2 * 60 * 1000};
+    const pageData = {title: messages.EMBED_TITLE(), pages: embeds, color: '#9096E6' as const, author: {username: interaction.member.user.username, avatar: interaction.member.user.displayAvatarURL()}, listenTimeout: 2 * 60 * 1000};
     return {pages: pageData};
 };

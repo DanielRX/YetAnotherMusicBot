@@ -501,16 +501,16 @@ export const options = [
     {type: 'string' as const, name: 'flags', description: ':notes: Add s to shuffle a playlist, r to reverse it, n to play next, j to play now', required: false, choices: [], default: ''}
 ];
 
-export const execute = async({interaction, guildId, message: messageF, params: {rawQuery, flags}}: CommandInput<{rawQuery: string, flags: string}>): Promise<CommandReturn> => {
+export const execute = async({interaction, guildId, messages, params: {rawQuery, flags}}: CommandInput<{rawQuery: string, flags: string}>): Promise<CommandReturn> => {
     if(!guildData.get(guildId)) {
         guildData.set(guildId, createGuildData());
     }
     const message = await interaction.deferReply({fetchReply: true});
     // Make sure that only users present in a voice channel can use 'play'
-    if(!interaction.member.voice.channel) { return messageF('NOT_IN_VC'); }
+    if(!interaction.member.voice.channel) { return messages.NOT_IN_VC(); }
     // Make sure there isn't a 'music-trivia' running
     const guild = guildData.get(guildId) as unknown as GuildData;
-    if(guild.triviaData.isTriviaRunning) { return messageF('TRIVIA_IS_RUNNING'); }
+    if(guild.triviaData.isTriviaRunning) { return messages.TRIVIA_IS_RUNNING(); }
 
     let player = playerManager.get(guildId) as unknown as MusicPlayer | undefined;
 
@@ -519,7 +519,7 @@ export const execute = async({interaction, guildId, message: messageF, params: {
         playerManager.set(guildId, player as unknown as CustomAudioPlayer);
     }
 
-    if(player.commandLock) { return messageF('PLAY_CALL_RUNNING'); }
+    if(player.commandLock) { return messages.PLAY_CALL_RUNNING(); }
 
     player.commandLock = true;
 

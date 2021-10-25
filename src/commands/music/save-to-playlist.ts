@@ -35,7 +35,7 @@ const getData: (url: string) => Promise<Track | {tracks: {items: ({track: Track}
 
 const processTrack = (user: User) => async(track: {track: Track}): Promise<PlayTrack> => searchOne(track.track).then((video) => constructSongObj(video, user));
 
-const processURL = async(url: string, interaction: CustomInteraction, message: CommandInput['message']) => {
+const processURL = async(url: string, interaction: CustomInteraction, messages: CommandInput['messages']) => {
     if(isSpotifyURL(url)) {
         return getData(url)
             .then(async(res: Track | {tracks: {items: ({track: Track})[]}}) => {
@@ -49,7 +49,7 @@ const processURL = async(url: string, interaction: CustomInteraction, message: C
     }
     if(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/.exec(url)) {
         const playlist = await YouTube.getPlaylist(url).catch(async()=> {
-            return message('PLAYLIST_DOES_NOT_EXIST');
+            return messages.PLAYLIST_DOES_NOT_EXIST();
         });
         if(typeof playlist === 'string') { return playlist; }
         const videosArr = await playlist.fetch().then((v) => v.videos);
@@ -57,37 +57,37 @@ const processURL = async(url: string, interaction: CustomInteraction, message: C
         return urlsArr;
     }
     const video = await YouTube.getVideo(url).catch(async() => {
-        return message('CANT_GET_VIDEO');
+        return messages.CANT_GET_VIDEO();
     });
     if(typeof video === 'string') { return video; }
 
-    if(video.live) { return message('NO_LIVE'); }
+    if(video.live) { return messages.NO_LIVE(); }
     return constructSongObj(video, interaction.member.user);
 };
 
-export const execute = async({interaction, message, params: {playlistName, url}}: CommandInput<{playlistName: string, url: string}>): Promise<CommandReturn> => {
+export const execute = async({interaction, messages, params: {playlistName, url}}: CommandInput<{playlistName: string, url: string}>): Promise<CommandReturn> => {
     const userData = await member.findOne({memberId: interaction.member.id}).exec();
-    if(!userData) { return message('NO_SAVED_PLAYLISTS'); }
+    if(!userData) { return messages.NO_SAVED_PLAYLISTS(); }
     const savedPlaylistsClone = userData.savedPlaylists;
-    if(savedPlaylistsClone.length == 0) { return message('NO_SAVED_PLAYLISTS'); }
+    if(savedPlaylistsClone.length == 0) { return messages.NO_SAVED_PLAYLISTS(); }
 
-    if(!validateURL(url)) { return message('INVALID_URL'); }
+    if(!validateURL(url)) { return messages.INVALID_URL(); }
 
     const location = savedPlaylistsClone.findIndex((value) => value.name == playlistName);
-    if(location === -1) { return message('PLAYLIST_NOT_FOUND', {playlistName}); }
+    if(location === -1) { return messages.PLAYLIST_NOT_FOUND({playlistName}); }
     let urlsArrayClone = savedPlaylistsClone[location].urls;
-    const processedURL = await processURL(url, interaction, message);
+    const processedURL = await processURL(url, interaction, messages);
     if(typeof processedURL === 'string') { throw new Error(processedURL); }
-    if(!processedURL) return message('MISSING_ERR_MESSAGE');
+    if(!processedURL) return messages.MISSING_ERR_MESSAGE();
     if(Array.isArray(processedURL)) {
         urlsArrayClone = urlsArrayClone.concat(processedURL);
         savedPlaylistsClone[location].urls = urlsArrayClone;
         await member.updateOne({memberId: interaction.member.id}, {savedPlaylists: savedPlaylistsClone}).exec();
-        return message('SUCCESS_PLAYLIST');
+        return messages.SUCCESS_PLAYLIST();
     }
 
     urlsArrayClone.push(processedURL);
     savedPlaylistsClone[location].urls = urlsArrayClone;
     await member.updateOne({memberId: interaction.member.id}, {savedPlaylists: savedPlaylistsClone}).exec();
-    return message('SUCCESS_APPEND', {name: savedPlaylistsClone[location].urls.slice(-1)[0].name, playlistName});
+    return messages.SUCCESS_APPEND({name: savedPlaylistsClone[location].urls.slice(-1)[0].name, playlistName});
 };

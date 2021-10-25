@@ -1,124 +1,52 @@
 {
-    "create-playlist": {
-        "PLAYLIST_NAME_EXISTS": "There is already a playlist named **{{playlistName}}** in your saved playlists!",
-        "PLAYLIST_CREATED": "Created a new playlist named **{{playlistName}}**",
-        "GENERIC_ERROR": "There was a problem executing this command, please try again later"
-    },
-    "delete-playlist": {
-        "NO_SAVED_PLAYLISTS": "You have zero saved playlists!",
-        "PLAYLIST_NOT_FOUND": "You have no playlist named {{playlistName}}",
-        "PLAYLIST_REMOVED": "I removed **{{playlistName}}** from your saved playlists!"
-    },
-    "display-playlist": {
-        "NO_SAVED_PLAYLISTS": "You have zero saved playlists!",
-        "PLAYLIST_NOT_FOUND": "You have no playlist named {{playlistName}}",
-        "EMPTY_PLAYLIST": "**{{playlistName}}** is empty!"
-    },
-    "leave": {
-        "NOT_IN_VC": ":no_entry: Please join a voice channel and try again!",
-        "NO_SONG_PLAYING": "There is no song playing right now!",
-        "NOT_IN_SAME_VC": "You must be in the same voice channel as the bot in order to do that!",
-        "LEFT_VC": "Left your voice channel!"
-    },
-    "loop-queue": {
-        "NO_SONG_PLAYING": "There is no song playing right now!",
-        "TRIVIA_IS_RUNNING": "You can't use this command while a trivia is running!",
-        "NOT_IN_SAME_VC": "You must be in the same voice channel as the bot in order to use that!",
-        "LOOP_SONG_ON": ":x: Turn off the **loop** command before using the **loopqueue** command",
-        "LOOP_DISABLED": ":repeat: The queue is no longer playing on **loop**",
-        "LOOP_ENABLED": ":repeat: The queue is now playing on **loop**"
-    },
-    "loop": {
-        "NO_SONG_PLAYING": "There is no song playing right now!",
-        "TRIVIA_IS_RUNNING": "You can't use this command while a trivia is running!",
-        "NOT_IN_SAME_VC": "You must be in the same voice channel as the bot in order to do that!",
-        "LOOP_DISABLED": "**{{song}}** is no longer playing on repeat :repeat:",
-        "LOOP_ENABLED": "**{{song}}** is now playing on repeat :repeat:"
-    },
-    "lyrics": {
-        "SONG_NOT_FOUND": ":x: No song has been found for this query",
-        "GENERIC_ERROR": "There was a problem fetching lyrics for this song, please try again",
-        "COMMAND_DISABLED": ":x: This command is not enabled",
-        "NO_SONG_PLAYING": "There is no song playing! Enter a song name or play a song",
-        "TRIVIA_IS_RUNNING": "You can't use this command while a trivia is running!"
-    },
-    "move": {
-        "NO_SONG_PLAYING": "There is no song playing right now!",
-        "TRIVIA_IS_RUNNING": "You can't use this command while a trivia is running!",
-        "NOT_IN_SAME_VC": "You must be in the same voice channel as the bot in order to do that!",
-        "INVALID_POSITION": ":x: Try again and enter a valid song position number",
-        "SONG_MOVED": "**{{songName}}** moved to position {{newPosition}}"
-    },
-    "music-trivia": {
-        "START": ":notes: Get ready! There are {{length}} songs, you have 30 seconds to guess either the singer/band or the name of the song. Good luck!\n    Vote skip the song by entering the word 'skip'.\n    You can end the trivia at any point by using the end-trivia command!`",
-        "NOT_IN_VC": ":no_entry: Please join a voice channel and try again!",
-        "TRACK_IS_PLAYING": "You can't use this command while a track is playing!",
-        "TRIVIA_IS_RUNNING": "You can't use this command while a trivia is running!",
-        "FAILED_TO_JOIN": "Failed to join your channel!"
-    },
-    "my-playlists": {
-        "NO_SAVED_PLAYLISTS": "You have zero saved playlists!",
-        "EMBED_TITLE": "Your saved playlists"
-    },
-    "pause": {
-        "NOT_IN_VC": ":no_entry: Please join a voice channel and try again!",
-        "NO_SONG_PLAYING": "There is no song playing right now!",
-        "NOT_IN_SAME_VC": "You must be in the same voice channel as the bot in order to do that!",
+    "global": {
+        "ABOUT": "Made by <@530808977794007051> with :heart: code is available on GitHub (coming soon)",
         "ALREADY_PAUSED": "You already paused this song!",
-        "SUCCESS": ":pause_button: Song was paused! To unpause, use the resume command",
-        "FAIL": "Unable to pause this song, please try again soon"
-    },
-    "play": {
-        "NOT_IN_VC": ":no_entry: Please join a voice channel and try again!",
-        "TRIVIA_IS_RUNNING": "You can't use this command while a trivia is running!",
-        "PLAY_CALL_RUNNING": "Please wait until the last play call is processed"
-    },
-    "queue-history": {
-        "NO_HISTORY": "There is no music queue history!",
-        "EMBED_TITLE": "Music Queue History",
-        "PAGE_TITLE": "Page {{i}}"
-    },
-    "queue": {
-        "TRIVIA_IS_RUNNING": "You can't use this command while a trivia is running!",
-        "NO_SONGS": ":x: There are no songs in queue!",
-        "NO_SONG_PLAYING": "There is no song playing right now!",
-        "EMBED_TITLE": "Music Queue",
-        "PAGE_TITLE": "Page {{i}}"
-    },
-    "remove-from-playlist": {
-        "NO_SAVED_PLAYLISTS": "You have zero saved playlists!",
-        "PLAYLIST_NOT_FOUND": "You have no playlist named {{playlistName}}",
-        "EMPTY_PLAYLIST": "**{{playlistName}}** is empty!",
-        "INDEX_TOO_HIGH": "The index you provided is larger than the playlist's length",
-        "REMOVED": "I removed **{{title}}** from **{{name}}**"
-    },
-    "remove": {
-        "NOT_IN_VC": ":no_entry: Please join a voice channel and try again!",
-        "NO_SONG_PLAYING": "There is no song playing right now!",
-        "NOT_IN_SAME_VC": "You must be in the same voice channel as the bot in order to do that!",
-        "INVALID_INDEX": "Please enter a valid position!",
-        "REMOVED": ":wastebasket: Removed song number {{position}} from queue!"
-    },
-    "resume": {
-        "NOT_IN_VC": ":no_entry: Please join a voice channel and try again!",
-        "NO_SONG_PLAYING": "There is no song playing right now!",
-        "NOT_IN_SAME_VC": "You must be in the same voice channel as the bot in order to do that!",
-        "NOT_PAUSED": "This song is not paused!",
-        "RESUMED": ":play_pause: Track resumed!",
-        "GENERIC_ERROR": "I was unable to unpause this song, please try again soon"
-    },
-    "save-to-playlist": {
-        "NO_SAVED_PLAYLISTS": "You have zero saved playlists!",
-        "INVALID_URL": "Please enter a valid YouTube or Spotify URL!",
-        "PLAYLIST_NOT_FOUND": "You have no playlist named {{playlistName}}",
-        "MISSING_ERR_MESSAGE": "This is a placeholder error message",
-        "SUCCESS_PLAYLIST": "The playlist you provided was successfully saved!",
-        "SUCCESS_APPEND": "I added **{{name}}** to **{{playlistName}}**",
-        "PLAYLIST_DOES_NOT_EXIST": ":x: Playlist is either private or it does not exist!",
         "CANT_GET_VIDEO": ":x: There was a problem getting the video you provided!",
-        "NO_LIVE": "I don't support live streams!"
-    },
-    "about": {
-        "ABOUT": "Made by <@530808977794007051> with :heart: code is available on GitHub (coming soon)"
+        "COMMAND_DISABLED": ":x: This command is not enabled",
+        "EMBED_TITLE_MUSIC_QUEUE_HISTORY": "Music Queue History",
+        "EMBED_TITLE_MUSIC_QUEUE": "Music Queue",
+        "EMBED_TITLE_PLAYLISTS": "Your saved playlists",
+        "EMPTY_PLAYLIST": "**{{playlistName}}** is empty!",
+        "FAIL": "Unable to pause this song, please try again soon",
+        "FAILED_TO_JOIN": "Failed to join your channel!",
+        "GENERIC_ERROR": "There was a problem executing this command, please try again later",
+        "INDEX_TOO_HIGH": "The index you provided is larger than the playlist's length",
+        "INVALID_INDEX": "Please enter a valid position!",
+        "INVALID_POSITION": ":x: Try again and enter a valid song position number",
+        "INVALID_URL": "Please enter a valid YouTube or Spotify URL!",
+        "LEFT_VC": "Left your voice channel!",
+        "QUEUE_LOOP_DISABLED": ":repeat: The queue is no longer playing on **loop**",
+        "SONG_LOOP_DISABLED": "**{{song}}** is no longer playing on repeat :repeat:",
+        "QUEUE_LOOP_ENABLED": ":repeat: The queue is now playing on **loop**",
+        "SONG_LOOP_ENABLED": "**{{song}}** is now playing on repeat :repeat:",
+        "LOOP_SONG_ON": ":x: Turn off the **loop** command before using the **loopqueue** command",
+        "MISSING_ERR_MESSAGE": "This is a placeholder error message",
+        "NO_HISTORY": "There is no music queue history!",
+        "NO_LIVE": "I don't support live streams!",
+        "NO_SAVED_PLAYLISTS": "You have zero saved playlists!",
+        "NO_SONG_PLAYING": "There is no song playing right now!",
+        "NO_SONGS": ":x: There are no songs in queue!",
+        "NOT_IN_SAME_VC": "You must be in the same voice channel as the bot in order to use that!",
+        "NOT_IN_VC": ":no_entry: Please join a voice channel and try again!",
+        "NOT_PAUSED": "This song is not paused!",
+        "PAGE_TITLE": "Page {{i}}",
+        "PLAY_CALL_RUNNING": "Please wait until the last play call is processed",
+        "PLAYLIST_CREATED": "Created a new playlist named **{{playlistName}}**",
+        "PLAYLIST_DOES_NOT_EXIST": ":x: Playlist is either private or it does not exist!",
+        "PLAYLIST_NAME_EXISTS": "There is already a playlist named **{{playlistName}}** in your saved playlists!",
+        "PLAYLIST_NOT_FOUND": "You have no playlist named {{playlistName}}",
+        "PLAYLIST_REMOVED": "I removed **{{playlistName}}** from your saved playlists!",
+        "REMOVED_FROM_QUEUE": ":wastebasket: Removed song number {{position}} from queue!",
+        "REMOVED_FROM_PLAYLIST": "I removed **{{title}}** from **{{name}}**",
+        "RESUMED": ":play_pause: Track resumed!",
+        "SONG_MOVED": "**{{songName}}** moved to position {{newPosition}}",
+        "SONG_NOT_FOUND": ":x: No song has been found for this query",
+        "START": ":notes: Get ready! There are {{length}} songs, you have 30 seconds to guess either the singer/band or the name of the song. Good luck!\n    Vote skip the song by entering the word 'skip'.\n    You can end the trivia at any point by using the end-trivia command!`",
+        "SUCCESS_APPEND": "I added **{{name}}** to **{{playlistName}}**",
+        "SUCCESS_PLAYLIST": "The playlist you provided was successfully saved!",
+        "SUCCESS": ":pause_button: Song was paused! To unpause, use the resume command",
+        "TRACK_IS_PLAYING": "You can't use this command while a track is playing!",
+        "TRIVIA_IS_RUNNING": "You can't use this command while a trivia is running!"
     }
 }

@@ -37,11 +37,11 @@ const handleSubscription = async(interaction: CustomInteraction, player: TriviaP
     return {embeds: [startTriviaEmbed]};
 };
 
-export const execute = async({interaction, guildId, message, params: {length, hardMode, roundMode, twitchChannel}}: CommandInput<{length: number, hardMode: boolean, roundMode: boolean, twitchChannel: string}>): Promise<CommandReturn> => {
+export const execute = async({interaction, guildId, messages, params: {length, hardMode, roundMode, twitchChannel}}: CommandInput<{length: number, hardMode: boolean, roundMode: boolean, twitchChannel: string}>): Promise<CommandReturn> => {
     const voiceChannel = interaction.member.voice.channel;
-    if(!voiceChannel) { return message('NOT_IN_VC'); }
-    if(playerManager.has(guildId)) { return message('TRACK_IS_PLAYING'); }
-    if(triviaManager.has(guildId)) { return message('TRIVIA_IS_RUNNING'); }
+    if(!voiceChannel) { return messages.NOT_IN_VC(); }
+    if(playerManager.has(guildId)) { return messages.TRACK_IS_PLAYING(); }
+    if(triviaManager.has(guildId)) { return messages.TRIVIA_IS_RUNNING(); }
 
     triviaManager.set(guildId, new TriviaPlayer(hardMode, roundMode, twitchChannel, voiceChannel as VoiceChannel));
 
@@ -57,6 +57,6 @@ export const execute = async({interaction, guildId, message, params: {length, ha
     });
 
     // play and display embed that says trivia started and how many songs are going to be
-    return handleSubscription(interaction, triviaPlayer, await message('START', {length: triviaPlayer.queue.length}), await message('FAILED_TO_JOIN'));
+    return handleSubscription(interaction, triviaPlayer, messages.START({length: triviaPlayer.queue.length}), messages.FAILED_TO_JOIN());
 };
 

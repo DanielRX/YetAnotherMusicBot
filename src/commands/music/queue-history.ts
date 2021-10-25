@@ -6,10 +6,10 @@ export const name = 'queue-history';
 export const description = 'Display the music queue history';
 export const deferred = false;
 
-export const execute = async({interaction, message}: CommandInput): Promise<CommandReturn> => {
+export const execute = async({interaction, messages}: CommandInput): Promise<CommandReturn> => {
     const guild = guildData.get(interaction.guildId);
-    if(!guild) { return message('NO_HISTORY'); }
-    if(!guild.queueHistory.length) { return message('NO_HISTORY'); }
+    if(!guild) { return messages.NO_HISTORY(); }
+    if(!guild.queueHistory.length) { return messages.NO_HISTORY(); }
 
     const queueClone = Array.from(guild.queueHistory);
     const embeds = [];

@@ -12,18 +12,18 @@ export const options = [
 
 const maxLength = 24;
 
-export const execute = async({interaction, message, params: {playlistName}}: CommandInput<{playlistName: string}>): Promise<CommandReturn> => {
+export const execute = async({interaction, messages, params: {playlistName}}: CommandInput<{playlistName: string}>): Promise<CommandReturn> => {
     // Check if user has playlists or if user is saved in the DB
     const userData = await member.findOne({memberId: interaction.member.id}).exec();
-    if(!userData) { return message('NO_SAVED_PLAYLISTS'); }
+    if(!userData) { return messages.global.NO_SAVED_PLAYLISTS(); }
     const savedPlaylistsClone = userData.savedPlaylists;
-    if(savedPlaylistsClone.length === 0) { return message('NO_SAVED_PLAYLISTS'); }
+    if(savedPlaylistsClone.length === 0) { return messages.global.NO_SAVED_PLAYLISTS(); }
 
     const location = savedPlaylistsClone.findIndex((value) => value.name == playlistName);
-    if(location === -1) { return message('PLAYLIST_NOT_FOUND', {playlistName}); }
+    if(location === -1) { return messages.PLAYLIST_NOT_FOUND({playlistName}); }
 
     const urlsArrayClone = savedPlaylistsClone[location].urls;
-    if(urlsArrayClone.length === 0) { return message('EMPTY_PLAYLIST', {playlistName}); }
+    if(urlsArrayClone.length === 0) { return messages.EMPTY_PLAYLIST({playlistName}); }
 
     const savedPlaylistEmbed = new MessageEmbed().setColor('#FF7373').setTitle(playlistName).setTimestamp();
     const fields = urlsArrayClone.slice(0, maxLength).map((x, i) => ({name: `${i + 1}`, value: `${x.name}`}));

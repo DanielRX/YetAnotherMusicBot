@@ -1,4 +1,4 @@
-import type {CommandInput, CommandReturn} from '../../utils/types';
+import type {CommandReturn} from '../../utils/types';
 import fs from 'fs-extra';
 import {MessageEmbed} from 'discord.js';
 
@@ -6,7 +6,7 @@ export const name = 'copypasta';
 export const description = 'Get a random copypasta! (Filters coming soon)';
 export const deferred = false;
 
-export const execute = async({}: CommandInput): Promise<CommandReturn> => {
+export const execute = async(): Promise<CommandReturn> => {
     const data = fs.readJSONSync('././resources/quotes/copypasta.json', 'utf8') as string[];
 
     const randomEl = data[Math.floor(Math.random() * data.length)];

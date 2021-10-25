@@ -1,4 +1,4 @@
-import type {CommandInput, CommandReturn} from '../../utils/types';
+import type {CommandReturn} from '../../utils/types';
 import {fetch} from '../../utils/utils';
 import {MessageEmbed} from 'discord.js';
 
@@ -6,7 +6,7 @@ export const name = 'chucknorris';
 export const description = 'Get a satirical fact about Chuck Norris!';
 export const deferred = false;
 
-export const execute = async({}: CommandInput): Promise<CommandReturn> => {
+export const execute = async(): Promise<CommandReturn> => {
     // thanks to https://api.chucknorris.io
     const json = await fetch<{value: string}>('https://api.chucknorris.io/jokes/random').then(async(res) => res.json());
     const embed = new MessageEmbed()

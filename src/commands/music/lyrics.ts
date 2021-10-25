@@ -74,14 +74,14 @@ const getLyrics = async(url: string, errorMessage: string) => {
     }
 };
 
-export const execute = async({interaction, guildId, message, params: {songName}}: CommandInput<{songName: string}>): Promise<CommandReturn> => {
-    if(!config.geniusLyricsAPI) { return message('COMMAND_DISABLED'); }
+export const execute = async({interaction, guildId, messages, params: {songName}}: CommandInput<{songName: string}>): Promise<CommandReturn> => {
+    if(!config.geniusLyricsAPI) { return messages.COMMAND_DISABLED(); }
     const player = playerManager.get(guildId);
     const guild = guildData.get(guildId);
     if(songName === '') {
-        if(!player) { return message('NO_SONG_PLAYING'); }
+        if(!player) { return messages.NO_SONG_PLAYING(); }
         if(guild) {
-            if(guild.triviaData.isTriviaRunning) { return message('TRIVIA_IS_RUNNING'); }
+            if(guild.triviaData.isTriviaRunning) { return messages.TRIVIA_IS_RUNNING(); }
         }
         songName = player.nowPlaying?.name ?? '';
     }

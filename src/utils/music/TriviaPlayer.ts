@@ -19,7 +19,7 @@ const capitalizeWords = (str: string) => {
 };
 
 const normalizeValue = (hardMode: boolean) => (value: string) => {
-    let val = value.normalize('NFD').replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+    let val = value.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // Remove diacritics
     if(!hardMode) {
         val = val.replace(/[^0-9a-zA-Z\s]/g, ''); // Remove non-alphanumeric characters
     }

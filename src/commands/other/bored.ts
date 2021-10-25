@@ -1,4 +1,4 @@
-import type {CommandInput, CommandReturn} from '../../utils/types';
+import type {CommandReturn} from '../../utils/types';
 import {fetch} from '../../utils/utils';
 import {MessageEmbed} from 'discord.js';
 
@@ -6,7 +6,7 @@ export const name = 'bored';
 export const description = 'Generate a random activity!';
 export const deferred = false;
 
-export const execute = async({}: CommandInput): Promise<CommandReturn> => {
+export const execute = async(): Promise<CommandReturn> => {
     const json = await fetch<{activity: string}>('https://www.boredapi.com/api/activity?participants=1').then(async(res) => res.json());
     const embed = new MessageEmbed()
         .setColor('#6BA3FF')

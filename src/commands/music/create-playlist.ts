@@ -9,7 +9,7 @@ export const options = [
     {type: 'string' as const, name: 'playlistname', description: 'What is the name of the playlist you would like to create?', required: true, choices: []}
 ];
 
-export const execute = async({interaction, message, params: {playlistName}}: CommandInput<{playlistName: string}>): Promise<CommandReturn> => {
+export const execute = async({interaction, messages, params: {playlistName}}: CommandInput<{playlistName: string}>): Promise<CommandReturn> => {
     const {member: {id, user: {username}, joinedAt}} = interaction;
     const playlistData = {name: playlistName, urls: []};
     // Check if the user exists in the db
@@ -18,16 +18,16 @@ export const execute = async({interaction, message, params: {playlistName}}: Com
         const userObject = {memberId: id, username, joinedAt, savedPlaylists: [playlistData]};
         const user = new member(userObject);
         await user.save();
-        return message('PLAYLIST_CREATED', {playlistName});
+        return messages.PLAYLIST_CREATED({playlistName});
     }
     // Make sure the playlist name isn't a duplicate
     if(userData.savedPlaylists.filter((playlist) => playlist.name == playlistName).length > 0) {
-        return message('PLAYLIST_NAME_EXISTS', {playlistName});
+        return messages.PLAYLIST_NAME_EXISTS({playlistName});
     }
 
     // Create and save the playlist in the DB
     userData.savedPlaylists.push(playlistData);
     await member.updateOne({memberId: interaction.member.id}, userData);
-    return message('PLAYLIST_CREATED', {playlistName});
+    return messages.PLAYLIST_CREATED({playlistName});
 };
 
