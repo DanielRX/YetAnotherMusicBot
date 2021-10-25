@@ -519,34 +519,40 @@ export const execute = async({interaction, guildId, messages, params: {rawQuery,
         playerManager.set(guildId, player as unknown as CustomAudioPlayer);
     }
 
-    if(player.commandLock) { logger.verbose(typeof messages.PLAY_CALL_RUNNING); return messages.PLAY_CALL_RUNNING(); }
+    if(player.commandLock) { return messages.PLAY_CALL_RUNNING(); }
 
     player.commandLock = true;
 
     // Check if the query is actually a saved playlist name
+    try {
+        const userData = await member.findOne({memberId: interaction.member.id}).exec(); // Object
 
-    const userData = await member.findOne({memberId: interaction.member.id}).exec(); // Object
-
-    if(userData !== null) {
-        const playlistsArray = userData.savedPlaylists;
-        const found = playlistsArray.find((playlist: Playlist) => playlist.name === rawQuery);
-        // Found a playlist with a name matching the query and it's not empty
-        if(found && playlistsArray[playlistsArray.indexOf(found)].urls.length) {
-            return handlePlayPlaylist(interaction, rawQuery, flags, message, playlistsArray, found);
+        if(userData !== null) {
+            const playlistsArray = userData.savedPlaylists;
+            const found = playlistsArray.find((playlist: Playlist) => playlist.name === rawQuery);
+            // Found a playlist with a name matching the query and it's not empty
+            if(found && playlistsArray[playlistsArray.indexOf(found)].urls.length) {
+                return handlePlayPlaylist(interaction, rawQuery, flags, message, playlistsArray, found);
+            }
         }
-    }
 
-    // check if the user wants to play a song from the history queue
-    if(Number(rawQuery)) { return handlePlayFromHistory(interaction, rawQuery, flags, message); }
-    if(isSpotifyURL(rawQuery)) { return handleSpotifyURL(interaction, rawQuery, flags); }
-    if(isYouTubePlaylistURL(rawQuery)) { return handleYoutubePlaylistURL(interaction, rawQuery, flags); }
-    if(isYouTubeVideoURL(rawQuery)) {
-        const output = handleYoutubeURL(interaction, rawQuery, flags);
+        // check if the user wants to play a song from the history queue
+        if(Number(rawQuery)) { return handlePlayFromHistory(interaction, rawQuery, flags, message); }
+        if(isSpotifyURL(rawQuery)) { return handleSpotifyURL(interaction, rawQuery, flags); }
+        if(isYouTubePlaylistURL(rawQuery)) { return handleYoutubePlaylistURL(interaction, rawQuery, flags); }
+        if(isYouTubeVideoURL(rawQuery)) {
+            const output = handleYoutubeURL(interaction, rawQuery, flags);
+            player.commandLock = false;
+            return output;
+        }
+
+        // If user provided a song/video name
+        const x = await searchYoutube(interaction, rawQuery, flags, interaction.member.voice.channel as VoiceChannel);
         player.commandLock = false;
-        return output;
+        return x;
+    } catch(e) {
+        logger.error(e);
+        player.commandLock = false;
     }
-
-    // If user provided a song/video name
-    return searchYoutube(interaction, rawQuery, flags, interaction.member.voice.channel as VoiceChannel);
 };
 
