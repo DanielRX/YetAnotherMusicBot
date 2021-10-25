@@ -1,4 +1,5 @@
 import * as fs from 'fs-extra';
+import {logger} from './logging';
 
 type Language = 'de_de' | 'en_gb';
 
@@ -18,6 +19,7 @@ export const messages = async(language: Language): Promise<LocaleObj> => {
     const file = await loadLocaleFile(language);
     const msgObj: LocaleObj = {};
     for(const key in file) {
+        logger.verbose(`🚀 ~ file: messages.ts ~ line 21 ~ messages ~ key`, key);
         msgObj[key] = (values?: {[key: string]: number | string}) => {
             if(typeof values === 'undefined') { return file[key]; }
             const templateMatcher = /{{\s?([^{}\s]*)\s?}}/g;
