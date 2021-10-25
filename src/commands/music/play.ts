@@ -528,6 +528,7 @@ export const execute = async({interaction, guildId, messages, params: {rawQuery,
         const userData = await member.findOne({memberId: interaction.member.id}).exec(); // Object
 
         if(userData !== null) {
+            logger.debug(`Playlist Name: ${rawQuery}`);
             const playlistsArray = userData.savedPlaylists;
             const found = playlistsArray.find((playlist: Playlist) => playlist.name === rawQuery);
             // Found a playlist with a name matching the query and it's not empty
@@ -537,16 +538,18 @@ export const execute = async({interaction, guildId, messages, params: {rawQuery,
         }
 
         // check if the user wants to play a song from the history queue
-        if(Number(rawQuery)) { return handlePlayFromHistory(interaction, rawQuery, flags, message); }
-        if(isSpotifyURL(rawQuery)) { return handleSpotifyURL(interaction, rawQuery, flags); }
-        if(isYouTubePlaylistURL(rawQuery)) { return handleYoutubePlaylistURL(interaction, rawQuery, flags); }
+        if(Number(rawQuery)) { logger.debug(`History song: ${rawQuery}`); return handlePlayFromHistory(interaction, rawQuery, flags, message); }
+        if(isSpotifyURL(rawQuery)) { logger.debug(`SpotifyURL: ${rawQuery}`); return handleSpotifyURL(interaction, rawQuery, flags); }
+        if(isYouTubePlaylistURL(rawQuery)) { logger.debug(`YoutubePrivateVideoURL: ${rawQuery}`); return handleYoutubePlaylistURL(interaction, rawQuery, flags); }
         if(isYouTubeVideoURL(rawQuery)) {
+            logger.debug(`YoutubeVideoURL: ${rawQuery}`);
             const output = handleYoutubeURL(interaction, rawQuery, flags);
             player.commandLock = false;
             return output;
         }
 
         // If user provided a song/video name
+        logger.debug(`Youtube Search: ${rawQuery}`);
         const x = await searchYoutube(interaction, rawQuery, flags, interaction.member.voice.channel as VoiceChannel);
         player.commandLock = false;
         return x;
