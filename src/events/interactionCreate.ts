@@ -3,7 +3,7 @@ import type {CustomInteraction} from '../utils/types';
 import {logger} from '../utils/logging';
 import {PagesBuilder} from 'discord.js-pages';
 import type {ColorResolvable} from 'discord.js';
-import {getAndFillMessage} from '../utils/messages';
+import {messages} from '../utils/messages';
 import {camelCase} from 'change-case';
 
 export const name = 'interactionCreate';
@@ -30,7 +30,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
         if(command.deferred) {
             await interaction.deferReply();
         }
-        const output = await command.execute({interaction, message: getAndFillMessage(command.name, 'en_gb'), params, guildId: interaction.guildId});
+        const output = await command.execute({interaction, messages: await messages('en_gb'), params, guildId: interaction.guildId});
         if(!interaction.replied) {
             if(typeof output !== 'undefined') {
                 if(typeof output !== 'string' && 'pages' in output) {
