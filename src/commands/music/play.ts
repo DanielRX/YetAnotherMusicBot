@@ -550,7 +550,7 @@ export const execute = async({interaction, guildId, messages, params: {rawQuery,
         const x = await searchYoutube(interaction, rawQuery, flags, interaction.member.voice.channel as VoiceChannel);
         player.commandLock = false;
         return x;
-    } catch(e: Error) {
+    } catch(e: unknown) {
         logger.error(e);
         player.commandLock = false;
     }
