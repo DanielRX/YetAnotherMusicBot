@@ -519,7 +519,7 @@ export const execute = async({interaction, guildId, messages, params: {rawQuery,
         playerManager.set(guildId, player as unknown as CustomAudioPlayer);
     }
 
-    if(player.commandLock) { return messages.PLAY_CALL_RUNNING(); }
+    if(player.commandLock) { logger.log(typeof messages.PLAY_CALL_RUNNING); return messages.PLAY_CALL_RUNNING(); }
 
     player.commandLock = true;
 

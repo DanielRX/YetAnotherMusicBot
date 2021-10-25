@@ -20,9 +20,9 @@ export const execute = async({interaction, messages}: CommandInput): Promise<Com
             .filter((e) => typeof e !== 'undefined')
             .map((e, j) => ({name: `${j + 1 + i * 24}`, value: `${e.name}`}));
 
-        embeds.push(new MessageEmbed().setTitle(await message('PAGE_TITLE', {i})).setFields(fields));
+        embeds.push(new MessageEmbed().setTitle(messages.PAGE_TITLE({i})).setFields(fields));
     }
 
-    const pageData = {title: await message('EMBED_TITLE'), pages: embeds, color: '#9096E6' as const, author: {username: interaction.member.user.username, avatar: interaction.member.user.displayAvatarURL()}, listenTimeout: 2 * 60 * 1000};
+    const pageData = {title: messages.EMBED_TITLE_MUSIC_QUEUE_HISTORY(), pages: embeds, color: '#9096E6' as const, author: {username: interaction.member.user.username, avatar: interaction.member.user.displayAvatarURL()}, listenTimeout: 2 * 60 * 1000};
     return {pages: pageData};
 };

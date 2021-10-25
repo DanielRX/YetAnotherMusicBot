@@ -14,7 +14,7 @@ export const execute = async({interaction, messages}: CommandInput): Promise<str
     if(savedPlaylistsClone.length == 0) { return messages.NO_SAVED_PLAYLISTS(); }
 
     const fields = savedPlaylistsClone.map((playlist, i) => ({name: `${i + 1}`, value: playlist.name, inline: true}));
-    const playlistsEmbed = new MessageEmbed().setTitle(await message('EMBED_TITLE')).setFields(fields).setTimestamp();
+    const playlistsEmbed = new MessageEmbed().setTitle(messages.EMBED_TITLE_PLAYLISTS()).setFields(fields).setTimestamp();
     return {embeds: [playlistsEmbed]};
 };
 
