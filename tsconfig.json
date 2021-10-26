@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "checkJs": false,
+    "allowJs": false,
+    "target": "es2016",
+    "module": "commonjs",
+    "lib": ["es2015"],
+    "outDir": "./build/",
+    "rootDir": "./src",
+    "strict": true,
+
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "downlevelIteration": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "exclude": ["node_modules", "coverage", "__tests__"]
+}

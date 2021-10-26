@@ -1,19 +1,23 @@
 {
-  "extends": ["eslint:recommended", "plugin:jest/recommended"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:jest/recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/all",
+    "prettier",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking"
+  ],
   "env": {
     "node": true,
     "es6": true
   },
   "parserOptions": {
-    "ecmaVersion": 2018,
-    "sourceType": "module"
+      "project": "tsconfig_lint.json",
+      "sourceType": "module"
   },
-  "plugins": [
-    "jest"
-  ],
+  "plugins": ["jest"],
   "rules": {
-    "//": "The no-console rule is only for development purposes",
-    "no-console": "off",
+    "no-console": "error",
     "no-useless-escape": "off",
     "no-inner-declarations": "off",
     "operator-linebreak": ["error", "none"],
@@ -50,14 +54,47 @@
     "id-length": "off",
     "object-property-newline": ["error", {"allowAllPropertiesOnSameLine": true}],
     "one-var": ["error", "never"],
+    "no-var": "error",
     "max-lines-per-function": "off",
     "no-magic-numbers": "off",
     "no-plusplus": "off",
-    "keyword-spacing": ["error", {"after": false, "overrides": {"try": {"after": true}, "const": {"after": true}, "else": {"after": true}, "return": {"after": true}}}],
+    "keyword-spacing": ["error", {"after": true, "overrides": {
+      "for": {"after": false},
+      "if": {"after": false},
+      "while": {"after": false},
+      "catch": {"after": false},
+      "case": {"after": true},
+      "switch": {"after": false}
+    }}],
     "max-statements-per-line": "off",
     "implicit-arrow-linebreak": "off",
     "sort-keys": "off",
-    "arrow-parens": ["error", "always"]
+    "arrow-parens": ["error", "always"],
+    "@typescript-eslint/lines-between-class-members": ["error", "always", {"exceptAfterSingleLine": true}],
+    "@typescript-eslint/consistent-indexed-object-style": ["error", "index-signature"],
+    "@typescript-eslint/consistent-type-imports": "error",
+    "no-multiple-empty-lines": ["error", {"max": 1}],
+    "eol-last": ["error", "always"],
+    "@typescript-eslint/consistent-type-definitions": ["error", "type"],
+    "@typescript-eslint/no-type-alias": "off",
+    // "@typescript-eslint/no-magic-numbers": ["error", {"ignore": [0, 1, -1]}],
+    "@typescript-eslint/explicit-function-return-type": "off",
+    // Remove these:
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/require-await": ["off"],
+    "@typescript-eslint/prefer-readonly-parameter-types": "off",
+    "@typescript-eslint/restrict-template-expressions": "off",
+    "@typescript-eslint/no-unsafe-call": "off",
+    "@typescript-eslint/no-unsafe-return": "off",
+    "@typescript-eslint/no-unsafe-assignment": "off",
+    "@typescript-eslint/no-unsafe-argument": "off",
+    "@typescript-eslint/no-unsafe-member-access": "off",
+    "@typescript-eslint/return-await": "off",
+    "@typescript-eslint/no-confusing-void-expression": "off",
+    "@typescript-eslint/prefer-optional-chain": "off",
+    "@typescript-eslint/no-invalid-void-type": "off",
+    "@typescript-eslint/no-non-null-assertion": "off",
+    "@typescript-eslint/no-magic-numbers": "off"
   },
-  "parser": "babel-eslint"
+  "parser": "@typescript-eslint/parser"
 }
