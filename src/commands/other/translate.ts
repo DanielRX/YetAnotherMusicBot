@@ -8,7 +8,7 @@ export const description = 'Translate to any language using Google translate.';
 export const deferred = false;
 
 export const options = [
-    {type: 'string' as const, name: 'targetlang', description: 'What is the target language? (language you want to translate to)', required: true, choices: []},
+    {type: 'string' as const, name: 'target-lang', description: 'What is the target language? (language you want to translate to)', required: true, choices: []},
     {type: 'string' as const, name: 'text', description: 'What text do you want to translate?', required: true, choices: []}
 ];
 

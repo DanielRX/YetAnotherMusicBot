@@ -501,7 +501,7 @@ export const options = [
     {type: 'string' as const, name: 'flags', description: ':notes: Add s to shuffle a playlist, r to reverse it, n to play next, j to play now', required: false, choices: [], default: ''}
 ];
 
-export const execute = async({interaction, guildId, messages, params: {rawQuery, flags}}: CommandInput<{rawQuery: string, flags: string}>): Promise<CommandReturn> => {
+export const execute = async({interaction, guildId, messages, params: {query, flags}}: CommandInput<{query: string, flags: string}>): Promise<CommandReturn> => {
     if(!guildData.get(guildId)) {
         guildData.set(guildId, createGuildData());
     }
@@ -528,29 +528,29 @@ export const execute = async({interaction, guildId, messages, params: {rawQuery,
         const userData = await member.findOne({memberId: interaction.member.id}).exec(); // Object
 
         if(userData !== null) {
-            logger.debug(`Playlist Name: ${rawQuery}`);
+            logger.debug(`Playlist Name: ${query}`);
             const playlistsArray = userData.savedPlaylists;
-            const found = playlistsArray.find((playlist: Playlist) => playlist.name === rawQuery);
+            const found = playlistsArray.find((playlist: Playlist) => playlist.name === query);
             // Found a playlist with a name matching the query and it's not empty
             if(found && playlistsArray[playlistsArray.indexOf(found)].urls.length) {
-                return handlePlayPlaylist(interaction, rawQuery, flags, message, playlistsArray, found);
+                return handlePlayPlaylist(interaction, query, flags, message, playlistsArray, found);
             }
         }
 
         // check if the user wants to play a song from the history queue
-        if(Number(rawQuery)) { logger.debug(`History song: ${rawQuery}`); return handlePlayFromHistory(interaction, rawQuery, flags, message); }
-        if(isSpotifyURL(rawQuery)) { logger.debug(`SpotifyURL: ${rawQuery}`); return handleSpotifyURL(interaction, rawQuery, flags); }
-        if(isYouTubePlaylistURL(rawQuery)) { logger.debug(`YoutubePrivateVideoURL: ${rawQuery}`); return handleYoutubePlaylistURL(interaction, rawQuery, flags); }
-        if(isYouTubeVideoURL(rawQuery)) {
-            logger.debug(`YoutubeVideoURL: ${rawQuery}`);
-            const output = handleYoutubeURL(interaction, rawQuery, flags);
+        if(Number(query)) { logger.debug(`History song: ${query}`); return handlePlayFromHistory(interaction, query, flags, message); }
+        if(isSpotifyURL(query)) { logger.debug(`SpotifyURL: ${query}`); return handleSpotifyURL(interaction, query, flags); }
+        if(isYouTubePlaylistURL(query)) { logger.debug(`YoutubePrivateVideoURL: ${query}`); return handleYoutubePlaylistURL(interaction, query, flags); }
+        if(isYouTubeVideoURL(query)) {
+            logger.debug(`YoutubeVideoURL: ${query}`);
+            const output = handleYoutubeURL(interaction, query, flags);
             player.commandLock = false;
             return output;
         }
 
         // If user provided a song/video name
-        logger.debug(`Youtube Search: ${rawQuery}`);
-        const x = await searchYoutube(interaction, rawQuery, flags, interaction.member.voice.channel as VoiceChannel);
+        logger.debug(`Youtube Search: ${query}`);
+        const x = await searchYoutube(interaction, query, flags, interaction.member.voice.channel as VoiceChannel);
         player.commandLock = false;
         return x;
     } catch(e: unknown) {

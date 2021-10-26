@@ -10,7 +10,7 @@ export const options = [
     {type: 'integer' as const, name: 'index', description: 'What is the index of the video you would like to delete from your saved playlist?', required: true, choices: []}
 ];
 
-export const execute = async({interaction, messages, params: {playlistName, index}}: CommandInput<{playlistName: string, index: number}>): Promise<CommandReturn> => {
+export const execute = async({interaction, messages, params: {playlist: playlistName, index}}: CommandInput<{playlist: string, index: number}>): Promise<CommandReturn> => {
     const userData = await member.findOne({memberId: interaction.member.id}).exec();
     if(!userData) { return messages.NO_SAVED_PLAYLISTS(); }
     const savedPlaylistsClone = userData.savedPlaylists;

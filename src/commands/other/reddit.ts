@@ -10,7 +10,7 @@ export const description = 'Replies with 10 top daily posts in wanted subreddit,
 export const deferred = false; // TODO: Fix
 
 export const options = [
-    {type: 'string' as const, name: 'subreddit', description: 'What subreddit would you like to search?', required: true, choices: []},
+    {type: 'string' as const, name: 'sub-reddit', description: 'What subreddit would you like to search?', required: true, choices: []},
     {type: 'string' as const, name: 'sort', description: 'What posts do you want to see? Select from best/hot/top/new/controversial/rising', required: true, choices: ['best', 'hot', 'new', 'top', 'controversial', 'rising']},
 ];
 

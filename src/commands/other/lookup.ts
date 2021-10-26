@@ -12,14 +12,14 @@ export const options = [
 
 type Data = {query: string, city: string, zip: string, regionName: string, country: string, org: string, isp: string, as: string};
 
-export const execute = async({params: {resl}}: CommandInput<{resl: string}>): Promise<CommandReturn> => {
-    const json = await fetch<Data>(`http://ip-api.com/json/${resl}`).then(async(res) => res.json()); // fetch json data from ip-api.com
+export const execute = async({params: {query}}: CommandInput<{query: string}>): Promise<CommandReturn> => {
+    const json = await fetch<Data>(`http://ip-api.com/json/${query}`).then(async(res) => res.json()); // fetch json data from ip-api.com
 
     //embed json results
     const embed = new MessageEmbed()
         .setColor('#42aaf5')
         .setAuthor('IP/Hostname Resolver', 'https://i.imgur.com/3lIiIv9.png', 'https://ip-api.com')
-        .addFields([{name: 'Query', value: resl, inline: true},
+        .addFields([{name: 'Query', value: query, inline: true},
             {name: 'Resolves', value: `${json.query}`, inline: true},
             {name: '‎', value: '‎', inline: true},
             {name: 'Location', value: `${json.city}, ${json.zip}, ${json.regionName}, ${json.country}`, inline: false},

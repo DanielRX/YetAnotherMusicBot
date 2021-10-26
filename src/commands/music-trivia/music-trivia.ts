@@ -37,13 +37,13 @@ const handleSubscription = async(interaction: CustomInteraction, player: TriviaP
     return {embeds: [startTriviaEmbed]};
 };
 
-export const execute = async({interaction, guildId, messages, params: {length, hardMode, roundMode, twitchChannel}}: CommandInput<{length: number, hardMode: boolean, roundMode: boolean, twitchChannel: string}>): Promise<CommandReturn> => {
+export const execute = async({interaction, guildId, messages, params: {length, hard, roundMode, twitchChannel}}: CommandInput<{length: number, hard: boolean, roundMode: boolean, twitchChannel: string}>): Promise<CommandReturn> => {
     const voiceChannel = interaction.member.voice.channel;
     if(!voiceChannel) { return messages.NOT_IN_VC(); }
     if(playerManager.has(guildId)) { return messages.TRACK_IS_PLAYING(); }
     if(triviaManager.has(guildId)) { return messages.TRIVIA_IS_RUNNING(); }
 
-    triviaManager.set(guildId, new TriviaPlayer(hardMode, roundMode, twitchChannel, voiceChannel as VoiceChannel));
+    triviaManager.set(guildId, new TriviaPlayer(hard, roundMode, twitchChannel, voiceChannel as VoiceChannel));
 
     const triviaPlayer = triviaManager.get(guildId) as unknown as TriviaPlayer;
     await triviaPlayer.loadSongs(length);

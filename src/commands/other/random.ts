@@ -10,7 +10,7 @@ export const options = [
     {type: 'integer' as const, name: 'max', description: 'What is the maximum number?', required: true, choices: []}
 ];
 
-export const execute = async({params: {minIn, maxIn}}: CommandInput<{minIn: number, maxIn: number}>): Promise<CommandReturn> => {
+export const execute = async({params: {min: minIn, max: maxIn}}: CommandInput<{min: number, max: number}>): Promise<CommandReturn> => {
     const min = Math.ceil(minIn);
     const max = Math.floor(maxIn);
     const rngEmbed = new MessageEmbed().setTitle(`${Math.floor(Math.random() * (max - min + 1)) + min}`);
