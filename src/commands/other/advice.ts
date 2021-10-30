@@ -1,5 +1,5 @@
 import type {CommandReturn} from '../../utils/types';
-import {fetch} from '../../utils/utils';
+import {fetchJSON} from '../../utils/utils';
 import {SlashCommandBuilder} from '@discordjs/builders';
 import {MessageEmbed} from 'discord.js';
 
@@ -9,8 +9,10 @@ export const deferred = false;
 
 export const data = new SlashCommandBuilder().setName(name).setDescription(description);
 
+const url = 'https://api.adviceslip.com/advice';
+
 export const execute = async(): Promise<CommandReturn> => {
-    const json = await fetch<{slip: {advice: string}}>('https://api.adviceslip.com/advice').then(async(res) => res.json());
+    const json = await fetchJSON<{slip: {advice: string}}>(url);
     const embed = new MessageEmbed()
         .setColor('#403B3A')
         .setAuthor('Advice Slip', 'https://i.imgur.com/8pIvnmD.png', 'https://adviceslip.com/')

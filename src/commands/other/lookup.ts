@@ -1,6 +1,6 @@
 import {MessageEmbed} from 'discord.js';
 import type {CommandInput, CommandReturn} from '../../utils/types';
-import {fetch} from '../../utils/utils';
+import {fetchJSON} from '../../utils/utils';
 
 export const name = 'lookup';
 export const description = 'Resolve an IP address or hostname with additional info.';
@@ -13,7 +13,7 @@ export const options = [
 type Data = {query: string, city: string, zip: string, regionName: string, country: string, org: string, isp: string, as: string};
 
 export const execute = async({params: {query}}: CommandInput<{query: string}>): Promise<CommandReturn> => {
-    const json = await fetch<Data>(`http://ip-api.com/json/${query}`).then(async(res) => res.json()); // fetch json data from ip-api.com
+    const json = await fetchJSON<Data>(`http://ip-api.com/json/${query}`);
 
     //embed json results
     const embed = new MessageEmbed()

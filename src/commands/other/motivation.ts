@@ -6,10 +6,11 @@ export const name = 'motivation';
 export const description = 'Get a random motivational quote!';
 export const deferred = false;
 
-export const execute = async(): Promise<CommandReturn> => {
-    // thanks to https://type.fit/api/quotes
+type Data = {quotes: ({text: string, author: string})[]};
 
-    const jsonQuotes = fs.readJSONSync('./resources/quotes/motivational.json', 'utf8') as {quotes: ({text: string, author: string})[]};
+// thanks to https://type.fit/api/quotes
+export const execute = async(): Promise<CommandReturn> => {
+    const jsonQuotes = fs.readJSONSync('./resources/quotes/motivational.json', 'utf8') as Data;
     const quoteArray = jsonQuotes.quotes;
 
     const randomQuote = quoteArray[Math.floor(Math.random() * quoteArray.length)];

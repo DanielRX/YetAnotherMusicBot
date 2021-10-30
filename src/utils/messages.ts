@@ -1,5 +1,4 @@
 import * as fs from 'fs-extra';
-import {logger} from './logging';
 
 type Language = 'de_de' | 'en_gb';
 

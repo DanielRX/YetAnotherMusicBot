@@ -2,7 +2,7 @@
 import type {CommandInput, CommandReturn} from '../../utils/types';
 import {MessageEmbed} from 'discord.js';
 import {config} from '../../utils/config';
-import {fetch} from '../../utils/utils';
+import {fetch, fetchJSON} from '../../utils/utils';
 
 export const name = 'game-search';
 export const description = 'Search for game information';
@@ -39,8 +39,8 @@ const getGameDetails = async(query: string) => {
 
     let json = await body.json();
     if(json.redirect) {
-        const redirect = await fetch<GameData>(`https://api.rawg.io/api/games/${body.slug}?key=${config.rawgAPI}`);
-        json = await redirect.json();
+        const redirect = await fetchJSON<GameData>(`https://api.rawg.io/api/games/${body.slug}?key=${config.rawgAPI}`);
+        json = redirect;
     }
     // 'id' is the only value that must be present to all valid queries
     if(!json.id) {

@@ -1,4 +1,4 @@
-import {fetch} from '../../utils/utils';
+import {fetchJSON} from '../../utils/utils';
 import {MessageEmbed} from 'discord.js';
 import type {CommandReturn} from '../../utils/types';
 
@@ -13,8 +13,10 @@ const makeEmbed = (quote: string) => new MessageEmbed()
     .setTimestamp()
     .setFooter('Powered by kanye.rest', '');
 
+const url = 'https://api.kanye.rest/?format=json';
+
 export const execute = async(): Promise<CommandReturn> => {
-    const json = await fetch<{quote: string}>('https://api.kanye.rest/?format=json').then(async(res) => res.json());
+    const json = await fetchJSON<{quote: string}>(url);
     return {embeds: [makeEmbed(json.quote)]};
 };
 

@@ -1,6 +1,6 @@
 import {MessageEmbed} from 'discord.js';
 import type {CommandInput, CommandReturn} from '../../utils/types';
-import {fetch} from '../../utils/utils';
+import {fetchJSON} from '../../utils/utils';
 
 export const name = 'urban';
 export const description = 'Get definitions from urban dictonary.';
@@ -10,8 +10,10 @@ export const options = [
     {type: 'string' as const, name: 'query', description: 'What do you want to search for?', required: true, choices: []},
 ];
 
-export const execute = async({interaction, params: {query}}: CommandInput<{query: string}>): Promise<CommandReturn> => {
-    const json = await fetch<{list: ({definition: string, permalink: string})[]}>(`https://api.urbandictionary.com/v0/define?term=${interaction.options.get('query')?.value}`).then(async(res) => res.json());
+type UrbanReturn = {list: ({definition: string, permalink: string})[]};
+
+export const execute = async({params: {query}}: CommandInput<{query: string}>): Promise<CommandReturn> => {
+    const json = await fetchJSON<UrbanReturn>(`https://api.urbandictionary.com/v0/define?term=${query}`);
     const embed = new MessageEmbed()
         .setColor('#BB7D61')
         .setTitle(query)

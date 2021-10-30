@@ -9,4 +9,4 @@ export const options = [
     {type: 'string' as const, name: 'gif', description: 'What gif would you like to search for?', required: true, choices: []}
 ];
 
-export const execute = async({message, params: {gif}}: CommandInput<{gif: string}>): Promise<CommandReturn> => searchTenor(message, gif);
+export const execute = async({messages, params: {gif}}: CommandInput<{gif: string}>): Promise<CommandReturn> => searchTenor(messages, gif);

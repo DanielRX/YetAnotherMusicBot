@@ -75,10 +75,12 @@ const validateURL = (url: string): boolean => isYouTubePlaylistURL(url) || isYou
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 type FetchConfig = {method?: 'GET' | 'POST', headers?: {'client-id'?: string, Authorization: string}};
-const fetch = f as <T>(url: string, config?: FetchConfig) => Promise<{slug: string, status: string, json: () => Promise<T & {length: number}>, text: () => Promise<string>}>;
+type FetchReturn<T> = Promise<{slug: string, status: string, json: () => Promise<T & {length: number}>, text: () => Promise<string>}>;
+const fetch = async<T>(url: string, config?: FetchConfig): FetchReturn<T> => f(url, config);
+const fetchJSON = async<T>(url: string, config?: FetchConfig): Promise<T & {length: number}> => fetch<T>(url, config).then(async(res) => res.json());
 
 const filterEmpty = <T>(x: T[]): T[] => x.filter((y) => typeof y !== 'undefined');
 
 const randomLineFromFile = async(file: string): Promise<string> => fs.readFile(file, 'utf8').then((links) => links.split('\n')).then(randomEl);
 
-export {randomLineFromFile, filterEmpty, fetch, arrayMove, getRandom, shuffleArray, isSpotifyURL, isYouTubePlaylistURL, isYouTubeVideoURL, validateURL, randomEl, setupOption};
+export {fetchJSON, randomLineFromFile, filterEmpty, fetch, arrayMove, getRandom, shuffleArray, isSpotifyURL, isYouTubePlaylistURL, isYouTubeVideoURL, validateURL, randomEl, setupOption};

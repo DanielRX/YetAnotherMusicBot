@@ -5,5 +5,5 @@ export const name = 'dog';
 export const description = 'Replies with a cute dog picture!';
 export const deferred = false;
 
-export const execute = async({message}: CommandInput): Promise<CommandReturn> => searchTenor(message, 'dog');
+export const execute = async({messages}: CommandInput): Promise<CommandReturn> => searchTenor(messages, 'dog');
 

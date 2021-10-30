@@ -1,4 +1,4 @@
-import {fetch} from '../../utils/utils';
+import {fetchJSON} from '../../utils/utils';
 import {MessageEmbed} from 'discord.js';
 import type {CommandReturn} from '../../utils/types';
 
@@ -6,9 +6,11 @@ export const name = 'trump';
 export const description = 'Get a random quote from Donald Trump!';
 export const deferred = false;
 
+const url = 'https://api.tronalddump.io/random/quote';
+
 export const execute = async(): Promise<CommandReturn> => {
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    const json = await fetch<{value: string, appeared_at: number}>('https://api.tronalddump.io/random/quote').then(async(res) => res.json());
+    const json = await fetchJSON<{value: string, appeared_at: number}>(url);
     const embed = new MessageEmbed()
         .setColor('#BB7D61')
         .setAuthor('Donald Trump', 'https://www.whitehouse.gov/wp-content/uploads/2021/01/45_donald_trump.jpg')
