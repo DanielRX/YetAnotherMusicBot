@@ -22,7 +22,7 @@ export const options = [
 export const execute = async({message, interaction, params: {difficulty, questionType, category}}: CommandInput): Promise<CommandReturn> => {
     const t = questionType !== 'both';
     const d = difficulty !== 'all';
-    const categoryIn = Number(category) === 1;
+    const categoryIn = Number(category) !== 1;
     const fullUrl = `${url}?amount=${amount}${t ? `&type=${questionType}` : ''}${d ? `&difficulty=${difficulty}` : ''}${categoryIn ? `&category=${category}` : ''}`;
     const data = await fetchJSON<{results: any}>(fullUrl).then(({results}) => results);
     const question = HTMLDecoderEncoder.decode(data[0].question);
