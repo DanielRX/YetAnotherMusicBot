@@ -29,15 +29,15 @@ export const execute = async({messages, params: {difficulty, questionType}}: Com
     let optionsString = '';
     if(!trueFalse) {
         const opts = [data[0].correct_answer, ...data[0].incorrect_answers];
-        optionsString = opts.sort((a, b) => a - b).map((a, i) => `${i + 1}) ${a}`).join('\n\n');
+        optionsString = opts.sort((a, b) => a - b).map((a, i) => `${i + 1}) ${a}`).join('\n');
     }
 
     const trueFalseAnswers = `1) True\n2)False`;
 
     const embed = new MessageEmbed()
         .setColor('#403B3A')
-        .setAuthor(`Question, ${data[0].difficulty}: ${data[0].category}`, '', 'https://opentdb.com/api.php')
-        .setDescription(`${question}\n${trueFalse ? trueFalseAnswers : optionsString}`)
+        .setAuthor(`Question, ${data[0].difficulty} - ${data[0].category}`, '', 'https://opentdb.com/api.php')
+        .setDescription(`${question.replace('&quot;', '"')}\n\n${trueFalse ? trueFalseAnswers : optionsString}`)
         .setTimestamp()
         .setFooter('Powered by opentdb.com', '');
 
