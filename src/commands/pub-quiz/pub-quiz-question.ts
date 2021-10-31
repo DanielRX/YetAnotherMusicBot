@@ -20,8 +20,9 @@ export const execute = async({messages, params: {difficulty, questionType}}: Com
     const t = questionType !== 'both';
     const d = difficulty !== 'all';
     const fullUrl = `${url}?amount=${amount}${t ? `&type=${questionType}` : ''}${d ? `&difficulty=${difficulty}` : ''}`;
-    const data = await fetchJSON(fullUrl);
+    const data = await fetchJSON<{results: any}>(fullUrl).then(({results}) => results);
+    const question = data[0].question;
     logger.info(data);
-    return 'Testing';
+    return question;
 };
 
