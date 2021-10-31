@@ -1,4 +1,5 @@
-import { logger } from '../../utils/logging';
+import {MessageEmbed} from 'discord.js';
+import {logger} from '../../utils/logging';
 import type {CommandReturn, CommandInput} from '../../utils/types';
 import {fetchJSON} from '../../utils/utils';
 
@@ -23,6 +24,22 @@ export const execute = async({messages, params: {difficulty, questionType}}: Com
     const data = await fetchJSON<{results: any}>(fullUrl).then(({results}) => results);
     const question = data[0].question;
     logger.info(data);
-    return question;
+
+    const trueFalse = data[0].type === 'boolean';
+    let optionsString = '';
+    if(!trueFalse) {
+        const opts = [data[0].correct_answer, ...data[0].incorrect_answers];
+        optionsString = opts.sort((a, b) => a - b).map((a, i) => `${i}) ${a}`).join('\n\n');
+    }
+
+    const trueFalseAnswers = `1) True\n2)False`;
+
+    const embed = new MessageEmbed()
+        .setColor('#403B3A')
+        .setAuthor(`Question, ${data[0].difficulty}: ${data[0].category}`, '', 'https://opentdb.com/api.php')
+        .setDescription(`${question}\n\n${trueFalse ? trueFalseAnswers : optionsString}`)
+        .setTimestamp()
+        .setFooter('Powered by opentdb.com', '');
+    return {embeds: [embed]};
 };
 
