@@ -2,6 +2,7 @@ import {MessageEmbed} from 'discord.js';
 import {logger} from '../../utils/logging';
 import type {CommandReturn, CommandInput} from '../../utils/types';
 import {fetchJSON} from '../../utils/utils';
+const HTMLDecoderEncoder = require("html-encoder-decoder");
 
 export const name = 'pub-quiz-question';
 export const description = 'Replies with a pub quiz question!';
@@ -22,8 +23,7 @@ export const execute = async({messages, params: {difficulty, questionType}}: Com
     const d = difficulty !== 'all';
     const fullUrl = `${url}?amount=${amount}${t ? `&type=${questionType}` : ''}${d ? `&difficulty=${difficulty}` : ''}`;
     const data = await fetchJSON<{results: any}>(fullUrl).then(({results}) => results);
-    const question = data[0].question;
-    logger.info(data);
+    const question = HTMLDecoderEncoder.decode(data[0].question);
 
     const trueFalse = data[0].type === 'boolean';
     let optionsString = '';
