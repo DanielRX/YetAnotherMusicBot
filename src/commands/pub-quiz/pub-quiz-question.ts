@@ -40,8 +40,7 @@ export const execute = async({message, interaction, params: {difficulty, questio
         .setTimestamp()
         .setFooter('Powered by opentdb.com', '');
 
-    const messageOut = await (interaction.channel ?? message.channel).send({embeds: [embed]});
     setTimeout(() => { void (interaction.channel ?? message.channel).send(HTMLDecoderEncoder.decode(data[0].correct_answer)); } , 15 * 1000);
-    return '';
+    return {embeds: [embed]};
 };
 
