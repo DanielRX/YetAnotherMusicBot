@@ -31,7 +31,7 @@ export const execute = async(message: Message): Promise<void> => {
         }
         // const params: any = message.content.split(' ').slice(1).map((p, i) => ({[camelCase(command.options![i].name)]: p})).reduce((a, b) => ({...a, ...b}), {});
         logger.verbose(params);
-        const output = await command.execute({interaction: undefined as unknown as CustomInteraction, messages: await messages('en_gb'), params, guildId: message.guildId ?? ''});
+        const output = await command.execute({message, interaction: undefined as unknown as CustomInteraction, messages: await messages('en_gb'), params, guildId: message.guildId ?? ''});
         if(typeof output !== 'undefined') {
             if(typeof output !== 'string' && 'pages' in output) {
                 await message.channel.send('Sorry, this command only works with / commands enabled!');

@@ -2,7 +2,7 @@ import {MessageEmbed} from 'discord.js';
 import {logger} from '../../utils/logging';
 import type {CommandReturn, CommandInput} from '../../utils/types';
 import {fetchJSON} from '../../utils/utils';
-const HTMLDecoderEncoder = require("html-encoder-decoder");
+const HTMLDecoderEncoder = require('html-encoder-decoder');
 
 export const name = 'pub-quiz-question';
 export const description = 'Replies with a pub quiz question!';
@@ -18,7 +18,7 @@ export const options = [
     {type: 'string' as const, name: 'question-type', description: 'The type of the question', required: false, choices: ['multiple', 'boolean', 'both'], default: 'both'}
 ];
 
-export const execute = async({messages, params: {difficulty, questionType}}: CommandInput): Promise<CommandReturn> => {
+export const execute = async({message, interaction, params: {difficulty, questionType}}: CommandInput): Promise<CommandReturn> => {
     const t = questionType !== 'both';
     const d = difficulty !== 'all';
     const fullUrl = `${url}?amount=${amount}${t ? `&type=${questionType}` : ''}${d ? `&difficulty=${difficulty}` : ''}`;
@@ -32,8 +32,7 @@ export const execute = async({messages, params: {difficulty, questionType}}: Com
         optionsString = opts.sort((a, b) => a - b).map((a, i) => `${i + 1}) ${a}`).join('\n');
     }
 
-    const trueFalseAnswers = `1) True\n2)False`;
-
+    const trueFalseAnswers = `1) True\n2) False`;
     const embed = new MessageEmbed()
         .setColor('#403B3A')
         .setAuthor(`Question, ${data[0].difficulty} - ${data[0].category}`, '', 'https://opentdb.com/api.php')
@@ -41,6 +40,8 @@ export const execute = async({messages, params: {difficulty, questionType}}: Com
         .setTimestamp()
         .setFooter('Powered by opentdb.com', '');
 
-    return {embeds: [embed]};
+    const messageOut = await (interaction.channel ?? message.channel).send({embeds: [embed]});
+    setTimeout(() => { void (interaction.channel ?? message.channel).send(HTMLDecoderEncoder.decode(data[0].correct_answer)); } , 15 * 1000);
+    return '';
 };
 
