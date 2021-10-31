@@ -40,7 +40,7 @@ export const execute = async({message, interaction, params: {difficulty, questio
         .setTimestamp()
         .setFooter('Powered by opentdb.com', '');
 
-    setTimeout(() => { void (interaction?.channel ?? message?.channel).send(HTMLDecoderEncoder.decode(data[0].correct_answer)); } , 15 * 1000);
+    setTimeout(() => { void (interaction?.channel ?? message?.channel).send(HTMLDecoderEncoder.decode(data[0].correct_answer)); } , 30 * 1000);
     return {embeds: [embed]};
 };
 
