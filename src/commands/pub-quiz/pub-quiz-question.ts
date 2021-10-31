@@ -15,16 +15,17 @@ const amount = 1;
 
 export const options = [
     {type: 'string' as const, name: 'difficulty', description: 'The difficulty of the question', required: false, choices: ['easy', 'medium', 'hard', 'all'], default: 'all'},
-    {type: 'string' as const, name: 'question-type', description: 'The type of the question', required: false, choices: ['multiple', 'boolean', 'both'], default: 'both'}
+    {type: 'string' as const, name: 'question-type', description: 'The type of the question', required: false, choices: ['multiple', 'boolean', 'both'], default: 'both'},
+    {type: 'integer' as const, name: 'category', description: 'The category of the question', required: false, choices: [], default: 1}
 ];
 
-export const execute = async({message, interaction, params: {difficulty, questionType}}: CommandInput): Promise<CommandReturn> => {
+export const execute = async({message, interaction, params: {difficulty, questionType, category}}: CommandInput): Promise<CommandReturn> => {
     const t = questionType !== 'both';
     const d = difficulty !== 'all';
-    const fullUrl = `${url}?amount=${amount}${t ? `&type=${questionType}` : ''}${d ? `&difficulty=${difficulty}` : ''}`;
+    const categoryIn = Number(category) === 1;
+    const fullUrl = `${url}?amount=${amount}${t ? `&type=${questionType}` : ''}${d ? `&difficulty=${difficulty}` : ''}${categoryIn ? `&category=${category}` : ''}`;
     const data = await fetchJSON<{results: any}>(fullUrl).then(({results}) => results);
     const question = HTMLDecoderEncoder.decode(data[0].question);
-
     const trueFalse = data[0].type === 'boolean';
     let optionsString = '';
     if(!trueFalse) {
