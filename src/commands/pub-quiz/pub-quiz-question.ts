@@ -28,7 +28,7 @@ export const execute = async({messages, params: {difficulty, questionType}}: Com
     const trueFalse = data[0].type === 'boolean';
     let optionsString = '';
     if(!trueFalse) {
-        const opts = [data[0].correct_answer, ...data[0].incorrect_answers];
+        const opts = [data[0].correct_answer, ...data[0].incorrect_answers].map((answer) => HTMLDecoderEncoder.decode(answer));
         optionsString = opts.sort((a, b) => a - b).map((a, i) => `${i + 1}) ${a}`).join('\n');
     }
 
