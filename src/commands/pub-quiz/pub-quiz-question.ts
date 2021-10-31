@@ -1,3 +1,4 @@
+import { logger } from '../../utils/logging';
 import type {CommandReturn, CommandInput} from '../../utils/types';
 import {fetchJSON} from '../../utils/utils';
 
@@ -18,6 +19,9 @@ export const options = [
 export const execute = async({messages, params: {difficulty, questionType}}: CommandInput): Promise<CommandReturn> => {
     const t = questionType !== 'both';
     const d = difficulty !== 'all';
-    return fetchJSON(`${url}?amount=${amount}${t ? `&type=${questionType}` : ''}${d ? `&difficulty=${difficulty}` : ''}`);
+    const fullUrl = `${url}?amount=${amount}${t ? `&type=${questionType}` : ''}${d ? `&difficulty=${difficulty}` : ''}`;
+    const data = await fetchJSON(fullUrl);
+    logger.info(data);
+    return 'Testing';
 };
 
