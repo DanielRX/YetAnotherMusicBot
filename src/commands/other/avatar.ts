@@ -10,11 +10,13 @@ export const options = [
     {type: 'user' as const, name: 'user', description: 'The user which avatar you want to display', required: true, choices: []}
 ];
 
+const embedColour = '#00AE86';
+
 export const execute = async({params: {user}}: CommandInput<{user: User}>): Promise<CommandReturn> => {
     const embed = new MessageEmbed()
         .setTitle(user.username)
         .setImage(user.displayAvatarURL({dynamic: true}))
-        .setColor('#00AE86');
+        .setColor(embedColour);
 
     return {embeds: [embed]};
 };

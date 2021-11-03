@@ -10,6 +10,8 @@ export const name = 'bot-status';
 export const description = 'Shows the current system status';
 export const deferred = false;
 
+const embedColour = '#ff0000';
+
 export const execute = async({interaction}: CommandInput): Promise<CommandReturn> => {
     const owner = await interaction.guild.fetchOwner();
     const isOwner = owner.id == interaction.member.id ? true : false;
@@ -49,7 +51,7 @@ export const execute = async({interaction}: CommandInput): Promise<CommandReturn
     const statusEmbed = new Discord.MessageEmbed()
         .setThumbnail(user.displayAvatarURL() || '')
         .setTitle(`Status of ${interaction.client.user?.username}`)
-        .setColor('#ff0000');
+        .setColor(embedColour);
 
     if(isOwner) {
         statusEmbed.addField(`Memory Usage`, `${Math.round(used * 100) / 100}MB`, true).addField(`Platform`, `${platform} ${archInfo}`, true);

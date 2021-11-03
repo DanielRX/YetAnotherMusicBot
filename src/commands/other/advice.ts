@@ -11,10 +11,12 @@ export const data = new SlashCommandBuilder().setName(name).setDescription(descr
 
 const url = 'https://api.adviceslip.com/advice';
 
+const embedColour = '#403B3A';
+
 export const execute = async(): Promise<CommandReturn> => {
     const json = await fetchJSON<{slip: {advice: string}}>(url);
     const embed = new MessageEmbed()
-        .setColor('#403B3A')
+        .setColor(embedColour)
         .setAuthor('Advice Slip', 'https://i.imgur.com/8pIvnmD.png', 'https://adviceslip.com/')
         .setDescription(json.slip.advice)
         .setTimestamp()
