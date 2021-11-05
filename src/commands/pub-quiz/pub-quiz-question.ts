@@ -1,14 +1,14 @@
 import {MessageEmbed} from 'discord.js';
-import {logger} from '../../utils/logging';
+// import {logger} from '../../utils/logging';
 import type {CommandReturn, CommandInput} from '../../utils/types';
 import {fetchJSON} from '../../utils/utils';
-const HTMLDecoderEncoder = require('html-encoder-decoder');
+import HTMLDecoderEncoder from 'html-encoder-decoder';
 
 export const name = 'pub-quiz-question';
 export const description = 'Replies with a pub quiz question!';
 export const deferred = false;
 
-const categories = {generalKnowledge: 9, entertainmentBooks: 10, entertainmentFilm: 11, entertainmentMusic: 12, entertainmentMusicalsAndTheatres: 13, entertainmentTelevision: 14, entertainmentVideoGames: 15, entertainmentBoardGames: 16, scienceAbdNature: 17, scienceComputers: 18, scienceMathematics: 19, mythology: 20, sports: 21, geography: 22, history: 23, politics: 24, art: 25, celebrities: 26, animals: 27, vehicles: 28, entertainmentComics: 29, scienceGadgets: 30, entertainmentJapaneseAnimeAndManga: 31, entertainmentCartoonAndAnimations: 32};
+// const categories = {generalKnowledge: 9, entertainmentBooks: 10, entertainmentFilm: 11, entertainmentMusic: 12, entertainmentMusicalsAndTheatres: 13, entertainmentTelevision: 14, entertainmentVideoGames: 15, entertainmentBoardGames: 16, scienceAbdNature: 17, scienceComputers: 18, scienceMathematics: 19, mythology: 20, sports: 21, geography: 22, history: 23, politics: 24, art: 25, celebrities: 26, animals: 27, vehicles: 28, entertainmentComics: 29, scienceGadgets: 30, entertainmentJapaneseAnimeAndManga: 31, entertainmentCartoonAndAnimations: 32};
 
 const url = 'https://opentdb.com/api.php';
 const amount = 1;
@@ -41,7 +41,7 @@ export const execute = async({message, interaction, params: {difficulty, questio
         .setTimestamp()
         .setFooter('Powered by opentdb.com', '');
 
-    setTimeout(() => { void (interaction?.channel ?? message?.channel).send(HTMLDecoderEncoder.decode(data[0].correct_answer)); } , 30 * 1000);
+    setTimeout(() => { void ((interaction ?? message).channel).send(HTMLDecoderEncoder.decode(data[0].correct_answer)); } , 30 * 1000);
     return {embeds: [embed]};
 };
 

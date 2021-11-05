@@ -7,7 +7,7 @@
     "start": "ts-node -T src/index.ts",
     "test": "jest",
     "test:watch": "jest --watch",
-    "pretest": "eslint --ignore-path .gitignore ."
+    "lint": "eslint --ignore-path .gitignore ."
   },
   "author": "Nir Gal",
   "license": "ISC",

@@ -194,7 +194,7 @@ export class TriviaPlayer extends Player {
             nextHintInt = setInterval(() => { void this.showHint(artists[0], song, artists); }, 5000);
 
             const onMessage = (username: string, message: string, isDiscord: boolean, msg?: Message) => {
-                if(!this.queue[0]) { return; }
+                if(this.queue.length === 0) { return; }
                 // if(!this.score.has(username)) { return; }
                 const time = Date.now();
                 const guess = normalizeValue(this.hardMode)(message);
@@ -278,13 +278,13 @@ export class TriviaPlayer extends Player {
 
                 const sortedScoreMap = new Map([...this.score.entries()].sort((a, b) => b[1] - a[1]));
 
-                const song = `${capitalizeWords(this.queue[0].artists[0])}: ${capitalizeWords(this.queue[0].name)}`;
+                const songString = `${capitalizeWords(this.queue[0].artists[0])}: ${capitalizeWords(this.queue[0].name)}`;
                 const board = getLeaderBoard(Array.from(sortedScoreMap.entries()), 10);
                 if(typeof board === 'undefined') { return; }
                 const embed = new MessageEmbed()
                     .setColor('#ff7373')
                     .setTitle(`:musical_note: The song was: (${Math.max(this.queue.length - 1, 0)} left${this.roundMode ? ' this round' : ''})`)
-                    .setDescription(`**[${song}](https://open.spotify.com/track/${(this.queue[0] as any).id})**\n${this.roundMode ? `You've got ${this.correctThisRound} / ${this.rounds} right to pass this round!\n` : ''}\n${board}`);
+                    .setDescription(`**[${songString}](https://open.spotify.com/track/${(this.queue[0] as any).id})**\n${this.roundMode ? `You've got ${this.correctThisRound} / ${this.rounds} right to pass this round!\n` : ''}\n${board}`);
 
                 this.lastSongMessage = await this.textChannel.send({embeds: [embed]});
             };
