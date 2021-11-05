@@ -9,9 +9,9 @@ export const options = [
     {type: 'string' as const, name: 'playlistname', description: 'Which playlist would you like to delete?', required: true, choices: []}
 ];
 
-export const execute = async({interaction, messages, params: {playlistName}}: CommandInput<{playlistName: string}>): Promise<CommandReturn> => {
+export const execute = async({messages, sender, params: {playlistName}}: CommandInput<{playlistName: string}>): Promise<CommandReturn> => {
     // Check if user has playlists or if user is saved in the DB
-    const userData = await member.findOne({memberId: interaction.member.id}).exec();
+    const userData = await member.findOne({memberId: sender.id}).exec();
     if(!userData) { return messages.NO_SAVED_PLAYLISTS(); }
 
     const savedPlaylistsClone = userData.savedPlaylists;
@@ -21,6 +21,6 @@ export const execute = async({interaction, messages, params: {playlistName}}: Co
     if(location === -1) { return messages.PLAYLIST_NOT_FOUND({playlistName}); }
 
     savedPlaylistsClone.splice(location, 1);
-    await member.updateOne({memberId: interaction.member.id}, {savedPlaylists: savedPlaylistsClone});
+    await member.updateOne({memberId: sender.id}, {savedPlaylists: savedPlaylistsClone});
     return messages.PLAYLIST_REMOVED({playlistName});
 };

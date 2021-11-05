@@ -74,7 +74,7 @@ const getLyrics = async(url: string, errorMessage: string) => {
     }
 };
 
-export const execute = async({interaction, guildId, messages, params: {songName}}: CommandInput<{songName: string}>): Promise<CommandReturn> => {
+export const execute = async({sender, guildId, messages, params: {songName}}: CommandInput<{songName: string}>): Promise<CommandReturn> => {
     if(!config.geniusLyricsAPI) { return messages.COMMAND_DISABLED(); }
     const player = playerManager.get(guildId);
     const guild = guildData.get(guildId);
@@ -86,9 +86,9 @@ export const execute = async({interaction, guildId, messages, params: {songName}
         songName = player.nowPlaying?.name ?? '';
     }
 
-    const url = await searchSong(cleanSongName(songName), await message('SONG_NOT_FOUND'));
-    const songPageURL = await getSongPageURL(url, await message('GENERIC_ERROR'));
-    const lyrics = await getLyrics(songPageURL, await message('GENERIC_ERROR'));
+    const url = await searchSong(cleanSongName(songName), messages.SONG_NOT_FOUND());
+    const songPageURL = await getSongPageURL(url, messages.GENERIC_ERROR());
+    const lyrics = await getLyrics(songPageURL, messages.GENERIC_ERROR());
 
     const lyricsIndex = Math.round(lyrics.length / 4096) + 1;
     const lyricsArray = [];
@@ -102,7 +102,13 @@ export const execute = async({interaction, guildId, messages, params: {songName}
         }
     }
 
-    const pageData = {title: `${songName} lyrics`, /* TODO: Replace by message */ pages: lyricsArray, color: '#9096E6' as const, url: songPageURL, author: {username: interaction.member.user.username, avatar: interaction.member.user.displayAvatarURL()}};
+    const pageData = {
+        title: `${songName} lyrics`, /* TODO: Replace by message */
+        pages: lyricsArray,
+        color: '#9096E6' as const,
+        url: songPageURL,
+        author: {username: sender.user.username, avatar: sender.user.displayAvatarURL()}
+    };
     return {pages: pageData};
 };
 

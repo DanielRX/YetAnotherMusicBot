@@ -6,7 +6,7 @@ export const name = 'queue';
 export const description = 'Display the music queue';
 export const deferred = true;
 
-export const execute = async({interaction, messages, guildId}: CommandInput): Promise<CommandReturn> => {
+export const execute = async({messages, guildId, sender}: CommandInput): Promise<CommandReturn> => {
     const guild = guildData.get(guildId);
     if(guild && guild.triviaData.isTriviaRunning) { return messages.TRIVIA_IS_RUNNING(); }
     const player = playerManager.get(guildId);
@@ -25,6 +25,6 @@ export const execute = async({interaction, messages, guildId}: CommandInput): Pr
         embeds.push(new MessageEmbed().setTitle(messages.PAGE_TITLE({i})).setFields(fields));
     }
 
-    const pageData = {title: messages.EMBED_TITLE_MUSIC_QUEUE(), pages: embeds, color: '#9096E6' as const, author: {username: interaction.member.user.username, avatar: interaction.member.user.displayAvatarURL()}, listenTimeout: 2 * 60 * 1000};
+    const pageData = {title: messages.EMBED_TITLE_MUSIC_QUEUE(), pages: embeds, color: '#9096E6' as const, author: {username: sender.user.username, avatar: sender.user.displayAvatarURL()}, listenTimeout: 2 * 60 * 1000};
     return {pages: pageData};
 };

@@ -12,11 +12,11 @@ export const deferred = false;
 
 const embedColour = '#ff0000';
 
-export const execute = async({interaction}: CommandInput): Promise<CommandReturn> => {
-    const owner = await interaction.guild.fetchOwner();
-    const isOwner = owner.id == interaction.member.id ? true : false;
+export const execute = async({interaction, sender, guild}: CommandInput): Promise<CommandReturn> => {
+    const owner = await guild.fetchOwner();
+    const isOwner = owner.id == sender.id ? true : false;
 
-    const pingMsg = await interaction.channel?.send('Processing...') as unknown as Message;
+    const pingMsg = await interaction?.channel?.send('Processing...') as unknown as Message;
 
     const commandTotal = commands.size;
     const platform = os
@@ -42,25 +42,25 @@ export const execute = async({interaction}: CommandInput): Promise<CommandReturn
     const hours = Math.floor((totalSeconds / 3600) % 24);
     const mins = Math.floor((totalSeconds / 60) % 60);
 
-    const guildCacheMap = interaction.client.guilds.cache;
+    const guildCacheMap = interaction?.client.guilds.cache;
     const guildCacheArray = Array.from(guildCacheMap, ([key, value]) => ({name: key, value}));
     const memberCount = guildCacheArray.reduce((prev, curr) => prev + curr.value.memberCount, 0);
 
     await pingMsg.edit('Complete');
-    const user = interaction.client.user as User;
+    const user = interaction?.client.user as User;
     const statusEmbed = new Discord.MessageEmbed()
         .setThumbnail(user.displayAvatarURL() || '')
-        .setTitle(`Status of ${interaction.client.user?.username}`)
+        .setTitle(`Status of ${interaction?.client.user?.username}`)
         .setColor(embedColour);
 
     if(isOwner) {
         statusEmbed.addField(`Memory Usage`, `${Math.round(used * 100) / 100}MB`, true).addField(`Platform`, `${platform} ${archInfo}`, true);
     }
 
-    statusEmbed.addField('Ping', `Round-trip took ${(pingMsg.editedTimestamp ?? pingMsg.createdTimestamp) - interaction.createdTimestamp}ms. \n			${interaction.client.ws.ping ? `The heartbeat ping is ${Math.round(interaction.client.ws.ping)}ms.` : ''}`)
+    statusEmbed.addField('Ping', `Round-trip took ${(pingMsg.editedTimestamp ?? pingMsg.createdTimestamp) - interaction?.createdTimestamp}ms. \n			${interaction?.client.ws.ping ? `The heartbeat ping is ${Math.round(interaction.client.ws.ping)}ms.` : ''}`)
         .addField(`Uptime`, `${days} D ${hours} H : ${mins} M : ${realTotalSecs} S`)
         .addField('Available Commands', `${commandTotal} Commands Available`)
-        .addField('Servers, Users', `On ${interaction.client.guilds.cache.size} servers, with a total of ${memberCount} users.`)
+        .addField('Servers, Users', `On ${interaction?.client.guilds.cache.size} servers, with a total of ${memberCount} users.`)
         .setFooter('Created', user.avatarURL() ?? '')
         .setTimestamp(user.createdAt);
 

@@ -13,16 +13,16 @@ export const options = [
     {type: 'integer' as const, name: 'newposition', description: 'What position do you want to move the song to?', required: true, choices: []}
 ];
 
-export const execute = async({interaction, guildId, messages, params: {oldPosition, newPosition}}: CommandInput<{oldPosition: number, newPosition: number}>): Promise<string> => {
+export const execute = async({sender, guildId, guild, messages, params: {oldPosition, newPosition}}: CommandInput<{oldPosition: number, newPosition: number}>): Promise<string> => {
     if(!guildData.get(guildId)) {
         guildData.set(guildId, createGuildData());
     }
-    const guild = guildData.get(guildId) as unknown as GuildData;
+    const guildD = guildData.get(guildId) as unknown as GuildData;
     const player = playerManager.get(guildId);
     if(!player) { return messages.NO_SONG_PLAYING(); }
     if(player.audioPlayer.state.status !== AudioPlayerStatus.Playing) { return messages.NO_SONG_PLAYING(); }
-    if(guild.triviaData.isTriviaRunning) { return messages.TRIVIA_IS_RUNNING(); } // && player.audioPlayer.state.status === AudioPlayerStatus.Playing
-    if(interaction.member.voice.channelId !== interaction.guild.me?.voice.channelId) { return messages.NOT_IN_SAME_VC(); }
+    if(guildD.triviaData.isTriviaRunning) { return messages.TRIVIA_IS_RUNNING(); } // && player.audioPlayer.state.status === AudioPlayerStatus.Playing
+    if(sender.voice.channelId !== guild.me?.voice.channelId) { return messages.NOT_IN_SAME_VC(); }
     const invalidPosition = oldPosition < 1 || oldPosition > player.queue.length || newPosition < 1 || newPosition > player.queue.length || oldPosition == newPosition;
     if(invalidPosition) { return messages.INVALID_POSITION(); }
 

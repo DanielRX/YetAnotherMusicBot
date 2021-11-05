@@ -29,6 +29,7 @@
     "NOT_IN_SAME_VC": "You must be in the same voice channel as the bot in order to use that!",
     "NOT_IN_VC": ":no_entry: Please join a voice channel and try again!",
     "NOT_PAUSED": "This song is not paused!",
+    "ONLY_INTERACTION": "This command currently only works as an interaction",
     "PAGE_TITLE": "Page {{i}}",
     "PLAY_CALL_RUNNING": "Please wait until the last play call is processed",
     "PLAYLIST_CREATED": "Created a new playlist named **{{playlistName}}**",

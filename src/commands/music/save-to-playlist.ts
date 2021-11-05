@@ -1,6 +1,6 @@
-import type {User} from 'discord.js';
+import type {GuildMember, User} from 'discord.js';
 import type {Video} from 'youtube-sr';
-import type {CommandInput, CommandReturn, CustomInteraction, PlayTrack, Track} from '../../utils/types';
+import type {CommandInput, CommandReturn, PlayTrack, Track} from '../../utils/types';
 import member from '../../utils/models/Member';
 import YouTube from 'youtube-sr';
 import {getData as gd} from 'spotify-url-info';
@@ -35,15 +35,15 @@ const getData: (url: string) => Promise<Track | {tracks: {items: ({track: Track}
 
 const processTrack = (user: User) => async(track: {track: Track}): Promise<PlayTrack> => searchOne(track.track).then((video) => constructSongObj(video, user));
 
-const processURL = async(url: string, interaction: CustomInteraction, messages: CommandInput['messages']) => {
+const processURL = async(url: string, sender: GuildMember, messages: CommandInput['messages']) => {
     if(isSpotifyURL(url)) {
         return getData(url)
             .then(async(res: Track | {tracks: {items: ({track: Track})[]}}) => {
                 if('tracks' in res) {
                     const spotifyPlaylistItems = res.tracks.items;
-                    return Promise.all(spotifyPlaylistItems.map(processTrack(interaction.member.user))).then(filterEmpty);
+                    return Promise.all(spotifyPlaylistItems.map(processTrack(sender.user))).then(filterEmpty);
                 }
-                return searchOne(res).then((video) => constructSongObj(video, interaction.member.user));
+                return searchOne(res).then((video) => constructSongObj(video, sender.user));
             })
             .catch((e: unknown) => { logger.error(e); });
     }
@@ -53,7 +53,7 @@ const processURL = async(url: string, interaction: CustomInteraction, messages: 
         });
         if(typeof playlist === 'string') { return playlist; }
         const videosArr = await playlist.fetch().then((v) => v.videos);
-        const urlsArr = videosArr.filter((v) => !v.private).map((v) => constructSongObj(v, interaction.member.user));
+        const urlsArr = videosArr.filter((v) => !v.private).map((v) => constructSongObj(v, sender.user));
         return urlsArr;
     }
     const video = await YouTube.getVideo(url).catch(async() => {
@@ -62,11 +62,11 @@ const processURL = async(url: string, interaction: CustomInteraction, messages: 
     if(typeof video === 'string') { return video; }
 
     if(video.live) { return messages.NO_LIVE(); }
-    return constructSongObj(video, interaction.member.user);
+    return constructSongObj(video, sender.user);
 };
 
-export const execute = async({interaction, messages, params: {playlistName, url}}: CommandInput<{playlistName: string, url: string}>): Promise<CommandReturn> => {
-    const userData = await member.findOne({memberId: interaction.member.id}).exec();
+export const execute = async({sender, messages, params: {playlistName, url}}: CommandInput<{playlistName: string, url: string}>): Promise<CommandReturn> => {
+    const userData = await member.findOne({memberId: sender.id}).exec();
     if(!userData) { return messages.NO_SAVED_PLAYLISTS(); }
     const savedPlaylistsClone = userData.savedPlaylists;
     if(savedPlaylistsClone.length == 0) { return messages.NO_SAVED_PLAYLISTS(); }
@@ -76,18 +76,18 @@ export const execute = async({interaction, messages, params: {playlistName, url}
     const location = savedPlaylistsClone.findIndex((value) => value.name == playlistName);
     if(location === -1) { return messages.PLAYLIST_NOT_FOUND({playlistName}); }
     let urlsArrayClone = savedPlaylistsClone[location].urls;
-    const processedURL = await processURL(url, interaction, messages);
+    const processedURL = await processURL(url, sender, messages);
     if(typeof processedURL === 'string') { throw new Error(processedURL); }
     if(!processedURL) return messages.MISSING_ERR_MESSAGE();
     if(Array.isArray(processedURL)) {
         urlsArrayClone = urlsArrayClone.concat(processedURL);
         savedPlaylistsClone[location].urls = urlsArrayClone;
-        await member.updateOne({memberId: interaction.member.id}, {savedPlaylists: savedPlaylistsClone}).exec();
+        await member.updateOne({memberId: sender.id}, {savedPlaylists: savedPlaylistsClone}).exec();
         return messages.SUCCESS_PLAYLIST();
     }
 
     urlsArrayClone.push(processedURL);
     savedPlaylistsClone[location].urls = urlsArrayClone;
-    await member.updateOne({memberId: interaction.member.id}, {savedPlaylists: savedPlaylistsClone}).exec();
+    await member.updateOne({memberId: sender.id}, {savedPlaylists: savedPlaylistsClone}).exec();
     return messages.SUCCESS_APPEND({name: savedPlaylistsClone[location].urls.slice(-1)[0].name, playlistName});
 };

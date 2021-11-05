@@ -5,6 +5,7 @@
   "main": "",
   "scripts": {
     "start": "ts-node -T src/index.ts",
+    "type-check": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
     "lint": "eslint --ignore-path .gitignore ."

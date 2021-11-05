@@ -6,8 +6,8 @@ export const name = 'my-playlists';
 export const description = 'Lists your saved playlists';
 export const deferred = true;
 
-export const execute = async({interaction, messages}: CommandInput): Promise<string | {embeds: MessageEmbed[]}> => {
-    const userData = await member.findOne({memberId: interaction.member.id}).exec();
+export const execute = async({sender, messages}: CommandInput): Promise<string | {embeds: MessageEmbed[]}> => {
+    const userData = await member.findOne({memberId: sender.id}).exec();
     if(!userData) { return messages.NO_SAVED_PLAYLISTS(); }
 
     const savedPlaylistsClone = userData.savedPlaylists;

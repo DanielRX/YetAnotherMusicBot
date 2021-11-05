@@ -7,16 +7,16 @@ export const name = 'loop';
 export const description = 'Set a song to play on loop';
 export const deferred = false;
 
-export const execute = async({interaction, messages}: CommandInput): Promise<string> => {
-    if(!guildData.get(interaction.guildId)) {
-        guildData.set(interaction.guildId, createGuildData());
+export const execute = async({sender, guild, guildId, messages}: CommandInput): Promise<string> => {
+    if(!guildData.get(guildId)) {
+        guildData.set(guildId, createGuildData());
     }
-    const guild = guildData.get(interaction.guildId) as unknown as GuildData;
-    const player = playerManager.get(interaction.guildId);
+    const guildD = guildData.get(guildId) as unknown as GuildData;
+    const player = playerManager.get(guildId);
     if(!player) { return messages.NO_SONG_PLAYING(); }
     if(player.audioPlayer.state.status !== AudioPlayerStatus.Playing) { return messages.NO_SONG_PLAYING(); }
-    if(guild.triviaData.isTriviaRunning) { return messages.TRIVIA_IS_RUNNING(); } // player.audioPlayer.state.status === AudioPlayerStatus.Playing
-    if(interaction.member.voice.channelId !== interaction.guild.me?.voice.channelId) { return messages.NOT_IN_SAME_VC(); }
+    if(guildD.triviaData.isTriviaRunning) { return messages.TRIVIA_IS_RUNNING(); } // player.audioPlayer.state.status === AudioPlayerStatus.Playing
+    if(sender.voice.channelId !== guild.me?.voice.channelId) { return messages.NOT_IN_SAME_VC(); }
 
     if(player.loopSong) {
         player.loopSong = false;

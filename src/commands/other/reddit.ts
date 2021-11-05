@@ -42,7 +42,7 @@ const fetchFromReddit = async(subreddit: string, sort: string, timeFilter = 'day
 };
 
 export const execute = async({interaction, params: {subReddit, sort}}: CommandInput<{subReddit: string, sort: 'best' | 'controversial' | 'hot' | 'new' | 'rising' | 'top'}>): Promise<CommandReturn> => {
-    const message = await interaction.deferReply({fetchReply: true});
+    const message = await interaction?.deferReply({fetchReply: true});
 
     if(!(sort === 'top' || sort === 'controversial')) { return fetchFromReddit(subReddit, sort); }
     const row = new MessageActionRow().addComponents(new MessageSelectMenu()
@@ -55,7 +55,7 @@ export const execute = async({interaction, params: {subReddit, sort}}: CommandIn
             {label: 'year', value: 'year'},
             {label: 'all', value: 'all'}
         ]));
-    const menu = await message.channel.send({
+    const menu = await message?.channel.send({
         content: `:loud_sound: Do you want to get the ${sort} posts from past hour/week/month/year or all?`,
         components: [row]
     });
@@ -67,7 +67,7 @@ export const execute = async({interaction, params: {subReddit, sort}}: CommandIn
     });
     return new Promise((resolve) => {
         collector.on('collect', async(i: SelectMenuInteraction) => {
-            if(i.user.id !== interaction.user.id) {
+            if(i.user.id !== interaction?.user.id) {
                 return i.reply({content: `This element is not for you!`, ephemeral: true});
             }
             collector.stop();

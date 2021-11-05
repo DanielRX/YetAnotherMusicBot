@@ -7,10 +7,10 @@ export const deferred = true;
 
 export const options = [];
 
-export const execute = async({interaction, guildId}: CommandInput): Promise<CommandReturn> => {
+export const execute = async({sender, guildId}: CommandInput): Promise<CommandReturn> => {
     const triviaPlayer = triviaManager.get(guildId);
     if(!triviaPlayer) { return 'Trivia is not running right now!'; }
-    if(!triviaPlayer.score.has(`d:${interaction.user.username.toLowerCase()}`)) { return 'You\'re not in the trivia!'; }
-    triviaPlayer.score.delete(`d:${interaction.user.username.toLowerCase()}`);
+    if(!triviaPlayer.score.has(`d:${sender.user.username.toLowerCase()}`)) { return 'You\'re not in the trivia!'; }
+    triviaPlayer.score.delete(`d:${sender.user.username.toLowerCase()}`);
     return 'Removed you from the music trivia!';
 };

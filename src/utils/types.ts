@@ -1,4 +1,4 @@
-import type {Client, GuildMember, CommandInteraction, Message, TextBasedChannels, VoiceChannel, MessageEmbed} from 'discord.js';
+import type {Client, GuildMember, CommandInteraction, Message, TextBasedChannels, VoiceChannel, MessageEmbed, User, Guild} from 'discord.js';
 import type {VoiceConnection, AudioPlayer} from '@discordjs/voice';
 import type {SlashCommandStringOption, SlashCommandIntegerOption, SlashCommandBooleanOption, SlashCommandUserOption} from '@discordjs/builders';
 import type {Page} from 'discord.js-pages';
@@ -9,7 +9,11 @@ export type PlayTrack = {previewUrl?: string, url: string, name: string, rawDura
 export type Track = {name: string, url: string, artists: string[], previewUrl: string};
 export type CustomAudioPlayer = {textChannel: TextBasedChannels | null, audioPlayer: AudioPlayer, loopTimes: number, nowPlaying?: PlayTrack, connection: VoiceConnection, loopSong: boolean, loopQueue: boolean, queue: PlayTrack[], commandLock: boolean, length: number, queueHistory: PlayTrack[]}
 
-export type CommandInput<T = any> = {params: T, interaction: CustomInteraction, messages: LocaleObj, guildId: string, message: Message};
+// TODO: Remove guildId and use guild.id
+// TODO: Add channel for the text channel of the command
+// TODO: Add voice channel for the voice channel of the user who run it
+// TODO: Add user info
+export type CommandInput<T = any> = {guild: Guild, sender: GuildMember, params: T, interaction?: CustomInteraction, messages: LocaleObj, guildId: string, message?: Message};
 
 export type Command = {deferred: boolean, execute: ({params, interaction, messages}: CommandInput) => Promise<CommandReturn>, name: string, description: string, options?: OptionConfig[]};
 export type CustomClient = Client;

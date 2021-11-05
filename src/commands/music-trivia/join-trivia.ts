@@ -7,13 +7,13 @@ export const deferred = true;
 
 export const options = [];
 
-export const execute = async({interaction, guildId, messages}: CommandInput): Promise<CommandReturn> => {
-    const voiceChannel = interaction.member.voice.channel;
+export const execute = async({sender, guildId, messages}: CommandInput): Promise<CommandReturn> => {
+    const voiceChannel = sender.voice.channel;
     if(!voiceChannel) { return messages.NOT_IN_VC(); }
 
     const triviaPlayer = triviaManager.get(guildId);
     if(!triviaPlayer) { return 'Trivia is not running right now!'; }
-    if(triviaPlayer.score.has(`d:${interaction.user.username.toLowerCase()}`)) { return 'You\'re already in the trivia!'; }
-    triviaPlayer.score.set(`d:${interaction.user.username.toLowerCase()}`, 0);
+    if(triviaPlayer.score.has(`d:${sender.user.username.toLowerCase()}`)) { return 'You\'re already in the trivia!'; }
+    triviaPlayer.score.set(`d:${sender.user.username.toLowerCase()}`, 0);
     return 'Added you to the music trivia!';
 };

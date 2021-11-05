@@ -502,6 +502,7 @@ export const options = [
 ];
 
 export const execute = async({interaction, guildId, messages, params: {query, flags}}: CommandInput<{query: string, flags: string}>): Promise<CommandReturn> => {
+    if(typeof interaction === 'undefined') { return messages.ONLY_INTERACTION(); }
     if(!guildData.get(guildId)) {
         guildData.set(guildId, createGuildData());
     }

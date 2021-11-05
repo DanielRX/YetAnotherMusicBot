@@ -9,15 +9,15 @@ export const options = [
     {type: 'integer' as const, name: 'position', description: 'What song number do you want to remove from queue?', required: true, choices: []}
 ];
 
-export const execute = async({interaction, guildId, messages, params: {position}}: CommandInput<{position: number}>): Promise<CommandReturn> => {
+export const execute = async({sender, guild, guildId, messages, params: {position}}: CommandInput<{position: number}>): Promise<CommandReturn> => {
     const player = playerManager.get(guildId);
 
     if(!player) { return messages.NO_SONG_PLAYING(); }
 
-    const voiceChannel = interaction.member.voice.channel;
+    const voiceChannel = sender.voice.channel;
 
     if(!voiceChannel) { return messages.NOT_IN_VC(); }
-    if(voiceChannel.id !== interaction.guild.me?.voice.channel?.id) { return messages.NOT_IN_SAME_VC(); }
+    if(voiceChannel.id !== guild.me?.voice.channel?.id) { return messages.NOT_IN_SAME_VC(); }
 
     if(position < 1 || position > player.queue.length) { return messages.INVALID_INDEX(); }
 

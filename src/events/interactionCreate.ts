@@ -2,7 +2,7 @@ import {commands} from '../utils/client';
 import type {CustomInteraction} from '../utils/types';
 import {logger} from '../utils/logging';
 import {PagesBuilder} from 'discord.js-pages';
-import type {ColorResolvable, Message} from 'discord.js';
+import type {ColorResolvable} from 'discord.js';
 import {messages} from '../utils/messages';
 import {camelCase} from 'change-case';
 
@@ -30,7 +30,7 @@ export const execute = async(interaction: CustomInteraction): Promise<void> => {
         if(command.deferred) {
             await interaction.deferReply();
         }
-        const output = await command.execute({message: undefined as unknown as Message, interaction, messages: await messages('en_gb'), params, guildId: interaction.guildId});
+        const output = await command.execute({guild: interaction.guild, sender: interaction.member, interaction, messages: await messages('en_gb'), params, guildId: interaction.guildId});
         if(!interaction.replied) {
             if(typeof output !== 'undefined') {
                 if(typeof output !== 'string' && 'pages' in output) {

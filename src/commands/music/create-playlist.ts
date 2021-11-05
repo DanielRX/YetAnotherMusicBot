@@ -10,6 +10,7 @@ export const options = [
 ];
 
 export const execute = async({interaction, messages, params: {playlistName}}: CommandInput<{playlistName: string}>): Promise<CommandReturn> => {
+    if(typeof interaction === 'undefined') { return messages.ONLY_INTERACTION(); }
     const {member: {id, user: {username}, joinedAt}} = interaction;
     const playlistData = {name: playlistName, urls: []};
     // Check if the user exists in the db
@@ -27,7 +28,7 @@ export const execute = async({interaction, messages, params: {playlistName}}: Co
 
     // Create and save the playlist in the DB
     userData.savedPlaylists.push(playlistData);
-    await member.updateOne({memberId: interaction.member.id}, userData);
+    await member.updateOne({memberId: id}, userData);
     return messages.PLAYLIST_CREATED({playlistName});
 };
 

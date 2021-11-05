@@ -10,8 +10,8 @@ export const options = [
     {type: 'integer' as const, name: 'index', description: 'What is the index of the video you would like to delete from your saved playlist?', required: true, choices: []}
 ];
 
-export const execute = async({interaction, messages, params: {playlist: playlistName, index}}: CommandInput<{playlist: string, index: number}>): Promise<CommandReturn> => {
-    const userData = await member.findOne({memberId: interaction.member.id}).exec();
+export const execute = async({sender, messages, params: {playlist: playlistName, index}}: CommandInput<{playlist: string, index: number}>): Promise<CommandReturn> => {
+    const userData = await member.findOne({memberId: sender.id}).exec();
     if(!userData) { return messages.NO_SAVED_PLAYLISTS(); }
     const savedPlaylistsClone = userData.savedPlaylists;
     if(savedPlaylistsClone.length == 0) { return messages.NO_SAVED_PLAYLISTS(); }
@@ -24,6 +24,6 @@ export const execute = async({interaction, messages, params: {playlist: playlist
     const title = urlsArrayClone[index - 1].name;
     urlsArrayClone.splice(index - 1, 1);
     savedPlaylistsClone[location].urls = urlsArrayClone;
-    await member.updateOne({memberId: interaction.member.id}, {savedPlaylists: savedPlaylistsClone}).exec();
+    await member.updateOne({memberId: sender.id}, {savedPlaylists: savedPlaylistsClone}).exec();
     return messages.REMOVED({title, name: savedPlaylistsClone[location].name});
 };
