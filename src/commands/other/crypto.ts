@@ -3,6 +3,7 @@ import axios from 'axios';
 import type {CommandInput, CommandReturn} from '../../utils/types';
 import {MessageEmbed} from 'discord.js';
 import {logger} from '../../utils/logging';
+import {config} from '../../utils/config';
 
 export const name = 'crypto';
 export const description = `Responds with a user's avatar`;
@@ -24,7 +25,7 @@ let dataProd: Coin[] = [];
 const requestOptions = {
     qs: {start: '1', limit: '200', convert: 'USD'},
     headers: {
-        'X-CMC_PRO_API_KEY': process.env.CMC_KEY
+        'X-CMC_PRO_API_KEY': config.CMCKey
     },
     json: true,
     gzip: true

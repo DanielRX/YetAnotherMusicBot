@@ -10,5 +10,6 @@
   "twitchClientSecret": "your-secret",
   "rawgAPI": "rawg-api-key",
   "twitchUsername": "",
-  "twitchToken": ""
+  "twitchToken": "",
+  "CMCKey": ""
 }
