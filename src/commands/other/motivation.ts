@@ -1,4 +1,4 @@
-import type {CommandReturn} from '../../utils/types';
+import type {CommandInput, CommandReturn} from '../../utils/types';
 import fs from 'fs-extra';
 import {MessageEmbed} from 'discord.js';
 
@@ -9,7 +9,7 @@ export const deferred = false;
 type Data = {quotes: ({text: string, author: string})[]};
 
 // thanks to https://type.fit/api/quotes
-export const execute = async(): Promise<CommandReturn> => {
+export const execute = async({messages}: CommandInput): Promise<CommandReturn> => {
     const jsonQuotes = fs.readJSONSync('./resources/quotes/motivational.json', 'utf8') as Data;
     const quoteArray = jsonQuotes.quotes;
 
@@ -19,7 +19,7 @@ export const execute = async(): Promise<CommandReturn> => {
         .setAuthor('Motivational Quote', 'https://i.imgur.com/Cnr6cQb.png', 'https://type.fit')
         .setDescription(`*"${randomQuote.text}*"\n\n-${randomQuote.author}`)
         .setTimestamp()
-        .setFooter('Powered by type.fit')
+        .setFooter(`${messages.POWERED_BY} type.fit`)
         .setColor('#FFD77A');
     return {embeds: [quoteEmbed]};
 };

@@ -6,6 +6,8 @@ export const name = 'queue-history';
 export const description = 'Display the music queue history';
 export const deferred = false;
 
+const embedColour = '#9096E6';
+
 export const execute = async({guildId, sender, messages}: CommandInput): Promise<CommandReturn> => {
     const guild = guildData.get(guildId);
     if(!guild) { return messages.NO_HISTORY(); }
@@ -23,6 +25,6 @@ export const execute = async({guildId, sender, messages}: CommandInput): Promise
         embeds.push(new MessageEmbed().setTitle(messages.PAGE_TITLE({i})).setFields(fields));
     }
 
-    const pageData = {title: messages.EMBED_TITLE_MUSIC_QUEUE_HISTORY(), pages: embeds, color: '#9096E6' as const, author: {username: sender.user.username, avatar: sender.user.displayAvatarURL()}, listenTimeout: 2 * 60 * 1000};
+    const pageData = {title: messages.EMBED_TITLE_MUSIC_QUEUE_HISTORY(), pages: embeds, color: embedColour, author: {username: sender.user.username, avatar: sender.user.displayAvatarURL()}, listenTimeout: 2 * 60 * 1000};
     return {pages: pageData};
 };

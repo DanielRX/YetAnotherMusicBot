@@ -14,7 +14,7 @@ export const options = [
 type SpeedrunStats = {runners: ({name: string, avatar: string})[], status :number};
 // eslint-disable-next-line @typescript-eslint/naming-convention
 type RunnerStats = {pbs: ({id: string, realtime_duration_ms: number, realtime_sum_of_best_ms: number, program: string, parsed_at: number, attempts: any[], game: {cover_url: string, name: string}, category: {name: string}, segments: any[]})[], status :number};
-export const execute = async({params: {user}}: CommandInput<{user: string}>): Promise<CommandReturn> => {
+export const execute = async({params: {user}, messages}: CommandInput<{user: string}>): Promise<CommandReturn> => {
     const userFiltered = user.toLowerCase();
     const userRes = await fetchJSON<SpeedrunStats>(`https://splits.io/api/v4/runners?search=${userFiltered}`);
     const runnerCount = userRes.runners.length;
@@ -50,7 +50,7 @@ export const execute = async({params: {user}}: CommandInput<{user: string}>): Pr
                 .addField('Sum Of Best', prettyMilliseconds(pbs.realtime_sum_of_best_ms), true)
                 .addField('Attempts', pbs.attempts.toString(), true)
                 .addField('Timer Used', pbs.program)
-                .setFooter('Powered by Splits.io! Run was submitted', 'https://splits.io//assets/favicon/favicon-32x32-84a395f64a39ce95d7c51fecffdaa578e2277e340d47a50fdac7feb00bf3fd68.png')
+                .setFooter(`${messages.POWERED_BY} Splits.io! Run was submitted`, 'https://splits.io//assets/favicon/favicon-32x32-84a395f64a39ce95d7c51fecffdaa578e2277e340d47a50fdac7feb00bf3fd68.png')
                 .setTimestamp(pbs.parsed_at));
         }
 

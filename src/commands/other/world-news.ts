@@ -1,4 +1,4 @@
-import type {CommandReturn} from '../../utils/types';
+import type {CommandInput, CommandReturn} from '../../utils/types';
 import {MessageEmbed} from 'discord.js';
 import {fetchJSON} from '../../utils/utils';
 import {config} from '../../utils/config';
@@ -9,7 +9,7 @@ export const deferred = false;
 
 type WorldNewsReturn = {articles: ({title: string, url: string, author: string, description: string, urlToImage: string, publishedAt: number})[]};
 
-export const execute = async(): Promise<CommandReturn> => {
+export const execute = async({messages}: CommandInput): Promise<CommandReturn> => {
     if(!config.newsAPI) { return ':x: This command is not enabled'; }
     // powered by NewsAPI.org
     const json = await fetchJSON<WorldNewsReturn>(`https://newsapi.org/v2/top-headlines?sources=reuters&pageSize=10&apiKey=${config.newsAPI}`);
@@ -24,7 +24,7 @@ export const execute = async(): Promise<CommandReturn> => {
             .setDescription(article.description)
             .setThumbnail(article.urlToImage)
             .setTimestamp(article.publishedAt)
-            .setFooter('Powered by NewsAPI.org'));
+            .setFooter(`${messages.POWERED_BY} NewsAPI.org`));
     }
     const pageData = {pages: articleArr};
     return {pages: pageData};

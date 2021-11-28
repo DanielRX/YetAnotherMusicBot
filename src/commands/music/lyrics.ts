@@ -15,6 +15,8 @@ export const options = [
     {type: 'string' as const, name: 'songname', description: ':mag: What song lyrics would you like to get?', required: false, choices: [], default: ''}
 ];
 
+const embedColour = '#9096E6';
+
 const cleanSongName = (songName: string) => {
     return songName
         .replace(/ *\([^)]*\) */g, '')
@@ -98,14 +100,14 @@ export const execute = async({sender, guildId, messages, params: {songName}}: Co
             lyricsArray.push(new MessageEmbed()
                 .setTitle(`Lyrics page #${i}`) // TODO: Replace by message
                 .setDescription(lyrics.slice((i - 1) * 4096, i * 4096))
-                .setFooter('Provided by genius.com')); // TODO: Replace by message
+                .setFooter(`${messages.POWERED_BY} genius.com`)); // TODO: Replace by message
         }
     }
 
     const pageData = {
         title: `${songName} lyrics`, /* TODO: Replace by message */
         pages: lyricsArray,
-        color: '#9096E6' as const,
+        color: embedColour,
         url: songPageURL,
         author: {username: sender.user.username, avatar: sender.user.displayAvatarURL()}
     };

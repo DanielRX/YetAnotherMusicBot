@@ -6,16 +6,16 @@ export const name = 'skip';
 export const description = 'Skip the currently playing song!';
 export const deferred = false;
 
-export const execute = async({sender, guild, guildId}: CommandInput): Promise<CommandReturn> => {
+export const execute = async({sender, guild, guildId, messages}: CommandInput): Promise<CommandReturn> => {
     const voiceChannel = sender.voice.channel;
-    if(!voiceChannel) { return 'Please join a voice channel and try again!'; }
+    if(!voiceChannel) { return messages.NOT_IN_VC(); }
 
     const player = playerManager.get(guildId);
     const guildD = guildData.get(guildId) as unknown as GuildData;
-    if(player?.audioPlayer.state.status !== AudioPlayerStatus.Playing) { return 'There is no song playing right now!'; }
-    if(voiceChannel.id !== guild.me?.voice.channel?.id) { return 'You must be in the same voice channel as the bot in order to skip!'; }
-    if(guildD.triviaData.isTriviaRunning) { return `You can't skip a trivia! Use end-trivia command instead`; }
+    if(player?.audioPlayer.state.status !== AudioPlayerStatus.Playing) { return messages.NO_SONG_PLAYING(); }
+    if(voiceChannel.id !== guild.me?.voice.channel?.id) { return messages.NOT_IN_SAME_VC(); }
+    if(guildD.triviaData.isTriviaRunning) { return messages.SKIP_TRIVIA_INVALID(); }
     player.audioPlayer.stop();
-    return `Skipped **${playerManager.get(guildId)?.nowPlaying?.name}**`;
+    return messages.SKIPPED_SONG({songName: player.nowPlaying?.name ?? ''});
 };
 

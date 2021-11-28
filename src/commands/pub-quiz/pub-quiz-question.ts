@@ -19,7 +19,7 @@ export const options = [
     {type: 'integer' as const, name: 'category', description: 'The category of the question', required: false, choices: [], default: 1}
 ];
 
-export const execute = async({message, interaction, params: {difficulty, questionType, category}}: CommandInput): Promise<CommandReturn> => {
+export const execute = async({message, interaction, params: {difficulty, questionType, category}, messages}: CommandInput): Promise<CommandReturn> => {
     const t = questionType !== 'both';
     const d = difficulty !== 'all';
     const categoryIn = Number(category) !== 1;
@@ -39,7 +39,7 @@ export const execute = async({message, interaction, params: {difficulty, questio
         .setAuthor(`Question, ${data[0].difficulty} - ${data[0].category}`, '', 'https://opentdb.com/api.php')
         .setDescription(`${question.replace('&quot;', '"')}\n\n${trueFalse ? trueFalseAnswers : optionsString}`)
         .setTimestamp()
-        .setFooter('Powered by opentdb.com', '');
+        .setFooter(`${messages.POWERED_BY} opentdb.com`, '');
 
     setTimeout(() => { void ((interaction ?? message).channel).send(HTMLDecoderEncoder.decode(data[0].correct_answer)); } , 30 * 1000);
     return {embeds: [embed]};

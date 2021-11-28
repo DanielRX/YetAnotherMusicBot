@@ -6,18 +6,18 @@ export const name = 'shuffle';
 export const description = 'Shuffle the music queue!';
 export const deferred = true;
 
-export const execute = async({guildId, guild, sender}: CommandInput): Promise<CommandReturn> => {
+export const execute = async({guildId, guild, sender, messages}: CommandInput): Promise<CommandReturn> => {
     const voiceChannel = sender.voice.channel;
-    if(!voiceChannel) { return `:no_entry: You must be in the same voice channel as the bot in order to use that!`; }
-    if(voiceChannel.id !== guild.me?.voice.channel?.id) { return `:no_entry: You must be in the same voice channel as the bot in order to use that!`; }
+    if(!voiceChannel) { return messages.NOT_IN_VC(); }
+    if(voiceChannel.id !== guild.me?.voice.channel?.id) { return messages.NOT_IN_SAME_VC(); }
     const player = playerManager.get(guildId);
-    if(!player) { return ':x: There is nothing playing right now!'; }
-    if(player.loopSong) { return ':x: Turn off the **loop** command before using the **shuffle** command!'; }
-    if(player.queue.length < 1) { return 'There are no songs in queue!'; }
-    if(player.commandLock) { return 'Please wait until play command is done processing'; }
+    if(!player) { return messages.NOTHING_PLAYING(); }
+    if(player.loopSong) { return messages.TURN_OFF_LOOP(); }
+    if(player.queue.length < 1) { return messages.NO_SONGS(); }
+    if(player.commandLock) { return messages.PLAY_CALL_RUNNING(); }
 
     shuffleArray(player.queue);
 
-    return 'The music queue has been shuffled!';
+    return messages.SHUFFLED();
 };
 

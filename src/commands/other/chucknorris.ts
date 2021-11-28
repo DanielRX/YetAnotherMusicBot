@@ -1,4 +1,4 @@
-import type {CommandReturn} from '../../utils/types';
+import type {CommandInput, CommandReturn} from '../../utils/types';
 import {fetchJSON} from '../../utils/utils';
 import {MessageEmbed} from 'discord.js';
 
@@ -10,7 +10,7 @@ const url = 'https://api.chucknorris.io/jokes/random';
 
 const embedColour = '#CD7232';
 
-export const execute = async(): Promise<CommandReturn> => {
+export const execute = async({messages}: CommandInput): Promise<CommandReturn> => {
     // thanks to https://api.chucknorris.io
     const json = await fetchJSON<{value: string}>(url);
     const embed = new MessageEmbed()
@@ -18,7 +18,7 @@ export const execute = async(): Promise<CommandReturn> => {
         .setAuthor('Chuck Norris', 'https://i.imgur.com/wr1g92v.png', 'https://chucknorris.io')
         .setDescription(json.value)
         .setTimestamp()
-        .setFooter('Powered by chucknorris.io', '');
+        .setFooter(`${messages.POWERED_BY} chucknorris.io`, '');
     return {embeds: [embed]};
 };
 

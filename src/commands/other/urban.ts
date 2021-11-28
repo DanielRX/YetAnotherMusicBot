@@ -12,7 +12,7 @@ export const options = [
 
 type UrbanReturn = {list: ({definition: string, permalink: string})[]};
 
-export const execute = async({params: {query}}: CommandInput<{query: string}>): Promise<CommandReturn> => {
+export const execute = async({params: {query}, messages}: CommandInput<{query: string}>): Promise<CommandReturn> => {
     const json = await fetchJSON<UrbanReturn>(`https://api.urbandictionary.com/v0/define?term=${query}`);
     const embed = new MessageEmbed()
         .setColor('#BB7D61')
@@ -21,6 +21,6 @@ export const execute = async({params: {query}}: CommandInput<{query: string}>): 
         .setDescription(`*${json.list[Math.floor(Math.random() * 1)].definition}*`)
         .setURL(json.list[0].permalink)
         .setTimestamp()
-        .setFooter('Powered by UrbanDictionary', '');
+        .setFooter(`${messages.POWERED_BY} UrbanDictionary`, '');
     return {embeds: [embed]};
 };

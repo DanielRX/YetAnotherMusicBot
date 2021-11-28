@@ -1,4 +1,4 @@
-import type {CommandReturn} from '../../utils/types';
+import type {CommandInput, CommandReturn} from '../../utils/types';
 import {fetchJSON} from '../../utils/utils';
 import {MessageEmbed} from 'discord.js';
 
@@ -8,13 +8,13 @@ export const deferred = false;
 
 const url = 'http://yerkee.com/api/fortune';
 
-export const execute = async(): Promise<CommandReturn> => {
+export const execute = async({messages}: CommandInput): Promise<CommandReturn> => {
     const json = await fetchJSON<{fortune: string}>(url);
     const embed = new MessageEmbed()
         .setColor('#F4D190')
         .setAuthor('Fortune Cookie', 'https://i.imgur.com/58wIjK0.png', 'https://yerkee.com')
         .setDescription(json.fortune)
         .setTimestamp()
-        .setFooter('Powered by yerkee.com', '');
+        .setFooter(`${messages.POWERED_BY} yerkee.com`, '');
     return {embeds: [embed]};
 };

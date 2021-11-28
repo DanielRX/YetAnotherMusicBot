@@ -12,8 +12,8 @@ export const execute = async({sender, guildId, messages}: CommandInput): Promise
     if(!voiceChannel) { return messages.NOT_IN_VC(); }
 
     const triviaPlayer = triviaManager.get(guildId);
-    if(!triviaPlayer) { return 'Trivia is not running right now!'; }
-    if(triviaPlayer.score.has(`d:${sender.user.username.toLowerCase()}`)) { return 'You\'re already in the trivia!'; }
+    if(!triviaPlayer) { return messages.TRIVIA_NOT_RUNNING(); }
+    if(triviaPlayer.score.has(`d:${sender.user.username.toLowerCase()}`)) { return messages.ALREADY_IN_TRIVIA(); }
     triviaPlayer.score.set(`d:${sender.user.username.toLowerCase()}`, 0);
-    return 'Added you to the music trivia!';
+    return messages.ADDED_TO_TRIVIA();
 };
