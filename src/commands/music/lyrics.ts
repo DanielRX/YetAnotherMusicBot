@@ -30,7 +30,7 @@ const searchSong = async(query: string, errorMessage: string): Promise<string> =
         const body = await fetch<{response: {hits: ({result: {api_path: string}})[]}}>(searchURL, {headers});
         const result = await body.json();
         const songPath = result.response.hits[0].result.api_path;
-        return `https://api.genius.com${songPath}`;
+        return `https://api.genius.com/${songPath}`;
     } catch(e: unknown) {
         logger.error(e);
         throw new Error(errorMessage);

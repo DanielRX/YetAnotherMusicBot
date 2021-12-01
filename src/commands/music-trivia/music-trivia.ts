@@ -11,11 +11,13 @@ export const description = 'Engage in a music quiz with your friends!';
 export const deferred = true;
 
 export const options = [
-    {type: 'string' as const, name: 'length', description: 'How many songs would you like the trivia to have?', required: false, choices: [], default: 25},
-    {type: 'boolean' as const, name: 'hard', description: 'Super strict answer mode', required: false, choices: [], default: false},
-    {type: 'boolean' as const, name: 'round-mode', description: 'Play forever with rounds', required: false, choices: [], default: false},
-    {type: 'string' as const, name: 'twitch-channel', description: 'Which twitch channel would you like to listen to?', required: false, choices: [], default: ''},
-];
+    {type: 'string', name: 'length', description: 'How many songs would you like the trivia to have?', required: false, choices: [], default: 25},
+    {type: 'boolean', name: 'hard', description: 'Super strict answer mode', required: false, choices: [], default: false},
+    {type: 'boolean', name: 'round-mode', description: 'Play forever with rounds', required: false, choices: [], default: false},
+    {type: 'string', name: 'twitch-channel', description: 'Which twitch channel would you like to listen to?', required: false, choices: [], default: ''},
+] as const;
+
+const embedColour = '#ff7373';
 
 const handleSubscription = async(interaction: CustomInteraction, player: TriviaPlayer, desc: string, errorMsg: string): Promise<CommandReturn> => {
     const {queue} = player;
@@ -33,7 +35,7 @@ const handleSubscription = async(interaction: CustomInteraction, player: TriviaP
     }
     void player.process(player.queue);
 
-    const startTriviaEmbed = new MessageEmbed().setColor('#ff7373').setTitle(':notes: Starting Music Quiz!').setDescription(desc);
+    const startTriviaEmbed = new MessageEmbed().setColor(embedColour).setTitle(':notes: Starting Music Quiz!').setDescription(desc);
     return {embeds: [startTriviaEmbed]};
 };
 
