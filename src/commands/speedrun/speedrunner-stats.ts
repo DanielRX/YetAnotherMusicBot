@@ -11,6 +11,8 @@ export const options = [
     {type: 'string' as const, name: 'user', description: 'Who do you want to look up?', required: true, choices: []},
 ];
 
+const embedColour = '#3E8657';
+
 type SpeedrunStats = {runners: ({name: string, avatar: string})[], status :number};
 // eslint-disable-next-line @typescript-eslint/naming-convention
 type RunnerStats = {pbs: ({id: string, realtime_duration_ms: number, realtime_sum_of_best_ms: number, program: string, parsed_at: number, attempts: any[], game: {cover_url: string, name: string}, category: {name: string}, segments: any[]})[], status :number};
@@ -18,13 +20,8 @@ export const execute = async({params: {user}, messages}: CommandInput<{user: str
     const userFiltered = user.toLowerCase();
     const userRes = await fetchJSON<SpeedrunStats>(`https://splits.io/api/v4/runners?search=${userFiltered}`);
     const runnerCount = userRes.runners.length;
-    if(runnerCount == 0) {
-        return `:x: The Runner ${user} was not found.`;
-    }
-
-    if(userRes.status == 404) {
-        return `:x: The Runner ${user} was not found.`;
-    }
+    if(runnerCount == 0) { return `:x: The Runner ${user} was not found.`; }
+    if(userRes.status == 404) { return `:x: The Runner ${user} was not found.`; }
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
     const pbsRes = await fetchJSON<RunnerStats>(`https://splits.io/api/v4/runners/${userRes.runners[0].name}/pbs`);
@@ -54,7 +51,7 @@ export const execute = async({params: {user}, messages}: CommandInput<{user: str
                 .setTimestamp(pbs.parsed_at));
         }
 
-        const pageData = {pages: pbEmbedArray, color: '#3E8657' as const};
+        const pageData = {pages: pbEmbedArray, color: embedColour};
         return {pages: pageData};
     }
     return 'There we no runners found';

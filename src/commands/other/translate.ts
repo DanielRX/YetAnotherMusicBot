@@ -12,6 +12,8 @@ export const options = [
     {type: 'string' as const, name: 'text', description: 'What text do you want to translate?', required: true, choices: []}
 ];
 
+const embedColour = '#FF0000';
+
 export const execute = async({params: {text, targetLang}, messages}: CommandInput<{targetLang: string, text: string}>): Promise<CommandReturn> => {
     const langCode = ISO6391.getCode(targetLang);
 
@@ -19,7 +21,7 @@ export const execute = async({params: {text, targetLang}, messages}: CommandInpu
 
     const response = await translate(text, {to: targetLang});
     const embed = new MessageEmbed()
-        .setColor('#FF0000')
+        .setColor(embedColour)
         .setTitle('Google Translate: ')
         .setURL('https://translate.google.com/')
         .setDescription(response.text)

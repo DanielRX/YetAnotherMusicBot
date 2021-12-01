@@ -11,6 +11,8 @@ export const options = [
     {type: 'string' as const, name: 'tvshow', description: 'What TV show are you looking for?', required: true, choices: []},
 ];
 
+const embedColour = '#17A589';
+
 type Show = {
     show: Nullable<{
         runtime: string,
@@ -112,7 +114,7 @@ export const execute = async({params: {tvShow}, messages}: CommandInput<{tvShow:
             .addField('Average Rating', showRatings.toString())
             .setFooter(`(Page ${i}/${showResponse.length}) ` + `${messages.POWERED_BY} tvmaze.com`, 'https://static.tvmaze.com/images/favico/favicon-32x32.png'));
     }
-    const pageData = {pages: embedArray, color: '#17A589' as const};
+    const pageData = {pages: embedArray, color: embedColour};
     return {pages: pageData};
 };
 

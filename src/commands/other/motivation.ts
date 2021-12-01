@@ -8,6 +8,8 @@ export const deferred = false;
 
 type Data = {quotes: ({text: string, author: string})[]};
 
+const embedColour = '#FFD77A';
+
 // thanks to https://type.fit/api/quotes
 export const execute = async({messages}: CommandInput): Promise<CommandReturn> => {
     const jsonQuotes = fs.readJSONSync('./resources/quotes/motivational.json', 'utf8') as Data;
@@ -20,7 +22,7 @@ export const execute = async({messages}: CommandInput): Promise<CommandReturn> =
         .setDescription(`*"${randomQuote.text}*"\n\n-${randomQuote.author}`)
         .setTimestamp()
         .setFooter(`${messages.POWERED_BY} type.fit`)
-        .setColor('#FFD77A');
+        .setColor(embedColour);
     return {embeds: [quoteEmbed]};
 };
 

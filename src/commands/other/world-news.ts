@@ -9,6 +9,8 @@ export const deferred = false;
 
 type WorldNewsReturn = {articles: ({title: string, url: string, author: string, description: string, urlToImage: string, publishedAt: number})[]};
 
+const embedColour = '#FF4F00';
+
 export const execute = async({messages}: CommandInput): Promise<CommandReturn> => {
     if(!config.newsAPI) { return ':x: This command is not enabled'; }
     // powered by NewsAPI.org
@@ -17,7 +19,7 @@ export const execute = async({messages}: CommandInput): Promise<CommandReturn> =
 
     for(const article of json.articles) {
         articleArr.push(new MessageEmbed()
-            .setColor('#FF4F00')
+            .setColor(embedColour)
             .setTitle(article.title)
             .setURL(article.url)
             .setAuthor(article.author)

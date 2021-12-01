@@ -19,6 +19,8 @@ export const options = [
     {type: 'integer' as const, name: 'category', description: 'The category of the question', required: false, choices: [], default: 1}
 ];
 
+const embedColour = '#403B3A';
+
 export const execute = async({message, interaction, params: {difficulty, questionType, category}, messages}: CommandInput): Promise<CommandReturn> => {
     const t = questionType !== 'both';
     const d = difficulty !== 'all';
@@ -35,7 +37,7 @@ export const execute = async({message, interaction, params: {difficulty, questio
 
     const trueFalseAnswers = `1) True\n2) False`;
     const embed = new MessageEmbed()
-        .setColor('#403B3A')
+        .setColor(embedColour)
         .setAuthor(`Question, ${data[0].difficulty} - ${data[0].category}`, '', 'https://opentdb.com/api.php')
         .setDescription(`${question.replace('&quot;', '"')}\n\n${trueFalse ? trueFalseAnswers : optionsString}`)
         .setTimestamp()
