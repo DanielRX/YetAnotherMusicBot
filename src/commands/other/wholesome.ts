@@ -2,8 +2,8 @@ import type {CommandInput, CommandReturn} from '../../utils/types';
 import {MessageEmbed} from 'discord.js';
 import {fetchJSON} from '../../utils/utils';
 
-export const name = 'motivation';
-export const description = 'Get a random motivational quote!';
+export const name = 'wholesome';
+export const description = 'Get a random wholesome affirmations!';
 export const deferred = false;
 
 const embedColour = '#FFD77A';
