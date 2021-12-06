@@ -2,7 +2,7 @@ import type {CommandInput, CommandReturn} from '../../utils/types';
 import {fetchJSON} from '../../utils/utils';
 import {MessageEmbed} from 'discord.js';
 
-export const name = 'digmon';
+export const name = 'digimon';
 export const description = 'Get the info on a digimon!';
 export const deferred = false;
 
