@@ -25,7 +25,7 @@ export const execute = async({params: {text, targetLang}, messages}: CommandInpu
         .setTitle('Google Translate: ')
         .setURL('https://translate.google.com/')
         .setDescription(response.text)
-        .setFooter(`${messages.POWERED_BY} Google Translate!`);
+        .setFooter(`${messages.POWERED_BY()} Google Translate!`);
     return {embeds: [embed]};
 };
 

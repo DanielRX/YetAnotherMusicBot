@@ -23,6 +23,6 @@ export const execute = async({params: {query}, messages}: CommandInput<{query: s
         .setDescription(`*${json.list[Math.floor(Math.random() * 1)].definition}*`)
         .setURL(json.list[0].permalink)
         .setTimestamp()
-        .setFooter(`${messages.POWERED_BY} UrbanDictionary`, '');
+        .setFooter(`${messages.POWERED_BY()} UrbanDictionary`, '');
     return {embeds: [embed]};
 };

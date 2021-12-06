@@ -203,11 +203,9 @@ const searchYoutube = async(interaction: CustomInteraction, query: string, flags
             resolve(i.values[0]);
         });
     });
-    if(value === 'cancel_option') {
-        if(playOptions) {
-            player.commandLock = false;
-            return 'Search canceled';
-        }
+    if(value === 'cancel_option' && playOptions) {
+        player.commandLock = false;
+        return 'Search canceled';
     }
     const videoIndex = parseInt(value);
     try {

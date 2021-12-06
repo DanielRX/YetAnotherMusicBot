@@ -6,6 +6,8 @@ export const name = 'copypasta';
 export const description = 'Get a random copypasta! (Filters coming soon)';
 export const deferred = false;
 
+const embedColour = '#FFD77A';
+
 export const execute = async({messages}: CommandInput): Promise<CommandReturn> => {
     const data = fs.readJSONSync('././resources/quotes/copypasta.json', 'utf8') as string[];
 
@@ -15,8 +17,8 @@ export const execute = async({messages}: CommandInput): Promise<CommandReturn> =
         .setTitle('Copypasta')
         .setDescription(`${randomEl}`)
         .setTimestamp()
-        .setFooter(`${messages.POWERED_BY} you!`)
-        .setColor('#FFD77A');
+        .setFooter(`${messages.POWERED_BY()} you!`)
+        .setColor(embedColour);
     return {embeds: [quoteEmbed]};
 };
 

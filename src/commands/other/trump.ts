@@ -18,6 +18,6 @@ export const execute = async({messages}: CommandInput): Promise<CommandReturn> =
         .setAuthor('Donald Trump', 'https://www.whitehouse.gov/wp-content/uploads/2021/01/45_donald_trump.jpg')
         .setDescription(json.value)
         .setTimestamp(json.appeared_at)
-        .setFooter(`${messages.POWERED_BY} tronalddump.io! Quote was posted`, ' ');
+        .setFooter(`${messages.POWERED_BY()} tronalddump.io! Quote was posted`, ' ');
     return {embeds: [embed]};
 };

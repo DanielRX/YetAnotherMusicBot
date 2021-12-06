@@ -20,7 +20,7 @@ export const execute = async({messages}: CommandInput): Promise<CommandReturn> =
         .setAuthor('Advice Slip', 'https://i.imgur.com/8pIvnmD.png', 'https://adviceslip.com/')
         .setDescription(json.slip.advice)
         .setTimestamp()
-        .setFooter(`${messages.POWERED_BY} adviceslip.com`, '');
+        .setFooter(`${messages.POWERED_BY()} adviceslip.com`, '');
     return {embeds: [embed]};
 };
 

@@ -18,7 +18,7 @@ export const execute = async({messages}: CommandInput): Promise<CommandReturn> =
         .setAuthor('Chuck Norris', 'https://i.imgur.com/wr1g92v.png', 'https://chucknorris.io')
         .setDescription(json.value)
         .setTimestamp()
-        .setFooter(`${messages.POWERED_BY} chucknorris.io`, '');
+        .setFooter(`${messages.POWERED_BY()} chucknorris.io`, '');
     return {embeds: [embed]};
 };
 

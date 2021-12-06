@@ -11,7 +11,7 @@ const makeEmbed = (quote: string, messages: CommandInput['messages']) => new Mes
     .setAuthor('Kanye West', 'https://i.imgur.com/SsNoHVh.png')
     .setDescription(quote)
     .setTimestamp()
-    .setFooter(`${messages.POWERED_BY} kanye.rest`, '');
+    .setFooter(`${messages.POWERED_BY()} kanye.rest`, '');
 
 const url = 'https://api.kanye.rest/?format=json';
 

@@ -100,7 +100,7 @@ export const execute = async({sender, guildId, messages, params: {songName}}: Co
             lyricsArray.push(new MessageEmbed()
                 .setTitle(`Lyrics page #${i}`) // TODO: Replace by message
                 .setDescription(lyrics.slice((i - 1) * 4096, i * 4096))
-                .setFooter(`${messages.POWERED_BY} genius.com`)); // TODO: Replace by message
+                .setFooter(`${messages.POWERED_BY()} genius.com`)); // TODO: Replace by message
         }
     }
 

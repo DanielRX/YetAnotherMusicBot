@@ -12,6 +12,8 @@ export const options = [
     {type: 'string' as const, name: 'game', description: 'What game are you looking for?', required: true, choices: []}
 ];
 
+const embedColour = '#B5B5B5';
+
 type GameData = {
     background_image: string,
     name: string,
@@ -79,7 +81,7 @@ export const execute = async({params: {game}}: CommandInput<{game: string}>): Pr
     // Row 2
         .addField('Genre(s)', genreArray.join(', '), true)
         .addField('Retailer(s)', retailerArray.join(', ').replace(/`/g, ''));
-    const pageData = {title: response.name, pages: [page1, page2], color: '#B5B5B5' as const, thumbnail: response.background_image};
+    const pageData = {title: response.name, pages: [page1, page2], color: embedColour, thumbnail: response.background_image};
 
     return {pages: pageData};
 };

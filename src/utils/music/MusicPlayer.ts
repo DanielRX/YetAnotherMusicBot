@@ -8,6 +8,8 @@ import {guildData, playerManager} from '../client';
 import {logger} from '../logging';
 import {Player} from './Player';
 
+const embedColour = '#ff0000';
+
 class MusicPlayer extends Player {
     public commandLock = false;
     public queue: PlayTrack[] = [];
@@ -58,20 +60,19 @@ class MusicPlayer extends Player {
                 return;
                 /* eslint-enable */
             }
-            if(newState.status === AudioPlayerStatus.Playing) {
-                if(!this.nowPlaying) { return; }
-                const queueHistory = this.getQueueHistory();
-                const playingEmbed = new MessageEmbed()
-                    .setThumbnail(this.nowPlaying.thumbnail)
-                    .setTitle(this.nowPlaying.name)
-                    .setColor('#ff0000')
-                    .addField('Duration', `:stopwatch: ${this.nowPlaying.duration}`, true)
-                    .setFooter(`Requested by ${this.nowPlaying.memberDisplayName}!`, this.nowPlaying.memberAvatar);
-                if(queueHistory.length) {
-                    playingEmbed.addField('Previous Song', queueHistory[0].name, true);
-                }
-                void this.textChannel.send({embeds: [playingEmbed]});
+            if(newState.status !== AudioPlayerStatus.Playing) { return; }
+            if(!this.nowPlaying) { return; }
+            const queueHistory = this.getQueueHistory();
+            const playingEmbed = new MessageEmbed()
+                .setThumbnail(this.nowPlaying.thumbnail)
+                .setTitle(this.nowPlaying.name)
+                .setColor(embedColour)
+                .addField('Duration', `:stopwatch: ${this.nowPlaying.duration}`, true)
+                .setFooter(`Requested by ${this.nowPlaying.memberDisplayName}!`, this.nowPlaying.memberAvatar);
+            if(queueHistory.length) {
+                playingEmbed.addField('Previous Song', queueHistory[0].name, true);
             }
+            void this.textChannel.send({embeds: [playingEmbed]});
         });
     }
 

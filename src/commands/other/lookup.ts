@@ -12,14 +12,17 @@ export const options = [
 
 type Data = {query: string, city: string, zip: string, regionName: string, country: string, org: string, isp: string, as: string};
 
+const embedColour = '#42aaf5';
+
 export const execute = async({params: {query}}: CommandInput<{query: string}>): Promise<CommandReturn> => {
     const json = await fetchJSON<Data>(`http://ip-api.com/json/${query}`);
 
     //embed json results
     const embed = new MessageEmbed()
-        .setColor('#42aaf5')
+        .setColor(embedColour)
         .setAuthor('IP/Hostname Resolver', 'https://i.imgur.com/3lIiIv9.png', 'https://ip-api.com')
-        .addFields([{name: 'Query', value: query, inline: true},
+        .addFields([
+            {name: 'Query', value: query, inline: true},
             {name: 'Resolves', value: `${json.query}`, inline: true},
             {name: '‎', value: '‎', inline: true},
             {name: 'Location', value: `${json.city}, ${json.zip}, ${json.regionName}, ${json.country}`, inline: false},

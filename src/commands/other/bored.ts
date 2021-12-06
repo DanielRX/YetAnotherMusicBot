@@ -17,6 +17,6 @@ export const execute = async({messages}: CommandInput): Promise<CommandReturn> =
         .setAuthor('Bored Activites', 'https://i.imgur.com/7Y2F38n.png', 'https://www.boredapi.com/')
         .setDescription(json.activity)
         .setTimestamp()
-        .setFooter(`${messages.POWERED_BY} boredapi.com`, '');
+        .setFooter(`${messages.POWERED_BY()} boredapi.com`, '');
     return {embeds: [embed]};
 };

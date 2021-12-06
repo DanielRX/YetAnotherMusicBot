@@ -9,15 +9,6 @@ export default () => {
             wasTriviaEndCalled: false,
             triviaQueue: [],
             triviaScore: new Map()
-        },
-        twitchData: {
-            interval: null,
-            embedStatus: null,
-            isRunning: false
-        },
-        gameData: {
-            connect4Players: new Map(),
-            tictactoePlayers: new Map()
         }
     };
 };

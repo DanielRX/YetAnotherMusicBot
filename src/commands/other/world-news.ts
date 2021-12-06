@@ -26,7 +26,7 @@ export const execute = async({messages}: CommandInput): Promise<CommandReturn> =
             .setDescription(article.description)
             .setThumbnail(article.urlToImage)
             .setTimestamp(article.publishedAt)
-            .setFooter(`${messages.POWERED_BY} NewsAPI.org`));
+            .setFooter(`${messages.POWERED_BY()} NewsAPI.org`));
     }
     const pageData = {pages: articleArr};
     return {pages: pageData};

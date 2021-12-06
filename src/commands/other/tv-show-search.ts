@@ -112,7 +112,7 @@ export const execute = async({params: {tvShow}, messages}: CommandInput<{tvShow:
             .addField('Runtime', showRuntime, true)
         // Row 4
             .addField('Average Rating', showRatings.toString())
-            .setFooter(`(Page ${i}/${showResponse.length}) ` + `${messages.POWERED_BY} tvmaze.com`, 'https://static.tvmaze.com/images/favico/favicon-32x32.png'));
+            .setFooter(`(Page ${i}/${showResponse.length}) ` + `${messages.POWERED_BY()} tvmaze.com`, 'https://static.tvmaze.com/images/favico/favicon-32x32.png'));
     }
     const pageData = {pages: embedArray, color: embedColour};
     return {pages: pageData};
