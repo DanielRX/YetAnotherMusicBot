@@ -16,7 +16,7 @@ export const execute = async({messages}: CommandInput): Promise<CommandReturn> =
         .setAuthor(json.copyright, '', json.hdurl)
         .setDescription(json.explanation)
         .setTimestamp()
-        .setTitle(json.title)
+        .setTitle(`[${json.title}](${json.hdurl})`)
         .setImage(json.url)
         .setFooter(`${messages.POWERED_BY()} api.nasa.gov`, 'https://api.nasa.gov/assets/img/favicons/favicon-192.png');
     return {embeds: [embed]};
