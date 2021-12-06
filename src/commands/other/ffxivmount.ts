@@ -42,4 +42,3 @@ export const execute = async({messages, params: {mountId}}: CommandInput<{mountI
         .setFooter(`${messages.POWERED_BY()} ffxivcollect.com`, 'https://ffxivcollect.com/assets/logo-041d12c9c99146d118486d15837336d90ec32dba6a1a498309fb27736d184687.png');
     return {embeds: [embed]};
 };
-

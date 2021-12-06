@@ -24,7 +24,7 @@ export const execute = async({messages, params: {name: digimon}}: CommandInput<{
         .setDescription(json.name)
         .setTimestamp()
         .setTitle(json.name)
-        .setURL(json.img)
+        .setImage(json.img)
         .setFooter(`${messages.POWERED_BY()} digimon-api.vercel.app`);
     return {embeds: [embed]};
 };
