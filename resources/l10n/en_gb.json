@@ -61,5 +61,6 @@
     "REMOVED_FROM_TRIVIA": "Removed from the music trivia!",
     "NOT_IN_TRIVIA": "They're not in the trivia!",
     "NOT_IN_TRIVIA2": "You're not in the trivia!",
-    "ONLY_OWNER": "Only the owner of the bot can do this!"
+    "ONLY_OWNER": "Only the owner of the bot can do this!",
+    "STOPPED_TRIVIA": "Stopped the trivia! To start a new one, use the music-trivia command"
 }
