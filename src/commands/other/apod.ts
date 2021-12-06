@@ -13,10 +13,11 @@ const url = `https://api.nasa.gov/planetary/apod?api_key=${config.NASAKey}`;
 export const execute = async({messages}: CommandInput): Promise<CommandReturn> => {
     const json = await fetchJSON<APOD>(url);
     const embed = new MessageEmbed()
-        .setAuthor(json.copyright, '', json.hdurl)
+        .setAuthor(json.copyright, '')
         .setDescription(json.explanation)
         .setTimestamp()
-        .setTitle(`[${json.title}](${json.hdurl})`)
+        .setTitle(json.title)
+        .setURL(json.hdurl)
         .setImage(json.url)
         .setFooter(`${messages.POWERED_BY()} api.nasa.gov`, 'https://api.nasa.gov/assets/img/favicons/favicon-192.png');
     return {embeds: [embed]};
