@@ -21,7 +21,7 @@ export const options = [
 
 const embedColour = '#403B3A';
 
-export const execute = async({message, interaction, params: {difficulty, questionType, category}, messages}: CommandInput): Promise<CommandReturn> => {
+export const execute = async({params: {difficulty, questionType, category}, messages, channel}: CommandInput): Promise<CommandReturn> => {
     const t = questionType !== 'both';
     const d = difficulty !== 'all';
     const categoryIn = Number(category) !== 1;
@@ -43,7 +43,7 @@ export const execute = async({message, interaction, params: {difficulty, questio
         .setTimestamp()
         .setFooter(`${messages.POWERED_BY()} opentdb.com`, '');
 
-    setTimeout(() => { void ((interaction ?? message).channel).send(HTMLDecoderEncoder.decode(data[0].correct_answer)); } , 30 * 1000);
+    setTimeout(() => { void channel.send(HTMLDecoderEncoder.decode(data[0].correct_answer)); } , 30 * 1000);
     return {embeds: [embed]};
 };
 

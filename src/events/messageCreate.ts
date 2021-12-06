@@ -1,6 +1,6 @@
 import {commands} from '../utils/client';
 import {logger} from '../utils/logging';
-import type {GuildMember, Message} from 'discord.js';
+import type {BaseGuildTextChannel, GuildMember, Message} from 'discord.js';
 import {messages} from '../utils/messages';
 import {camelCase} from 'change-case';
 
@@ -31,7 +31,7 @@ export const execute = async(message: Message): Promise<void> => {
         // const params: any = message.content.split(' ').slice(1).map((p, i) => ({[camelCase(command.options![i].name)]: p})).reduce((a, b) => ({...a, ...b}), {});
         logger.verbose(params);
         // TODO: Make sure .author works
-        const output = await command.execute({message, sender: message.author as unknown as GuildMember, guild: message.guild!, messages: await messages('en_gb'), params, guildId: message.guildId ?? ''});
+        const output = await command.execute({message, sender: message.author as unknown as GuildMember, guild: message.guild!, messages: await messages('en_gb'), params, guildId: message.guildId ?? '', channel: message.channel as BaseGuildTextChannel});
         if(typeof output !== 'undefined') {
             if(typeof output !== 'string' && 'pages' in output) {
                 await message.channel.send('Sorry, this command only works with / commands enabled!');

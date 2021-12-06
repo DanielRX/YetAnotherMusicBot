@@ -1,4 +1,4 @@
-import type {Client, GuildMember, CommandInteraction, Message, TextBasedChannels, VoiceChannel, MessageEmbed, User, Guild} from 'discord.js';
+import type {Client, GuildMember, CommandInteraction, Message, TextBasedChannels, VoiceChannel, MessageEmbed, User, Guild, BaseGuildTextChannel} from 'discord.js';
 import type {VoiceConnection, AudioPlayer} from '@discordjs/voice';
 import type {SlashCommandStringOption, SlashCommandIntegerOption, SlashCommandBooleanOption, SlashCommandUserOption} from '@discordjs/builders';
 import type {Page} from 'discord.js-pages';
@@ -13,9 +13,9 @@ export type CustomAudioPlayer = {textChannel: TextBasedChannels | null, audioPla
 // TODO: Add channel for the text channel of the command
 // TODO: Add voice channel for the voice channel of the user who run it
 // TODO: Add user info
-export type CommandInput<T = any> = {guild: Guild, sender: GuildMember, params: T, interaction?: CustomInteraction, messages: LocaleObj, guildId: string, message?: Message};
+export type CommandInput<T = any> = {guild: Guild, sender: GuildMember, params: T, interaction?: CustomInteraction, messages: LocaleObj, guildId: string, message?: Message, channel: BaseGuildTextChannel};
 
-export type Command = {deferred: boolean, execute: ({params, interaction, messages}: CommandInput) => Promise<CommandReturn>, name: string, description: string, options?: OptionConfig[]};
+export type Command = {deferred: boolean, execute: (input: CommandInput) => Promise<CommandReturn>, name: string, description: string, options?: OptionConfig[]};
 export type CustomClient = Client;
 export type CustomInteraction = Omit<CommandInteraction, 'deferReply'> & {guildId: string, client: CustomClient, guild: {client: CustomClient}, member: GuildMember, deferReply: (x?: {fetchReply: boolean}) => Promise<Message>};
 export type YoutubeTrack = {title: string | undefined, url: string, thumbnail: {url: string | undefined}, durationFormatted: string, duration: number};

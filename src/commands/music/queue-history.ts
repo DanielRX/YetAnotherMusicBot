@@ -8,6 +8,8 @@ export const deferred = false;
 
 const embedColour = '#9096E6';
 
+const pageSize = 24;
+
 export const execute = async({guildId, sender, messages}: CommandInput): Promise<CommandReturn> => {
     const guild = guildData.get(guildId);
     if(!guild) { return messages.NO_HISTORY(); }
@@ -16,11 +18,11 @@ export const execute = async({guildId, sender, messages}: CommandInput): Promise
     const queueClone = Array.from(guild.queueHistory);
     const embeds = [];
 
-    for(let i = 0; i < Math.ceil(queueClone.length / 24); i++) {
+    for(let i = 0; i < Math.ceil(queueClone.length / pageSize); i++) {
         const fields = queueClone
-            .slice(i * 24, (i + 1) * 24)
+            .slice(i * pageSize, (i + 1) * pageSize)
             .filter((e) => typeof e !== 'undefined')
-            .map((e, j) => ({name: `${j + 1 + i * 24}`, value: `${e.name}`}));
+            .map((e, j) => ({name: `${(j + 1) + (i * pageSize)}`, value: `${e.name}`}));
 
         embeds.push(new MessageEmbed().setTitle(messages.PAGE_TITLE({i})).setFields(fields));
     }

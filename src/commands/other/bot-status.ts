@@ -12,11 +12,11 @@ export const deferred = false;
 
 const embedColour = '#ff0000';
 
-export const execute = async({interaction, sender, guild}: CommandInput): Promise<CommandReturn> => {
+export const execute = async({interaction, sender, guild, channel}: CommandInput): Promise<CommandReturn> => {
     const owner = await guild.fetchOwner();
     const isOwner = owner.id == sender.id ? true : false;
 
-    const pingMsg = await interaction?.channel?.send('Processing...') as unknown as Message;
+    const pingMsg = await channel.send('Processing...') as unknown as Message;
 
     const commandTotal = commands.size;
     const platform = os

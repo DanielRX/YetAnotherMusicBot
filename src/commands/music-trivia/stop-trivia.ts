@@ -8,11 +8,11 @@ export const deferred = false;
 export const execute = async({sender, guild, guildId, messages}: CommandInput): Promise<CommandReturn> => {
     const triviaPlayer = triviaManager.get(guildId);
     if(!triviaPlayer) { return messages.TRIVIA_NOT_RUNNING(); }
-    if(guild.me?.voice.channel !== sender.voice.channel) { return ':no_entry: Please join a voice channel and try again!'; }
+    if(guild.me?.voice.channel !== sender.voice.channel) { return messages.NOT_IN_VC(); }
 
-    if(!triviaPlayer.score.has(`d:${sender.user.username.toLowerCase()}`)) { return ':stop_sign: You need to participate in the trivia in order to end it'; }
+    if(!triviaPlayer.score.has(`d:${sender.user.username.toLowerCase()}`)) { return messages.NOT_IN_TRIVIA2(); }
     triviaPlayer.reset();
     triviaManager.delete(guildId);
 
-    return 'Stopped the trivia! To start a new one, use the music-trivia command';
+    return messages.STOPPED_TRIVIA();
 };

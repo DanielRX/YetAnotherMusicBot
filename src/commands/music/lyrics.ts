@@ -76,6 +76,8 @@ const getLyrics = async(url: string, errorMessage: string) => {
     }
 };
 
+const pageSize = 4096;
+
 export const execute = async({sender, guildId, messages, params: {songName}}: CommandInput<{songName: string}>): Promise<CommandReturn> => {
     if(!config.geniusLyricsAPI) { return messages.COMMAND_DISABLED(); }
     const player = playerManager.get(guildId);
@@ -92,14 +94,14 @@ export const execute = async({sender, guildId, messages, params: {songName}}: Co
     const songPageURL = await getSongPageURL(url, messages.GENERIC_ERROR());
     const lyrics = await getLyrics(songPageURL, messages.GENERIC_ERROR());
 
-    const lyricsIndex = Math.round(lyrics.length / 4096) + 1;
+    const lyricsIndex = Math.round(lyrics.length / pageSize) + 1;
     const lyricsArray = [];
 
     for(let i = 1; i <= lyricsIndex; ++i) {
-        if(lyrics.trim().slice((i - 1) * 4096, i * 4096).length !== 0) {
+        if(lyrics.trim().slice((i - 1) * pageSize, i * pageSize).length !== 0) {
             lyricsArray.push(new MessageEmbed()
                 .setTitle(`Lyrics page #${i}`) // TODO: Replace by message
-                .setDescription(lyrics.slice((i - 1) * 4096, i * 4096))
+                .setDescription(lyrics.slice((i - 1) * pageSize, i * pageSize))
                 .setFooter(`${messages.POWERED_BY()} genius.com`)); // TODO: Replace by message
         }
     }
