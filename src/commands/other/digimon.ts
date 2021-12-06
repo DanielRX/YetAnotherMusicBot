@@ -19,7 +19,7 @@ export const options = [
 const url = `https://digimon-api.vercel.app/api/digimon/name/`;
 
 export const execute = async({messages, params: {name: digimon}}: CommandInput<{name: string}>): Promise<CommandReturn> => {
-    const json = await fetchJSON<DigmonInfo>(`${url}/${digimon}`);
+    const [json] = await fetchJSON<DigmonInfo[]>(`${url}/${digimon}`);
     const embed = new MessageEmbed()
         .setDescription(json.name)
         .setTimestamp()
