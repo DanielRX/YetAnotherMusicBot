@@ -2,7 +2,7 @@ import type {CommandInput, CommandReturn} from '../../utils/types';
 import {fetchJSON} from '../../utils/utils';
 import {MessageEmbed} from 'discord.js';
 
-export const name = 'ffxivmount';
+export const name = 'getffxivmount';
 export const description = 'Get the info on a mount!';
 export const deferred = false;
 
