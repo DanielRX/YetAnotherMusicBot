@@ -13,7 +13,7 @@ const url = `https://api.nasa.gov/planetary/apod?api_key=${config.NASAKey}`;
 export const execute = async({messages}: CommandInput): Promise<CommandReturn> => {
     const json = await fetchJSON<APOD>(url);
     const embed = new MessageEmbed()
-        .setAuthor(json.copyright, '')
+        .setAuthor(json.copyright || 'NASA', '')
         .setDescription(json.explanation)
         .setTimestamp()
         .setTitle(json.title)
