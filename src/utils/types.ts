@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import type {Client, GuildMember, CommandInteraction, Message, TextBasedChannels, VoiceChannel, MessageEmbed, User, Guild, BaseGuildTextChannel} from 'discord.js';
 import type {VoiceConnection, AudioPlayer} from '@discordjs/voice';
 import type {SlashCommandStringOption, SlashCommandIntegerOption, SlashCommandBooleanOption, SlashCommandUserOption} from '@discordjs/builders';
 import type {Page} from 'discord.js-pages';
 import type {LocaleObj} from './messages';
+import type {Nullable} from 'discord-api-types/utils/internals';
 
 export type GuildData = {triviaData: {isTriviaRunning: boolean}, queueHistory: PlayTrack[]};
 export type PlayTrack = {previewUrl?: string, url: string, name: string, rawDuration: number, duration: string, timestamp: string, thumbnail: string, voiceChannel?: VoiceChannel, memberDisplayName: string, memberAvatar: string, artists: string[]};
@@ -27,3 +29,91 @@ export type OptionConfig = BaseOptionConfig & ({required: false, default: any} |
 export type CommandReturn = string | {content: string} | {embeds: MessageEmbed[]} | {pages: {thumbnail?: string, listenTimeout?: number, pages: Page[], title?: string, color?: string, url?: string, author?: {username: string, avatar: string}}};
 
 export type MessageFunction = (name: string, params?: any) => Promise<string>;
+
+export type RAWGGameData = {
+    background_image: string,
+    name: string,
+    developers: ({name: string})[],
+    publishers: ({name: string})[],
+    genres: ({name: string})[],
+    redirect: boolean,
+    id: string,
+    tba: string,
+    released: string,
+    esrb_rating: {name: string} | null,
+    description_raw: string,
+    rating: string | null,
+    platforms: ({platform: {name: string}})[],
+    stores: ({store: {name: string}, url: string})[]
+};
+
+export type APODData = {
+    copyright: string,
+    date: string,
+    explanation: string,
+    hdurl: string,
+    media_type: 'image',
+    service_version: 'v1',
+    title: string,
+    url: string
+};
+
+export type COVIDWorldStats = {todayCases: number, todayDeaths: number, recovered: number, deaths: number, active: number, cases: number, tests: number, casesPerOneMillion: number, deathsPerOneMillion: number, updated: number};
+export type COVIDCountryStats = COVIDWorldStats & {country: string, countryInfo: {flag: string}};
+export type CryptoCoinData = {symbol: string, price: number[]};
+
+export type DigimonInfo = {
+    name: string,
+    img: string,
+    level: string,
+};
+
+export type FFXIVMountInfo = {
+    id: number,
+    name: string,
+    description: string,
+    enhanced_description: string,
+    tooltip: string,
+    movement: string,
+    seats: number,
+    order: number,
+    order_group: number,
+    patch: string,
+    item_id: null,
+    owned: string,
+    image: string,
+    icon: string,
+    sources: {type: string, text: string, related_type: string, related_id: number}[]
+};
+
+export type IPLookupData = {query: string, city: string, zip: string, regionName: string, country: string, org: string, isp: string, as: string};
+export type MotivationData = {quotes: ({text: string, author: string})[]};
+export type ShowData = {
+    show: Nullable<{
+        runtime: string,
+        name: string,
+        summary: string,
+        language: string,
+        type: string,
+        premiered: string,
+        network: {
+            country: {
+                code: string
+            }
+            name: string,
+        },
+        rating: {
+            average: string,
+        },
+        url: string,
+        image: {
+            original: string
+        },
+        genres: string[]
+    }>
+};
+
+export type UrbanDictionaryData = {list: ({definition: string, permalink: string})[]};
+export type WorldNewsData = {articles: ({title: string, url: string, author: string, description: string, urlToImage: string, publishedAt: number})[]};
+export type SpeedrunStats = {runners: ({name: string, avatar: string})[], status :number};
+export type SpeedrunnerStats = {pbs: ({id: string, realtime_duration_ms: number, realtime_sum_of_best_ms: number, program: string, parsed_at: number, attempts: any[], game: {cover_url: string, name: string}, category: {name: string}, segments: any[]})[], status :number};

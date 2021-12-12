@@ -1,28 +1,10 @@
-import type {CommandInput, CommandReturn} from '../../utils/types';
+import type {CommandInput, CommandReturn, FFXIVMountInfo} from '../../utils/types';
 import {fetchJSON} from '../../utils/utils';
 import {MessageEmbed} from 'discord.js';
 
 export const name = 'getffxivmount';
 export const description = 'Get the info on a mount!';
 export const deferred = false;
-
-type FFXIVInfo = {
-  id: number,
-  name: string,
-  description: string,
-  enhanced_description: string,
-  tooltip: string,
-  movement: string,
-  seats: number,
-  order: number,
-  order_group: number,
-  patch: string,
-  item_id: null,
-  owned: string,
-  image: string,
-  icon: string,
-  sources: {type: string, text: string, related_type: string, related_id: number}[]
-}
 
 export const options = [
     {type: 'integer' as const, name: 'mount-id', description: 'Which mount do you want to see?', required: true, choices: []}
@@ -31,7 +13,7 @@ export const options = [
 const url = `https://ffxivcollect.com/api/`;
 
 export const execute = async({messages, params: {mountId}}: CommandInput<{mountId: number}>): Promise<CommandReturn> => {
-    const json = await fetchJSON<FFXIVInfo>(`${url}/mounts/${mountId}`);
+    const json = await fetchJSON<FFXIVMountInfo>(`${url}/mounts/${mountId}`);
     const embed = new MessageEmbed()
         // .setAuthor(json.name, '')
         .setDescription(json.enhanced_description)

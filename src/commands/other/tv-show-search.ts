@@ -1,7 +1,6 @@
-import type {CommandInput, CommandReturn} from '../../utils/types';
+import type {CommandInput, CommandReturn, ShowData} from '../../utils/types';
 import {MessageEmbed} from 'discord.js';
 import {fetch} from '../../utils/utils';
-import type {Nullable} from 'discord-api-types/utils/internals';
 
 export const name = 'tv-show-search';
 export const description = 'Search for TV shows';
@@ -13,34 +12,9 @@ export const options = [
 
 const embedColour = '#17A589';
 
-type Show = {
-    show: Nullable<{
-        runtime: string,
-        name: string,
-        summary: string,
-        language: string,
-        type: string,
-        premiered: string,
-        network: {
-            country: {
-                code: string
-            }
-            name: string,
-        },
-        rating: {
-            average: string,
-        },
-        url: string,
-        image: {
-            original: string
-        },
-        genres: string[]
-    }>
-};
-
-const getShowSearch = async(showQuery: string): Promise<Show[]> => {
+const getShowSearch = async(showQuery: string) => {
     const url = `http://api.tvmaze.com/search/shows?q=${encodeURI(showQuery)}`;
-    const body = await fetch<Show[]>(url);
+    const body = await fetch<ShowData[]>(url);
     if(body.status == `429`) { throw new Error(':x: Rate Limit exceeded. Please try again in a few minutes.'); }
     if(body.status == `503`) { throw new Error(':x: The service is currently unavailable. Please try again later.'); }
     if(body.status != '200') { throw new Error('There was a problem getting data from the API, make sure you entered a valid TV show name'); }
@@ -63,7 +37,7 @@ const cleanUp = (summary: string) => summary
     .toLocaleString();
 
 export const execute = async({params: {tvShow}, messages}: CommandInput<{tvShow: string}>): Promise<CommandReturn> => {
-    const showResponse: Show[] = await getShowSearch(`${tvShow}`);
+    const showResponse: ShowData[] = await getShowSearch(`${tvShow}`);
 
     const embedArray = [];
     for(let i = 1; i <= showResponse.length; ++i) {

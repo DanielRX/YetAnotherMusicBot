@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import type {CommandInput, CommandReturn} from '../../utils/types';
+import type {CommandInput, CommandReturn, CryptoCoinData} from '../../utils/types';
 import {MessageEmbed} from 'discord.js';
 import {logger} from '../../utils/logging';
 import {config} from '../../utils/config';
@@ -14,13 +14,12 @@ export const options = [
     {type: 'boolean' as const, name: 'prod', description: 'Use prod or dev API', required: false, choices: [], default: false}
 ];
 
-type Coin = {symbol: string, price: number[]};
 
 let lastUpdate = 0;
 let lastUpdateProd = 0;
 
-let data: Coin[] = [];
-let dataProd: Coin[] = [];
+let data: CryptoCoinData[] = [];
+let dataProd: CryptoCoinData[] = [];
 
 const requestOptions = {
     qs: {start: '1', limit: '200', convert: 'USD'},
@@ -65,12 +64,12 @@ const checkUpdate = async(prod = false) => {
         data = coins;
     }
 };
-const cleanCoin = (x: Coin) => {
+const cleanCoin = (x: CryptoCoinData) => {
     const {symbol, price} = x;
     return {symbol, price};
 };
 
-const f = (coin: Coin) => {
+const f = (coin: CryptoCoinData) => {
     const {price, symbol} = coin;
     const [usd, h1, h24, d7] = price;
     const changes = [h1, h24, d7].map((x) => `${x > 0 ? '↑' : x < 0 ? '↓' : '→'} ${x.toFixed(1)}%`);

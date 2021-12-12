@@ -1,5 +1,5 @@
 import {MessageEmbed} from 'discord.js';
-import type {CommandInput, CommandReturn} from '../../utils/types';
+import type {CommandInput, CommandReturn, COVIDCountryStats, COVIDWorldStats} from '../../utils/types';
 import {fetch} from '../../utils/utils';
 
 export const name = 'covid';
@@ -10,14 +10,11 @@ export const options = [
     {type: 'string' as const, name: 'country', description: 'What country do you like to search? Type `all` to display worldwide stats.', required: false, choices: [], default: 'all'}
 ];
 
-type WorldStats = {todayCases: number, todayDeaths: number, recovered: number, deaths: number, active: number, cases: number, tests: number, casesPerOneMillion: number, deathsPerOneMillion: number, updated: number};
-type CountryStats = WorldStats & {country: string, countryInfo: {flag: string}};
-
 const baseUrl = `https://disease.sh/v3/covid-19`;
 
 const getWorldStats = async() => {
     const url = `${baseUrl}/all`;
-    const body = await fetch<WorldStats>(url);
+    const body = await fetch<COVIDWorldStats>(url);
     if(body.status != '200') {
         throw new Error(`The covid API can't be accessed at the moment, please try later`);
     }
@@ -25,7 +22,7 @@ const getWorldStats = async() => {
 };
 const getCountryStats = async(country: string) => {
     const url = `${baseUrl}/countries/${country}`;
-    const body = await fetch<CountryStats>(url);
+    const body = await fetch<COVIDCountryStats>(url);
     if(body.status != '200') {
         throw new Error(`There was a problem getting data from the API, make sure you entered a valid country name`);
     }
@@ -35,7 +32,7 @@ const getCountryStats = async(country: string) => {
 const ratioToPercStr = (x: number) => `${(x * 100).toFixed(2)}%`;
 const toStr = (x: number) => x.toLocaleString();
 
-const makeEmbed = (res: WorldStats) => new MessageEmbed()
+const makeEmbed = (res: COVIDWorldStats) => new MessageEmbed()
     .setColor('RANDOM')
     .addField('Total cases', toStr(res.cases), true)
     .addField('Cases today', toStr(res.todayCases), true)

@@ -1,4 +1,4 @@
-import type {CommandInput, CommandReturn} from '../../utils/types';
+import type {CommandInput, CommandReturn, WorldNewsData} from '../../utils/types';
 import {MessageEmbed} from 'discord.js';
 import {fetchJSON} from '../../utils/utils';
 import {config} from '../../utils/config';
@@ -7,14 +7,12 @@ export const name = 'world-news';
 export const description = 'Replies with the 10 latest world news headlines!';
 export const deferred = false;
 
-type WorldNewsReturn = {articles: ({title: string, url: string, author: string, description: string, urlToImage: string, publishedAt: number})[]};
-
 const embedColour = '#FF4F00';
 
 export const execute = async({messages}: CommandInput): Promise<CommandReturn> => {
     if(!config.newsAPI) { return ':x: This command is not enabled'; }
     // powered by NewsAPI.org
-    const json = await fetchJSON<WorldNewsReturn>(`https://newsapi.org/v2/top-headlines?sources=reuters&pageSize=10&apiKey=${config.newsAPI}`);
+    const json = await fetchJSON<WorldNewsData>(`https://newsapi.org/v2/top-headlines?sources=reuters&pageSize=10&apiKey=${config.newsAPI}`);
     const articleArr = [];
 
     for(const article of json.articles) {

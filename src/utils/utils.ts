@@ -31,7 +31,7 @@ const shuffleArray = <T>(arr: T[]): T[] => {
 };
 
 const getRandom = <T>(arr: T[], n: number): T[] => {
-    if(n > arr.length) {throw new RangeError('getRandom: more elements taken than available!');}
+    if(n > arr.length) { throw new RangeError('getRandom: more elements taken than available!'); }
     return shuffleArray(arr).slice(0, n);
 };
 

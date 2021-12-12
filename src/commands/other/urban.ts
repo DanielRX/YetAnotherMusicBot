@@ -1,5 +1,5 @@
 import {MessageEmbed} from 'discord.js';
-import type {CommandInput, CommandReturn} from '../../utils/types';
+import type {CommandInput, CommandReturn, UrbanDictionaryData} from '../../utils/types';
 import {fetchJSON} from '../../utils/utils';
 
 export const name = 'urban';
@@ -12,10 +12,9 @@ export const options = [
 
 const embedColour = '#BB7D61';
 
-type UrbanReturn = {list: ({definition: string, permalink: string})[]};
 
 export const execute = async({params: {query}, messages}: CommandInput<{query: string}>): Promise<CommandReturn> => {
-    const json = await fetchJSON<UrbanReturn>(`https://api.urbandictionary.com/v0/define?term=${query}`);
+    const json = await fetchJSON<UrbanDictionaryData>(`https://api.urbandictionary.com/v0/define?term=${query}`);
     const embed = new MessageEmbed()
         .setColor(embedColour)
         .setTitle(query)

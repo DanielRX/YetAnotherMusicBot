@@ -1,16 +1,10 @@
-import type {CommandInput, CommandReturn} from '../../utils/types';
+import type {CommandInput, CommandReturn, DigimonInfo} from '../../utils/types';
 import {fetchJSON} from '../../utils/utils';
 import {MessageEmbed} from 'discord.js';
 
 export const name = 'digimon';
 export const description = 'Get the info on a digimon!';
 export const deferred = false;
-
-type DigmonInfo = {
-  name: string,
-  img: string,
-  level: string,
-};
 
 export const options = [
     {type: 'string' as const, name: 'name', description: 'Which digimon do you want to see?', required: true, choices: []}
@@ -19,7 +13,7 @@ export const options = [
 const url = `https://digimon-api.vercel.app/api/digimon/name/`;
 
 export const execute = async({messages, params: {name: digimon}}: CommandInput<{name: string}>): Promise<CommandReturn> => {
-    const [json] = await fetchJSON<DigmonInfo[]>(`${url}/${digimon}`);
+    const [json] = await fetchJSON<DigimonInfo[]>(`${url}/${digimon}`);
     const embed = new MessageEmbed()
         .setDescription(json.level)
         .setTimestamp()

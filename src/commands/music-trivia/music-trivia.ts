@@ -17,7 +17,7 @@ export const options = [
     {type: 'string', name: 'twitch-channel', description: 'Which twitch channel would you like to listen to?', required: false, choices: [], default: ''},
 ] as const;
 
-const embedColour = '#ff7373';
+const embedColour = '#FF7373';
 
 const handleSubscription = async({guildId, guild, channel, messages}: CommandInput, player: TriviaPlayer): Promise<CommandReturn> => {
     const {queue} = player;

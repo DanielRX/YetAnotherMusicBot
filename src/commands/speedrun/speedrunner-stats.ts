@@ -1,4 +1,4 @@
-import type {CommandInput, CommandReturn} from '../../utils/types';
+import type {CommandInput, CommandReturn, SpeedrunnerStats, SpeedrunStats} from '../../utils/types';
 import {MessageEmbed} from 'discord.js';
 import {fetchJSON} from '../../utils/utils';
 import prettyMilliseconds from 'pretty-ms';
@@ -13,9 +13,6 @@ export const options = [
 
 const embedColour = '#3E8657';
 
-type SpeedrunStats = {runners: ({name: string, avatar: string})[], status :number};
-// eslint-disable-next-line @typescript-eslint/naming-convention
-type RunnerStats = {pbs: ({id: string, realtime_duration_ms: number, realtime_sum_of_best_ms: number, program: string, parsed_at: number, attempts: any[], game: {cover_url: string, name: string}, category: {name: string}, segments: any[]})[], status :number};
 export const execute = async({params: {user}, messages}: CommandInput<{user: string}>): Promise<CommandReturn> => {
     const userFiltered = user.toLowerCase();
     const userRes = await fetchJSON<SpeedrunStats>(`https://splits.io/api/v4/runners?search=${userFiltered}`);
@@ -24,7 +21,7 @@ export const execute = async({params: {user}, messages}: CommandInput<{user: str
     if(userRes.status == 404) { return `:x: The Runner ${user} was not found.`; }
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    const pbsRes = await fetchJSON<RunnerStats>(`https://splits.io/api/v4/runners/${userRes.runners[0].name}/pbs`);
+    const pbsRes = await fetchJSON<SpeedrunnerStats>(`https://splits.io/api/v4/runners/${userRes.runners[0].name}/pbs`);
 
     if(pbsRes.length == 0) { return `:x: The Runner ${userRes.runners[0].name}'s hasn't submitted any speedruns to Splits.io\n\n        Please try again later.`; }
     if(pbsRes.status == 404) { return `:x: The User ${user}s stats were not found.`; }

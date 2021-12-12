@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import type {CommandInput, CommandReturn} from '../../utils/types';
+import type {CommandInput, CommandReturn, RAWGGameData} from '../../utils/types';
 import {MessageEmbed} from 'discord.js';
 import {config} from '../../utils/config';
 import {fetch, fetchJSON} from '../../utils/utils';
@@ -14,26 +14,9 @@ export const options = [
 
 const embedColour = '#B5B5B5';
 
-type GameData = {
-    background_image: string,
-    name: string,
-    developers: ({name: string})[],
-    publishers: ({name: string})[],
-    genres: ({name: string})[],
-    redirect: boolean,
-    id: string,
-    tba: string,
-    released: string,
-    esrb_rating: {name: string} | null,
-    description_raw: string,
-    rating: string | null,
-    platforms: ({platform: {name: string}})[],
-    stores: ({store: {name: string}, url: string})[]
-};
-
 const getGameDetails = async(query: string) => {
     const url = `https://api.rawg.io/api/games/${query}?key=${config.rawgAPI}`;
-    const body = await fetch<GameData>(url);
+    const body = await fetch<RAWGGameData>(url);
     if(body.status == `429`) { throw new Error(':x: Rate Limit exceeded. Please try again in a few minutes.'); }
     if(body.status == `503`) { throw new Error(':x: The service is currently unavailable. Please try again later.'); }
     if(body.status == '404') { throw new Error(`:x: Error: ${query} was not found`); }
@@ -41,7 +24,7 @@ const getGameDetails = async(query: string) => {
 
     let json = await body.json();
     if(json.redirect) {
-        const redirect = await fetchJSON<GameData>(`https://api.rawg.io/api/games/${body.slug}?key=${config.rawgAPI}`);
+        const redirect = await fetchJSON<RAWGGameData>(`https://api.rawg.io/api/games/${body.slug}?key=${config.rawgAPI}`);
         json = redirect;
     }
     // 'id' is the only value that must be present to all valid queries

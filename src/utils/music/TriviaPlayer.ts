@@ -12,6 +12,12 @@ import {config} from '../config';
 import * as tmi from 'tmi.js';
 import {getRandom} from '../utils';
 
+const embedColour = '#FF7373';
+
+const timeForSong = 30000;
+const answerTimeout = 1500;
+const ROUND_SIZE = 25;
+
 const capitalizeWords = (str: string) => {
     return str.replace(/\w\S*/g, function(txt) {
         return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
@@ -29,7 +35,7 @@ const normalizeValue = (hardMode: boolean) => (value: string) => {
         .replace(/ \[.*\]/g, '')
         .replace(/\s+/g, ' ')
         .trim()
-        .toLowerCase(); // Remove duplicate spaces
+        .toLowerCase();
 };
 
 const getLeaderBoard = (arr: [string, number][], limit = 10) => { // TODO: Shared medals
@@ -68,10 +74,6 @@ const convertToHint = (str: string, hintCount: number) => {
     }
     return out;
 };
-
-const timeForSong = 30000;
-const answerTimeout = 1500;
-const ROUND_SIZE = 25;
 
 type TriviaElement = {youtubeUrl: string, previewUrl: string, artists: string[], album: string, name: string, id: string};
 
@@ -125,21 +127,18 @@ export class TriviaPlayer extends Player {
 
     public passConnection(connection: VoiceConnection): void {
         super.passConnection(connection);
-
         this.audioPlayer.on('stateChange', async(oldState, newState) => {
             let nextHintInt: NodeJS.Timeout | undefined = undefined;
             if(newState.status === AudioPlayerStatus.Idle && oldState.status !== AudioPlayerStatus.Idle) {
                 this.queue.shift();
                 if(this.roundMode && (this.correctThisRound + this.queue.length < this.rounds)) {
-                    const embed = new MessageEmbed()
-                        .setColor('#ff7373')
+                    const embed = new MessageEmbed({color: embedColour})
                         .setTitle(`You lost the game at round ${this.rounds}!`)
                         .setDescription(`You needed ${this.rounds} but you only have ${this.correctThisRound} and ${this.queue.length} songs left`);
                     const sortedScoreMap = new Map([...this.score.entries()].sort((a, b) => b[1] - a[1]));
                     const board = getLeaderBoard(Array.from(sortedScoreMap.entries()), 20);
                     logger.info(getLeaderBoard(Array.from(sortedScoreMap.entries()), Infinity));
-                    const embed2 = new MessageEmbed()
-                        .setColor('#ff7373')
+                    const embed2 = new MessageEmbed({color: embedColour})
                         .setTitle(`:musical_note: Scores:`)
                         .setDescription(`${board}`);
                     this.reset();
@@ -148,7 +147,7 @@ export class TriviaPlayer extends Player {
                 }
                 if(this.roundMode && (this.correctThisRound >= this.rounds)) {
                     this.correctThisRound = 0;
-                    const embed = new MessageEmbed().setColor('#ff7373').setTitle(`Round Complete`).setDescription(`You got through round ${this.rounds}`);
+                    const embed = new MessageEmbed({color: embedColour}).setTitle(`Round Complete`).setDescription(`You got through round ${this.rounds}`);
                     this.rounds++;
                     if(this.lastRoundMessage !== null) { void this.lastRoundMessage.delete().catch(() => { logger.error('Failed to delete message'); }); }
                     this.lastRoundMessage = await this.textChannel.send({embeds: [embed]});
@@ -166,8 +165,7 @@ export class TriviaPlayer extends Player {
                     if(this.wasTriviaEndCalled) { return; }
                     const board = getLeaderBoard(Array.from(sortedScoreMap.entries()));
                     if(typeof board !== 'undefined') {
-                        const embed = new MessageEmbed()
-                            .setColor('#ff7373')
+                        const embed = new MessageEmbed({color: embedColour})
                             .setTitle(`Music Quiz Results:`)
                             .setDescription(board);
                         void this.textChannel.send({embeds: [embed]});
@@ -282,7 +280,7 @@ export class TriviaPlayer extends Player {
                 const board = getLeaderBoard(Array.from(sortedScoreMap.entries()), 10);
                 if(typeof board === 'undefined') { return; }
                 const embed = new MessageEmbed()
-                    .setColor('#ff7373')
+                    .setColor(embedColour)
                     .setTitle(`:musical_note: The song was: (${Math.max(this.queue.length - 1, 0)} left${this.roundMode ? ' this round' : ''})`)
                     .setDescription(`**[${songString}](https://open.spotify.com/track/${(this.queue[0] as any).id})**\n${this.roundMode ? `You've got ${this.correctThisRound} / ${this.rounds} right to pass this round!\n` : ''}\n${board}`);
 
@@ -317,7 +315,7 @@ export class TriviaPlayer extends Player {
         const titleHint = convertToHint(title, this.hints);
         const artistHints = artists.map((artist) => convertToHint(artist, this.hints));
         const song = `\`${this.songNameFoundTime === -1 ? titleHint : title}\`\nBy:\n ${this.songSingerFoundTime === -1 ? artistHints.map((artist) => `\`${artist}\``).join('\n') : artists.map((artist) => `\`${artist}\``).join('\n')}`;
-        const embed = new MessageEmbed().setColor('#ff7373').setTitle(`The song is:`).setDescription(song);
+        const embed = new MessageEmbed({color: embedColour}).setTitle(`The song is:`).setDescription(song);
         if(this.lastMessage !== null) { this.lastMessage.delete().catch(() => { logger.error('Failed to delete message'); }); }
         this.lastMessage = await this.textChannel.send({embeds: [embed]});
         this.hints++;

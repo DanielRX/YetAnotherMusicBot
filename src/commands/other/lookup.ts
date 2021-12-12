@@ -1,5 +1,5 @@
 import {MessageEmbed} from 'discord.js';
-import type {CommandInput, CommandReturn} from '../../utils/types';
+import type {CommandInput, CommandReturn, IPLookupData} from '../../utils/types';
 import {fetchJSON} from '../../utils/utils';
 
 export const name = 'lookup';
@@ -10,12 +10,10 @@ export const options = [
     {type: 'string' as const, name: 'query', description: 'What do you want to lookup? Please enter a hostname/domain or IP address.', required: true, choices: []}
 ];
 
-type Data = {query: string, city: string, zip: string, regionName: string, country: string, org: string, isp: string, as: string};
-
 const embedColour = '#42aaf5';
 
 export const execute = async({params: {query}}: CommandInput<{query: string}>): Promise<CommandReturn> => {
-    const json = await fetchJSON<Data>(`http://ip-api.com/json/${query}`);
+    const json = await fetchJSON<IPLookupData>(`http://ip-api.com/json/${query}`);
 
     //embed json results
     const embed = new MessageEmbed()
