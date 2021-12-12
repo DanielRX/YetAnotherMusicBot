@@ -13,8 +13,7 @@ const embedColour = '#BB7D61';
 export const execute = async({messages}: CommandInput): Promise<CommandReturn> => {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     const json = await fetchJSON<{value: string, appeared_at: number}>(url);
-    const embed = new MessageEmbed()
-        .setColor(embedColour)
+    const embed = new MessageEmbed({color: embedColour})
         .setAuthor('Donald Trump', 'https://www.whitehouse.gov/wp-content/uploads/2021/01/45_donald_trump.jpg')
         .setDescription(json.value)
         .setTimestamp(json.appeared_at)

@@ -36,8 +36,7 @@ export const execute = async({params: {difficulty, questionType, category}, mess
     }
 
     const trueFalseAnswers = `1) True\n2) False`;
-    const embed = new MessageEmbed()
-        .setColor(embedColour)
+    const embed = new MessageEmbed({color: embedColour})
         .setAuthor(`Question, ${data[0].difficulty} - ${data[0].category}`, '', 'https://opentdb.com/api.php')
         .setDescription(`${question.replace('&quot;', '"')}\n\n${trueFalse ? trueFalseAnswers : optionsString}`)
         .setTimestamp()

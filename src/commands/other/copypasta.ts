@@ -13,12 +13,11 @@ export const execute = async({messages}: CommandInput): Promise<CommandReturn> =
 
     const randomEl = data[Math.floor(Math.random() * data.length)];
 
-    const quoteEmbed = new MessageEmbed()
+    const quoteEmbed = new MessageEmbed({color: embedColour})
         .setTitle('Copypasta')
         .setDescription(`${randomEl}`)
         .setTimestamp()
         .setFooter(`${messages.POWERED_BY()} you!`)
-        .setColor(embedColour);
     return {embeds: [quoteEmbed]};
 };
 

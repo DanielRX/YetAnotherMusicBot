@@ -20,8 +20,7 @@ export const execute = async({params: {text, targetLang}, messages}: CommandInpu
     if(langCode === '') { return ':x: Please provide a valid language!'; }
 
     const response = await translate(text, {to: targetLang});
-    const embed = new MessageEmbed()
-        .setColor(embedColour)
+    const embed = new MessageEmbed({color: embedColour})
         .setTitle('Google Translate: ')
         .setURL('https://translate.google.com/')
         .setDescription(response.text)

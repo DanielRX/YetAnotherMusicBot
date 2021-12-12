@@ -13,10 +13,8 @@ export const options = [
 const embedColour = '#00AE86';
 
 export const execute = async({params: {user}}: CommandInput<{user: User}>): Promise<CommandReturn> => {
-    const embed = new MessageEmbed()
+    const embed = new MessageEmbed({color: embedColour})
         .setTitle(user.username)
-        .setImage(user.displayAvatarURL({dynamic: true}))
-        .setColor(embedColour);
-
+        .setImage(user.displayAvatarURL({dynamic: true}));
     return {embeds: [embed]};
 };

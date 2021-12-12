@@ -12,11 +12,9 @@ export const options = [
 
 const embedColour = '#BB7D61';
 
-
 export const execute = async({params: {query}, messages}: CommandInput<{query: string}>): Promise<CommandReturn> => {
     const json = await fetchJSON<UrbanDictionaryData>(`https://api.urbandictionary.com/v0/define?term=${query}`);
-    const embed = new MessageEmbed()
-        .setColor(embedColour)
+    const embed = new MessageEmbed({color: embedColour})
         .setTitle(query)
         .setAuthor('Urban Dictionary', 'https://i.imgur.com/vdoosDm.png', 'https://urbandictionary.com')
         .setDescription(`*${json.list[Math.floor(Math.random() * 1)].definition}*`)

@@ -8,8 +8,7 @@ export const deferred = false;
 
 const embedColour = '#AF6234';
 
-const makeEmbed = (quote: string, messages: CommandInput['messages']) => new MessageEmbed()
-    .setColor(embedColour)
+const makeEmbed = (quote: string, messages: CommandInput['messages']) => new MessageEmbed({color: embedColour})
     .setAuthor('Kanye West', 'https://i.imgur.com/SsNoHVh.png')
     .setDescription(quote)
     .setTimestamp()

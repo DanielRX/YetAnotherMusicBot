@@ -14,12 +14,11 @@ export const execute = async({messages}: CommandInput): Promise<CommandReturn> =
     const jsonQuotes = fs.readJSONSync('./resources/quotes/motivational.json', 'utf8') as MotivationData;
     const randomQuote = randomEl(jsonQuotes.quotes);
 
-    const quoteEmbed = new MessageEmbed()
+    const quoteEmbed = new MessageEmbed({color: embedColour})
         .setAuthor('Motivational Quote', 'https://i.imgur.com/Cnr6cQb.png', 'https://type.fit')
         .setDescription(`*"${randomQuote.text}*"\n\n-${randomQuote.author}`)
         .setTimestamp()
-        .setFooter(`${messages.POWERED_BY()} type.fit`)
-        .setColor(embedColour);
+        .setFooter(`${messages.POWERED_BY()} type.fit`);
     return {embeds: [quoteEmbed]};
 };
 

@@ -13,8 +13,7 @@ const embedColour = '#E41032';
 export const execute = async({messages}: CommandInput): Promise<CommandReturn> => {
     // thanks to https://evilinsult.com :)
     const json = await fetchJSON<{insult: string}>(url);
-    const embed = new MessageEmbed()
-        .setColor(embedColour)
+    const embed = new MessageEmbed({color: embedColour})
         .setAuthor('Evil Insult', 'https://i.imgur.com/bOVpNAX.png', 'https://evilinsult.com')
         .setDescription(json.insult)
         .setTimestamp()

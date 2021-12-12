@@ -20,11 +20,10 @@ export const execute = async({params: {question}}: CommandInput<{question: strin
 
     const randomAnswer = randomEl(answers);
 
-    const answerEmbed = new MessageEmbed()
+    const answerEmbed = new MessageEmbed({color: embedColour})
         .setTitle(question)
         .setAuthor('Magic 8 Ball', 'https://i.imgur.com/HbwMhWM.png')
         .setDescription(randomAnswer.text)
-        .setColor(embedColour)
         .setTimestamp();
 
     return {embeds: [answerEmbed]};

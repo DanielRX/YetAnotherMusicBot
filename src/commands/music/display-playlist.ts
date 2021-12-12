@@ -27,7 +27,7 @@ export const execute = async({sender, messages, params: {playlistName}}: Command
     const urlsArrayClone = savedPlaylistsClone[location].urls;
     if(urlsArrayClone.length === 0) { return messages.EMPTY_PLAYLIST({playlistName}); }
 
-    const savedPlaylistEmbed = new MessageEmbed().setColor(embedColour).setTitle(playlistName).setTimestamp();
+    const savedPlaylistEmbed = new MessageEmbed({color: embedColour}).setTitle(playlistName).setTimestamp();
     const fields = urlsArrayClone.slice(0, maxLength).map((x, i) => ({name: `${i + 1}`, value: `${x.name}`}));
     savedPlaylistEmbed.setFields(fields);
 

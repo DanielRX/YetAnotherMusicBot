@@ -16,8 +16,7 @@ export const execute = async({params: {query}}: CommandInput<{query: string}>): 
     const json = await fetchJSON<IPLookupData>(`http://ip-api.com/json/${query}`);
 
     //embed json results
-    const embed = new MessageEmbed()
-        .setColor(embedColour)
+    const embed = new MessageEmbed({color: embedColour})
         .setAuthor('IP/Hostname Resolver', 'https://i.imgur.com/3lIiIv9.png', 'https://ip-api.com')
         .addFields([
             {name: 'Query', value: query, inline: true},

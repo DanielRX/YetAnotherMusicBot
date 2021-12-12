@@ -12,8 +12,7 @@ const embedColour = '#6BA3FF';
 
 export const execute = async({messages}: CommandInput): Promise<CommandReturn> => {
     const json = await fetchJSON<{activity: string}>(url);
-    const embed = new MessageEmbed()
-        .setColor(embedColour)
+    const embed = new MessageEmbed({color: embedColour})
         .setAuthor('Bored Activites', 'https://i.imgur.com/7Y2F38n.png', 'https://www.boredapi.com/')
         .setDescription(json.activity)
         .setTimestamp()

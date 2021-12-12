@@ -1,5 +1,5 @@
 import type {CommandInput, CommandReturn} from '../../utils/types';
-import type {Message, User} from 'discord.js';
+import {Message, MessageEmbed, User} from 'discord.js';
 import Discord from 'discord.js';
 import os from 'os';
 import {readJsonSync} from 'fs-extra';
@@ -48,10 +48,9 @@ export const execute = async({interaction, sender, guild, channel}: CommandInput
 
     await pingMsg.edit('Complete');
     const user = interaction?.client.user as User;
-    const statusEmbed = new Discord.MessageEmbed()
+    const statusEmbed = new MessageEmbed({color: embedColour})
         .setThumbnail(user.displayAvatarURL() || '')
-        .setTitle(`Status of ${interaction?.client.user?.username}`)
-        .setColor(embedColour);
+        .setTitle(`Status of ${interaction?.client.user?.username}`);
 
     if(isOwner) {
         statusEmbed.addField(`Memory Usage`, `${Math.round(used * 100) / 100}MB`, true).addField(`Platform`, `${platform} ${archInfo}`, true);

@@ -12,8 +12,7 @@ const embedColour = '#F4D190';
 
 export const execute = async({messages}: CommandInput): Promise<CommandReturn> => {
     const json = await fetchJSON<{fortune: string}>(url);
-    const embed = new MessageEmbed()
-        .setColor(embedColour)
+    const embed = new MessageEmbed({color: embedColour})
         .setAuthor('Fortune Cookie', 'https://i.imgur.com/58wIjK0.png', 'https://yerkee.com')
         .setDescription(json.fortune)
         .setTimestamp()

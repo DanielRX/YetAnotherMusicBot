@@ -16,8 +16,7 @@ export const execute = async({messages}: CommandInput): Promise<CommandReturn> =
     const articleArr = [];
 
     for(const article of json.articles) {
-        articleArr.push(new MessageEmbed()
-            .setColor(embedColour)
+        articleArr.push(new MessageEmbed({color: embedColour})
             .setTitle(article.title)
             .setURL(article.url)
             .setAuthor(article.author)
