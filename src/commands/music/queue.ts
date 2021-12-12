@@ -7,7 +7,6 @@ export const description = 'Display the music queue';
 export const deferred = true;
 
 const embedColour = '#9096E6';
-
 const pageSize = 24;
 
 export const execute = async({messages, guildId, sender}: CommandInput): Promise<CommandReturn> => {

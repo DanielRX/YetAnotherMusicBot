@@ -16,6 +16,7 @@ export const options = [
 ];
 
 const embedColour = '#9096E6';
+const pageSize = 4096;
 
 const cleanSongName = (songName: string) => {
     return songName
@@ -76,7 +77,6 @@ const getLyrics = async(url: string, errorMessage: string) => {
     }
 };
 
-const pageSize = 4096;
 
 export const execute = async({sender, guildId, messages, params: {songName}}: CommandInput<{songName: string}>): Promise<CommandReturn> => {
     if(!config.geniusLyricsAPI) { return messages.COMMAND_DISABLED(); }

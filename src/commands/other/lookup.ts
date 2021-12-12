@@ -10,7 +10,7 @@ export const options = [
     {type: 'string' as const, name: 'query', description: 'What do you want to lookup? Please enter a hostname/domain or IP address.', required: true, choices: []}
 ];
 
-const embedColour = '#42aaf5';
+const embedColour = '#42AAF5';
 
 export const execute = async({params: {query}}: CommandInput<{query: string}>): Promise<CommandReturn> => {
     const json = await fetchJSON<IPLookupData>(`http://ip-api.com/json/${query}`);

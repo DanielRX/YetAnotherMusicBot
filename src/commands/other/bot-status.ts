@@ -10,7 +10,7 @@ export const name = 'bot-status';
 export const description = 'Shows the current system status';
 export const deferred = false;
 
-const embedColour = '#ff0000';
+const embedColour = '#FF0000';
 
 export const execute = async({interaction, sender, guild, channel}: CommandInput): Promise<CommandReturn> => {
     const owner = await guild.fetchOwner();
